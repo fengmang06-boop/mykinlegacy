@@ -3,6 +3,7 @@ dist/
 .next/
 coverage/
 .turbo/
+artifacts/visual-review/
 .env
 .env.*
 !.env.example

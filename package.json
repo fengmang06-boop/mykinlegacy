@@ -46,6 +46,7 @@
     "staging:stack": "docker compose -f docker-compose.staging.yml up -d mysql redis api worker web admin",
     "staging:web": "corepack pnpm --filter @ai-heritage/web build && corepack pnpm --filter @ai-heritage/web start",
     "staging:worker": "corepack pnpm --filter @ai-heritage/worker build && corepack pnpm --filter @ai-heritage/worker start",
+    "visual:review": "node scripts/visual-review.mjs",
     "typecheck": "corepack pnpm -r typecheck",
     "format": "prettier --write .",
     "clean": "rimraf --glob \"apps/*/.next\" \"apps/*/dist\" \"packages/*/dist\" coverage"
@@ -55,6 +56,7 @@
     "@next/eslint-plugin-next": "15.5.4",
     "@types/node": "^24.5.2",
     "eslint": "^9.36.0",
+    "playwright": "^1.61.1",
     "prettier": "^3.6.2",
     "prisma": "^6.19.0",
     "rimraf": "^6.0.1",
