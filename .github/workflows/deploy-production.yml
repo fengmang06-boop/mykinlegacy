@@ -1,0 +1,65 @@
+name: Deploy Production
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mykinlegacy-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Deploy main to production
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate production secrets
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          : "${PROD_PROJECT_DIR:?Missing PROD_PROJECT_DIR}"
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$PROD_SSH_PRIVATE_KEY" > ~/.ssh/mykinlegacy_prod
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Deploy on production VPS
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -p "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'bash -s' -- "$PROD_PROJECT_DIR" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          PROJECT_DIR="$1"
+          cd "$PROJECT_DIR"
+          git fetch origin main
+          git checkout main
+          git pull --ff-only origin main
+          bash deployment/deploy.sh
+          bash deployment/status.sh
+          REMOTE_SCRIPT

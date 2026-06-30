@@ -4,7 +4,9 @@ This guide is for production deployment, status checks, failure reporting, and r
 
 ## How To Deploy
 
-Run these commands on the production server from the project root:
+Production deploy is normally automatic after a commit is pushed to `main`.
+
+Manual server deploy is still available. Run these commands on the production server from the project root:
 
 ```bash
 git checkout main
@@ -37,6 +39,141 @@ Failure prints:
 ```text
 DEPLOYMENT_FAILED <commit_hash>
 ```
+
+## Automatic GitHub Actions Deploy
+
+The workflow file is:
+
+```text
+.github/workflows/deploy-production.yml
+```
+
+It runs on:
+
+- every push to `main`
+- manual `workflow_dispatch`
+
+The workflow connects to the VPS over SSH, enters `PROD_PROJECT_DIR`, pulls `main`, runs deployment, and prints production status:
+
+```bash
+git fetch origin main
+git checkout main
+git pull --ff-only origin main
+bash deployment/deploy.sh
+bash deployment/status.sh
+```
+
+If `deployment/deploy.sh` fails, the GitHub Actions run fails. If `deployment/health-check.sh` fails inside deploy, the GitHub Actions run fails.
+
+## GitHub Secrets Required
+
+Add these repository secrets in GitHub:
+
+```text
+PROD_SSH_HOST
+PROD_SSH_USER
+PROD_SSH_PORT
+PROD_SSH_PRIVATE_KEY
+PROD_PROJECT_DIR
+```
+
+Recommended values:
+
+```text
+PROD_SSH_HOST=216.128.154.152
+PROD_SSH_USER=root
+PROD_SSH_PORT=22
+PROD_PROJECT_DIR=/root/mykinlegacy
+```
+
+Use the real production project folder for `PROD_PROJECT_DIR`.
+
+## One-Time SSH Key Setup For GitHub Actions
+
+Create a deployment key on your local machine:
+
+```bash
+ssh-keygen -t ed25519 -C "github-actions-mykinlegacy" -f mykinlegacy_github_actions -N ""
+```
+
+Add the public key to the VPS:
+
+```bash
+cat mykinlegacy_github_actions.pub | ssh root@216.128.154.152 "mkdir -p ~/.ssh && chmod 700 ~/.ssh && cat >> ~/.ssh/authorized_keys && chmod 600 ~/.ssh/authorized_keys"
+```
+
+Open the private key:
+
+```bash
+cat mykinlegacy_github_actions
+```
+
+Copy the full private key, including:
+
+```text
+-----BEGIN OPENSSH PRIVATE KEY-----
+...
+-----END OPENSSH PRIVATE KEY-----
+```
+
+Add it to GitHub:
+
+```text
+GitHub repo -> Settings -> Secrets and variables -> Actions -> New repository secret
+```
+
+Use:
+
+```text
+Name: PROD_SSH_PRIVATE_KEY
+Value: full private key content
+```
+
+Then add:
+
+```text
+PROD_SSH_HOST=216.128.154.152
+PROD_SSH_USER=root
+PROD_SSH_PORT=22
+PROD_PROJECT_DIR=/root/mykinlegacy
+```
+
+After the secret is saved, delete the private key from your local machine if you do not need it:
+
+```bash
+rm mykinlegacy_github_actions
+```
+
+Keep the `.pub` file only if you want a local record of which public key was installed.
+
+## Manual GitHub Actions Deploy
+
+To run production deployment manually:
+
+```text
+GitHub repo -> Actions -> Deploy Production -> Run workflow -> main -> Run workflow
+```
+
+The run log should include:
+
+```text
+DEPLOYMENT_SUCCESS <commit_hash>
+```
+
+It should also print the output of:
+
+```bash
+bash deployment/status.sh
+```
+
+## Automatic Deploy Verification
+
+After a GitHub Actions deploy finishes:
+
+1. Open the Actions run.
+2. Confirm the deploy step passed.
+3. Confirm the log includes `DEPLOYMENT_SUCCESS`.
+4. Confirm `public_http`, `public_https`, `api`, `web`, `worker`, `mysql`, `redis`, and `nginx` are healthy in the status output.
 
 ## How To Check Status
 
@@ -172,6 +309,29 @@ The rollback script will:
 - record the rollback target as last successful only if health checks pass
 
 Rollback does not automatically roll back database migrations. If a failed deploy included database changes, stop and inspect before rolling back application code.
+
+## Manual GitHub Actions Rollback
+
+The workflow file is:
+
+```text
+.github/workflows/rollback-production.yml
+```
+
+To run rollback from GitHub:
+
+```text
+GitHub repo -> Actions -> Rollback Production -> Run workflow -> commit_hash -> Run workflow
+```
+
+The rollback workflow runs:
+
+```bash
+bash deployment/rollback.sh <commit_hash>
+bash deployment/status.sh
+```
+
+Use rollback only for a known healthy commit. Rollback does not automatically reverse database migrations.
 
 ## Production Safety Rules
 

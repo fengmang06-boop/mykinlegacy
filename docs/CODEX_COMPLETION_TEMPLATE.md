@@ -30,6 +30,18 @@
 
 ```
 
+## Auto Deploy
+
+- Yes/No
+
+## GitHub Actions Run URL
+
+-
+
+## Production Status Summary
+
+-
+
 ## Server Commands
 
 ```bash
