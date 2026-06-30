@@ -1291,9 +1291,11 @@ textarea {
   border: 1px solid rgba(201, 162, 74, 0.34);
   border-radius: 18px;
   background:
+    radial-gradient(circle at 72% 8%, rgba(201, 162, 74, 0.18), transparent 15rem),
     linear-gradient(135deg, rgba(246, 235, 212, 0.08), transparent 42%), rgba(23, 20, 15, 0.88);
   box-shadow:
     0 30px 90px rgba(0, 0, 0, 0.45),
+    0 0 46px rgba(201, 162, 74, 0.08),
     inset 0 1px 0 rgba(246, 235, 212, 0.08);
 }
 
@@ -1354,7 +1356,9 @@ textarea {
   background:
     linear-gradient(180deg, rgba(246, 235, 212, 0.07), rgba(246, 235, 212, 0.025)),
     rgba(17, 16, 13, 0.92);
-  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.26);
+  box-shadow:
+    0 18px 46px rgba(0, 0, 0, 0.26),
+    inset 0 1px 0 rgba(246, 235, 212, 0.06);
 }
 
 .home-artifact-tile {
@@ -2047,13 +2051,28 @@ textarea {
 
 @media (max-width: 800px) {
   .nav {
-    align-items: flex-start;
-    flex-direction: column;
-    padding: 16px 0;
+    min-height: 62px;
+    align-items: center;
+    flex-direction: row;
+    padding: 8px 0;
+    gap: 12px;
   }
 
   .nav-links {
-    flex-wrap: wrap;
+    margin-left: auto;
+    flex-wrap: nowrap;
+    gap: 0;
+  }
+
+  .nav-links a:not(.nav-cta) {
+    display: none;
+  }
+
+  .nav-cta {
+    min-height: 38px;
+    padding: 0 13px;
+    font-size: 13px;
+    white-space: nowrap;
   }
 
   .hero {
@@ -2133,8 +2152,8 @@ textarea {
 
 @media (max-width: 640px) {
   .brand {
-    width: 42px;
-    min-height: 42px;
+    width: 38px;
+    min-height: 38px;
   }
 
   .brand-logo-full {
@@ -2143,38 +2162,77 @@ textarea {
 
   .brand-logo-mark {
     display: block;
-    width: 42px;
-    height: 42px;
+    width: 38px;
+    height: 38px;
   }
 
   .home-shell {
     width: min(100% - 24px, 1180px);
   }
 
+  .home-hero-grid {
+    gap: 28px;
+    padding: 42px 0 38px;
+  }
+
+  .home-eyebrow {
+    margin-bottom: 10px;
+    font-size: 11px;
+  }
+
   .home-premium h1 {
-    font-size: clamp(38px, 12vw, 50px);
+    font-size: clamp(32px, 9.4vw, 39px);
+    line-height: 1.06;
   }
 
   .home-premium h2 {
-    font-size: clamp(30px, 9vw, 40px);
+    font-size: clamp(28px, 8.2vw, 36px);
+    line-height: 1.1;
   }
 
   .home-hero-subtext {
-    font-size: 18px;
+    margin-top: 16px;
+    font-size: 16px;
+    line-height: 1.62;
   }
 
-  .home-cta-row,
-  .home-hero-trust {
+  .home-cta-row {
+    gap: 10px;
+    margin-top: 22px;
     flex-direction: column;
     align-items: stretch;
   }
 
+  .home-hero-trust {
+    gap: 9px 12px;
+    margin-top: 18px;
+    font-size: 12px;
+  }
+
+  .home-hero-trust span {
+    gap: 7px;
+  }
+
   .home-button {
+    min-height: 46px;
     width: 100%;
   }
 
   .home-artifact-board {
-    padding: 14px;
+    padding: 12px;
+  }
+
+  .home-board-header {
+    padding-bottom: 12px;
+  }
+
+  .home-board-header img {
+    width: 38px;
+    height: 38px;
+  }
+
+  .home-board-header strong {
+    font-size: 18px;
   }
 
   .home-artifact-grid,
@@ -2183,35 +2241,121 @@ textarea {
   .home-step-line,
   .home-faq-list div {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .home-artifact-tile,
+  .home-card,
+  .home-step {
+    min-height: auto;
+    padding: 15px;
+  }
+
+  .home-artifact-tile {
+    gap: 9px;
+  }
+
+  .home-artifact-tile img {
+    width: 54px;
+    height: 44px;
+  }
+
+  .home-artifact-tile h2 {
+    font-size: 18px;
+  }
+
+  .home-artifact-tile p,
+  .home-card p,
+  .home-step p {
+    font-size: 14px;
+    line-height: 1.52;
   }
 
   .home-featured-tile {
     grid-row: auto;
-    min-height: 230px;
+    min-height: 190px;
   }
 
   .home-featured-tile img {
-    width: 110px;
-    height: 86px;
+    width: 82px;
+    height: 66px;
+  }
+
+  .home-card img {
+    width: 44px;
+    height: 44px;
+    margin-bottom: 12px;
+  }
+
+  .home-card h3 {
+    margin-bottom: 7px;
+    font-size: 20px;
+  }
+
+  .home-receive-card {
+    min-height: auto;
+  }
+
+  .home-receive-card img {
+    width: 62px;
+    height: 54px;
+  }
+
+  .home-step img {
+    width: 54px;
+    height: 54px;
+    margin: 14px 0;
+  }
+
+  .home-step span {
+    width: 28px;
+    height: 28px;
+    font-size: 13px;
   }
 
   .home-section,
   .home-final-cta {
-    padding: 64px 0;
+    padding: 52px 0;
+  }
+
+  .home-section-heading {
+    margin-bottom: 24px;
+  }
+
+  .home-section-heading p:not(.home-eyebrow) {
+    margin-top: 12px;
+    font-size: 16px;
   }
 
   .home-generation-card {
     grid-template-columns: 82px 1fr;
-    padding: 16px;
+    gap: 13px;
+    padding: 14px;
   }
 
   .home-generation-card img {
-    height: 64px;
+    height: 58px;
+  }
+
+  .home-generation-card p {
+    font-size: 14px;
+    line-height: 1.5;
   }
 
   .home-trust-block {
     min-height: auto;
-    padding: 22px;
+    padding: 18px;
+  }
+
+  .home-trust-block img {
+    width: 92px;
+    height: 66px;
+    margin-bottom: 16px;
+  }
+
+  .home-trust-block p:not(.home-eyebrow) {
+    font-size: 15px;
+    line-height: 1.58;
   }
 
   .premium-page .section {
@@ -2220,15 +2364,16 @@ textarea {
   }
 
   .premium-page h1 {
-    font-size: clamp(38px, 12vw, 50px);
+    font-size: clamp(34px, 10.4vw, 42px);
+    line-height: 1.07;
   }
 
   .premium-page h2 {
-    font-size: clamp(30px, 9vw, 40px);
+    font-size: clamp(28px, 8.2vw, 36px);
   }
 
   .premium-page .interview-hero-grid {
-    padding: 58px 0;
+    padding: 44px 0;
   }
 
   .premium-page .trust-row {
@@ -2239,16 +2384,86 @@ textarea {
 
   .premium-page .lead {
     max-width: 100%;
+    font-size: 16px;
+    line-height: 1.62;
     overflow-wrap: normal;
     word-break: normal;
   }
 
   .premium-page .premium-artifact-board {
     grid-template-columns: 1fr;
-    padding: 14px;
+    gap: 12px;
+    padding: 12px;
+  }
+
+  .premium-page .product-panel {
+    order: -1;
+  }
+
+  .premium-page .premium-certificate-card {
+    min-height: 230px;
+  }
+
+  .premium-page .premium-artifact-board .mockup-item {
+    min-height: 116px;
+    padding: 13px;
+  }
+
+  .premium-page .premium-artifact-board .mockup-item.featured {
+    min-height: 168px;
+  }
+
+  .premium-page .premium-artifact-board .mockup-item strong,
+  .premium-page .premium-artifact-board .mockup-item.featured strong {
+    margin-bottom: 5px;
+    font-size: 18px;
+  }
+
+  .premium-page .mini-crest,
+  .premium-page .mini-certificate,
+  .premium-page .mini-story,
+  .premium-page .mini-guide,
+  .premium-page .mini-vault {
+    width: 48px;
+    height: 54px;
+    margin-bottom: 9px;
   }
 
   .premium-page .premium-artifact-board .mockup-item.wide {
-    grid-template-columns: 58px 1fr;
+    grid-template-columns: 50px 1fr;
+    min-height: 82px;
+  }
+
+  .premium-page .product-hero {
+    padding: 50px 0 58px;
+  }
+
+  .premium-page .journey-shell {
+    padding: 50px 0 58px;
+  }
+
+  .premium-page .journey-card {
+    gap: 14px;
+    padding: 20px;
+  }
+
+  .premium-page .interview-preview {
+    padding: 14px;
+  }
+
+  .premium-page .trust-strip-grid article {
+    min-height: auto;
+    padding: 16px;
+  }
+
+  .premium-page .faq-row {
+    padding: 16px;
+  }
+
+  .premium-page .mock-crest,
+  .premium-page .mock-certificate,
+  .premium-page .mock-page,
+  .premium-page .mock-vault {
+    min-height: 220px;
   }
 }
