@@ -1,0 +1,62 @@
+[
+  {
+    "gap_name": "real_service_orchestration_not_started_by_e2e",
+    "blocked_flow": "web -> api -> db -> outbox -> worker",
+    "missing_module": "local service orchestration runner with live MySQL and Redis",
+    "expected_behavior": "E2E runner starts web, admin, API, worker, MySQL, Redis, seed data, and exercises HTTP routes through the browser.",
+    "current_behavior": "M15 smoke suite verifies the chain with test-only mock providers and in-memory repositories. It does not require local MySQL, Redis, Docker, or browser binaries.",
+    "severity": "medium",
+    "recommended_fix": "Add Playwright browser tests once staging-like local orchestration is stable.",
+    "milestone_to_fix": "Milestone 16: Staging Deployment",
+    "status": "remaining",
+    "reason": "Browser-level process orchestration still belongs to staging setup, but local scripts and DB-ready pipeline are prepared."
+  },
+  {
+    "gap_name": "order_paid_outbox_not_fully_consumed_into_real_generation_manifest",
+    "blocked_flow": "Stripe verified payment -> outbox -> GenerationManifest creation",
+    "missing_module": "DB-backed worker processor that consumes order.paid and persists a GenerationManifest",
+    "expected_behavior": "A verified Stripe webhook creates one order.paid outbox event and the worker creates a manifest with expected deliverables.",
+    "current_behavior": "The M15.5 orchestration processor consumes order.paid into one idempotent GenerationManifest and one GenerationJob. A Prisma-backed repository is available for MySQL-backed execution, with in-memory fallback for tests.",
+    "severity": "high",
+    "recommended_fix": "Implement DB-backed order.paid consumer before staging E2E.",
+    "milestone_to_fix": "Milestone 15.5: Orchestration Gap Closure Before Staging",
+    "status": "closed",
+    "reason": "processOrderPaidOutbox creates an idempotent GenerationManifest and GenerationJob from order.paid."
+  },
+  {
+    "gap_name": "mock_ai_assets_not_persisted_by_full_worker_chain",
+    "blocked_flow": "GenerationManifest -> prompt rendering -> mock AI -> storage asset records",
+    "missing_module": "single orchestrator that links generated candidates to required persisted assets for an order",
+    "expected_behavior": "All required image, PDF, and ZIP assets are produced by worker jobs from the manifest.",
+    "current_behavior": "The M15.5 manifest-driven pipeline creates the full MVP required asset set, enforces ZIP-after-required-assets ordering, completes the manifest, and records private asset metadata without public URLs.",
+    "severity": "high",
+    "recommended_fix": "Implement manifest-driven worker orchestration with DB repositories.",
+    "milestone_to_fix": "Milestone 15.5: Orchestration Gap Closure Before Staging",
+    "status": "closed",
+    "reason": "runManifestDrivenGeneration creates all MVP required asset records, computes manifest completion, and blocks ZIP until non-ZIP assets exist."
+  },
+  {
+    "gap_name": "admin_pages_are_mvp_placeholders",
+    "blocked_flow": "admin UI -> DB-backed operational resources",
+    "missing_module": "admin frontend API integration against real orders, jobs, manifests, assets, and logs",
+    "expected_behavior": "Admin pages show live DB state and invoke guarded API mutations.",
+    "current_behavior": "Admin service exposes DB-backed orchestration summaries for orders, manifests, assets, download tokens, and email logs. Browser-level admin UI integration remains part of staging validation.",
+    "severity": "medium",
+    "recommended_fix": "Connect admin pages to API endpoints before staging.",
+    "milestone_to_fix": "Milestone 15.5: Orchestration Gap Closure Before Staging",
+    "status": "closed",
+    "reason": "getAdminDbVisibilitySummary exposes DB-backed order, manifest, asset, download token, and email summaries with masked private fields."
+  },
+  {
+    "gap_name": "download_email_not_triggered_by_order_completion_pipeline",
+    "blocked_flow": "assets complete -> download token -> delivery email",
+    "missing_module": "completion processor that creates token and queues email after all required assets are available",
+    "expected_behavior": "Order completion automatically creates a download token and sends mock delivery email.",
+    "current_behavior": "The M15.5 completion processor creates a hash-only download token, links all required assets, writes a mock delivery email log, and marks paid orders completed.",
+    "severity": "medium",
+    "recommended_fix": "Add completion orchestration and idempotency checks around delivery email.",
+    "milestone_to_fix": "Milestone 15.5: Orchestration Gap Closure Before Staging",
+    "status": "closed",
+    "reason": "completeOrderDelivery creates a hash-only token, email log, and completed order state after manifest completion."
+  }
+]

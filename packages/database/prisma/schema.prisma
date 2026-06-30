@@ -1,0 +1,1497 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/client"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductStatus {
+  draft    @map("draft")
+  active   @map("active")
+  archived @map("archived")
+
+  @@map("product_status")
+}
+
+enum ProductType {
+  digital  @map("digital")
+  physical @map("physical")
+  hybrid   @map("hybrid")
+
+  @@map("product_type")
+}
+
+enum DeliverableCategory {
+  image    @map("image")
+  pdf      @map("pdf")
+  archive  @map("archive")
+  preview  @map("preview")
+  physical @map("physical")
+
+  @@map("deliverable_category")
+}
+
+enum UserStatus {
+  active   @map("active")
+  disabled @map("disabled")
+  deleted  @map("deleted")
+
+  @@map("user_status")
+}
+
+enum OrderStatus {
+  draft           @map("draft")
+  pending_payment @map("pending_payment")
+  paid            @map("paid")
+  processing      @map("processing")
+  completed       @map("completed")
+  failed          @map("failed")
+  cancelled       @map("cancelled")
+
+  @@map("order_status")
+}
+
+enum PaymentStatus {
+  unpaid     @map("unpaid")
+  authorized @map("authorized")
+  paid       @map("paid")
+  failed     @map("failed")
+  refunded   @map("refunded")
+  disputed   @map("disputed")
+
+  @@map("payment_status")
+}
+
+enum FulfillmentStatus {
+  not_started         @map("not_started")
+  queued              @map("queued")
+  generating          @map("generating")
+  completed           @map("completed")
+  partially_completed @map("partially_completed")
+  failed              @map("failed")
+
+  @@map("fulfillment_status")
+}
+
+enum OrderItemStatus {
+  pending   @map("pending")
+  active    @map("active")
+  fulfilled @map("fulfilled")
+  failed    @map("failed")
+  refunded  @map("refunded")
+
+  @@map("order_item_status")
+}
+
+enum StatusType {
+  order       @map("order")
+  payment     @map("payment")
+  fulfillment @map("fulfillment")
+
+  @@map("status_type")
+}
+
+enum ActorType {
+  system   @map("system")
+  admin    @map("admin")
+  customer @map("customer")
+  webhook  @map("webhook")
+
+  @@map("actor_type")
+}
+
+enum NoteType {
+  internal         @map("internal")
+  customer_visible @map("customer_visible")
+  system           @map("system")
+
+  @@map("note_type")
+}
+
+enum PaymentProvider {
+  stripe @map("stripe")
+  paypal @map("paypal")
+
+  @@map("payment_provider")
+}
+
+enum PaymentIntentStatus {
+  created   @map("created")
+  pending   @map("pending")
+  succeeded @map("succeeded")
+  failed    @map("failed")
+  cancelled @map("cancelled")
+
+  @@map("payment_intent_status")
+}
+
+enum TransactionType {
+  authorization @map("authorization")
+  capture       @map("capture")
+  sale          @map("sale")
+  refund        @map("refund")
+
+  @@map("transaction_type")
+}
+
+enum TransactionStatus {
+  pending   @map("pending")
+  succeeded @map("succeeded")
+  failed    @map("failed")
+
+  @@map("transaction_status")
+}
+
+enum WebhookProcessingStatus {
+  received  @map("received")
+  processed @map("processed")
+  ignored   @map("ignored")
+  failed    @map("failed")
+
+  @@map("webhook_processing_status")
+}
+
+enum RefundStatus {
+  requested @map("requested")
+  succeeded @map("succeeded")
+  failed    @map("failed")
+
+  @@map("refund_status")
+}
+
+enum AiProviderStatus {
+  active   @map("active")
+  disabled @map("disabled")
+
+  @@map("ai_provider_status")
+}
+
+enum AiCapability {
+  image     @map("image")
+  text      @map("text")
+  vision    @map("vision")
+  embedding @map("embedding")
+
+  @@map("ai_capability")
+}
+
+enum AiModelStatus {
+  active     @map("active")
+  disabled   @map("disabled")
+  deprecated @map("deprecated")
+
+  @@map("ai_model_status")
+}
+
+enum PromptType {
+  image       @map("image")
+  story       @map("story")
+  certificate @map("certificate")
+  explanation @map("explanation")
+
+  @@map("prompt_type")
+}
+
+enum PromptTemplateStatus {
+  active   @map("active")
+  archived @map("archived")
+
+  @@map("prompt_template_status")
+}
+
+enum PromptVersionStatus {
+  draft   @map("draft")
+  active  @map("active")
+  retired @map("retired")
+
+  @@map("prompt_version_status")
+}
+
+enum BindingStatus {
+  active   @map("active")
+  disabled @map("disabled")
+
+  @@map("binding_status")
+}
+
+enum GenerationJobStatus {
+  queued     @map("queued")
+  processing @map("processing")
+  completed  @map("completed")
+  failed     @map("failed")
+  cancelled  @map("cancelled")
+
+  @@map("generation_job_status")
+}
+
+enum GenerationManifestStatus {
+  pending             @map("pending")
+  in_progress         @map("in_progress")
+  completed           @map("completed")
+  failed              @map("failed")
+  partially_completed @map("partially_completed")
+
+  @@map("generation_manifest_status")
+}
+
+enum GenerationStepType {
+  prompt      @map("prompt")
+  image       @map("image")
+  pdf         @map("pdf")
+  postprocess @map("postprocess")
+  package     @map("package")
+
+  @@map("generation_step_type")
+}
+
+enum GenerationStepStatus {
+  pending    @map("pending")
+  processing @map("processing")
+  completed  @map("completed")
+  failed     @map("failed")
+  skipped    @map("skipped")
+
+  @@map("generation_step_status")
+}
+
+enum AiGenerationRunStatus {
+  pending   @map("pending")
+  succeeded @map("succeeded")
+  failed    @map("failed")
+
+  @@map("ai_generation_run_status")
+}
+
+enum AssetType {
+  image   @map("image")
+  pdf     @map("pdf")
+  archive @map("archive")
+  preview @map("preview")
+
+  @@map("asset_type")
+}
+
+enum AssetKind {
+  generated       @map("generated")
+  uploaded        @map("uploaded")
+  packaged        @map("packaged")
+  preview         @map("preview")
+  physical_mockup @map("physical_mockup")
+
+  @@map("asset_kind")
+}
+
+enum AssetStatus {
+  pending   @map("pending")
+  available @map("available")
+  failed    @map("failed")
+  deleted   @map("deleted")
+
+  @@map("asset_status")
+}
+
+enum StorageProvider {
+  local_private @map("local_private")
+  s3            @map("s3")
+  r2            @map("r2")
+
+  @@map("storage_provider")
+}
+
+enum DownloadTokenStatus {
+  active  @map("active")
+  expired @map("expired")
+  revoked @map("revoked")
+
+  @@map("download_token_status")
+}
+
+enum CreatedByType {
+  system @map("system")
+  admin  @map("admin")
+
+  @@map("created_by_type")
+}
+
+enum DownloadEventType {
+  page_view          @map("page_view")
+  file_download      @map("file_download")
+  signed_url_created @map("signed_url_created")
+  denied             @map("denied")
+
+  @@map("download_event_type")
+}
+
+enum EmailTemplateStatus {
+  draft   @map("draft")
+  active  @map("active")
+  retired @map("retired")
+
+  @@map("email_template_status")
+}
+
+enum EmailProvider {
+  mock     @map("mock")
+  resend   @map("resend")
+  sendgrid @map("sendgrid")
+  ses      @map("ses")
+
+  @@map("email_provider")
+}
+
+enum EmailStatus {
+  queued    @map("queued")
+  sent      @map("sent")
+  delivered @map("delivered")
+  bounced   @map("bounced")
+  failed    @map("failed")
+
+  @@map("email_status")
+}
+
+enum AdminStatus {
+  active   @map("active")
+  disabled @map("disabled")
+
+  @@map("admin_status")
+}
+
+enum OutboxStatus {
+  pending    @map("pending")
+  processing @map("processing")
+  published  @map("published")
+  failed     @map("failed")
+
+  @@map("outbox_status")
+}
+
+enum IdempotencyScope {
+  api     @map("api")
+  webhook @map("webhook")
+  job     @map("job")
+
+  @@map("idempotency_scope")
+}
+
+enum IdempotencyStatus {
+  processing @map("processing")
+  completed  @map("completed")
+  failed     @map("failed")
+
+  @@map("idempotency_status")
+}
+
+enum HouseStatus {
+  active   @map("active")
+  archived @map("archived")
+  deleted  @map("deleted")
+
+  @@map("house_status")
+}
+
+enum HouseIdentityStatus {
+  draft     @map("draft")
+  confirmed @map("confirmed")
+  archived  @map("archived")
+
+  @@map("house_identity_status")
+}
+
+enum IdentityVersionReason {
+  initial_create  @map("initial_create")
+  user_edit       @map("user_edit")
+  regeneration    @map("regeneration")
+  product_upgrade @map("product_upgrade")
+  admin_edit      @map("admin_edit")
+
+  @@map("identity_version_reason")
+}
+
+enum HouseInterviewStatus {
+  in_progress        @map("in_progress")
+  needs_confirmation @map("needs_confirmation")
+  confirmed          @map("confirmed")
+  expired            @map("expired")
+  cancelled          @map("cancelled")
+
+  @@map("house_interview_status")
+}
+
+model Product {
+  id            String        @id @db.Char(26)
+  code          String        @unique @db.VarChar(64)
+  productType   ProductType   @map("product_type")
+  status        ProductStatus
+  defaultLocale String        @map("default_locale") @db.VarChar(16)
+  metadataJson  Json?         @map("metadata_json")
+  createdAt     DateTime      @map("created_at") @db.DateTime(3)
+  updatedAt     DateTime      @map("updated_at") @db.DateTime(3)
+
+  translations          ProductTranslation[]
+  packages              ProductPackage[]
+  orderItems            OrderItem[]
+  orderInputs           OrderInput[]
+  productPromptBindings ProductPromptBinding[]
+  generationJobs        GenerationJob[]
+
+  @@index([status])
+  @@index([productType])
+  @@map("products")
+}
+
+model ProductTranslation {
+  id               String   @id @db.Char(26)
+  productId        String   @map("product_id") @db.Char(26)
+  locale           String   @db.VarChar(16)
+  name             String   @db.VarChar(255)
+  shortDescription String?  @map("short_description") @db.Text
+  descriptionJson  Json?    @map("description_json")
+  createdAt        DateTime @map("created_at") @db.DateTime(3)
+  updatedAt        DateTime @map("updated_at") @db.DateTime(3)
+
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([productId, locale])
+  @@map("product_translations")
+}
+
+model ProductPackage {
+  id                   String        @id @db.Char(26)
+  productId            String        @map("product_id") @db.Char(26)
+  code                 String        @db.VarChar(64)
+  status               ProductStatus
+  priceCents           BigInt        @map("price_cents")
+  currency             String        @db.Char(3)
+  sortOrder            Int           @map("sort_order")
+  generationConfigJson Json?         @map("generation_config_json")
+  metadataJson         Json?         @map("metadata_json")
+  createdAt            DateTime      @map("created_at") @db.DateTime(3)
+  updatedAt            DateTime      @map("updated_at") @db.DateTime(3)
+
+  product               Product                @relation(fields: [productId], references: [id])
+  packageDeliverables   PackageDeliverable[]
+  orderItems            OrderItem[]
+  productPromptBindings ProductPromptBinding[]
+
+  @@unique([productId, code])
+  @@index([status])
+  @@index([priceCents])
+  @@map("product_packages")
+}
+
+model DeliverableType {
+  id              String              @id @db.Char(26)
+  code            String              @unique @db.VarChar(64)
+  category        DeliverableCategory
+  defaultFileExt  String              @map("default_file_ext") @db.VarChar(16)
+  defaultMimeType String              @map("default_mime_type") @db.VarChar(128)
+  isDigital       Boolean             @map("is_digital")
+  metadataJson    Json?               @map("metadata_json")
+  createdAt       DateTime            @map("created_at") @db.DateTime(3)
+  updatedAt       DateTime            @map("updated_at") @db.DateTime(3)
+
+  packageDeliverables   PackageDeliverable[]
+  productPromptBindings ProductPromptBinding[]
+  assets                Asset[]
+  assetDeliverableLinks AssetDeliverableLink[]
+
+  @@index([category])
+  @@map("deliverable_types")
+}
+
+model PackageDeliverable {
+  id                String   @id @db.Char(26)
+  packageId         String   @map("package_id") @db.Char(26)
+  deliverableTypeId String   @map("deliverable_type_id") @db.Char(26)
+  deliverableCode   String   @map("deliverable_code") @db.VarChar(64)
+  quantity          Int
+  required          Boolean
+  sortOrder         Int      @map("sort_order")
+  configJson        Json?    @map("config_json")
+  createdAt         DateTime @map("created_at") @db.DateTime(3)
+
+  package               ProductPackage         @relation(fields: [packageId], references: [id])
+  deliverableType       DeliverableType        @relation(fields: [deliverableTypeId], references: [id])
+  assetDeliverableLinks AssetDeliverableLink[]
+
+  @@unique([packageId, deliverableCode])
+  @@index([packageId])
+  @@index([deliverableTypeId])
+  @@map("package_deliverables")
+}
+
+model User {
+  id               String     @id @db.Char(26)
+  status           UserStatus
+  primaryEmailHash String?    @unique @map("primary_email_hash") @db.Char(64)
+  emailVerifiedAt  DateTime?  @map("email_verified_at") @db.DateTime(3)
+  createdAt        DateTime   @map("created_at") @db.DateTime(3)
+  updatedAt        DateTime   @map("updated_at") @db.DateTime(3)
+
+  customerProfiles CustomerProfile[]
+  customerPii      CustomerPii[]
+  orders           Order[]
+  ownedHouses      House[]
+
+  @@index([status])
+  @@map("users")
+}
+
+model CustomerProfile {
+  id                String   @id @db.Char(26)
+  userId            String?  @map("user_id") @db.Char(26)
+  preferredLocale   String?  @map("preferred_locale") @db.VarChar(16)
+  preferredCurrency String?  @map("preferred_currency") @db.Char(3)
+  marketingOptIn    Boolean  @map("marketing_opt_in")
+  metadataJson      Json?    @map("metadata_json")
+  createdAt         DateTime @map("created_at") @db.DateTime(3)
+  updatedAt         DateTime @map("updated_at") @db.DateTime(3)
+
+  user          User?   @relation(fields: [userId], references: [id])
+  orders        Order[]
+  primaryHouses House[]
+
+  @@index([userId])
+  @@map("customer_profiles")
+}
+
+model CustomerPii {
+  id             String   @id @db.Char(26)
+  userId         String?  @map("user_id") @db.Char(26)
+  emailEncrypted Bytes?   @map("email_encrypted") @db.VarBinary(1024)
+  nameEncrypted  Bytes?   @map("name_encrypted") @db.VarBinary(1024)
+  phoneEncrypted Bytes?   @map("phone_encrypted") @db.VarBinary(1024)
+  countryCode    String?  @map("country_code") @db.Char(2)
+  createdAt      DateTime @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime @map("updated_at") @db.DateTime(3)
+
+  user User? @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+  @@map("customer_pii")
+}
+
+model House {
+  id                       String      @id @db.Char(26)
+  status                   HouseStatus
+  ownerUserId              String?     @map("owner_user_id") @db.Char(26)
+  primaryCustomerProfileId String?     @map("primary_customer_profile_id") @db.Char(26)
+  displayName              String      @map("display_name") @db.VarChar(255)
+  defaultLocale            String      @map("default_locale") @db.VarChar(16)
+  metadataJson             Json?       @map("metadata_json")
+  createdAt                DateTime    @map("created_at") @db.DateTime(3)
+  updatedAt                DateTime    @map("updated_at") @db.DateTime(3)
+  deletedAt                DateTime?   @map("deleted_at") @db.DateTime(3)
+
+  ownerUser              User?                  @relation(fields: [ownerUserId], references: [id])
+  primaryCustomerProfile CustomerProfile?       @relation(fields: [primaryCustomerProfileId], references: [id])
+  identities             HouseIdentity[]
+  identityVersions       HouseIdentityVersion[]
+  identityMemories       HouseIdentityMemory[]
+  interviews             HouseInterview[]
+  consentRecords         ConsentRecord[]
+
+  @@index([status])
+  @@index([ownerUserId])
+  @@index([primaryCustomerProfileId])
+  @@map("houses")
+}
+
+model HouseIdentity {
+  id                     String              @id @db.Char(26)
+  houseId                String              @map("house_id") @db.Char(26)
+  activeVersionId        String?             @unique @map("active_version_id") @db.Char(26)
+  status                 HouseIdentityStatus
+  currentHouseDnaJson    Json?               @map("current_house_dna_json")
+  privacyPreferencesJson Json?               @map("privacy_preferences_json")
+  createdAt              DateTime            @map("created_at") @db.DateTime(3)
+  updatedAt              DateTime            @map("updated_at") @db.DateTime(3)
+
+  house         House                  @relation(fields: [houseId], references: [id])
+  activeVersion HouseIdentityVersion?  @relation("ActiveHouseIdentityVersion", fields: [activeVersionId], references: [id])
+  versions      HouseIdentityVersion[] @relation("HouseIdentityVersions")
+
+  @@index([houseId])
+  @@index([status])
+  @@map("house_identities")
+}
+
+model HouseIdentityVersion {
+  id                       String                @id @db.Char(26)
+  houseId                  String                @map("house_id") @db.Char(26)
+  identityId               String                @map("identity_id") @db.Char(26)
+  identityVersion          Int                   @map("identity_version")
+  versionReason            IdentityVersionReason @map("version_reason")
+  previousVersionId        String?               @map("previous_version_id") @db.Char(26)
+  activeVersion            Boolean               @map("active_version")
+  generatedFromOrderId     String?               @map("generated_from_order_id") @db.Char(26)
+  generatedFromInterviewId String?               @map("generated_from_interview_id") @db.Char(26)
+  generatedFromAdminEdit   Boolean               @map("generated_from_admin_edit")
+  houseDnaSnapshotJson     Json                  @map("house_dna_snapshot_json")
+  changedFieldsJson        Json?                 @map("changed_fields_json")
+  contractVersion          String                @map("contract_version") @db.VarChar(16)
+  schemaVersion            String                @map("schema_version") @db.VarChar(16)
+  source                   String                @db.VarChar(64)
+  createdAt                DateTime              @map("created_at") @db.DateTime(3)
+
+  house                  House                  @relation(fields: [houseId], references: [id])
+  identity               HouseIdentity          @relation("HouseIdentityVersions", fields: [identityId], references: [id])
+  activeForIdentity      HouseIdentity?         @relation("ActiveHouseIdentityVersion")
+  previousVersion        HouseIdentityVersion?  @relation("PreviousHouseIdentityVersion", fields: [previousVersionId], references: [id])
+  nextVersions           HouseIdentityVersion[] @relation("PreviousHouseIdentityVersion")
+  generatedFromOrder     Order?                 @relation(fields: [generatedFromOrderId], references: [id])
+  generatedFromInterview HouseInterview?        @relation(fields: [generatedFromInterviewId], references: [id])
+  identityMemories       HouseIdentityMemory[]
+
+  @@unique([identityId, identityVersion])
+  @@index([houseId])
+  @@index([identityId])
+  @@index([previousVersionId])
+  @@index([generatedFromOrderId])
+  @@index([generatedFromInterviewId])
+  @@index([activeVersion])
+  @@map("house_identity_versions")
+}
+
+model HouseIdentityMemory {
+  id                String   @id @db.Char(26)
+  houseId           String   @map("house_id") @db.Char(26)
+  identityVersionId String?  @map("identity_version_id") @db.Char(26)
+  memoryJson        Json     @map("memory_json")
+  createdAt         DateTime @map("created_at") @db.DateTime(3)
+  updatedAt         DateTime @map("updated_at") @db.DateTime(3)
+
+  house           House                 @relation(fields: [houseId], references: [id])
+  identityVersion HouseIdentityVersion? @relation(fields: [identityVersionId], references: [id])
+
+  @@index([houseId])
+  @@index([identityVersionId])
+  @@map("house_identity_memory")
+}
+
+model HouseInterview {
+  id                  String               @id @db.Char(26)
+  houseId             String?              @map("house_id") @db.Char(26)
+  status              HouseInterviewStatus
+  currentStep         String               @map("current_step") @db.VarChar(128)
+  locale              String               @db.VarChar(16)
+  expiresAt           DateTime             @map("expires_at") @db.DateTime(3)
+  answersJson         Json                 @map("answers_json")
+  houseDnaDraftJson   Json?                @map("house_dna_draft_json")
+  normalizedInputJson Json?                @map("normalized_input_json")
+  createdAt           DateTime             @map("created_at") @db.DateTime(3)
+  updatedAt           DateTime             @map("updated_at") @db.DateTime(3)
+
+  house            House?                 @relation(fields: [houseId], references: [id])
+  identityVersions HouseIdentityVersion[]
+
+  @@index([houseId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("house_interviews")
+}
+
+model ConsentRecord {
+  id                           String    @id @db.Char(26)
+  houseId                      String?   @map("house_id") @db.Char(26)
+  orderId                      String?   @map("order_id") @db.Char(26)
+  termsAccepted                Boolean   @map("terms_accepted")
+  termsAcceptedAt              DateTime? @map("terms_accepted_at") @db.DateTime(3)
+  privacyPolicyAccepted        Boolean   @map("privacy_policy_accepted")
+  privacyPolicyAcceptedAt      DateTime? @map("privacy_policy_accepted_at") @db.DateTime(3)
+  heritageDisclaimerAccepted   Boolean   @map("heritage_disclaimer_accepted")
+  heritageDisclaimerAcceptedAt DateTime? @map("heritage_disclaimer_accepted_at") @db.DateTime(3)
+  aiGenerationConsent          Boolean   @map("ai_generation_consent")
+  emailDeliveryConsent         Boolean   @map("email_delivery_consent")
+  marketingOptIn               Boolean   @map("marketing_opt_in")
+  galleryOptIn                 Boolean   @map("gallery_opt_in")
+  ipHash                       String?   @map("ip_hash") @db.Char(64)
+  userAgentHash                String?   @map("user_agent_hash") @db.Char(64)
+  consentVersion               String    @map("consent_version") @db.VarChar(32)
+  contractVersion              String    @map("contract_version") @db.VarChar(16)
+  schemaVersion                String    @map("schema_version") @db.VarChar(16)
+  source                       String    @db.VarChar(64)
+  createdAt                    DateTime  @map("created_at") @db.DateTime(3)
+  updatedAt                    DateTime  @map("updated_at") @db.DateTime(3)
+
+  house House? @relation(fields: [houseId], references: [id])
+  order Order? @relation(fields: [orderId], references: [id])
+
+  @@index([houseId])
+  @@index([orderId])
+  @@index([createdAt])
+  @@map("consent_records")
+}
+
+model Order {
+  id                String            @id @db.Char(26)
+  orderNumber       String            @unique @map("order_number") @db.VarChar(32)
+  userId            String?           @map("user_id") @db.Char(26)
+  customerProfileId String?           @map("customer_profile_id") @db.Char(26)
+  orderStatus       OrderStatus       @map("order_status")
+  paymentStatus     PaymentStatus     @map("payment_status")
+  fulfillmentStatus FulfillmentStatus @map("fulfillment_status")
+  subtotalCents     BigInt            @map("subtotal_cents")
+  discountCents     BigInt            @map("discount_cents")
+  taxCents          BigInt            @map("tax_cents")
+  totalCents        BigInt            @map("total_cents")
+  currency          String            @db.Char(3)
+  locale            String            @db.VarChar(16)
+  source            String            @db.VarChar(64)
+  metadataJson      Json?             @map("metadata_json")
+  createdAt         DateTime          @map("created_at") @db.DateTime(3)
+  updatedAt         DateTime          @map("updated_at") @db.DateTime(3)
+  paidAt            DateTime?         @map("paid_at") @db.DateTime(3)
+  completedAt       DateTime?         @map("completed_at") @db.DateTime(3)
+  deletedAt         DateTime?         @map("deleted_at") @db.DateTime(3)
+
+  user                  User?                  @relation(fields: [userId], references: [id])
+  customerProfile       CustomerProfile?       @relation(fields: [customerProfileId], references: [id])
+  orderItems            OrderItem[]
+  orderCustomerPii      OrderCustomerPii?
+  orderInputs           OrderInput[]
+  orderStatusHistories  OrderStatusHistory[]
+  orderNotes            OrderNote[]
+  paymentIntents        PaymentIntent[]
+  paymentTransactions   PaymentTransaction[]
+  refunds               Refund[]
+  generationManifests   GenerationManifest[]
+  generationJobs        GenerationJob[]
+  assets                Asset[]
+  downloadTokens        DownloadToken[]
+  downloadEvents        DownloadEvent[]
+  emailLogs             EmailLog[]
+  houseIdentityVersions HouseIdentityVersion[]
+  consentRecords        ConsentRecord[]
+
+  @@index([userId])
+  @@index([customerProfileId])
+  @@index([orderStatus])
+  @@index([paymentStatus])
+  @@index([fulfillmentStatus])
+  @@index([createdAt])
+  @@map("orders")
+}
+
+model OrderItem {
+  id                  String          @id @db.Char(26)
+  orderId             String          @map("order_id") @db.Char(26)
+  productId           String          @map("product_id") @db.Char(26)
+  packageId           String          @map("package_id") @db.Char(26)
+  quantity            Int
+  unitPriceCents      BigInt          @map("unit_price_cents")
+  totalPriceCents     BigInt          @map("total_price_cents")
+  currency            String          @db.Char(3)
+  productSnapshotJson Json?           @map("product_snapshot_json")
+  status              OrderItemStatus
+  createdAt           DateTime        @map("created_at") @db.DateTime(3)
+  updatedAt           DateTime        @map("updated_at") @db.DateTime(3)
+
+  order               Order                @relation(fields: [orderId], references: [id])
+  product             Product              @relation(fields: [productId], references: [id])
+  package             ProductPackage       @relation(fields: [packageId], references: [id])
+  orderInputs         OrderInput[]
+  generationManifests GenerationManifest[]
+  generationJobs      GenerationJob[]
+  assets              Asset[]
+
+  @@index([orderId])
+  @@index([productId])
+  @@index([packageId])
+  @@index([status])
+  @@map("order_items")
+}
+
+model OrderCustomerPii {
+  id             String   @id @db.Char(26)
+  orderId        String   @unique @map("order_id") @db.Char(26)
+  emailEncrypted Bytes    @map("email_encrypted") @db.VarBinary(1024)
+  emailHash      String   @map("email_hash") @db.Char(64)
+  nameEncrypted  Bytes?   @map("name_encrypted") @db.VarBinary(1024)
+  billingCountry String?  @map("billing_country") @db.Char(2)
+  createdAt      DateTime @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime @map("updated_at") @db.DateTime(3)
+
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@index([emailHash])
+  @@map("order_customer_pii")
+}
+
+model OrderInput {
+  id                  String   @id @db.Char(26)
+  orderId             String   @map("order_id") @db.Char(26)
+  orderItemId         String   @map("order_item_id") @db.Char(26)
+  productId           String   @map("product_id") @db.Char(26)
+  inputSchemaVersion  String   @map("input_schema_version") @db.VarChar(32)
+  inputJson           Json     @map("input_json")
+  normalizedInputJson Json?    @map("normalized_input_json")
+  locale              String   @db.VarChar(16)
+  createdAt           DateTime @map("created_at") @db.DateTime(3)
+  updatedAt           DateTime @map("updated_at") @db.DateTime(3)
+
+  order     Order     @relation(fields: [orderId], references: [id])
+  orderItem OrderItem @relation(fields: [orderItemId], references: [id])
+  product   Product   @relation(fields: [productId], references: [id])
+
+  @@index([orderId])
+  @@index([orderItemId])
+  @@index([productId])
+  @@map("order_inputs")
+}
+
+model OrderStatusHistory {
+  id         String     @id @db.Char(26)
+  orderId    String     @map("order_id") @db.Char(26)
+  statusType StatusType @map("status_type")
+  fromStatus String?    @map("from_status") @db.VarChar(32)
+  toStatus   String     @map("to_status") @db.VarChar(32)
+  reasonCode String?    @map("reason_code") @db.VarChar(64)
+  message    String?    @db.Text
+  actorType  ActorType  @map("actor_type")
+  actorId    String?    @map("actor_id") @db.Char(26)
+  createdAt  DateTime   @map("created_at") @db.DateTime(3)
+
+  order Order @relation(fields: [orderId], references: [id])
+
+  @@index([orderId, createdAt])
+  @@index([statusType, toStatus])
+  @@map("order_status_history")
+}
+
+model OrderNote {
+  id          String   @id @db.Char(26)
+  orderId     String   @map("order_id") @db.Char(26)
+  adminUserId String?  @map("admin_user_id") @db.Char(26)
+  noteType    NoteType @map("note_type")
+  body        String   @db.Text
+  createdAt   DateTime @map("created_at") @db.DateTime(3)
+
+  order     Order      @relation(fields: [orderId], references: [id])
+  adminUser AdminUser? @relation(fields: [adminUserId], references: [id])
+
+  @@index([orderId])
+  @@index([adminUserId])
+  @@map("order_notes")
+}
+
+model PaymentIntent {
+  id               String              @id @db.Char(26)
+  orderId          String              @map("order_id") @db.Char(26)
+  provider         PaymentProvider
+  providerIntentId String              @map("provider_intent_id") @db.VarChar(255)
+  status           PaymentIntentStatus
+  amountCents      BigInt              @map("amount_cents")
+  currency         String              @db.Char(3)
+  checkoutUrl      String?             @map("checkout_url") @db.Text
+  metadataJson     Json?               @map("metadata_json")
+  createdAt        DateTime            @map("created_at") @db.DateTime(3)
+  updatedAt        DateTime            @map("updated_at") @db.DateTime(3)
+  expiresAt        DateTime?           @map("expires_at") @db.DateTime(3)
+
+  order               Order                @relation(fields: [orderId], references: [id])
+  paymentTransactions PaymentTransaction[]
+
+  @@unique([provider, providerIntentId])
+  @@index([orderId])
+  @@index([status])
+  @@map("payment_intents")
+}
+
+model PaymentTransaction {
+  id                    String            @id @db.Char(26)
+  orderId               String            @map("order_id") @db.Char(26)
+  paymentIntentId       String            @map("payment_intent_id") @db.Char(26)
+  provider              PaymentProvider
+  providerTransactionId String            @map("provider_transaction_id") @db.VarChar(255)
+  transactionType       TransactionType   @map("transaction_type")
+  status                TransactionStatus
+  amountCents           BigInt            @map("amount_cents")
+  currency              String            @db.Char(3)
+  rawEventId            String?           @map("raw_event_id") @db.Char(26)
+  processedAt           DateTime          @map("processed_at") @db.DateTime(3)
+  createdAt             DateTime          @map("created_at") @db.DateTime(3)
+
+  order         Order                @relation(fields: [orderId], references: [id])
+  paymentIntent PaymentIntent        @relation(fields: [paymentIntentId], references: [id])
+  rawEvent      PaymentWebhookEvent? @relation(fields: [rawEventId], references: [id])
+  refunds       Refund[]
+
+  @@unique([provider, providerTransactionId])
+  @@index([orderId])
+  @@index([paymentIntentId])
+  @@index([status])
+  @@index([rawEventId])
+  @@map("payment_transactions")
+}
+
+model PaymentWebhookEvent {
+  id                String                  @id @db.Char(26)
+  provider          PaymentProvider
+  providerEventId   String                  @map("provider_event_id") @db.VarChar(255)
+  eventType         String                  @map("event_type") @db.VarChar(128)
+  signatureVerified Boolean                 @map("signature_verified")
+  processingStatus  WebhookProcessingStatus @map("processing_status")
+  payloadJson       Json                    @map("payload_json")
+  errorMessage      String?                 @map("error_message") @db.Text
+  receivedAt        DateTime                @map("received_at") @db.DateTime(3)
+  processedAt       DateTime?               @map("processed_at") @db.DateTime(3)
+
+  paymentTransactions PaymentTransaction[]
+
+  @@unique([provider, providerEventId])
+  @@index([eventType])
+  @@index([processingStatus])
+  @@index([receivedAt])
+  @@map("payment_webhook_events")
+}
+
+model Refund {
+  id                   String          @id @db.Char(26)
+  orderId              String          @map("order_id") @db.Char(26)
+  paymentTransactionId String?         @map("payment_transaction_id") @db.Char(26)
+  provider             PaymentProvider
+  providerRefundId     String?         @map("provider_refund_id") @db.VarChar(255)
+  status               RefundStatus
+  amountCents          BigInt          @map("amount_cents")
+  currency             String          @db.Char(3)
+  reason               String?         @db.VarChar(255)
+  createdByAdminId     String?         @map("created_by_admin_id") @db.Char(26)
+  createdAt            DateTime        @map("created_at") @db.DateTime(3)
+  processedAt          DateTime?       @map("processed_at") @db.DateTime(3)
+
+  order              Order               @relation(fields: [orderId], references: [id])
+  paymentTransaction PaymentTransaction? @relation(fields: [paymentTransactionId], references: [id])
+  createdByAdmin     AdminUser?          @relation(fields: [createdByAdminId], references: [id])
+
+  @@unique([provider, providerRefundId])
+  @@index([orderId])
+  @@index([status])
+  @@index([paymentTransactionId])
+  @@index([createdByAdminId])
+  @@map("refunds")
+}
+
+model AiProvider {
+  id         String           @id @db.Char(26)
+  code       String           @unique @db.VarChar(64)
+  status     AiProviderStatus
+  configJson Json?            @map("config_json")
+  createdAt  DateTime         @map("created_at") @db.DateTime(3)
+  updatedAt  DateTime         @map("updated_at") @db.DateTime(3)
+
+  aiModels         AiModel[]
+  aiGenerationRuns AiGenerationRun[]
+
+  @@index([status])
+  @@map("ai_providers")
+}
+
+model AiModel {
+  id                String        @id @db.Char(26)
+  providerId        String        @map("provider_id") @db.Char(26)
+  modelCode         String        @map("model_code") @db.VarChar(128)
+  capability        AiCapability
+  status            AiModelStatus
+  costConfigJson    Json?         @map("cost_config_json")
+  defaultParamsJson Json?         @map("default_params_json")
+  createdAt         DateTime      @map("created_at") @db.DateTime(3)
+  updatedAt         DateTime      @map("updated_at") @db.DateTime(3)
+
+  provider              AiProvider             @relation(fields: [providerId], references: [id])
+  productPromptBindings ProductPromptBinding[]
+  aiGenerationRuns      AiGenerationRun[]
+
+  @@unique([providerId, modelCode])
+  @@index([capability])
+  @@index([status])
+  @@map("ai_models")
+}
+
+model PromptTemplate {
+  id          String               @id @db.Char(26)
+  code        String               @unique @db.VarChar(128)
+  promptType  PromptType           @map("prompt_type")
+  status      PromptTemplateStatus
+  description String?              @db.Text
+  createdAt   DateTime             @map("created_at") @db.DateTime(3)
+  updatedAt   DateTime             @map("updated_at") @db.DateTime(3)
+
+  versions PromptTemplateVersion[]
+
+  @@index([promptType])
+  @@map("prompt_templates")
+}
+
+model PromptTemplateVersion {
+  id                  String              @id @db.Char(26)
+  promptTemplateId    String              @map("prompt_template_id") @db.Char(26)
+  version             Int
+  status              PromptVersionStatus
+  templateBody        String              @map("template_body") @db.MediumText
+  variablesSchemaJson Json?               @map("variables_schema_json")
+  negativePrompt      String?             @map("negative_prompt") @db.Text
+  paramsJson          Json?               @map("params_json")
+  createdByAdminId    String?             @map("created_by_admin_id") @db.Char(26)
+  createdAt           DateTime            @map("created_at") @db.DateTime(3)
+  activatedAt         DateTime?           @map("activated_at") @db.DateTime(3)
+
+  promptTemplate        PromptTemplate         @relation(fields: [promptTemplateId], references: [id])
+  createdByAdmin        AdminUser?             @relation(fields: [createdByAdminId], references: [id])
+  productPromptBindings ProductPromptBinding[]
+  aiGenerationRuns      AiGenerationRun[]
+
+  @@unique([promptTemplateId, version])
+  @@index([status])
+  @@index([createdByAdminId])
+  @@map("prompt_template_versions")
+}
+
+model ProductPromptBinding {
+  id                      String        @id @db.Char(26)
+  productId               String        @map("product_id") @db.Char(26)
+  packageId               String?       @map("package_id") @db.Char(26)
+  deliverableTypeId       String?       @map("deliverable_type_id") @db.Char(26)
+  promptTemplateVersionId String        @map("prompt_template_version_id") @db.Char(26)
+  aiModelId               String?       @map("ai_model_id") @db.Char(26)
+  status                  BindingStatus
+  priority                Int
+  configJson              Json?         @map("config_json")
+  createdAt               DateTime      @map("created_at") @db.DateTime(3)
+
+  product               Product               @relation(fields: [productId], references: [id])
+  package               ProductPackage?       @relation(fields: [packageId], references: [id])
+  deliverableType       DeliverableType?      @relation(fields: [deliverableTypeId], references: [id])
+  promptTemplateVersion PromptTemplateVersion @relation(fields: [promptTemplateVersionId], references: [id])
+  aiModel               AiModel?              @relation(fields: [aiModelId], references: [id])
+
+  @@index([productId])
+  @@index([packageId])
+  @@index([deliverableTypeId])
+  @@index([status])
+  @@index([promptTemplateVersionId])
+  @@index([aiModelId])
+  @@map("product_prompt_bindings")
+}
+
+model GenerationJob {
+  id           String              @id @db.Char(26)
+  orderId      String              @map("order_id") @db.Char(26)
+  orderItemId  String              @map("order_item_id") @db.Char(26)
+  productId    String              @map("product_id") @db.Char(26)
+  status       GenerationJobStatus
+  priority     Int
+  attempts     Int
+  maxAttempts  Int                 @map("max_attempts")
+  errorCode    String?             @map("error_code") @db.VarChar(64)
+  errorMessage String?             @map("error_message") @db.Text
+  startedAt    DateTime?           @map("started_at") @db.DateTime(3)
+  completedAt  DateTime?           @map("completed_at") @db.DateTime(3)
+  createdAt    DateTime            @map("created_at") @db.DateTime(3)
+  updatedAt    DateTime            @map("updated_at") @db.DateTime(3)
+
+  order               Order                @relation(fields: [orderId], references: [id])
+  orderItem           OrderItem            @relation(fields: [orderItemId], references: [id])
+  product             Product              @relation(fields: [productId], references: [id])
+  generationManifests GenerationManifest[]
+  generationSteps     GenerationStep[]
+  aiGenerationRuns    AiGenerationRun[]
+  assets              Asset[]
+
+  @@index([orderId])
+  @@index([orderItemId])
+  @@index([status, createdAt])
+  @@index([productId])
+  @@map("generation_jobs")
+}
+
+model GenerationManifest {
+  id                    String                   @id @db.Char(26)
+  orderId               String                   @map("order_id") @db.Char(26)
+  orderItemId           String                   @map("order_item_id") @db.Char(26)
+  generationJobId       String?                  @map("generation_job_id") @db.Char(26)
+  houseId               String?                  @map("house_id") @db.Char(26)
+  identityVersionId     String?                  @map("identity_version_id") @db.Char(26)
+  productCode           String                   @map("product_code") @db.VarChar(128)
+  packageCode           String                   @map("package_code") @db.VarChar(128)
+  expectedAssetsJson    Json                     @map("expected_assets_json")
+  generatedAssetsJson   Json                     @map("generated_assets_json")
+  missingRequiredAssets Json                     @map("missing_required_assets_json")
+  optionalAssetsJson    Json                     @map("optional_assets_json")
+  failedAssetsJson      Json                     @map("failed_assets_json")
+  status                GenerationManifestStatus @map("manifest_status")
+  createdAt             DateTime                 @map("created_at") @db.DateTime(3)
+  updatedAt             DateTime                 @map("updated_at") @db.DateTime(3)
+  completedAt           DateTime?                @map("completed_at") @db.DateTime(3)
+
+  order         Order          @relation(fields: [orderId], references: [id])
+  orderItem     OrderItem      @relation(fields: [orderItemId], references: [id])
+  generationJob GenerationJob? @relation(fields: [generationJobId], references: [id])
+
+  @@unique([orderId, orderItemId])
+  @@index([orderId])
+  @@index([orderItemId])
+  @@index([generationJobId])
+  @@index([status])
+  @@map("generation_manifests")
+}
+
+model GenerationStep {
+  id              String               @id @db.Char(26)
+  generationJobId String               @map("generation_job_id") @db.Char(26)
+  stepType        GenerationStepType   @map("step_type")
+  status          GenerationStepStatus
+  sortOrder       Int                  @map("sort_order")
+  attempts        Int
+  errorMessage    String?              @map("error_message") @db.Text
+  inputJson       Json?                @map("input_json")
+  outputJson      Json?                @map("output_json")
+  startedAt       DateTime?            @map("started_at") @db.DateTime(3)
+  completedAt     DateTime?            @map("completed_at") @db.DateTime(3)
+  createdAt       DateTime             @map("created_at") @db.DateTime(3)
+
+  generationJob    GenerationJob     @relation(fields: [generationJobId], references: [id])
+  aiGenerationRuns AiGenerationRun[]
+
+  @@index([generationJobId])
+  @@index([stepType])
+  @@index([status])
+  @@map("generation_steps")
+}
+
+model AiGenerationRun {
+  id                      String                @id @db.Char(26)
+  generationJobId         String                @map("generation_job_id") @db.Char(26)
+  generationStepId        String?               @map("generation_step_id") @db.Char(26)
+  aiProviderId            String                @map("ai_provider_id") @db.Char(26)
+  aiModelId               String                @map("ai_model_id") @db.Char(26)
+  promptTemplateVersionId String?               @map("prompt_template_version_id") @db.Char(26)
+  renderedPrompt          String                @map("rendered_prompt") @db.MediumText
+  negativePrompt          String?               @map("negative_prompt") @db.Text
+  inputPayloadJson        Json?                 @map("input_payload_json")
+  outputPayloadJson       Json?                 @map("output_payload_json")
+  status                  AiGenerationRunStatus
+  providerRequestId       String?               @map("provider_request_id") @db.VarChar(255)
+  costCentsEstimated      BigInt?               @map("cost_cents_estimated")
+  latencyMs               Int?                  @map("latency_ms")
+  errorCode               String?               @map("error_code") @db.VarChar(64)
+  errorMessage            String?               @map("error_message") @db.Text
+  createdAt               DateTime              @map("created_at") @db.DateTime(3)
+  completedAt             DateTime?             @map("completed_at") @db.DateTime(3)
+
+  generationJob         GenerationJob          @relation(fields: [generationJobId], references: [id])
+  generationStep        GenerationStep?        @relation(fields: [generationStepId], references: [id])
+  aiProvider            AiProvider             @relation(fields: [aiProviderId], references: [id])
+  aiModel               AiModel                @relation(fields: [aiModelId], references: [id])
+  promptTemplateVersion PromptTemplateVersion? @relation(fields: [promptTemplateVersionId], references: [id])
+
+  @@index([generationJobId])
+  @@index([aiProviderId])
+  @@index([aiModelId])
+  @@index([promptTemplateVersionId])
+  @@index([status])
+  @@index([providerRequestId])
+  @@index([generationStepId])
+  @@map("ai_generation_runs")
+}
+
+model Asset {
+  id                String          @id @db.Char(26)
+  orderId           String          @map("order_id") @db.Char(26)
+  orderItemId       String?         @map("order_item_id") @db.Char(26)
+  generationJobId   String?         @map("generation_job_id") @db.Char(26)
+  deliverableTypeId String          @map("deliverable_type_id") @db.Char(26)
+  assetType         AssetType       @map("asset_type")
+  assetKind         AssetKind       @map("asset_kind")
+  status            AssetStatus
+  storageProvider   StorageProvider @map("storage_provider")
+  storageBucket     String          @map("storage_bucket") @db.VarChar(255)
+  storageKey        String          @map("storage_key") @db.VarChar(1024)
+  fileName          String          @map("file_name") @db.VarChar(255)
+  mimeType          String          @map("mime_type") @db.VarChar(128)
+  fileExt           String          @map("file_ext") @db.VarChar(16)
+  sizeBytes         BigInt          @map("size_bytes")
+  checksumSha256    String?         @map("checksum_sha256") @db.Char(64)
+  width             Int?
+  height            Int?
+  locale            String?         @db.VarChar(16)
+  createdAt         DateTime        @map("created_at") @db.DateTime(3)
+  updatedAt         DateTime        @map("updated_at") @db.DateTime(3)
+  deletedAt         DateTime?       @map("deleted_at") @db.DateTime(3)
+
+  order                 Order                  @relation(fields: [orderId], references: [id])
+  orderItem             OrderItem?             @relation(fields: [orderItemId], references: [id])
+  generationJob         GenerationJob?         @relation(fields: [generationJobId], references: [id])
+  deliverableType       DeliverableType        @relation(fields: [deliverableTypeId], references: [id])
+  assetMetadata         AssetMetadata?
+  assetDeliverableLinks AssetDeliverableLink[]
+  downloadTokenAssets   DownloadTokenAsset[]
+  downloadEvents        DownloadEvent[]
+
+  @@unique([storageProvider, storageBucket, storageKey])
+  @@index([orderId])
+  @@index([orderItemId])
+  @@index([generationJobId])
+  @@index([deliverableTypeId])
+  @@index([status])
+  @@index([assetKind])
+  @@map("assets")
+}
+
+model AssetMetadata {
+  id           String   @id @db.Char(26)
+  assetId      String   @unique @map("asset_id") @db.Char(26)
+  metadataJson Json     @map("metadata_json")
+  createdAt    DateTime @map("created_at") @db.DateTime(3)
+  updatedAt    DateTime @map("updated_at") @db.DateTime(3)
+
+  asset Asset @relation(fields: [assetId], references: [id])
+
+  @@map("asset_metadata")
+}
+
+model AssetDeliverableLink {
+  id                   String   @id @db.Char(26)
+  assetId              String   @map("asset_id") @db.Char(26)
+  packageDeliverableId String?  @map("package_deliverable_id") @db.Char(26)
+  deliverableTypeId    String   @map("deliverable_type_id") @db.Char(26)
+  variantNumber        Int?     @map("variant_number")
+  createdAt            DateTime @map("created_at") @db.DateTime(3)
+
+  asset              Asset               @relation(fields: [assetId], references: [id])
+  packageDeliverable PackageDeliverable? @relation(fields: [packageDeliverableId], references: [id])
+  deliverableType    DeliverableType     @relation(fields: [deliverableTypeId], references: [id])
+
+  @@index([assetId])
+  @@index([deliverableTypeId])
+  @@index([packageDeliverableId])
+  @@map("asset_deliverable_links")
+}
+
+model DownloadToken {
+  id            String              @id @db.Char(26)
+  orderId       String              @map("order_id") @db.Char(26)
+  tokenHash     String              @unique @map("token_hash") @db.Char(64)
+  status        DownloadTokenStatus
+  expiresAt     DateTime            @map("expires_at") @db.DateTime(3)
+  maxDownloads  Int?                @map("max_downloads")
+  downloadCount Int                 @map("download_count")
+  createdBy     CreatedByType       @map("created_by")
+  createdAt     DateTime            @map("created_at") @db.DateTime(3)
+  revokedAt     DateTime?           @map("revoked_at") @db.DateTime(3)
+
+  order               Order                @relation(fields: [orderId], references: [id])
+  downloadTokenAssets DownloadTokenAsset[]
+  downloadEvents      DownloadEvent[]
+
+  @@index([orderId])
+  @@index([status])
+  @@index([expiresAt])
+  @@map("download_tokens")
+}
+
+model DownloadTokenAsset {
+  id              String   @id @db.Char(26)
+  downloadTokenId String   @map("download_token_id") @db.Char(26)
+  assetId         String   @map("asset_id") @db.Char(26)
+  createdAt       DateTime @map("created_at") @db.DateTime(3)
+
+  downloadToken DownloadToken @relation(fields: [downloadTokenId], references: [id])
+  asset         Asset         @relation(fields: [assetId], references: [id])
+
+  @@unique([downloadTokenId, assetId])
+  @@index([assetId])
+  @@map("download_token_assets")
+}
+
+model DownloadEvent {
+  id              String            @id @db.Char(26)
+  downloadTokenId String            @map("download_token_id") @db.Char(26)
+  orderId         String            @map("order_id") @db.Char(26)
+  assetId         String?           @map("asset_id") @db.Char(26)
+  eventType       DownloadEventType @map("event_type")
+  ipHash          String?           @map("ip_hash") @db.Char(64)
+  userAgentHash   String?           @map("user_agent_hash") @db.Char(64)
+  createdAt       DateTime          @map("created_at") @db.DateTime(3)
+
+  downloadToken DownloadToken @relation(fields: [downloadTokenId], references: [id])
+  order         Order         @relation(fields: [orderId], references: [id])
+  asset         Asset?        @relation(fields: [assetId], references: [id])
+
+  @@index([downloadTokenId])
+  @@index([orderId])
+  @@index([assetId])
+  @@index([createdAt])
+  @@map("download_events")
+}
+
+model EmailTemplate {
+  id              String              @id @db.Char(26)
+  code            String              @db.VarChar(128)
+  locale          String              @db.VarChar(16)
+  version         Int
+  status          EmailTemplateStatus
+  subjectTemplate String              @map("subject_template") @db.Text
+  bodyTemplate    String              @map("body_template") @db.MediumText
+  createdAt       DateTime            @map("created_at") @db.DateTime(3)
+  updatedAt       DateTime            @map("updated_at") @db.DateTime(3)
+
+  emailLogs EmailLog[]
+
+  @@unique([code, locale, version])
+  @@index([status])
+  @@map("email_templates")
+}
+
+model EmailLog {
+  id                 String        @id @db.Char(26)
+  orderId            String?       @map("order_id") @db.Char(26)
+  emailTemplateId    String?       @map("email_template_id") @db.Char(26)
+  provider           EmailProvider
+  providerMessageId  String?       @map("provider_message_id") @db.VarChar(255)
+  recipientEmailHash String        @map("recipient_email_hash") @db.Char(64)
+  status             EmailStatus
+  errorMessage       String?       @map("error_message") @db.Text
+  payloadJson        Json?         @map("payload_json")
+  createdAt          DateTime      @map("created_at") @db.DateTime(3)
+  sentAt             DateTime?     @map("sent_at") @db.DateTime(3)
+
+  order         Order?         @relation(fields: [orderId], references: [id])
+  emailTemplate EmailTemplate? @relation(fields: [emailTemplateId], references: [id])
+
+  @@index([orderId])
+  @@index([recipientEmailHash])
+  @@index([status])
+  @@index([providerMessageId])
+  @@index([emailTemplateId])
+  @@map("email_logs")
+}
+
+model AdminUser {
+  id             String      @id @db.Char(26)
+  emailHash      String      @unique @map("email_hash") @db.Char(64)
+  emailEncrypted Bytes       @map("email_encrypted") @db.VarBinary(1024)
+  passwordHash   String?     @map("password_hash") @db.VarChar(255)
+  status         AdminStatus
+  mfaEnabled     Boolean     @map("mfa_enabled")
+  lastLoginAt    DateTime?   @map("last_login_at") @db.DateTime(3)
+  createdAt      DateTime    @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime    @map("updated_at") @db.DateTime(3)
+
+  orderNotes             OrderNote[]
+  refunds                Refund[]
+  promptTemplateVersions PromptTemplateVersion[]
+  adminUserRoles         AdminUserRole[]
+
+  @@index([status])
+  @@map("admin_users")
+}
+
+model AdminRole {
+  id        String   @id @db.Char(26)
+  code      String   @unique @db.VarChar(64)
+  name      String   @db.VarChar(128)
+  createdAt DateTime @map("created_at") @db.DateTime(3)
+
+  adminUserRoles       AdminUserRole[]
+  adminRolePermissions AdminRolePermission[]
+
+  @@map("admin_roles")
+}
+
+model AdminPermission {
+  id          String   @id @db.Char(26)
+  code        String   @unique @db.VarChar(128)
+  description String?  @db.Text
+  createdAt   DateTime @map("created_at") @db.DateTime(3)
+
+  adminRolePermissions AdminRolePermission[]
+
+  @@map("admin_permissions")
+}
+
+model AdminUserRole {
+  id          String   @id @db.Char(26)
+  adminUserId String   @map("admin_user_id") @db.Char(26)
+  adminRoleId String   @map("admin_role_id") @db.Char(26)
+  createdAt   DateTime @map("created_at") @db.DateTime(3)
+
+  adminUser AdminUser @relation(fields: [adminUserId], references: [id])
+  adminRole AdminRole @relation(fields: [adminRoleId], references: [id])
+
+  @@unique([adminUserId, adminRoleId])
+  @@index([adminRoleId])
+  @@map("admin_user_roles")
+}
+
+model AdminRolePermission {
+  id                String   @id @db.Char(26)
+  adminRoleId       String   @map("admin_role_id") @db.Char(26)
+  adminPermissionId String   @map("admin_permission_id") @db.Char(26)
+  createdAt         DateTime @map("created_at") @db.DateTime(3)
+
+  adminRole       AdminRole       @relation(fields: [adminRoleId], references: [id])
+  adminPermission AdminPermission @relation(fields: [adminPermissionId], references: [id])
+
+  @@unique([adminRoleId, adminPermissionId])
+  @@index([adminPermissionId])
+  @@map("admin_role_permissions")
+}
+
+model AuditLog {
+  id           String    @id @db.Char(26)
+  actorType    ActorType @map("actor_type")
+  actorId      String?   @map("actor_id") @db.Char(26)
+  action       String    @db.VarChar(128)
+  entityType   String    @map("entity_type") @db.VarChar(64)
+  entityId     String?   @map("entity_id") @db.Char(26)
+  ipHash       String?   @map("ip_hash") @db.Char(64)
+  beforeJson   Json?     @map("before_json")
+  afterJson    Json?     @map("after_json")
+  metadataJson Json?     @map("metadata_json")
+  createdAt    DateTime  @map("created_at") @db.DateTime(3)
+
+  @@index([actorType, actorId])
+  @@index([entityType, entityId])
+  @@index([action])
+  @@index([createdAt])
+  @@map("audit_logs")
+}
+
+model OutboxEvent {
+  id            String       @id @db.Char(26)
+  eventType     String       @map("event_type") @db.VarChar(128)
+  aggregateType String       @map("aggregate_type") @db.VarChar(64)
+  aggregateId   String       @map("aggregate_id") @db.Char(26)
+  payloadJson   Json         @map("payload_json")
+  status        OutboxStatus
+  attempts      Int
+  nextAttemptAt DateTime?    @map("next_attempt_at") @db.DateTime(3)
+  createdAt     DateTime     @map("created_at") @db.DateTime(3)
+  publishedAt   DateTime?    @map("published_at") @db.DateTime(3)
+
+  @@index([status, nextAttemptAt])
+  @@index([aggregateType, aggregateId])
+  @@index([eventType])
+  @@map("outbox_events")
+}
+
+model IdempotencyKey {
+  id             String            @id @db.Char(26)
+  scope          IdempotencyScope
+  idempotencyKey String            @map("idempotency_key") @db.VarChar(255)
+  requestHash    String            @map("request_hash") @db.Char(64)
+  responseJson   Json?             @map("response_json")
+  status         IdempotencyStatus
+  expiresAt      DateTime          @map("expires_at") @db.DateTime(3)
+  createdAt      DateTime          @map("created_at") @db.DateTime(3)
+  updatedAt      DateTime          @map("updated_at") @db.DateTime(3)
+
+  @@unique([scope, idempotencyKey])
+  @@index([expiresAt])
+  @@index([status])
+  @@map("idempotency_keys")
+}

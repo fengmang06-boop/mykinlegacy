@@ -1,0 +1,157 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: ai_heritage_staging_mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: ai_heritage_staging
+      MYSQL_USER: ai_heritage
+      MYSQL_PASSWORD: ai_heritage_staging_password
+      MYSQL_ROOT_PASSWORD: ai_heritage_staging_root_password
+    ports:
+      - "3307:3306"
+    volumes:
+      - staging_mysql_data:/var/lib/mysql
+    command:
+      - "--character-set-server=utf8mb4"
+      - "--collation-server=utf8mb4_unicode_ci"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-u", "ai_heritage", "-pai_heritage_staging_password"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: ai_heritage_staging_redis
+    restart: unless-stopped
+    ports:
+      - "6380:6379"
+    volumes:
+      - staging_redis_data:/data
+    command: ["redis-server", "--appendonly", "yes"]
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  api:
+    image: node:22-bookworm-slim
+    container_name: ai_heritage_staging_api
+    working_dir: /workspace
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    ports:
+      - "4000:4000"
+    volumes:
+      - .:/workspace
+      - staging_node_store:/root/.local/share/pnpm/store
+      - staging_private_storage:/workspace/.local-storage-staging
+    environment: &staging_env
+      NODE_ENV: staging
+      APP_ENV: staging
+      APP_WEB_URL: https://staging.mykinlegacy.com
+      API_PUBLIC_URL: https://api-staging.mykinlegacy.com
+      ADMIN_WEB_URL: https://admin-staging.mykinlegacy.com
+      NEXT_PUBLIC_SITE_URL: https://staging.mykinlegacy.com
+      APP_BASE_URL: https://staging.mykinlegacy.com
+      ADMIN_BASE_URL: https://admin-staging.mykinlegacy.com
+      API_BASE_URL: http://localhost:4000
+      NEXT_PUBLIC_API_BASE_URL: http://localhost:4000/api/v1
+      DATABASE_URL: mysql://ai_heritage:ai_heritage_staging_password@mysql:3306/ai_heritage_staging
+      DIRECT_URL: mysql://ai_heritage:ai_heritage_staging_password@mysql:3306/ai_heritage_staging
+      REDIS_URL: redis://redis:6379
+      API_PORT: "4000"
+      STRIPE_SECRET_KEY: replace_me_test_key_only
+      STRIPE_WEBHOOK_SECRET: replace_me_test_webhook_secret
+      AI_PROVIDER: mock
+      EMAIL_PROVIDER: mock
+      STORAGE_PROVIDER: local_private
+      LOCAL_STORAGE_DIR: ./.local-storage-staging
+      ADMIN_BOOTSTRAP_ENABLED: "false"
+      ADMIN_SESSION_SECRET: replace_me
+      RECOVERY_SCAN_ENABLED: "true"
+      CLEANUP_DESTRUCTIVE_ENABLED: "false"
+      WORKER_ENABLE_OUTBOX_DISPATCHER: "true"
+    command: >
+      sh -lc "corepack enable &&
+      corepack pnpm install --frozen-lockfile &&
+      corepack pnpm db:generate &&
+      corepack pnpm --filter @ai-heritage/api build &&
+      corepack pnpm --filter @ai-heritage/api start"
+
+  worker:
+    image: node:22-bookworm-slim
+    container_name: ai_heritage_staging_worker
+    working_dir: /workspace
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    volumes:
+      - .:/workspace
+      - staging_node_store:/root/.local/share/pnpm/store
+      - staging_private_storage:/workspace/.local-storage-staging
+    environment:
+      <<: *staging_env
+    command: >
+      sh -lc "corepack enable &&
+      corepack pnpm install --frozen-lockfile &&
+      corepack pnpm db:generate &&
+      corepack pnpm --filter @ai-heritage/worker build &&
+      corepack pnpm --filter @ai-heritage/worker start"
+
+  web:
+    image: node:22-bookworm-slim
+    container_name: ai_heritage_staging_web
+    working_dir: /workspace
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/workspace
+      - staging_node_store:/root/.local/share/pnpm/store
+    environment:
+      <<: *staging_env
+      PORT: "3000"
+    command: >
+      sh -lc "corepack enable &&
+      corepack pnpm install --frozen-lockfile &&
+      corepack pnpm --filter @ai-heritage/web build &&
+      corepack pnpm --filter @ai-heritage/web start"
+
+  admin:
+    image: node:22-bookworm-slim
+    container_name: ai_heritage_staging_admin
+    working_dir: /workspace
+    restart: unless-stopped
+    depends_on:
+      - api
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/workspace
+      - staging_node_store:/root/.local/share/pnpm/store
+    environment:
+      <<: *staging_env
+      PORT: "3001"
+    command: >
+      sh -lc "corepack enable &&
+      corepack pnpm install --frozen-lockfile &&
+      corepack pnpm --filter @ai-heritage/admin build &&
+      corepack pnpm --filter @ai-heritage/admin start"
+
+volumes:
+  staging_mysql_data:
+  staging_redis_data:
+  staging_node_store:
+  staging_private_storage:

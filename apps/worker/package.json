@@ -1,0 +1,24 @@
+{
+  "name": "@ai-heritage/worker",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "tsx watch src/main.ts",
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/main.js",
+    "lint": "eslint .",
+    "test": "vitest run --passWithNoTests",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "clean": "rimraf dist"
+  },
+  "dependencies": {
+    "@ai-heritage/ai": "workspace:*",
+    "@ai-heritage/config": "workspace:*",
+    "@ai-heritage/database": "workspace:*",
+    "@ai-heritage/email": "workspace:*",
+    "@ai-heritage/observability": "workspace:*",
+    "@ai-heritage/pdf": "workspace:*",
+    "@ai-heritage/queue": "workspace:*",
+    "@ai-heritage/storage": "workspace:*"
+  }
+}
