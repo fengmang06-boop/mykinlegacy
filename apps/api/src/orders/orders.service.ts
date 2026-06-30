@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable, Optional } from "@nestjs/common";
 import { ulid } from "ulid";
 
 import { ApiException } from "../common/api-error";
@@ -92,6 +92,7 @@ export class OrdersService {
 
   constructor(
     prismaService: PrismaService,
+    @Optional()
     private readonly orchestrationRepository?: OrderGenerationRepository
   ) {
     this.prisma = prismaService.db as unknown as OrdersClient;

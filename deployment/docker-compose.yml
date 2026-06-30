@@ -35,9 +35,17 @@ services:
       retries: 12
 
   api:
-    image: node:22-bookworm-slim
+    image: mykinlegacy_app:latest
+    build:
+      context: ..
+      dockerfile: deployment/Dockerfile
+      args:
+        NEXT_PUBLIC_API_BASE_URL: https://${DOMAIN}/api/v1
+        NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
+        APP_WEB_URL: https://${DOMAIN}
+        APP_BASE_URL: https://${DOMAIN}
     container_name: mykinlegacy_api
-    working_dir: /workspace
+    working_dir: /app
     restart: unless-stopped
     depends_on:
       mysql:
@@ -52,15 +60,8 @@ services:
       REDIS_URL: redis://redis:6379
       API_PORT: "4000"
     volumes:
-      - ../:/workspace
-      - node_store:/root/.local/share/pnpm/store
-      - private_storage:/workspace/.local-storage-production
-    command: >
-      sh -lc "corepack enable &&
-      corepack pnpm install --frozen-lockfile &&
-      corepack pnpm db:generate &&
-      corepack pnpm --filter @ai-heritage/api... build &&
-      corepack pnpm --filter @ai-heritage/api start"
+      - private_storage:/app/.local-storage-production
+    command: ["node", "apps/api/dist/main.js"]
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:4000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
       interval: 20s
@@ -68,9 +69,9 @@ services:
       retries: 12
 
   worker:
-    image: node:22-bookworm-slim
+    image: mykinlegacy_app:latest
     container_name: mykinlegacy_worker
-    working_dir: /workspace
+    working_dir: /app
     restart: unless-stopped
     depends_on:
       mysql:
@@ -84,15 +85,8 @@ services:
       DIRECT_URL: mysql://${MYSQL_USER}:${MYSQL_PASSWORD}@mysql:3306/${MYSQL_DATABASE}
       REDIS_URL: redis://redis:6379
     volumes:
-      - ../:/workspace
-      - node_store:/root/.local/share/pnpm/store
-      - private_storage:/workspace/.local-storage-production
-    command: >
-      sh -lc "corepack enable &&
-      corepack pnpm install --frozen-lockfile &&
-      corepack pnpm db:generate &&
-      corepack pnpm --filter @ai-heritage/worker... build &&
-      corepack pnpm --filter @ai-heritage/worker start"
+      - private_storage:/app/.local-storage-production
+    command: ["node", "apps/worker/dist/main.js"]
     healthcheck:
       test: ["CMD-SHELL", "node -e \"process.exit(0)\""]
       interval: 30s
@@ -100,9 +94,9 @@ services:
       retries: 3
 
   web:
-    image: node:22-bookworm-slim
+    image: mykinlegacy_app:latest
     container_name: mykinlegacy_web
-    working_dir: /workspace
+    working_dir: /app
     restart: unless-stopped
     depends_on:
       api:
@@ -115,14 +109,7 @@ services:
       NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
       APP_WEB_URL: https://${DOMAIN}
       APP_BASE_URL: https://${DOMAIN}
-    volumes:
-      - ../:/workspace
-      - node_store:/root/.local/share/pnpm/store
-    command: >
-      sh -lc "corepack enable &&
-      corepack pnpm install --frozen-lockfile &&
-      corepack pnpm --filter @ai-heritage/web... build &&
-      corepack pnpm --filter @ai-heritage/web start"
+    command: ["corepack", "pnpm", "--filter", "@ai-heritage/web", "start"]
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
       interval: 20s
@@ -156,7 +143,6 @@ services:
 volumes:
   mysql_data:
   redis_data:
-  node_store:
   private_storage:
   nginx_certs:
   certbot_webroot:

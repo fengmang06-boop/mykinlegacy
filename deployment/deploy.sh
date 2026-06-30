@@ -63,28 +63,27 @@ compose() {
 echo "Creating Docker volumes..."
 $SUDO docker volume create "${COMPOSE_PROJECT_NAME}_mysql_data" >/dev/null
 $SUDO docker volume create "${COMPOSE_PROJECT_NAME}_redis_data" >/dev/null
-$SUDO docker volume create "${COMPOSE_PROJECT_NAME}_node_store" >/dev/null
 $SUDO docker volume create "${COMPOSE_PROJECT_NAME}_private_storage" >/dev/null
 
 compose stop nginx >/dev/null 2>&1 || true
 bash "$SCRIPT_DIR/ssl-init.sh"
 
+echo "Building production application image..."
+compose build --pull api
+
 echo "Starting MySQL and Redis..."
 compose up -d mysql redis
 
 echo "Running database migrations..."
-compose run --rm api sh -lc "corepack enable && corepack pnpm install --frozen-lockfile && corepack pnpm db:generate && corepack pnpm db:migrate:deploy"
+compose run --rm api corepack pnpm db:migrate:deploy
 
 if [ "${RUN_SEED:-true}" = "true" ]; then
   echo "Running seed data..."
   compose run --rm api sh -lc "corepack pnpm db:seed"
 fi
 
-echo "Building production workspaces..."
-compose run --rm api sh -lc "corepack enable && corepack pnpm install --frozen-lockfile && corepack pnpm db:generate && corepack pnpm --filter @ai-heritage/api... build && corepack pnpm --filter @ai-heritage/worker... build && NEXT_PUBLIC_API_BASE_URL=https://${DOMAIN}/api/v1 NEXT_PUBLIC_SITE_URL=https://${DOMAIN} APP_WEB_URL=https://${DOMAIN} APP_BASE_URL=https://${DOMAIN} corepack pnpm --filter @ai-heritage/web... build"
-
 echo "Building and starting application services..."
-compose up -d --build api worker web nginx
+compose up -d --no-build --force-recreate api worker web nginx
 
 if [ -d "$PROJECT_ROOT/.git" ]; then
   git -C "$PROJECT_ROOT" rev-parse HEAD > "$SCRIPT_DIR/.current_revision" || true

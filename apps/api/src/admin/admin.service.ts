@@ -1,6 +1,6 @@
 import { createHash, pbkdf2Sync, randomBytes, timingSafeEqual } from "node:crypto";
 
-import { HttpStatus, Injectable } from "@nestjs/common";
+import { HttpStatus, Injectable, Optional } from "@nestjs/common";
 
 import { ApiException } from "../common/api-error";
 import type { AdminAction, AdminAuditLog, AdminRole, AdminSession } from "./admin.types";
@@ -71,7 +71,7 @@ export class AdminService {
   private readonly sessions = new Map<string, AdminSession>();
   private readonly auditLogs: AdminAuditLog[] = [];
 
-  constructor(private readonly orchestrationRepository?: object) {
+  constructor(@Optional() private readonly orchestrationRepository?: object) {
     this.bootstrapDevAdminIfAllowed();
   }
 
