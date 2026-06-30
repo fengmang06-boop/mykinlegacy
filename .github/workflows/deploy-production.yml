@@ -43,12 +43,34 @@ jobs:
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           python3 - <<'PY'
+          import base64
           import os
+          import sys
           from pathlib import Path
 
-          key = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
-          key = key.replace("\\r", "").replace("\r", "")
+          raw_key = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw_key.replace("\\r", "").replace("\r", "")
           key = key.replace("\\n", "\n")
+
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw_key).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "")
+                  decoded = decoded.replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+
+          valid_headers = (
+              "-----BEGIN OPENSSH PRIVATE KEY-----",
+              "-----BEGIN RSA PRIVATE KEY-----",
+              "-----BEGIN EC PRIVATE KEY-----",
+          )
+          if not any(header in key for header in valid_headers):
+              print("PROD_SSH_PRIVATE_KEY is not a valid OpenSSH/RSA/EC private key. Replace the GitHub Secret with the full private key, not the public key.", file=sys.stderr)
+              sys.exit(1)
+
           if not key.endswith("\n"):
               key += "\n"
 
