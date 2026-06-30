@@ -59,7 +59,7 @@ services:
       sh -lc "corepack enable &&
       corepack pnpm install --frozen-lockfile &&
       corepack pnpm db:generate &&
-      corepack pnpm --filter @ai-heritage/api build &&
+      corepack pnpm --filter @ai-heritage/api... build &&
       corepack pnpm --filter @ai-heritage/api start"
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:4000/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]
@@ -91,7 +91,7 @@ services:
       sh -lc "corepack enable &&
       corepack pnpm install --frozen-lockfile &&
       corepack pnpm db:generate &&
-      corepack pnpm --filter @ai-heritage/worker build &&
+      corepack pnpm --filter @ai-heritage/worker... build &&
       corepack pnpm --filter @ai-heritage/worker start"
     healthcheck:
       test: ["CMD-SHELL", "node -e \"process.exit(0)\""]
@@ -121,7 +121,7 @@ services:
     command: >
       sh -lc "corepack enable &&
       corepack pnpm install --frozen-lockfile &&
-      corepack pnpm --filter @ai-heritage/web build &&
+      corepack pnpm --filter @ai-heritage/web... build &&
       corepack pnpm --filter @ai-heritage/web start"
     healthcheck:
       test: ["CMD-SHELL", "node -e \"fetch('http://127.0.0.1:3000').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))\""]

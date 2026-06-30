@@ -80,6 +80,9 @@ if [ "${RUN_SEED:-true}" = "true" ]; then
   compose run --rm api sh -lc "corepack pnpm db:seed"
 fi
 
+echo "Building production workspaces..."
+compose run --rm api sh -lc "corepack enable && corepack pnpm install --frozen-lockfile && corepack pnpm db:generate && corepack pnpm --filter @ai-heritage/api... build && corepack pnpm --filter @ai-heritage/worker... build && NEXT_PUBLIC_API_BASE_URL=https://${DOMAIN}/api/v1 NEXT_PUBLIC_SITE_URL=https://${DOMAIN} APP_WEB_URL=https://${DOMAIN} APP_BASE_URL=https://${DOMAIN} corepack pnpm --filter @ai-heritage/web... build"
+
 echo "Building and starting application services..."
 compose up -d --build api worker web nginx
 
