@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function CreatePage() {
   return (
-    <main>
+    <main className="premium-page create-page">
       <CreateStart />
     </main>
   );

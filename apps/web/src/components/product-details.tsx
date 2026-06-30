@@ -57,7 +57,7 @@ export function ProductDetails() {
   }
 
   return (
-    <section>
+    <section className="product-details">
       <p className="eyebrow">Collection details</p>
       <h2>{translation?.name ?? "Family Legacy Collection"}</h2>
       <p className="lead">
@@ -78,7 +78,7 @@ export function ProductDetails() {
       </Link>
       <p className="notice">Digital product. No physical shipping.</p>
 
-      <div className="card">
+      <div className="card product-detail-card">
         <p className="eyebrow">Gift-ready collection</p>
         <div className="summary-list">
           <div className="summary-row">
@@ -96,7 +96,7 @@ export function ProductDetails() {
         </div>
       </div>
 
-      <div className="card">
+      <div className="card product-detail-card">
         <p className="eyebrow">Private vault contents</p>
         <h2>Included artifacts</h2>
         <ul>

@@ -47,15 +47,14 @@ export function CreateStart() {
 
   return (
     <>
-      <section className="interview-hero">
+      <section className="premium-hero interview-hero">
         <div className="section interview-hero-grid">
           <div>
             <p className="eyebrow">Gift-first guided interview</p>
             <h1>Who is this collection for?</h1>
             <p className="lead">
-              This helps us shape the collection around the person receiving it, not just the
-              family name. Start with the parent, grandparent, couple, or family moment you want to
-              honor.
+              This helps us shape the collection around the person receiving it, not just the family
+              name. Start with the parent, grandparent, couple, or family moment you want to honor.
             </p>
             <div className="trust-row">
               <span>Private by default</span>
@@ -63,13 +62,13 @@ export function CreateStart() {
               <span>Digital delivery</span>
             </div>
           </div>
-          <div className="mock-certificate">
+          <div className="mock-certificate premium-certificate-card">
             <span>Their legacy begins</span>
             <strong>with being recognized.</strong>
           </div>
         </div>
       </section>
-      <section className="journey-shell">
+      <section className="premium-section journey-shell">
         <div className="section interview-layout">
           <div className="journey-card">
             <p className="eyebrow">Private gift journey</p>

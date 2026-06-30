@@ -12,10 +12,13 @@ export const metadata: Metadata = publicMetadata({
 
 export default function FamilyLegacyCollectionPage() {
   return (
-    <main>
-      <section className="product-hero">
+    <main className="premium-page collection-page">
+      <section className="premium-hero product-hero">
         <div className="section product-layout">
-          <div className="delivery-mockup product-mockup" aria-label="Collection artifact preview">
+          <div
+            className="premium-artifact-board product-mockup"
+            aria-label="Collection artifact preview"
+          >
             <article className="mockup-item featured">
               <span className="mini-crest" aria-hidden="true" />
               <strong>Crest Artwork</strong>
@@ -57,7 +60,7 @@ export default function FamilyLegacyCollectionPage() {
         </div>
       </section>
 
-      <section className="trust-strip">
+      <section className="premium-section trust-strip">
         <div className="section trust-strip-grid">
           <article>
             <h3>Secure & Private</h3>
@@ -78,7 +81,7 @@ export default function FamilyLegacyCollectionPage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section premium-section">
         <p className="eyebrow">Preview your legacy</p>
         <h2>A collection your parents can open, read, keep, and share.</h2>
         <p className="lead">
@@ -106,7 +109,7 @@ export default function FamilyLegacyCollectionPage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section premium-section">
         <h2>Frequently Asked Questions</h2>
         <div className="faq-list">
           <div className="faq-row">
@@ -124,7 +127,7 @@ export default function FamilyLegacyCollectionPage() {
         </div>
       </section>
 
-      <section className="section">
+      <section className="section premium-section premium-disclaimer">
         <h2>Disclaimer</h2>
         <p className="lead">
           Your collection is a personalized heritage-inspired symbolic keepsake. It is private by
