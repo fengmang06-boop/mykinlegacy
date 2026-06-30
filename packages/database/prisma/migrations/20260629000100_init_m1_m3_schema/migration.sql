@@ -581,6 +581,34 @@ CREATE TABLE `generation_jobs` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
+CREATE TABLE `generation_manifests` (
+    `id` CHAR(26) NOT NULL,
+    `order_id` CHAR(26) NOT NULL,
+    `order_item_id` CHAR(26) NOT NULL,
+    `generation_job_id` CHAR(26) NULL,
+    `house_id` CHAR(26) NULL,
+    `identity_version_id` CHAR(26) NULL,
+    `product_code` VARCHAR(128) NOT NULL,
+    `package_code` VARCHAR(128) NOT NULL,
+    `expected_assets_json` JSON NOT NULL,
+    `generated_assets_json` JSON NOT NULL,
+    `missing_required_assets_json` JSON NOT NULL,
+    `optional_assets_json` JSON NOT NULL,
+    `failed_assets_json` JSON NOT NULL,
+    `manifest_status` ENUM('pending', 'in_progress', 'completed', 'failed', 'partially_completed') NOT NULL,
+    `created_at` DATETIME(3) NOT NULL,
+    `updated_at` DATETIME(3) NOT NULL,
+    `completed_at` DATETIME(3) NULL,
+
+    INDEX `generation_manifests_order_id_idx`(`order_id`),
+    INDEX `generation_manifests_order_item_id_idx`(`order_item_id`),
+    INDEX `generation_manifests_generation_job_id_idx`(`generation_job_id`),
+    INDEX `generation_manifests_manifest_status_idx`(`manifest_status`),
+    UNIQUE INDEX `generation_manifests_order_id_order_item_id_key`(`order_id`, `order_item_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
 CREATE TABLE `generation_steps` (
     `id` CHAR(26) NOT NULL,
     `generation_job_id` CHAR(26) NOT NULL,
@@ -642,9 +670,9 @@ CREATE TABLE `assets` (
     `asset_type` ENUM('image', 'pdf', 'archive', 'preview') NOT NULL,
     `asset_kind` ENUM('generated', 'uploaded', 'packaged', 'preview', 'physical_mockup') NOT NULL,
     `status` ENUM('pending', 'available', 'failed', 'deleted') NOT NULL,
-    `storage_provider` ENUM('s3', 'r2') NOT NULL,
-    `storage_bucket` VARCHAR(255) NOT NULL,
-    `storage_key` VARCHAR(1024) NOT NULL,
+    `storage_provider` ENUM('local_private', 's3', 'r2') NOT NULL,
+    `storage_bucket` VARCHAR(191) NOT NULL,
+    `storage_key` VARCHAR(512) NOT NULL,
     `file_name` VARCHAR(255) NOT NULL,
     `mime_type` VARCHAR(128) NOT NULL,
     `file_ext` VARCHAR(16) NOT NULL,
@@ -766,7 +794,7 @@ CREATE TABLE `email_logs` (
     `id` CHAR(26) NOT NULL,
     `order_id` CHAR(26) NULL,
     `email_template_id` CHAR(26) NULL,
-    `provider` ENUM('resend', 'sendgrid', 'ses') NOT NULL,
+    `provider` ENUM('mock', 'resend', 'sendgrid', 'ses') NOT NULL,
     `provider_message_id` VARCHAR(255) NULL,
     `recipient_email_hash` CHAR(64) NOT NULL,
     `status` ENUM('queued', 'sent', 'delivered', 'bounced', 'failed') NOT NULL,
@@ -1053,6 +1081,15 @@ ALTER TABLE `generation_jobs` ADD CONSTRAINT `generation_jobs_order_item_id_fkey
 
 -- AddForeignKey
 ALTER TABLE `generation_jobs` ADD CONSTRAINT `generation_jobs_product_id_fkey` FOREIGN KEY (`product_id`) REFERENCES `products`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `generation_manifests` ADD CONSTRAINT `generation_manifests_order_id_fkey` FOREIGN KEY (`order_id`) REFERENCES `orders`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `generation_manifests` ADD CONSTRAINT `generation_manifests_order_item_id_fkey` FOREIGN KEY (`order_item_id`) REFERENCES `order_items`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `generation_manifests` ADD CONSTRAINT `generation_manifests_generation_job_id_fkey` FOREIGN KEY (`generation_job_id`) REFERENCES `generation_jobs`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE `generation_steps` ADD CONSTRAINT `generation_steps_generation_job_id_fkey` FOREIGN KEY (`generation_job_id`) REFERENCES `generation_jobs`(`id`) ON DELETE RESTRICT ON UPDATE CASCADE;

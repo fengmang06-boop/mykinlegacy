@@ -1208,8 +1208,8 @@ model Asset {
   assetKind         AssetKind       @map("asset_kind")
   status            AssetStatus
   storageProvider   StorageProvider @map("storage_provider")
-  storageBucket     String          @map("storage_bucket") @db.VarChar(255)
-  storageKey        String          @map("storage_key") @db.VarChar(1024)
+  storageBucket     String          @map("storage_bucket") @db.VarChar(191)
+  storageKey        String          @map("storage_key") @db.VarChar(512)
   fileName          String          @map("file_name") @db.VarChar(255)
   mimeType          String          @map("mime_type") @db.VarChar(128)
   fileExt           String          @map("file_ext") @db.VarChar(16)
