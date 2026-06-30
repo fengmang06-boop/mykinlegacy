@@ -45,8 +45,9 @@ jobs:
         run: |
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
-          printf '%s\n' "$PROD_SSH_PRIVATE_KEY" > ~/.ssh/mykinlegacy_prod
+          printf '%s\n' "$PROD_SSH_PRIVATE_KEY" | tr -d '\r' > ~/.ssh/mykinlegacy_prod
           chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keygen -y -f ~/.ssh/mykinlegacy_prod > /dev/null
           ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
