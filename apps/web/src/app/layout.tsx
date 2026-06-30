@@ -47,7 +47,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <header className="site-header">
           <nav className="nav" aria-label="Primary navigation">
             <Link className="brand" href="/">
-              MyKinLegacy
+              <span className="brand-copy">
+                <span>MyKinLegacy</span>
+                <small>Legacy, Designed.</small>
+              </span>
             </Link>
             <div className="nav-links">
               <Link href="/family-legacy-collection">Collection</Link>

@@ -23,8 +23,8 @@ describe("customer frontend flow", () => {
     expect(html).toContain(
       "A meaningful family keepsake for the parents who already have everything."
     );
-    expect(html).toContain("Begin Their Legacy");
-    expect(html).toContain("View the Collection");
+    expect(html).toContain("Create Your Legacy");
+    expect(html).toContain("View Collections");
     expect(html).toContain("not an official coat of arms");
     expect(html).toContain("not a genealogy claim");
   });
