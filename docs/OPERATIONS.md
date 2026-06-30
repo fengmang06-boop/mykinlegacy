@@ -1,18 +1,21 @@
 # MyKinLegacy Operations Guide
 
-This guide is for production deployment checks on the Ubuntu server.
+This guide is for production deployment, status checks, failure reporting, and rollback.
 
-## Deploy
+## How To Deploy
 
-From the project directory on the server:
+Run these commands on the production server from the project root:
 
 ```bash
+git checkout main
 git pull origin main
 bash deployment/deploy.sh
 ```
 
 The deploy script will:
 
+- print the current commit before deploy
+- pull the latest code when it is on a normal Git branch
 - create required Docker volumes
 - initialize SSL files when needed
 - build the production application image
@@ -20,13 +23,24 @@ The deploy script will:
 - run Prisma migrations
 - run seed data when `RUN_SEED=true`
 - recreate API, Worker, Web, and Nginx containers
-- run the deployment health check
+- run `deployment/health-check.sh`
+- save `deployment/.last-successful-commit` only after health checks pass
 
-A deploy is considered successful only when `deployment/health-check.sh` passes.
+Success prints:
 
-## Check Status
+```text
+DEPLOYMENT_SUCCESS <commit_hash>
+```
 
-Use this command when anything looks wrong:
+Failure prints:
+
+```text
+DEPLOYMENT_FAILED <commit_hash>
+```
+
+## How To Check Status
+
+Use this command whenever deployment looks unclear:
 
 ```bash
 bash deployment/status.sh
@@ -34,21 +48,25 @@ bash deployment/status.sh
 
 It prints:
 
-- current git commit
-- current branch
-- last known good revision
-- previous revision
+- current Git branch
+- current Git commit
+- latest local commit message
+- last successful deployment commit
 - Docker Compose service status
-- container health
-- public HTTP and HTTPS checks
-- recent API logs
-- recent Web logs
-- recent Worker logs
+- container health status
+- public HTTP check
+- public HTTPS check
+- API `/health` result
+- disk usage
+- memory usage
+- last 80 API log lines
+- last 80 Web log lines
+- last 80 Worker log lines
 - rollback hint
 
-## Run Health Check
+## Short Health Check
 
-Use this command for a short pass/fail verification:
+Use this command for a compact pass/fail check:
 
 ```bash
 bash deployment/health-check.sh
@@ -65,112 +83,105 @@ It checks:
 - `public_http`
 - `public_https`
 
-If any item fails, run:
+## How To Read Health Check Failures
+
+`mysql` failed:
+
+- Database container is unhealthy.
+- Check `deployment/.env.production`.
+- Send MySQL health output and API logs to ChatGPT.
+
+`redis` failed:
+
+- Redis container is unhealthy.
+- Check container status in `deployment/status.sh`.
+
+`api` failed:
+
+- API is not answering `/health`.
+- Send API logs, current commit, and container health to ChatGPT.
+
+`web` failed:
+
+- Next.js app is not answering on port `3000`.
+- Send Web logs and build output to ChatGPT.
+
+`worker` failed:
+
+- Worker container is not running or unhealthy.
+- Send Worker logs to ChatGPT.
+
+`nginx` failed:
+
+- Public routing may be broken.
+- Check whether API and Web are healthy first.
+
+`public_http` failed:
+
+- Public HTTP cannot reach `/health`.
+- Check firewall, Docker ports, and Nginx.
+
+`public_https` failed:
+
+- HTTPS cannot reach `/health`.
+- Check SSL mode, certificate initialization, and Nginx logs.
+
+## What Logs To Send To ChatGPT
+
+Run:
 
 ```bash
 bash deployment/status.sh
 ```
 
-## How To Read Failures
+Send the full output, especially:
 
-Use the failed service name to decide where to look first.
+- Git section
+- Docker compose service status
+- Container health status
+- Public URL checks
+- API `/health` result
+- Recent API logs
+- Recent Web logs
+- Recent Worker logs
+- Disk and memory usage
 
-`mysql` failed:
+Avoid sending real secrets from `deployment/.env.production`.
 
-- MySQL container is not healthy.
-- Check `deployment/.env.production` database values.
-- Check MySQL logs in `deployment/status.sh`.
+## How To Roll Back
 
-`redis` failed:
-
-- Redis container is not healthy.
-- Check Redis container status.
-
-`api` failed:
-
-- API container is not responding on `/health`.
-- Read the API log section in `deployment/status.sh`.
-- Common causes are failed Node startup, missing environment variables, or database connection errors.
-
-`web` failed:
-
-- Web container is not responding on port `3000`.
-- Read the Web log section in `deployment/status.sh`.
-
-`worker` failed:
-
-- Worker container is not running.
-- Read the Worker log section in `deployment/status.sh`.
-
-`nginx` failed:
-
-- Nginx cannot reach its internal `/health` route.
-- Check whether API and Web are healthy first.
-
-`public_http` failed:
-
-- The server is not reachable over public HTTP.
-- Check firewall, Docker ports, and Nginx.
-
-`public_https` failed:
-
-- HTTPS is not reachable.
-- If using self-signed TLS during bootstrap, the health check uses `curl -k`.
-- Check SSL initialization and Nginx logs.
-
-## Rollback
-
-Use rollback only when the current deployment is broken and the previous revision was healthy.
+Rollback requires a specific commit hash:
 
 ```bash
-bash deployment/rollback.sh
+bash deployment/rollback.sh <commit_hash>
+```
+
+Example:
+
+```bash
+bash deployment/rollback.sh 3254f28
 ```
 
 The rollback script will:
 
-- read `deployment/.previous_revision`
-- check out that git revision
-- rebuild the application image when the rollback target supports production Docker builds
-- recreate API, Worker, Web, and Nginx
-- run the health check
-- record the rollback revision as current if health passes
+- confirm before doing anything destructive
+- check out the target commit
+- run `deployment/deploy.sh`
+- run `deployment/health-check.sh`
+- print recent API/Web/Worker logs if rollback fails
+- record the rollback target as last successful only if health checks pass
 
-To rollback to a specific commit:
+Rollback does not automatically roll back database migrations. If a failed deploy included database changes, stop and inspect before rolling back application code.
 
-```bash
-ROLLBACK_REVISION=<commit_hash> bash deployment/rollback.sh
-```
+## Production Safety Rules
 
-Rollback does not downgrade database schema. If a failed deployment included irreversible database changes, stop and inspect the database before rolling back application code.
-
-## Useful Commands
-
-Show service status:
-
-```bash
-docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml ps
-```
-
-Follow API logs:
-
-```bash
-docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml logs -f api
-```
-
-Follow Web logs:
-
-```bash
-docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml logs -f web
-```
-
-Follow Worker logs:
-
-```bash
-docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml logs -f worker
-```
-
-Restart the current stack without pulling code:
-
-```bash
-docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml up -d --no-build --force-recreate api worker web nginx
-```
+- Do not edit production files manually inside containers.
+- Do not commit `deployment/.env.production`.
+- Do not paste production secrets into ChatGPT.
+- Do not run rollback without a known target commit.
+- Do not deploy from an uncommitted working tree.
+- Do not change Stripe live settings during deployment debugging.
+- Do not run database-destructive commands without a separate backup.
+- Always run `bash deployment/status.sh` after a failed deploy.
+- Treat `DEPLOYMENT_SUCCESS` as the only deploy success signal.
+- Treat `DEPLOYMENT_FAILED` as a stop-and-diagnose signal.

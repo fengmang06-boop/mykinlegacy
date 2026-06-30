@@ -16,6 +16,7 @@ deployment/.current_revision
 deployment/.previous_revision
 deployment/.failed_revision
 deployment/.previous_revision.tmp
+deployment/.last-successful-commit
 production-bootstrap/.current_revision
 production-bootstrap/.previous_revision
 production-bootstrap/.previous_revision.tmp

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -uo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
@@ -43,9 +43,18 @@ public_check() {
   local label="$1"
   local url="$2"
   if curl -kfsS --max-time 10 "$url" >/dev/null 2>&1; then
-    printf '%-14s PASS %s\n' "$label" "$url"
+    printf '%-16s PASS %s\n' "$label" "$url"
   else
-    printf '%-14s FAIL %s\n' "$label" "$url"
+    printf '%-16s FAIL %s\n' "$label" "$url"
+  fi
+}
+
+api_health() {
+  local output
+  if output="$(compose exec -T api node -e "fetch('http://127.0.0.1:4000/health').then(async r=>{console.log(r.status + ' ' + await r.text()); process.exit(r.ok?0:1)}).catch(e=>{console.error(e.message); process.exit(1)})" 2>&1)"; then
+    echo "api_health      PASS ${output}"
+  else
+    echo "api_health      FAIL ${output}"
   fi
 }
 
@@ -55,12 +64,13 @@ echo
 
 echo "Git"
 if [ -d "$PROJECT_ROOT/.git" ]; then
-  echo "current_commit: $(git -C "$PROJECT_ROOT" rev-parse --short HEAD)"
-  echo "current_branch: $(git -C "$PROJECT_ROOT" rev-parse --abbrev-ref HEAD)"
-  if [ -f "$SCRIPT_DIR/.current_revision" ]; then
-    echo "last_known_good: $(cut -c1-12 "$SCRIPT_DIR/.current_revision")"
+  echo "current_branch: $(git -C "$PROJECT_ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unknown)"
+  echo "current_commit: $(git -C "$PROJECT_ROOT" rev-parse --short HEAD 2>/dev/null || echo unknown)"
+  echo "latest_message: $(git -C "$PROJECT_ROOT" log -1 --pretty=%s 2>/dev/null || echo unknown)"
+  if [ -f "$SCRIPT_DIR/.last-successful-commit" ]; then
+    echo "last_successful: $(cut -c1-12 "$SCRIPT_DIR/.last-successful-commit")"
   else
-    echo "last_known_good: not recorded"
+    echo "last_successful: not recorded"
   fi
   if [ -f "$SCRIPT_DIR/.previous_revision" ]; then
     echo "previous_revision: $(cut -c1-12 "$SCRIPT_DIR/.previous_revision")"
@@ -72,11 +82,11 @@ else
 fi
 echo
 
-echo "Docker compose services"
+echo "Docker compose service status"
 compose ps || true
 echo
 
-echo "Container health"
+echo "Container health status"
 container_health mykinlegacy_mysql
 container_health mykinlegacy_redis
 container_health mykinlegacy_api
@@ -88,6 +98,18 @@ echo
 echo "Public URL checks"
 public_check "public_http" "http://${PUBLIC_IP:-216.128.154.152}/health"
 public_check "public_https" "https://${DOMAIN:-216.128.154.152}/health"
+echo
+
+echo "API /health result"
+api_health
+echo
+
+echo "Disk usage"
+df -h / || true
+echo
+
+echo "Memory usage"
+free -h || true
 echo
 
 echo "Recent API logs (tail 80)"
@@ -103,5 +125,5 @@ compose logs --tail=80 worker || true
 echo
 
 echo "Rollback hint"
-echo "If this deployment is broken and the previous revision was healthy, run:"
-echo "  bash deployment/rollback.sh"
+echo "Rollback to a known commit:"
+echo "  bash deployment/rollback.sh <commit_hash>"

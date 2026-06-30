@@ -6,8 +6,37 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 ENV_FILE="$SCRIPT_DIR/.env.production"
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 COMPOSE_PROJECT_NAME="mykinlegacy"
+LAST_SUCCESSFUL_FILE="$SCRIPT_DIR/.last-successful-commit"
 
 cd "$SCRIPT_DIR"
+
+current_commit() {
+  if [ -d "$PROJECT_ROOT/.git" ]; then
+    git -C "$PROJECT_ROOT" rev-parse HEAD 2>/dev/null || echo "unknown"
+  else
+    echo "unknown"
+  fi
+}
+
+short_commit() {
+  local commit="$1"
+  if [ "$commit" = "unknown" ]; then
+    echo "unknown"
+  else
+    echo "$commit" | cut -c1-12
+  fi
+}
+
+deploy_failed() {
+  local status=$?
+  if [ "$status" -ne 0 ]; then
+    local failed_commit
+    failed_commit="$(current_commit)"
+    echo "DEPLOYMENT_FAILED $(short_commit "$failed_commit")"
+  fi
+}
+
+trap deploy_failed EXIT
 
 if [ "$(id -u)" -eq 0 ]; then
   SUDO=""
@@ -21,12 +50,31 @@ if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>
 fi
 
 if [ -d "$PROJECT_ROOT/.git" ]; then
-  git -C "$PROJECT_ROOT" rev-parse HEAD > "$SCRIPT_DIR/.previous_revision.tmp" || true
-  if [ -f "$SCRIPT_DIR/.current_revision" ]; then
+  BEFORE_COMMIT="$(current_commit)"
+  echo "Current commit before deploy: $(short_commit "$BEFORE_COMMIT")"
+
+  if [ -f "$LAST_SUCCESSFUL_FILE" ]; then
+    cp "$LAST_SUCCESSFUL_FILE" "$SCRIPT_DIR/.previous_revision"
+  elif [ -f "$SCRIPT_DIR/.current_revision" ]; then
     cp "$SCRIPT_DIR/.current_revision" "$SCRIPT_DIR/.previous_revision"
-  elif [ -s "$SCRIPT_DIR/.previous_revision.tmp" ]; then
-    cp "$SCRIPT_DIR/.previous_revision.tmp" "$SCRIPT_DIR/.previous_revision"
+  elif [ "$BEFORE_COMMIT" != "unknown" ]; then
+    echo "$BEFORE_COMMIT" > "$SCRIPT_DIR/.previous_revision"
   fi
+
+  CURRENT_BRANCH="$(git -C "$PROJECT_ROOT" rev-parse --abbrev-ref HEAD 2>/dev/null || echo "HEAD")"
+  if [ "${DEPLOY_SKIP_GIT_PULL:-false}" != "true" ] && [ "$CURRENT_BRANCH" != "HEAD" ] && git -C "$PROJECT_ROOT" remote get-url origin >/dev/null 2>&1; then
+    echo "Pulling latest code from origin/${CURRENT_BRANCH}..."
+    git -C "$PROJECT_ROOT" pull --ff-only origin "$CURRENT_BRANCH"
+    AFTER_PULL_COMMIT="$(current_commit)"
+    echo "Current commit after git pull: $(short_commit "$AFTER_PULL_COMMIT")"
+  else
+    echo "Git pull skipped. Branch: ${CURRENT_BRANCH}"
+    AFTER_PULL_COMMIT="$(current_commit)"
+    echo "Current commit after git pull step: $(short_commit "$AFTER_PULL_COMMIT")"
+  fi
+else
+  echo "Current commit before deploy: unknown"
+  echo "Current commit after git pull step: unknown"
 fi
 
 if [ ! -f "$ENV_FILE" ]; then
@@ -89,8 +137,15 @@ echo "Running health check..."
 bash "$SCRIPT_DIR/health-check.sh"
 
 if [ -d "$PROJECT_ROOT/.git" ]; then
-  git -C "$PROJECT_ROOT" rev-parse HEAD > "$SCRIPT_DIR/.current_revision" || true
+  SUCCESSFUL_COMMIT="$(current_commit)"
+  echo "$SUCCESSFUL_COMMIT" > "$SCRIPT_DIR/.current_revision"
+  echo "$SUCCESSFUL_COMMIT" > "$LAST_SUCCESSFUL_FILE"
+else
+  SUCCESSFUL_COMMIT="unknown"
 fi
 
 echo "PASS deployment complete"
 echo "Open: https://${DOMAIN}"
+echo "DEPLOYMENT_SUCCESS $(short_commit "$SUCCESSFUL_COMMIT")"
+
+trap - EXIT
