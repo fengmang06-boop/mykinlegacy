@@ -16,7 +16,7 @@ export const metadata: Metadata = {
   icons: {
     icon: "/assets/homepage/brand/favicon.svg",
     shortcut: "/assets/homepage/brand/favicon.svg",
-    apple: "/assets/homepage/brand/logo-mark.svg"
+    apple: "/assets/final-homepage/01_brand/logo-mark.webp"
   },
   openGraph: {
     title: BRAND_NAME,
@@ -55,7 +55,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             <Link className="brand" href="/">
               <Image
                 className="brand-logo-full"
-                src="/assets/homepage/brand/logo-horizontal.svg"
+                src="/assets/final-homepage/01_brand/logo-primary.webp"
                 width={214}
                 height={60}
                 alt=""
@@ -64,7 +64,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
               />
               <Image
                 className="brand-logo-mark"
-                src="/assets/homepage/brand/logo-mark.svg"
+                src="/assets/final-homepage/01_brand/logo-mark.webp"
                 width={42}
                 height={42}
                 alt=""
@@ -89,7 +89,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           <div className="footer-inner">
             <div className="footer-brand-row">
               <Image
-                src="/assets/homepage/brand/logo-horizontal.svg"
+                src="/assets/final-homepage/01_brand/logo-primary.webp"
                 width={192}
                 height={48}
                 alt="MyKinLegacy - Legacy, Designed."

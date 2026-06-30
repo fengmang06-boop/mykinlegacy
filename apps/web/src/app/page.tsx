@@ -5,6 +5,8 @@ import React from "react";
 
 import { publicMetadata } from "../lib/seo";
 
+const finalHomepageAsset = "/assets/final-homepage";
+
 export const metadata: Metadata = publicMetadata({
   title: "MyKinLegacy | Meaningful Family Keepsake for Parents",
   description:
@@ -16,27 +18,27 @@ const heroArtifacts = [
   [
     "House Identity",
     "A private interpretation of what your family stands for.",
-    "/assets/homepage/hero/icon-house-identity.svg"
+    `${finalHomepageAsset}/02_homepage/hero/hero-house-identity.webp`
   ],
   [
     "Heritage Certificate",
     "A ceremonial piece for gifting, printing, and keeping.",
-    "/assets/homepage/hero/icon-certificate.svg"
+    `${finalHomepageAsset}/02_homepage/hero/hero-heritage-certificate.webp`
   ],
   [
     "Family Story",
     "A written reflection shaped around values, memory, and belonging.",
-    "/assets/homepage/hero/icon-story.svg"
+    `${finalHomepageAsset}/02_homepage/hero/hero-family-story.webp`
   ],
   [
     "Symbol Guide",
     "A guide to the colors, animals, and symbols chosen for the collection.",
-    "/assets/homepage/hero/icon-symbol-guide.svg"
+    `${finalHomepageAsset}/02_homepage/hero/hero-symbol-guide.webp`
   ],
   [
     "Private Collection Vault",
     "A secure private space to receive and preserve the collection.",
-    "/assets/homepage/hero/icon-vault.svg"
+    `${finalHomepageAsset}/02_homepage/hero/hero-private-vault.webp`
   ]
 ] as const;
 
@@ -44,42 +46,42 @@ const occasions = [
   [
     "Father's Day",
     "For the father who never asks for much.",
-    "/assets/homepage/occasions/gift-fathers-day.svg"
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-fathers-day.webp`
   ],
   [
     "Birthday",
     "For a gift that says more than another object.",
-    "/assets/homepage/occasions/gift-birthday.svg"
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-birthday.webp`
   ],
   [
     "Anniversary",
     "For honoring the family two people built together.",
-    "/assets/homepage/occasions/gift-anniversary.svg"
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-anniversary.webp`
   ],
   [
     "Christmas",
     "For the family moment everyone remembers.",
-    "/assets/homepage/occasions/gift-christmas.svg"
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-christmas.webp`
   ],
   [
     "Retirement",
     "For a life of work, care, and quiet legacy.",
-    "/assets/homepage/occasions/gift-retirement.svg"
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-retirement.webp`
   ],
   [
     "Thanksgiving",
     "For gathering around the story that holds everyone.",
-    "/assets/homepage/occasions/gift-thanksgiving.svg"
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-thanksgiving.webp`
   ],
   [
     "New Baby",
     "For welcoming a child into a living family story.",
-    "/assets/homepage/occasions/gift-new-baby.svg"
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-new-baby.webp`
   ],
   [
     "Graduation",
     "For sending someone forward with roots.",
-    "/assets/homepage/occasions/gift-graduation.svg"
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-graduation.webp`
   ]
 ] as const;
 
@@ -87,32 +89,32 @@ const receives = [
   [
     "House Identity",
     "The emotional center of the collection: values, story, tone, and symbolic direction.",
-    "/assets/homepage/features/feature-identity.svg"
+    `${finalHomepageAsset}/04_homepage/features/feature-house-identity.webp`
   ],
   [
     "Heritage Certificate",
     "A premium ceremonial artifact designed for personal keeping and gifting.",
-    "/assets/homepage/features/feature-certificate.svg"
+    `${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`
   ],
   [
     "Family Story",
     "A warm narrative that helps parents feel recognized instead of merely represented.",
-    "/assets/homepage/features/feature-story.svg"
+    `${finalHomepageAsset}/04_homepage/features/feature-family-story.webp`
   ],
   [
     "Symbol Guide",
     "A clear explanation of why each symbol belongs in the collection.",
-    "/assets/homepage/features/feature-symbols.svg"
+    `${finalHomepageAsset}/04_homepage/features/feature-symbol-guide.webp`
   ],
   [
     "Private Collection Vault",
     "A protected delivery space for receiving and preserving the finished collection.",
-    "/assets/homepage/features/feature-vault.svg"
+    `${finalHomepageAsset}/04_homepage/features/feature-private-vault.webp`
   ],
   [
     "Recognition Cards",
     "Small shareable moments that make the collection easier to show family.",
-    "/assets/homepage/features/feature-cards.svg"
+    `${finalHomepageAsset}/04_homepage/features/feature-recognition-cards.webp`
   ]
 ] as const;
 
@@ -121,31 +123,31 @@ const steps = [
     "1",
     "Tell Us",
     "Share who the collection is for and what your family wants remembered.",
-    "/assets/homepage/steps/step-01.svg"
+    `${finalHomepageAsset}/05_homepage/steps/step-01-tell-us.webp`
   ],
   [
     "2",
     "We Create",
     "We shape values, culture, symbols, and story into a private collection.",
-    "/assets/homepage/steps/step-02.svg"
+    `${finalHomepageAsset}/05_homepage/steps/step-02-we-create.webp`
   ],
   [
     "3",
     "Review",
     "See the direction before the collection becomes final.",
-    "/assets/homepage/steps/step-03.svg"
+    `${finalHomepageAsset}/05_homepage/steps/step-03-review.webp`
   ],
   [
     "4",
     "Finalize",
     "The symbolic artwork and written artifacts are prepared for keeping.",
-    "/assets/homepage/steps/step-04.svg"
+    `${finalHomepageAsset}/05_homepage/steps/step-04-finalize.webp`
   ],
   [
     "5",
     "Receive",
     "Your collection is delivered through a private vault.",
-    "/assets/homepage/steps/step-05.svg"
+    `${finalHomepageAsset}/05_homepage/steps/step-05-receive.webp`
   ]
 ] as const;
 
@@ -153,33 +155,44 @@ const generationCards = [
   [
     "Crafted with meaning",
     "Every artifact should explain why it belongs, not simply look decorative.",
-    "/assets/homepage/generations/gen-crafted.svg"
+    `${finalHomepageAsset}/06_homepage/generations/generations-crafted-with-meaning.webp`
   ],
   [
     "A legacy that lives on",
     "Made for parents, children, and grandchildren to revisit over time.",
-    "/assets/homepage/generations/gen-legacy-family.svg"
+    `${finalHomepageAsset}/06_homepage/generations/generations-a-legacy-that-lives-on.webp`
   ],
   [
     "Our story",
     "A collection that gives the family language for what it has carried.",
-    "/assets/homepage/generations/gen-our-story.svg"
+    `${finalHomepageAsset}/06_homepage/generations/generations-our-story.webp`
   ],
   [
     "A collection that lasts",
     "Private, gift-ready, and designed to feel worth preserving.",
-    "/assets/homepage/generations/gen-collection.svg"
+    `${finalHomepageAsset}/06_homepage/generations/generations-a-collection-that-lasts.webp`
   ]
 ] as const;
 
 function HomeAsset({
+  className,
   src,
   size = 96
 }: Readonly<{
+  className?: string;
   src: string;
   size?: number;
 }>) {
-  return <Image src={src} width={size} height={size} alt="" aria-hidden="true" />;
+  return (
+    <Image
+      className={className}
+      src={src}
+      width={size}
+      height={size}
+      alt=""
+      aria-hidden="true"
+    />
+  );
 }
 
 export default function HomePage() {
@@ -211,21 +224,26 @@ export default function HomePage() {
 
           <div className="home-artifact-board" aria-label="Legacy collection preview">
             <div className="home-board-header">
-              <HomeAsset src="/assets/homepage/brand/logo-mark.svg" size={96} />
+              <HomeAsset src={`${finalHomepageAsset}/01_brand/logo-mark.webp`} size={96} />
               <div>
                 <strong>Family Legacy Collection</strong>
                 <span>Private vault preview</span>
               </div>
             </div>
+            <div className="home-hero-main-visual">
+              <Image
+                src={`${finalHomepageAsset}/02_homepage/hero/hero-main-crest.webp`}
+                width={900}
+                height={620}
+                alt=""
+                aria-hidden="true"
+                priority
+              />
+            </div>
             <div className="home-artifact-grid">
-              {heroArtifacts.map(([title, description, icon], index) => (
-                <article
-                  className={
-                    index === 0 ? "home-artifact-tile home-featured-tile" : "home-artifact-tile"
-                  }
-                  key={title}
-                >
-                  <HomeAsset src={icon} size={160} />
+              {heroArtifacts.map(([title, description, icon]) => (
+                <article className="home-artifact-tile" key={title}>
+                  <HomeAsset className="home-card-visual" src={icon} size={220} />
                   <div>
                     <h2>{title}</h2>
                     <p>{description}</p>
@@ -250,7 +268,7 @@ export default function HomePage() {
           <div className="home-card-grid home-occasion-grid">
             {occasions.map(([title, description, icon]) => (
               <article className="home-card home-occasion-card" key={title}>
-                <HomeAsset src={icon} size={80} />
+                <HomeAsset className="home-card-visual" src={icon} size={220} />
                 <h3>{title}</h3>
                 <p>{description}</p>
               </article>
@@ -272,7 +290,7 @@ export default function HomePage() {
           <div className="home-card-grid">
             {receives.map(([title, description, icon]) => (
               <article className="home-card home-receive-card" key={title}>
-                <HomeAsset src={icon} size={120} />
+                <HomeAsset className="home-card-visual" src={icon} size={260} />
                 <h3>{title}</h3>
                 <p>{description}</p>
               </article>
@@ -291,7 +309,7 @@ export default function HomePage() {
             {steps.map(([number, title, description, icon]) => (
               <article className="home-step" key={title}>
                 <span>{number}</span>
-                <HomeAsset src={icon} size={96} />
+                <HomeAsset className="home-card-visual" src={icon} size={220} />
                 <h3>{title}</h3>
                 <p>{description}</p>
               </article>
@@ -313,7 +331,7 @@ export default function HomePage() {
           <div className="home-generation-stack">
             {generationCards.map(([title, description, icon]) => (
               <article className="home-generation-card" key={title}>
-                <HomeAsset src={icon} size={120} />
+                <HomeAsset className="home-card-visual" src={icon} size={260} />
                 <div>
                   <h3>{title}</h3>
                   <p>{description}</p>
@@ -327,7 +345,11 @@ export default function HomePage() {
       <section className="home-section">
         <div className="home-shell home-trust-grid">
           <article className="home-trust-block">
-            <HomeAsset src="/assets/homepage/trust/trust-symbolic.svg" size={140} />
+            <HomeAsset
+              className="home-card-visual"
+              src={`${finalHomepageAsset}/07_homepage/trust/trust-symbolic-by-design.webp`}
+              size={300}
+            />
             <p className="home-eyebrow">Trust and clarity</p>
             <h2>Symbolic by design, private by default.</h2>
             <p>
@@ -336,7 +358,11 @@ export default function HomePage() {
             </p>
           </article>
           <article className="home-trust-block">
-            <HomeAsset src="/assets/homepage/trust/trust-privacy.svg" size={140} />
+            <HomeAsset
+              className="home-card-visual"
+              src={`${finalHomepageAsset}/07_homepage/trust/trust-privacy-promise.webp`}
+              size={300}
+            />
             <p className="home-eyebrow">Privacy promise</p>
             <h2>Your family story belongs to your family.</h2>
             <p>
