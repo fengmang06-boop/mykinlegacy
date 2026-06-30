@@ -14,6 +14,7 @@ coverage/
 .local-storage-production/
 deployment/.current_revision
 deployment/.previous_revision
+deployment/.failed_revision
 deployment/.previous_revision.tmp
 production-bootstrap/.current_revision
 production-bootstrap/.previous_revision

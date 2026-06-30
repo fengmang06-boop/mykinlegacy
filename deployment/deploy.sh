@@ -85,12 +85,12 @@ fi
 echo "Building and starting application services..."
 compose up -d --no-build --force-recreate api worker web nginx
 
+echo "Running health check..."
+bash "$SCRIPT_DIR/health-check.sh"
+
 if [ -d "$PROJECT_ROOT/.git" ]; then
   git -C "$PROJECT_ROOT" rev-parse HEAD > "$SCRIPT_DIR/.current_revision" || true
 fi
-
-echo "Running health check..."
-bash "$SCRIPT_DIR/health-check.sh"
 
 echo "PASS deployment complete"
 echo "Open: https://${DOMAIN}"
