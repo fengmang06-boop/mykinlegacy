@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 400" role="img" aria-label="Privacy promise">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E4C878"/><stop offset="0.55" stop-color="#C8A55A"/><stop offset="1" stop-color="#8F6B2E"/>
+    </linearGradient>
+    <filter id="s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000" flood-opacity=".35"/></filter>
+  </defs>
+  <rect width="1200" height="400" rx="42" fill="#151412"/>
+  <rect x="18" y="18" width="1164" height="364" rx="30" fill="none" stroke="url(#g)" stroke-width="4" opacity=".65"/>
+  <g fill="none" stroke="url(#g)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" filter="url(#s)">
+    <rect x="180" y="190" width="152" height="120" rx="14"/><path d="M212 190v-44c0-30 20-56 44-56s44 26 44 56v44"/><path d="M256 238v38"/>
+  </g>
+</svg>

@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 600" role="img" aria-label="Tell Us">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#E4C878"/><stop offset="0.55" stop-color="#C8A55A"/><stop offset="1" stop-color="#8F6B2E"/>
+    </linearGradient>
+    <filter id="s" x="-30%" y="-30%" width="160%" height="160%"><feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#000" flood-opacity=".35"/></filter>
+  </defs>
+  <rect width="600" height="600" rx="42" fill="#151412"/>
+  <rect x="18" y="18" width="564" height="564" rx="30" fill="none" stroke="url(#g)" stroke-width="4" opacity=".65"/>
+  <g fill="none" stroke="url(#g)" stroke-width="18" stroke-linecap="round" stroke-linejoin="round" filter="url(#s)">
+    <circle cx="256" cy="170" r="70"/><path d="M256 130v80"/><path d="M216 170h80"/><path d="M140 314h232M170 364h172"/><text x="256" y="190" text-anchor="middle" fill="#C8A55A" stroke="none" font-size="90" font-family="Georgia">1</text>
+  </g>
+</svg>

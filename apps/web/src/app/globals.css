@@ -75,43 +75,32 @@ select {
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  width: 214px;
+  min-height: 60px;
   color: #f6ebd4;
-  font-family: "Playfair Display", "Libre Baskerville", "Cormorant Garamond", Georgia, serif;
-  font-size: 20px;
-  font-weight: 700;
-  letter-spacing: 0;
   text-decoration: none;
 }
 
-.brand-copy,
-.brand-copy span,
-.brand small {
+.brand-logo-full,
+.brand-logo-mark {
   display: block;
+  height: auto;
+  max-width: 100%;
 }
 
-.brand-copy {
-  line-height: 1.05;
+.brand-logo-mark {
+  display: none;
 }
 
-.brand small {
-  color: #c9a24a;
-  font-family: Inter, Manrope, Arial, Helvetica, sans-serif;
-  font-size: 11px;
-  font-weight: 650;
-  letter-spacing: 0;
-}
-
-.brand::before {
-  content: "";
-  width: 34px;
-  height: 34px;
-  border: 1px solid rgba(201, 162, 74, 0.72);
-  border-radius: 50%;
-  background:
-    radial-gradient(circle at 50% 45%, rgba(201, 162, 74, 0.32), transparent 44%),
-    linear-gradient(135deg, transparent 48%, rgba(201, 162, 74, 0.72) 49% 51%, transparent 52%),
-    #15120d;
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .nav-links {
@@ -1059,6 +1048,21 @@ textarea {
   line-height: 1.6;
 }
 
+.footer-brand-row {
+  margin-bottom: 16px;
+}
+
+.footer-brand-row img {
+  display: block;
+  height: auto;
+  max-width: min(192px, 100%);
+}
+
+.footer-inner p {
+  max-width: 760px;
+  margin: 0;
+}
+
 .footer-links {
   display: flex;
   flex-wrap: wrap;
@@ -1085,11 +1089,32 @@ textarea {
   --home-line: rgba(201, 162, 74, 0.28);
   min-height: 100vh;
   overflow: hidden;
+  position: relative;
   background:
     radial-gradient(circle at 18% 0%, rgba(201, 162, 74, 0.16), transparent 28rem),
     radial-gradient(circle at 92% 18%, rgba(246, 235, 212, 0.08), transparent 22rem),
     linear-gradient(180deg, #0a0908 0%, #11100d 48%, #0a0908 100%);
   color: var(--home-ivory);
+}
+
+.home-premium::after,
+.premium-page::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image: url("/assets/homepage/brand/pattern-bg.svg");
+  background-size: 560px 560px;
+  background-position: center top;
+  mix-blend-mode: screen;
+  opacity: 0.12;
+}
+
+.home-premium > *,
+.premium-page > * {
+  position: relative;
+  z-index: 1;
 }
 
 .home-shell {
@@ -1594,6 +1619,7 @@ textarea {
   --premium-line: rgba(201, 162, 74, 0.28);
   min-height: 100vh;
   overflow: hidden;
+  position: relative;
   background:
     radial-gradient(circle at 12% 0%, rgba(201, 162, 74, 0.14), transparent 28rem),
     radial-gradient(circle at 92% 18%, rgba(246, 235, 212, 0.07), transparent 22rem),
@@ -2107,16 +2133,18 @@ textarea {
 
 @media (max-width: 640px) {
   .brand {
-    gap: 9px;
+    width: 42px;
+    min-height: 42px;
   }
 
-  .brand::before {
-    width: 30px;
-    height: 30px;
+  .brand-logo-full {
+    display: none;
   }
 
-  .brand small {
-    font-size: 10px;
+  .brand-logo-mark {
+    display: block;
+    width: 42px;
+    height: 42px;
   }
 
   .home-shell {

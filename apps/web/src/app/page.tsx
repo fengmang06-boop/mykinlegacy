@@ -16,27 +16,27 @@ const heroArtifacts = [
   [
     "House Identity",
     "A private interpretation of what your family stands for.",
-    "/assets/homepage/hero/house-identity.svg"
+    "/assets/homepage/hero/icon-house-identity.svg"
   ],
   [
     "Heritage Certificate",
     "A ceremonial piece for gifting, printing, and keeping.",
-    "/assets/homepage/hero/heritage-certificate.svg"
+    "/assets/homepage/hero/icon-certificate.svg"
   ],
   [
     "Family Story",
     "A written reflection shaped around values, memory, and belonging.",
-    "/assets/homepage/hero/family-story.svg"
+    "/assets/homepage/hero/icon-story.svg"
   ],
   [
     "Symbol Guide",
     "A guide to the colors, animals, and symbols chosen for the collection.",
-    "/assets/homepage/hero/symbol-guide.svg"
+    "/assets/homepage/hero/icon-symbol-guide.svg"
   ],
   [
     "Private Collection Vault",
     "A secure private space to receive and preserve the collection.",
-    "/assets/homepage/hero/private-vault.svg"
+    "/assets/homepage/hero/icon-vault.svg"
   ]
 ] as const;
 
@@ -44,42 +44,42 @@ const occasions = [
   [
     "Father's Day",
     "For the father who never asks for much.",
-    "/assets/homepage/occasions/fathers-day.svg"
+    "/assets/homepage/occasions/gift-fathers-day.svg"
   ],
   [
     "Birthday",
     "For a gift that says more than another object.",
-    "/assets/homepage/occasions/birthday.svg"
+    "/assets/homepage/occasions/gift-birthday.svg"
   ],
   [
     "Anniversary",
     "For honoring the family two people built together.",
-    "/assets/homepage/occasions/anniversary.svg"
+    "/assets/homepage/occasions/gift-anniversary.svg"
   ],
   [
     "Christmas",
     "For the family moment everyone remembers.",
-    "/assets/homepage/occasions/christmas.svg"
+    "/assets/homepage/occasions/gift-christmas.svg"
   ],
   [
     "Retirement",
     "For a life of work, care, and quiet legacy.",
-    "/assets/homepage/occasions/retirement.svg"
+    "/assets/homepage/occasions/gift-retirement.svg"
   ],
   [
     "Thanksgiving",
     "For gathering around the story that holds everyone.",
-    "/assets/homepage/occasions/thanksgiving.svg"
+    "/assets/homepage/occasions/gift-thanksgiving.svg"
   ],
   [
     "New Baby",
     "For welcoming a child into a living family story.",
-    "/assets/homepage/occasions/new-baby.svg"
+    "/assets/homepage/occasions/gift-new-baby.svg"
   ],
   [
     "Graduation",
     "For sending someone forward with roots.",
-    "/assets/homepage/occasions/graduation.svg"
+    "/assets/homepage/occasions/gift-graduation.svg"
   ]
 ] as const;
 
@@ -87,32 +87,32 @@ const receives = [
   [
     "House Identity",
     "The emotional center of the collection: values, story, tone, and symbolic direction.",
-    "/assets/homepage/features/house-identity.svg"
+    "/assets/homepage/features/feature-identity.svg"
   ],
   [
     "Heritage Certificate",
     "A premium ceremonial artifact designed for personal keeping and gifting.",
-    "/assets/homepage/features/heritage-certificate.svg"
+    "/assets/homepage/features/feature-certificate.svg"
   ],
   [
     "Family Story",
     "A warm narrative that helps parents feel recognized instead of merely represented.",
-    "/assets/homepage/features/family-story.svg"
+    "/assets/homepage/features/feature-story.svg"
   ],
   [
     "Symbol Guide",
     "A clear explanation of why each symbol belongs in the collection.",
-    "/assets/homepage/features/symbol-guide.svg"
+    "/assets/homepage/features/feature-symbols.svg"
   ],
   [
     "Private Collection Vault",
     "A protected delivery space for receiving and preserving the finished collection.",
-    "/assets/homepage/features/private-vault.svg"
+    "/assets/homepage/features/feature-vault.svg"
   ],
   [
     "Recognition Cards",
     "Small shareable moments that make the collection easier to show family.",
-    "/assets/homepage/features/recognition-cards.svg"
+    "/assets/homepage/features/feature-cards.svg"
   ]
 ] as const;
 
@@ -121,31 +121,31 @@ const steps = [
     "1",
     "Tell Us",
     "Share who the collection is for and what your family wants remembered.",
-    "/assets/homepage/steps/tell-us.svg"
+    "/assets/homepage/steps/step-01.svg"
   ],
   [
     "2",
     "We Create",
     "We shape values, culture, symbols, and story into a private collection.",
-    "/assets/homepage/steps/we-create.svg"
+    "/assets/homepage/steps/step-02.svg"
   ],
   [
     "3",
     "Review",
     "See the direction before the collection becomes final.",
-    "/assets/homepage/steps/review.svg"
+    "/assets/homepage/steps/step-03.svg"
   ],
   [
     "4",
     "Finalize",
     "The symbolic artwork and written artifacts are prepared for keeping.",
-    "/assets/homepage/steps/finalize.svg"
+    "/assets/homepage/steps/step-04.svg"
   ],
   [
     "5",
     "Receive",
     "Your collection is delivered through a private vault.",
-    "/assets/homepage/steps/receive.svg"
+    "/assets/homepage/steps/step-05.svg"
   ]
 ] as const;
 
@@ -153,22 +153,22 @@ const generationCards = [
   [
     "Crafted with meaning",
     "Every artifact should explain why it belongs, not simply look decorative.",
-    "/assets/homepage/generations/crafted.svg"
+    "/assets/homepage/generations/gen-crafted.svg"
   ],
   [
     "A legacy that lives on",
     "Made for parents, children, and grandchildren to revisit over time.",
-    "/assets/homepage/generations/legacy.svg"
+    "/assets/homepage/generations/gen-legacy-family.svg"
   ],
   [
     "Our story",
     "A collection that gives the family language for what it has carried.",
-    "/assets/homepage/generations/story.svg"
+    "/assets/homepage/generations/gen-our-story.svg"
   ],
   [
     "A collection that lasts",
     "Private, gift-ready, and designed to feel worth preserving.",
-    "/assets/homepage/generations/lasts.svg"
+    "/assets/homepage/generations/gen-collection.svg"
   ]
 ] as const;
 
@@ -211,7 +211,7 @@ export default function HomePage() {
 
           <div className="home-artifact-board" aria-label="Legacy collection preview">
             <div className="home-board-header">
-              <HomeAsset src="/assets/homepage/brand/monogram.svg" size={96} />
+              <HomeAsset src="/assets/homepage/brand/logo-mark.svg" size={96} />
               <div>
                 <strong>Family Legacy Collection</strong>
                 <span>Private vault preview</span>
@@ -327,7 +327,7 @@ export default function HomePage() {
       <section className="home-section">
         <div className="home-shell home-trust-grid">
           <article className="home-trust-block">
-            <HomeAsset src="/assets/homepage/trust/symbolic-private.svg" size={140} />
+            <HomeAsset src="/assets/homepage/trust/trust-symbolic.svg" size={140} />
             <p className="home-eyebrow">Trust and clarity</p>
             <h2>Symbolic by design, private by default.</h2>
             <p>
@@ -336,7 +336,7 @@ export default function HomePage() {
             </p>
           </article>
           <article className="home-trust-block">
-            <HomeAsset src="/assets/homepage/trust/privacy-promise.svg" size={140} />
+            <HomeAsset src="/assets/homepage/trust/trust-privacy.svg" size={140} />
             <p className="home-eyebrow">Privacy promise</p>
             <h2>Your family story belongs to your family.</h2>
             <p>

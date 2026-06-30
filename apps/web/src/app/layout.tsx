@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import type { ReactNode } from "react";
 import Link from "next/link";
 
@@ -12,6 +13,11 @@ export const metadata: Metadata = {
   description:
     "Meaningful private family keepsakes for parents, grandparents, and families who deserve more than another ordinary gift.",
   alternates: { canonical: SITE_URL },
+  icons: {
+    icon: "/assets/homepage/brand/favicon.svg",
+    shortcut: "/assets/homepage/brand/favicon.svg",
+    apple: "/assets/homepage/brand/logo-mark.svg"
+  },
   openGraph: {
     title: BRAND_NAME,
     description:
@@ -47,10 +53,25 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <header className="site-header">
           <nav className="nav" aria-label="Primary navigation">
             <Link className="brand" href="/">
-              <span className="brand-copy">
-                <span>MyKinLegacy</span>
-                <small>Legacy, Designed.</small>
-              </span>
+              <Image
+                className="brand-logo-full"
+                src="/assets/homepage/brand/logo-horizontal.svg"
+                width={214}
+                height={60}
+                alt=""
+                aria-hidden="true"
+                priority
+              />
+              <Image
+                className="brand-logo-mark"
+                src="/assets/homepage/brand/logo-mark.svg"
+                width={42}
+                height={42}
+                alt=""
+                aria-hidden="true"
+                priority
+              />
+              <span className="sr-only">MyKinLegacy - Legacy, Designed.</span>
             </Link>
             <div className="nav-links">
               <Link href="/family-legacy-collection">Collection</Link>
@@ -66,8 +87,18 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         {children}
         <footer className="site-footer">
           <div className="footer-inner">
-            Private by default. Personalized heritage-inspired symbolic keepsakes for gifting and
-            personal keeping; not official arms or genealogy claims.
+            <div className="footer-brand-row">
+              <Image
+                src="/assets/homepage/brand/logo-horizontal.svg"
+                width={192}
+                height={48}
+                alt="MyKinLegacy - Legacy, Designed."
+              />
+            </div>
+            <p>
+              Private by default. Personalized heritage-inspired symbolic keepsakes for gifting and
+              personal keeping; not official arms or genealogy claims.
+            </p>
             <div className="footer-links">
               <Link href="/privacy">Privacy</Link>
               <Link href="/terms">Terms</Link>

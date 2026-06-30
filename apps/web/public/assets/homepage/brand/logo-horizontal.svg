@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 360" role="img" aria-label="MyKinLegacy horizontal logo">
+  <defs><linearGradient id="gold" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#E4C878"/><stop offset=".5" stop-color="#C8A55A"/><stop offset="1" stop-color="#8B672D"/></linearGradient></defs>
+  <rect width="1280" height="360" fill="none"/>
+  <g transform="translate(60 42) scale(.55)">
+    <path d="M154 72h204c24 0 44 20 44 44v184c0 79-63 121-146 162C173 421 110 379 110 300V116c0-24 20-44 44-44z" fill="none" stroke="url(#gold)" stroke-width="22" stroke-linejoin="round"/>
+    <path d="M148 100c31 8 59 26 83 54l25 30 25-30c24-28 52-46 83-54" fill="none" stroke="url(#gold)" stroke-width="16" stroke-linecap="round"/>
+    <path d="M166 352V164h42l49 99 49-99h42v188" fill="none" stroke="url(#gold)" stroke-width="24" stroke-linejoin="round"/>
+    <path d="M214 352V224l42 72 42-72v128" fill="none" stroke="url(#gold)" stroke-width="18" stroke-linejoin="round"/>
+    <path d="M350 310c-34 17-69 23-104 18" fill="none" stroke="url(#gold)" stroke-width="16" stroke-linecap="round"/>
+    <path d="M256 42l12 26 26 12-26 12-12 26-12-26-26-12 26-12 12-26z" fill="url(#gold)"/>
+  </g>
+  <text x="350" y="150" fill="#F4EAD7" font-size="92" font-family="Georgia, 'Times New Roman', serif" letter-spacing="1">MyKinLegacy</text>
+  <line x1="360" y1="215" x2="455" y2="215" stroke="url(#gold)" stroke-width="5"/>
+  <text x="490" y="232" fill="#C8A55A" font-size="33" font-family="Arial, sans-serif" letter-spacing="15">LEGACY, DESIGNED.</text>
+  <line x1="925" y1="215" x2="1020" y2="215" stroke="url(#gold)" stroke-width="5"/>
+</svg>
