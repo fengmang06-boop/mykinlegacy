@@ -1,0 +1,267 @@
+name: Authenticated Admin Visual Review
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - ".github/workflows/admin-visual-review-production.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mykinlegacy-admin-visual-review
+  cancel-in-progress: false
+
+jobs:
+  capture:
+    name: Capture authenticated admin review
+    runs-on: ubuntu-latest
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Enable pnpm
+        shell: bash
+        run: corepack enable
+
+      - name: Validate production secrets
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          : "${PROD_PROJECT_DIR:?Missing PROD_PROJECT_DIR}"
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64
+          import os
+          import sys
+          from pathlib import Path
+
+          raw_key = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw_key.replace("\\r", "").replace("\r", "")
+          key = key.replace("\\n", "\n")
+
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw_key).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "")
+                  decoded = decoded.replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+
+          valid_headers = (
+              "-----BEGIN OPENSSH PRIVATE KEY-----",
+              "-----BEGIN RSA PRIVATE KEY-----",
+              "-----BEGIN EC PRIVATE KEY-----",
+          )
+          if not any(header in key for header in valid_headers):
+              print("PROD_SSH_PRIVATE_KEY is not a valid private key.", file=sys.stderr)
+              sys.exit(1)
+
+          if not key.endswith("\n"):
+              key += "\n"
+
+          Path.home().joinpath(".ssh", "mykinlegacy_prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keygen -y -f ~/.ssh/mykinlegacy_prod > /dev/null
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Read admin token from production environment
+        shell: bash
+        run: |
+          set -euo pipefail
+          ADMIN_TOKEN="$(
+            ssh -i ~/.ssh/mykinlegacy_prod \
+              -o BatchMode=yes \
+              -o IdentitiesOnly=yes \
+              -o StrictHostKeyChecking=yes \
+              -p "$PROD_SSH_PORT" \
+              "$PROD_SSH_USER@$PROD_SSH_HOST" \
+              'bash -s' -- "$PROD_PROJECT_DIR" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          PROJECT_DIR="$1"
+          cd "$PROJECT_DIR"
+          if [ ! -f deployment/.env.production ]; then
+            exit 2
+          fi
+          python3 - <<'PY'
+          from pathlib import Path
+          for line in Path("deployment/.env.production").read_text().splitlines():
+              if line.startswith("ADMIN_ACCESS_TOKEN="):
+                  print(line.split("=", 1)[1].strip().strip('"').strip("'"))
+                  break
+          PY
+          REMOTE_SCRIPT
+          )"
+          if [ -z "$ADMIN_TOKEN" ]; then
+            echo "ADMIN_ACCESS_TOKEN was not found in production environment." >&2
+            exit 1
+          fi
+          echo "::add-mask::$ADMIN_TOKEN"
+          echo "ADMIN_ACCESS_TOKEN=$ADMIN_TOKEN" >> "$GITHUB_ENV"
+          echo "ADMIN_ACCESS_TOKEN=SET"
+
+      - name: Install dependencies
+        shell: bash
+        run: corepack pnpm install --frozen-lockfile
+
+      - name: Install Chromium
+        shell: bash
+        run: corepack pnpm exec playwright install chromium --with-deps
+
+      - name: Confirm admin routes authenticate
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import { chromium } from "playwright";
+
+          const token = process.env.ADMIN_ACCESS_TOKEN;
+          if (!token) {
+            throw new Error("ADMIN_ACCESS_TOKEN missing from workflow environment.");
+          }
+
+          const routes = [
+            "/admin/orders",
+            "/admin/email-logs",
+            "/admin/download-tokens"
+          ];
+
+          const browser = await chromium.launch({ headless: true });
+          const page = await browser.newPage();
+
+          try {
+            for (const route of routes) {
+              const url = `https://mykinlegacy.com${route}?token=${encodeURIComponent(token)}`;
+              await page.goto(url, { waitUntil: "networkidle", timeout: 60000 });
+              const bodyText = await page.locator("body").innerText({ timeout: 10000 });
+              if (/Admin debug access is locked|provided admin token did not match|ADMIN_ACCESS_TOKEN is not configured/i.test(bodyText)) {
+                throw new Error(`${route} did not authenticate.`);
+              }
+              if (/https:\/\/mykinlegacy\.com\/download\/[A-Za-z0-9_-]{20,}/.test(bodyText)) {
+                throw new Error(`${route} appears to expose a raw vault URL.`);
+              }
+              console.log(`${route} AUTH_OK`);
+            }
+          } finally {
+            await browser.close();
+          }
+          NODE
+
+      - name: Capture full-site review with authenticated admin pages
+        shell: bash
+        run: |
+          corepack pnpm visual:review -- \
+            --full-site \
+            --base-url=https://mykinlegacy.com \
+            --output-dir=apps/web/public/review/full-site \
+            --latest-order=AHL-20260701-01KWEJEY \
+            --founder-order=AHL-20260701-01KWECW4
+
+      - name: Validate review safety
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs = require("fs");
+          const path = require("path");
+
+          const outputDir = "apps/web/public/review/full-site";
+          const token = process.env.ADMIN_ACCESS_TOKEN;
+          const html = fs.readFileSync(path.join(outputDir, "index.html"), "utf8");
+          const reportText = fs.readFileSync(path.join(outputDir, "report.json"), "utf8");
+          const report = JSON.parse(reportText);
+          const combined = `${html}\n${reportText}`;
+
+          if (token && combined.includes(token)) {
+            throw new Error("Raw admin token leaked into visual review output.");
+          }
+          if (/(token=)(?!\[redacted\])[^"'\s&<>]+/i.test(combined)) {
+            throw new Error("Unredacted admin token query string found in visual review output.");
+          }
+          if (/https:\/\/mykinlegacy\.com\/download\/[A-Za-z0-9_-]{20,}/.test(combined)) {
+            throw new Error("Raw vault URL appears in visual review output.");
+          }
+
+          const required = [
+            "admin-orders-desktop.png",
+            "admin-orders-tablet.png",
+            "admin-orders-mobile.png",
+            "admin-email-logs-desktop.png",
+            "admin-email-logs-tablet.png",
+            "admin-email-logs-mobile.png",
+            "admin-download-tokens-desktop.png",
+            "admin-download-tokens-tablet.png",
+            "admin-download-tokens-mobile.png"
+          ];
+          const missing = required.filter((file) => !fs.existsSync(path.join(outputDir, file)));
+          if (missing.length > 0) {
+            throw new Error(`Missing admin screenshots: ${missing.join(", ")}`);
+          }
+
+          const adminScreenshots = report.screenshots.filter((shot) => shot.pageKey.startsWith("admin-"));
+          const lockedWarnings = adminScreenshots.flatMap((shot) => shot.warnings).filter((warning) => /locked|ADMIN_ACCESS_TOKEN was not available/i.test(warning));
+          if (lockedWarnings.length > 0) {
+            throw new Error("Admin screenshots still contain locked-state warnings.");
+          }
+
+          console.log(`ADMIN_VISUAL_REVIEW_SAFE screenshots=${adminScreenshots.length}`);
+          NODE
+
+      - name: Commit visual review output
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add apps/web/public/review/full-site
+          if git diff --cached --quiet; then
+            echo "No visual review changes to commit."
+          else
+            git commit -m "Regenerate authenticated admin visual review"
+            git push origin main
+          fi
+
+      - name: Deploy updated review output
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'bash -s' -- "$PROD_PROJECT_DIR" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          PROJECT_DIR="$1"
+          cd "$PROJECT_DIR"
+          git fetch origin main
+          git checkout main
+          git pull --ff-only origin main
+          bash deployment/deploy.sh
+          bash deployment/status.sh
+          REMOTE_SCRIPT
