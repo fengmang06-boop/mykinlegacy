@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://mykinlegacy.com",
-  "commit": "8967c5b65a71193fab21e02c5adfccf0beb230ba",
-  "capturedAt": "2026-07-01T16:42:29.354Z",
+  "commit": "1ec05b1df0f82f61d2850724302074badc9e5915",
+  "capturedAt": "2026-07-01T16:51:30.008Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
     "Admin pages were captured with a redacted token in the URL."
@@ -168,12 +168,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 5090
+            "height": 5042
           },
-          "scrollHeight": 2545,
+          "scrollHeight": 2521,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1630277,
+          "fileSize": 1622334,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -432,12 +432,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 6254
+            "height": 5958
           },
-          "scrollHeight": 3127,
+          "scrollHeight": 2979,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1150254,
+          "fileSize": 1090671,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -525,7 +525,7 @@
           "scrollHeight": 1572,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 638637,
+          "fileSize": 636350,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -608,12 +608,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 4526
+            "height": 4346
           },
-          "scrollHeight": 2263,
+          "scrollHeight": 2173,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1112255,
+          "fileSize": 1054835,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -1142,12 +1142,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 5090
+        "height": 5042
       },
-      "scrollHeight": 2545,
+      "scrollHeight": 2521,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1630277,
+      "fileSize": 1622334,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1382,12 +1382,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 6254
+        "height": 5958
       },
-      "scrollHeight": 3127,
+      "scrollHeight": 2979,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1150254,
+      "fileSize": 1090671,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1467,7 +1467,7 @@
       "scrollHeight": 1572,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 638637,
+      "fileSize": 636350,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1542,12 +1542,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 4526
+        "height": 4346
       },
-      "scrollHeight": 2263,
+      "scrollHeight": 2173,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1112255,
+      "fileSize": 1054835,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
