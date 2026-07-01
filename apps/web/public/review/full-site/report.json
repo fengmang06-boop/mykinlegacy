@@ -1,10 +1,10 @@
 {
   "baseUrl": "https://mykinlegacy.com",
-  "commit": "8dae037eb3a11606f1b792c90f7e9c21128e9b46",
-  "capturedAt": "2026-07-01T13:59:38.404Z",
+  "commit": "96ff73873d5c2f3e43bc1b7f914b5a0cd130acb7",
+  "capturedAt": "2026-07-01T14:52:07.312Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
-    "ADMIN_ACCESS_TOKEN was not available locally; admin pages were captured in locked state."
+    "Admin pages were captured with a redacted token in the URL."
   ],
   "pages": [
     {
@@ -722,21 +722,30 @@
             "height": 1200
           },
           "screenshot": "admin-orders-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1521
+            "height": 1200
           },
-          "scrollHeight": 1521,
+          "scrollHeight": 1200,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 429351,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 93615,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -750,21 +759,30 @@
             "height": 1200
           },
           "screenshot": "admin-orders-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 1521
+            "height": 1200
           },
-          "scrollHeight": 1521,
+          "scrollHeight": 1200,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 340103,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 84821,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -780,21 +798,30 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "admin-orders-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 3144
+            "height": 2482
           },
-          "scrollHeight": 1572,
+          "scrollHeight": 1241,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 674331,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 196488,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         }
       ]
@@ -818,21 +845,30 @@
             "height": 1200
           },
           "screenshot": "admin-email-logs-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1521
+            "height": 1200
           },
-          "scrollHeight": 1521,
+          "scrollHeight": 1200,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 429016,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 93757,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -846,21 +882,30 @@
             "height": 1200
           },
           "screenshot": "admin-email-logs-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 1521
+            "height": 1200
           },
-          "scrollHeight": 1521,
+          "scrollHeight": 1200,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 340057,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 85388,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -876,18 +921,16 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "admin-email-logs-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 3144
+            "height": 3858
           },
-          "scrollHeight": 1572,
+          "scrollHeight": 1929,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 673659,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 676441,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -914,7 +957,7 @@
             "height": 1200
           },
           "screenshot": "admin-download-tokens-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-desktop.png",
           "dimensions": {
             "width": 1440,
             "height": 1521
@@ -922,10 +965,8 @@
           "scrollHeight": 1521,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 429183,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 402221,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -942,7 +983,7 @@
             "height": 1200
           },
           "screenshot": "admin-download-tokens-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-tablet.png",
           "dimensions": {
             "width": 768,
             "height": 1521
@@ -950,10 +991,8 @@
           "scrollHeight": 1521,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 339997,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 320452,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -972,7 +1011,7 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "admin-download-tokens-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-mobile.png",
           "dimensions": {
             "width": 780,
             "height": 3144
@@ -980,10 +1019,8 @@
           "scrollHeight": 1572,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 673607,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 611608,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -1644,21 +1681,30 @@
         "height": 1200
       },
       "screenshot": "admin-orders-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1521
+        "height": 1200
       },
-      "scrollHeight": 1521,
+      "scrollHeight": 1200,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 429351,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 93615,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1672,21 +1718,30 @@
         "height": 1200
       },
       "screenshot": "admin-orders-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 1521
+        "height": 1200
       },
-      "scrollHeight": 1521,
+      "scrollHeight": 1200,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 340103,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 84821,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1702,21 +1757,30 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "admin-orders-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 3144
+        "height": 2482
       },
-      "scrollHeight": 1572,
+      "scrollHeight": 1241,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 674331,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 196488,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1730,21 +1794,30 @@
         "height": 1200
       },
       "screenshot": "admin-email-logs-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1521
+        "height": 1200
       },
-      "scrollHeight": 1521,
+      "scrollHeight": 1200,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 429016,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 93757,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1758,21 +1831,30 @@
         "height": 1200
       },
       "screenshot": "admin-email-logs-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 1521
+        "height": 1200
       },
-      "scrollHeight": 1521,
+      "scrollHeight": 1200,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 340057,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 85388,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1788,18 +1870,16 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "admin-email-logs-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 3144
+        "height": 3858
       },
-      "scrollHeight": 1572,
+      "scrollHeight": 1929,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 673659,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 676441,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1816,7 +1896,7 @@
         "height": 1200
       },
       "screenshot": "admin-download-tokens-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-desktop.png",
       "dimensions": {
         "width": 1440,
         "height": 1521
@@ -1824,10 +1904,8 @@
       "scrollHeight": 1521,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 429183,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 402221,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1844,7 +1922,7 @@
         "height": 1200
       },
       "screenshot": "admin-download-tokens-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-tablet.png",
       "dimensions": {
         "width": 768,
         "height": 1521
@@ -1852,10 +1930,8 @@
       "scrollHeight": 1521,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 339997,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 320452,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1874,7 +1950,7 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "admin-download-tokens-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-mobile.png",
       "dimensions": {
         "width": 780,
         "height": 3144
@@ -1882,10 +1958,8 @@
       "scrollHeight": 1572,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 673607,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 611608,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
