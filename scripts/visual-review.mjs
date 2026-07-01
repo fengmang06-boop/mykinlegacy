@@ -581,6 +581,24 @@ function mergePages(existingPages, screenshots) {
   }));
 }
 
+function reportNotes({ adminToken, existingReport }) {
+  const includesAdminPages = activePages.some((page) => page.key.startsWith("admin-"));
+  const baseNotes = existingReport?.notes?.filter(
+    (note) => !String(note).includes("ADMIN_ACCESS_TOKEN")
+  ) ?? ["Internal visual review only. Do not link from public navigation."];
+  const notes = new Set(baseNotes);
+
+  if (includesAdminPages) {
+    notes.add(
+      adminToken
+        ? "Admin pages were captured with a redacted token in the URL."
+        : "ADMIN_ACCESS_TOKEN was not available locally; admin pages were captured in locked state."
+    );
+  }
+
+  return [...notes];
+}
+
 function detailsList(title, items, renderer) {
   if (items.length === 0) {
     return "";
@@ -981,12 +999,7 @@ async function main() {
     baseUrl,
     commit,
     capturedAt,
-    notes: [
-      "Internal visual review only. Do not link from public navigation.",
-      adminToken
-        ? "Admin pages were captured with a redacted token in the URL."
-        : "ADMIN_ACCESS_TOKEN was not available locally; admin pages were captured in locked state."
-    ],
+    notes: reportNotes({ adminToken, existingReport }),
     pages: reportPages,
     screenshots: reportScreenshots
   };

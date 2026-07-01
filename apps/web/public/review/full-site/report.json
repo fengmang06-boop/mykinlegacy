@@ -1,10 +1,9 @@
 {
   "baseUrl": "https://mykinlegacy.com",
-  "commit": "7db1139df2ae0d14d8cd18f08421102ff0f832c1",
-  "capturedAt": "2026-07-01T15:12:24.242Z",
+  "commit": "ab7a7cf2e94f1348556dfe2aa965df28e39ee593",
+  "capturedAt": "2026-07-01T16:06:21.870Z",
   "notes": [
-    "Internal visual review only. Do not link from public navigation.",
-    "Admin pages were captured with a redacted token in the URL."
+    "Internal visual review only. Do not link from public navigation."
   ],
   "pages": [
     {
@@ -119,7 +118,7 @@
           "scrollHeight": 1896,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 639471,
+          "fileSize": 729006,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -140,12 +139,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 2563
+            "height": 2551
           },
-          "scrollHeight": 2563,
+          "scrollHeight": 2551,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 781324,
+          "fileSize": 823468,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -168,12 +167,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 5114
+            "height": 5090
           },
-          "scrollHeight": 2557,
+          "scrollHeight": 2545,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1516551,
+          "fileSize": 1630277,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -228,12 +227,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 6248
+            "height": 6204
           },
-          "scrollHeight": 6248,
+          "scrollHeight": 6204,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 2148199,
+          "fileSize": 2144056,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -256,12 +255,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 12620
+            "height": 12532
           },
-          "scrollHeight": 6310,
+          "scrollHeight": 6266,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 4589834,
+          "fileSize": 4536965,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -290,12 +289,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1769
+            "height": 1770
           },
-          "scrollHeight": 1769,
+          "scrollHeight": 1770,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 608507,
+          "fileSize": 706847,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -316,12 +315,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 2586
+            "height": 2445
           },
-          "scrollHeight": 2586,
+          "scrollHeight": 2445,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 764636,
+          "fileSize": 711206,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -344,12 +343,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 5500
+            "height": 5218
           },
-          "scrollHeight": 2750,
+          "scrollHeight": 2609,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1528035,
+          "fileSize": 1478798,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -378,12 +377,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 2096
+            "height": 2152
           },
-          "scrollHeight": 2096,
+          "scrollHeight": 2152,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 593175,
+          "fileSize": 602484,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -404,12 +403,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 2715
+            "height": 2875
           },
-          "scrollHeight": 2715,
+          "scrollHeight": 2875,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 521183,
+          "fileSize": 515276,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -432,12 +431,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 6458
+            "height": 6254
           },
-          "scrollHeight": 3229,
+          "scrollHeight": 3127,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1184241,
+          "fileSize": 1150254,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -471,7 +470,7 @@
           "scrollHeight": 1521,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 511742,
+          "fileSize": 527197,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -492,12 +491,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 1546
+            "height": 1521
           },
-          "scrollHeight": 1546,
+          "scrollHeight": 1521,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 348416,
+          "fileSize": 347705,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -520,12 +519,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 3246
+            "height": 3144
           },
-          "scrollHeight": 1623,
+          "scrollHeight": 1572,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 645056,
+          "fileSize": 638637,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -559,7 +558,7 @@
           "scrollHeight": 1548,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 516729,
+          "fileSize": 526634,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -580,12 +579,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 2365
+            "height": 2183
           },
-          "scrollHeight": 2365,
+          "scrollHeight": 2183,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 539587,
+          "fileSize": 502614,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -608,12 +607,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 4890
+            "height": 4526
           },
-          "scrollHeight": 2445,
+          "scrollHeight": 2263,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1186615,
+          "fileSize": 1112255,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -647,7 +646,7 @@
           "scrollHeight": 1548,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 517368,
+          "fileSize": 527264,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -668,16 +667,33 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 2365
+            "height": 2183
           },
-          "scrollHeight": 2365,
+          "scrollHeight": 2183,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 539977,
+          "fileSize": 503132,
           "warnings": [],
           "failedImages": [],
-          "failedRequests": [],
-          "consoleErrors": [],
+          "failedRequests": [
+            {
+              "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+              "resourceType": "script",
+              "errorText": "net::ERR_SOCKET_NOT_CONNECTED"
+            }
+          ],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: net::ERR_SOCKET_NOT_CONNECTED",
+              "location": {
+                "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -696,12 +712,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 4890
+            "height": 4526
           },
-          "scrollHeight": 2445,
+          "scrollHeight": 2263,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1187571,
+          "fileSize": 1113415,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -1076,7 +1092,7 @@
       "scrollHeight": 1896,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 639471,
+      "fileSize": 729006,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1097,12 +1113,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 2563
+        "height": 2551
       },
-      "scrollHeight": 2563,
+      "scrollHeight": 2551,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 781324,
+      "fileSize": 823468,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1125,12 +1141,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 5114
+        "height": 5090
       },
-      "scrollHeight": 2557,
+      "scrollHeight": 2545,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1516551,
+      "fileSize": 1630277,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1177,12 +1193,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 6248
+        "height": 6204
       },
-      "scrollHeight": 6248,
+      "scrollHeight": 6204,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 2148199,
+      "fileSize": 2144056,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1205,12 +1221,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 12620
+        "height": 12532
       },
-      "scrollHeight": 6310,
+      "scrollHeight": 6266,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 4589834,
+      "fileSize": 4536965,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1231,12 +1247,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1769
+        "height": 1770
       },
-      "scrollHeight": 1769,
+      "scrollHeight": 1770,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 608507,
+      "fileSize": 706847,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1257,12 +1273,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 2586
+        "height": 2445
       },
-      "scrollHeight": 2586,
+      "scrollHeight": 2445,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 764636,
+      "fileSize": 711206,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1285,12 +1301,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 5500
+        "height": 5218
       },
-      "scrollHeight": 2750,
+      "scrollHeight": 2609,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1528035,
+      "fileSize": 1478798,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1311,12 +1327,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 2096
+        "height": 2152
       },
-      "scrollHeight": 2096,
+      "scrollHeight": 2152,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 593175,
+      "fileSize": 602484,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1337,12 +1353,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 2715
+        "height": 2875
       },
-      "scrollHeight": 2715,
+      "scrollHeight": 2875,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 521183,
+      "fileSize": 515276,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1365,12 +1381,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 6458
+        "height": 6254
       },
-      "scrollHeight": 3229,
+      "scrollHeight": 3127,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1184241,
+      "fileSize": 1150254,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1396,7 +1412,7 @@
       "scrollHeight": 1521,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 511742,
+      "fileSize": 527197,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1417,12 +1433,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 1546
+        "height": 1521
       },
-      "scrollHeight": 1546,
+      "scrollHeight": 1521,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 348416,
+      "fileSize": 347705,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1445,12 +1461,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 3246
+        "height": 3144
       },
-      "scrollHeight": 1623,
+      "scrollHeight": 1572,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 645056,
+      "fileSize": 638637,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1476,7 +1492,7 @@
       "scrollHeight": 1548,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 516729,
+      "fileSize": 526634,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1497,12 +1513,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 2365
+        "height": 2183
       },
-      "scrollHeight": 2365,
+      "scrollHeight": 2183,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 539587,
+      "fileSize": 502614,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1525,12 +1541,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 4890
+        "height": 4526
       },
-      "scrollHeight": 2445,
+      "scrollHeight": 2263,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1186615,
+      "fileSize": 1112255,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1556,7 +1572,7 @@
       "scrollHeight": 1548,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 517368,
+      "fileSize": 527264,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1577,16 +1593,33 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 2365
+        "height": 2183
       },
-      "scrollHeight": 2365,
+      "scrollHeight": 2183,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 539977,
+      "fileSize": 503132,
       "warnings": [],
       "failedImages": [],
-      "failedRequests": [],
-      "consoleErrors": [],
+      "failedRequests": [
+        {
+          "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+          "resourceType": "script",
+          "errorText": "net::ERR_SOCKET_NOT_CONNECTED"
+        }
+      ],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: net::ERR_SOCKET_NOT_CONNECTED",
+          "location": {
+            "url": "https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1605,12 +1638,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 4890
+        "height": 4526
       },
-      "scrollHeight": 2445,
+      "scrollHeight": 2263,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1187571,
+      "fileSize": 1113415,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
