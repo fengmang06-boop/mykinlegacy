@@ -457,7 +457,7 @@ export async function recoverStuckPaidOrders(input: {
 }): Promise<{ scanned: number; recovered: number; failed: number }> {
   const now = input.now ?? new Date();
   const orders = await input.databaseModule.prisma.order.findMany({
-    where: { paymentStatus: "paid", fulfillmentStatus: "not_started" },
+    where: { paymentStatus: "paid", fulfillmentStatus: { in: ["not_started", "queued", "generating"] } },
     orderBy: { paidAt: "asc" },
     take: 10,
     include: {
