@@ -1,11 +1,15 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 import { ApiClient } from "../lib/api-client";
 import { trackEvent } from "../lib/analytics";
+
+const finalHomepageAsset = "/assets/final-homepage";
+const isLogDeliveryMode = process.env.NEXT_PUBLIC_EMAIL_PROVIDER === "log";
 
 export function PaymentSuccess() {
   const searchParams = useSearchParams();
@@ -56,18 +60,24 @@ export function PaymentSuccess() {
 
   return (
     <section className="journey-shell">
-      <div className="section">
+      <div className="section transaction-layout">
         <div className="journey-card">
           <p className="eyebrow">{isFounderDemo ? "Founder Demo Mode" : "Collection Ready"}</p>
           <h1>{message}</h1>
           <p className="lead">
-            Your private collection has been prepared for review. Open the vault to see the
-            Heritage Certificate, Family Story, Symbol Guide, Crest Artwork, and Collection Letter.
+            Your payment has been confirmed. Your private collection is being prepared for review,
+            including the Heritage Certificate, Family Story, Symbol Guide, Crest Artwork, and
+            Collection Letter.
           </p>
           {!isFounderDemo ? (
             <p className="notice">
-              When your private vault is ready, the secure vault link will be sent to your delivery
-              email. For your privacy, vault links are not shown on this page.
+              In live email mode, your vault link will be sent by email when the collection is
+              ready. For your privacy, vault links are not shown on this page.
+            </p>
+          ) : null}
+          {isLogDeliveryMode ? (
+            <p className="notice">
+              Test mode: delivery is logged for internal review, not sent externally.
             </p>
           ) : null}
           {attempts >= 24 && !confirmed ? (
@@ -91,6 +101,23 @@ export function PaymentSuccess() {
             </Link>
           </div>
         </div>
+        <aside className="side-panel transaction-side-panel" aria-label="Collection preparation">
+          <div className="side-panel-visual">
+            <Image
+              src={`${finalHomepageAsset}/08_homepage/cta/cta-review-before-you-begin.webp`}
+              width={520}
+              height={360}
+              alt=""
+              aria-hidden="true"
+              priority
+            />
+          </div>
+          <p className="eyebrow">Private collection</p>
+          <h2>Prepared with care</h2>
+          <p>
+            The vault is token-protected, private by default, and designed for personal keeping.
+          </p>
+        </aside>
       </div>
     </section>
   );

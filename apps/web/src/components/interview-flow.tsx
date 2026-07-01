@@ -1,11 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ApiClient } from "../lib/api-client";
 import { trackEvent } from "../lib/analytics";
 import { getSafetyMessage } from "../lib/safety";
+
+const finalHomepageAsset = "/assets/final-homepage";
 
 const STEPS = [
   {
@@ -157,9 +160,19 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
             </p>
             {founderDemoMode ? <p className="notice">Founder Demo Mode: local preview flow.</p> : null}
           </div>
-          <div className="mock-certificate">
-            <span>Step {stepIndex + 1}</span>
-            <strong>{step.question}</strong>
+          <div className="transaction-visual-card" aria-label="Private collection preview">
+            <Image
+              src={`${finalHomepageAsset}/02_homepage/hero/hero-private-vault.webp`}
+              width={620}
+              height={520}
+              alt=""
+              aria-hidden="true"
+              priority
+            />
+            <div>
+              <span>Step {stepIndex + 1}</span>
+              <strong>{step.question}</strong>
+            </div>
           </div>
         </div>
       </section>
@@ -215,6 +228,13 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
           </div>
           <aside className="interview-preview" aria-label="Collection preview">
             <div className="preview-cover">
+              <Image
+                src={`${finalHomepageAsset}/09_extras/extra-private-archive-wide.webp`}
+                width={520}
+                height={360}
+                alt=""
+                aria-hidden="true"
+              />
               <strong>Collection Preview</strong>
               <span>
                 This helps us shape the collection around the person receiving it, not just the

@@ -10,7 +10,7 @@ import { chromium } from "playwright";
 const DEFAULT_BASE_URL = "http://localhost:3000";
 const MIN_SCREENSHOT_BYTES = 20 * 1024;
 
-const pages = [
+const basePages = [
   { key: "home", label: "Homepage", path: "/" },
   { key: "create", label: "Create", path: "/create" },
   {
@@ -19,6 +19,8 @@ const pages = [
     path: "/family-legacy-collection"
   }
 ];
+
+let activePages = basePages;
 
 const viewports = [
   { key: "desktop", width: 1440, height: 1200 },
@@ -39,16 +41,20 @@ const outputDir = path.join(repoRoot, "artifacts", "visual-review");
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const options = { baseUrl: DEFAULT_BASE_URL };
+  const options = { baseUrl: DEFAULT_BASE_URL, orderNumber: "" };
 
   for (const arg of args) {
     if (arg.startsWith("--base-url=")) {
       options.baseUrl = arg.slice("--base-url=".length);
     }
+    if (arg.startsWith("--order-number=")) {
+      options.orderNumber = arg.slice("--order-number=".length);
+    }
   }
 
   return {
-    baseUrl: options.baseUrl.replace(/\/+$/, "")
+    baseUrl: options.baseUrl.replace(/\/+$/, ""),
+    orderNumber: options.orderNumber.trim()
   };
 }
 
@@ -443,7 +449,7 @@ async function captureScreenshot(browser, baseUrl, pageDefinition, viewportDefin
 }
 
 function groupScreenshots(screenshots) {
-  return pages.map((pageDefinition) => ({
+  return activePages.map((pageDefinition) => ({
     ...pageDefinition,
     screenshots: screenshots.filter((screenshot) => screenshot.pageKey === pageDefinition.key)
   }));
@@ -774,9 +780,24 @@ async function writeReports(report) {
 }
 
 async function main() {
-  const { baseUrl } = parseArgs();
+  const { baseUrl, orderNumber } = parseArgs();
   const capturedAt = new Date().toISOString();
   const commit = getGitCommit();
+  activePages = orderNumber
+    ? [
+        ...basePages,
+        {
+          key: "checkout",
+          label: "Checkout",
+          path: `/checkout/${encodeURIComponent(orderNumber)}`
+        },
+        {
+          key: "order-status",
+          label: "Order Status",
+          path: `/order-status/${encodeURIComponent(orderNumber)}`
+        }
+      ]
+    : basePages;
 
   await prepareOutputDir();
 
@@ -784,7 +805,7 @@ async function main() {
   const screenshots = [];
 
   try {
-    for (const pageDefinition of pages) {
+    for (const pageDefinition of activePages) {
       for (const viewportDefinition of viewports) {
         console.log(
           `Capturing ${pageDefinition.path} at ${viewportDefinition.key} from ${baseUrl}`

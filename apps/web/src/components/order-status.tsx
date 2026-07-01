@@ -1,11 +1,14 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
 import { ApiClient, type OrderStatus as OrderStatusData } from "../lib/api-client";
 import { friendlyGenerationMessage } from "../lib/state";
 import { trackEvent } from "../lib/analytics";
+
+const finalHomepageAsset = "/assets/final-homepage";
 
 export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
   const [order, setOrder] = useState<OrderStatusData | null>(null);
@@ -54,34 +57,48 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
 
   const expected = order?.generation_manifest?.expected_assets_count ?? 0;
   const generated = order?.generation_manifest?.generated_assets_count ?? 0;
+  const vaultReady = Boolean(order?.download_ready);
 
   return (
     <section className="journey-shell">
-      <div className="section">
+      <div className="section transaction-layout">
         <div className="journey-card">
-          <p className="eyebrow">Order Status</p>
-          <h1>{orderNumber}</h1>
+          <p className="eyebrow">Private vault progress</p>
+          <h1>{vaultReady ? "Your vault is ready" : "Your collection is being prepared"}</h1>
+          <p className="lead">Order {orderNumber}</p>
           {error ? <p className="error">{error}</p> : null}
-          <div className="grid">
-            <div className="card">
+          <div className="status-grid">
+            <div className="card status-card" data-state={order?.payment_status === "paid" ? "complete" : "pending"}>
               <h2>Payment</h2>
               <p>{order?.payment_status ?? "Loading"}</p>
             </div>
-            <div className="card">
+            <div
+              className="card status-card"
+              data-state={order?.fulfillment_status === "completed" ? "complete" : "pending"}
+            >
               <h2>Fulfillment</h2>
               <p>{order?.fulfillment_status ?? "Loading"}</p>
             </div>
-            <div className="card">
+            <div className="card status-card" data-state={expected > 0 && generated >= expected ? "complete" : "pending"}>
               <h2>Assets</h2>
               <p>
                 {generated} / {expected}
               </p>
             </div>
-            <div className="card">
+            <div className="card status-card" data-state={vaultReady ? "complete" : "pending"}>
               <h2>Vault</h2>
-              <p>{order?.download_ready ? "Ready" : "Still preparing"}</p>
+              <p>{vaultReady ? "Ready" : "Still preparing"}</p>
             </div>
           </div>
+          {vaultReady ? (
+            <div className="vault-ready-panel">
+              <strong>Vault Ready</strong>
+              <span>
+                Your private vault link has been created and sent through the configured delivery
+                channel.
+              </span>
+            </div>
+          ) : null}
           <p className="notice">
             {friendlyGenerationMessage({
               payment_status: order?.payment_status,
@@ -113,6 +130,24 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
             </Link>
           ) : null}
         </div>
+        <aside className="side-panel transaction-side-panel" aria-label="Vault status visual">
+          <div className="side-panel-visual">
+            <Image
+              src={`${finalHomepageAsset}/09_extras/extra-private-archive-wide.webp`}
+              width={520}
+              height={360}
+              alt=""
+              aria-hidden="true"
+              priority
+            />
+          </div>
+          <p className="eyebrow">Private by default</p>
+          <h2>{vaultReady ? "Ready for keeping" : "Preparing the collection"}</h2>
+          <p>
+            The vault token is never displayed here. This protects the private collection even on a
+            shared screen.
+          </p>
+        </aside>
       </div>
     </section>
   );

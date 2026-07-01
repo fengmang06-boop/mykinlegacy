@@ -3,121 +3,700 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="robots" content="noindex,nofollow" />
     <title>MyKinLegacy Visual Review</title>
     <style>
       :root {
         color-scheme: dark;
-        --bg: #0a0908;
+        --bg: #0b0a08;
         --panel: #15120d;
-        --gold: #c9a24a;
-        --ivory: #f6ebd4;
-        --muted: rgba(246, 235, 212, 0.72);
-        --line: rgba(201, 162, 74, 0.28);
+        --panel-soft: #1d1811;
+        --border: rgba(212, 175, 92, 0.26);
+        --gold: #d8b45f;
+        --ivory: #f7f0df;
+        --muted: #b6a98d;
+        --danger: #ffb4a8;
+        --success: #a9e6be;
+      }
+
+      * {
+        box-sizing: border-box;
       }
 
       body {
         margin: 0;
-        background: var(--bg);
+        background:
+          radial-gradient(circle at top left, rgba(216, 180, 95, 0.12), transparent 34rem),
+          var(--bg);
         color: var(--ivory);
         font-family:
-          Inter,
-          ui-sans-serif,
-          system-ui,
-          -apple-system,
-          BlinkMacSystemFont,
-          "Segoe UI",
-          sans-serif;
-      }
-
-      main {
-        width: min(1180px, calc(100% - 32px));
-        margin: 0 auto;
-        padding: 48px 0;
-      }
-
-      h1,
-      h2 {
-        margin: 0;
-        font-family: Georgia, "Times New Roman", serif;
-        font-weight: 500;
-      }
-
-      h1 {
-        font-size: clamp(36px, 6vw, 72px);
-      }
-
-      p {
-        color: var(--muted);
-        line-height: 1.65;
-      }
-
-      section {
-        margin-top: 40px;
-        padding: 22px;
-        border: 1px solid var(--line);
-        border-radius: 16px;
-        background: var(--panel);
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: minmax(0, 1fr) minmax(240px, 0.36fr);
-        gap: 18px;
-        align-items: start;
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
       }
 
       a {
         color: var(--gold);
       }
 
-      img {
-        width: 100%;
-        height: auto;
-        display: block;
-        border: 1px solid var(--line);
-        border-radius: 12px;
+      .shell {
+        margin: 0 auto;
+        max-width: 1440px;
+        padding: 40px 28px 72px;
       }
 
-      @media (max-width: 760px) {
-        .grid {
+      .hero {
+        border: 1px solid var(--border);
+        background: linear-gradient(135deg, rgba(29, 24, 17, 0.94), rgba(11, 10, 8, 0.92));
+        border-radius: 22px;
+        padding: 30px;
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.34);
+      }
+
+      .eyebrow {
+        color: var(--gold);
+        font-size: 0.76rem;
+        letter-spacing: 0.12em;
+        margin: 0 0 8px;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        letter-spacing: 0;
+        margin: 0;
+      }
+
+      h1 {
+        font-size: clamp(2rem, 4vw, 4rem);
+      }
+
+      .meta {
+        color: var(--muted);
+        display: grid;
+        gap: 6px;
+        margin-top: 20px;
+      }
+
+      .page-group {
+        margin-top: 42px;
+      }
+
+      .page-heading {
+        margin-bottom: 18px;
+      }
+
+      .screenshot-grid {
+        display: grid;
+        gap: 22px;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+
+      .shot-card {
+        background: linear-gradient(180deg, rgba(29, 24, 17, 0.94), rgba(13, 12, 10, 0.96));
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        overflow: hidden;
+        padding: 16px;
+      }
+
+      .shot-card.warning {
+        border-color: rgba(255, 180, 168, 0.54);
+      }
+
+      .shot-card header {
+        align-items: flex-start;
+        display: flex;
+        justify-content: space-between;
+        gap: 14px;
+        margin-bottom: 14px;
+      }
+
+      .shot-card header p {
+        color: var(--muted);
+        margin: 4px 0 0;
+      }
+
+      .shot-card header span {
+        border: 1px solid currentColor;
+        border-radius: 999px;
+        color: var(--success);
+        flex: 0 0 auto;
+        font-size: 0.72rem;
+        padding: 5px 9px;
+      }
+
+      .shot-card.warning header span {
+        color: var(--danger);
+      }
+
+      dl {
+        color: var(--muted);
+        display: grid;
+        font-size: 0.86rem;
+        gap: 8px;
+        margin: 0 0 14px;
+      }
+
+      dl div {
+        display: grid;
+        gap: 4px;
+      }
+
+      dt {
+        color: var(--ivory);
+        font-weight: 700;
+      }
+
+      dd {
+        margin: 0;
+        overflow-wrap: anywhere;
+      }
+
+      .image-link {
+        background: #050504;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        display: block;
+        overflow: hidden;
+      }
+
+      img {
+        display: block;
+        height: auto;
+        width: 100%;
+      }
+
+      .details {
+        border-top: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--muted);
+        margin-top: 14px;
+        padding-top: 12px;
+      }
+
+      .details summary {
+        color: var(--danger);
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      .details ul {
+        margin: 10px 0 0;
+        padding-left: 20px;
+      }
+
+      .details li {
+        overflow-wrap: anywhere;
+        padding: 4px 0;
+      }
+
+      @media (max-width: 1100px) {
+        .screenshot-grid {
           grid-template-columns: 1fr;
         }
       }
     </style>
   </head>
   <body>
-    <main>
-      <h1>MyKinLegacy Visual Review</h1>
-      <p>Design review captures for homepage, create, and Family Legacy Collection pages.</p>
-
-      <section>
-        <h2>Homepage</h2>
-        <div class="grid">
-          <a href="./home-desktop.png"><img src="./home-desktop.png" alt="Homepage desktop" /></a>
-          <a href="./home-mobile.png"><img src="./home-mobile.png" alt="Homepage mobile" /></a>
+    <main class="shell">
+      <section class="hero">
+        <p class="eyebrow">MyKinLegacy QA</p>
+        <h1>Visual Review Report</h1>
+        <div class="meta">
+          <div><strong>Captured:</strong> 2026-07-01T10:33:05.536Z</div>
+          <div><strong>Base URL:</strong> http://localhost:3001</div>
+          <div><strong>Commit:</strong> 66f0af3f3d9c1a70bc974e986c9790950ca7f176</div>
         </div>
       </section>
+      
+        <section class="page-group">
+          <div class="page-heading">
+            <p class="eyebrow">/</p>
+            <h2>Homepage</h2>
+          </div>
+          <div class="screenshot-grid">
+            
+                  <article class="shot-card pass">
+                    <header>
+                      <div>
+                        <h3>desktop</h3>
+                        <p>1440 x 1200</p>
+                      </div>
+                      <span>PASS</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/">http://localhost:3001/</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>1440 x 6997</dd></div>
+                      <div><dt>Scroll height</dt><dd>6997px</dd></div>
+                      <div><dt>File size</dt><dd>5.58 MB</dd></div>
+                    </dl>
+                    <a class="image-link" href="home-desktop.png">
+                      <img src="home-desktop.png" alt="Homepage desktop screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+                    
+                  </article>
+                
 
-      <section>
-        <h2>Create</h2>
-        <div class="grid">
-          <a href="./create-desktop.png"><img src="./create-desktop.png" alt="Create desktop" /></a>
-          <a href="./create-mobile.png"><img src="./create-mobile.png" alt="Create mobile" /></a>
-        </div>
-      </section>
+                  <article class="shot-card pass">
+                    <header>
+                      <div>
+                        <h3>tablet</h3>
+                        <p>768 x 1200</p>
+                      </div>
+                      <span>PASS</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/">http://localhost:3001/</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>768 x 9695</dd></div>
+                      <div><dt>Scroll height</dt><dd>9695px</dd></div>
+                      <div><dt>File size</dt><dd>4.74 MB</dd></div>
+                    </dl>
+                    <a class="image-link" href="home-tablet.png">
+                      <img src="home-tablet.png" alt="Homepage tablet screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+                    
+                  </article>
+                
 
-      <section>
-        <h2>Family Legacy Collection</h2>
-        <div class="grid">
-          <a href="./collection-desktop.png"
-            ><img src="./collection-desktop.png" alt="Collection desktop"
-          /></a>
-          <a href="./collection-mobile.png"
-            ><img src="./collection-mobile.png" alt="Collection mobile"
-          /></a>
-        </div>
-      </section>
+                  <article class="shot-card pass">
+                    <header>
+                      <div>
+                        <h3>mobile</h3>
+                        <p>390 x 1200 @2x</p>
+                      </div>
+                      <span>PASS</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/">http://localhost:3001/</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>780 x 14502</dd></div>
+                      <div><dt>Scroll height</dt><dd>7251px</dd></div>
+                      <div><dt>File size</dt><dd>6.24 MB</dd></div>
+                    </dl>
+                    <a class="image-link" href="home-mobile.png">
+                      <img src="home-mobile.png" alt="Homepage mobile screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+                    
+                  </article>
+                
+          </div>
+        </section>
+      
+
+        <section class="page-group">
+          <div class="page-heading">
+            <p class="eyebrow">/create</p>
+            <h2>Create</h2>
+          </div>
+          <div class="screenshot-grid">
+            
+                  <article class="shot-card pass">
+                    <header>
+                      <div>
+                        <h3>desktop</h3>
+                        <p>1440 x 1200</p>
+                      </div>
+                      <span>PASS</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/create">http://localhost:3001/create</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>1440 x 1896</dd></div>
+                      <div><dt>Scroll height</dt><dd>1896px</dd></div>
+                      <div><dt>File size</dt><dd>631.5 KB</dd></div>
+                    </dl>
+                    <a class="image-link" href="create-desktop.png">
+                      <img src="create-desktop.png" alt="Create desktop screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+                    
+                  </article>
+                
+
+                  <article class="shot-card pass">
+                    <header>
+                      <div>
+                        <h3>tablet</h3>
+                        <p>768 x 1200</p>
+                      </div>
+                      <span>PASS</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/create">http://localhost:3001/create</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>768 x 2631</dd></div>
+                      <div><dt>Scroll height</dt><dd>2631px</dd></div>
+                      <div><dt>File size</dt><dd>770.1 KB</dd></div>
+                    </dl>
+                    <a class="image-link" href="create-tablet.png">
+                      <img src="create-tablet.png" alt="Create tablet screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+                    
+                  </article>
+                
+
+                  <article class="shot-card pass">
+                    <header>
+                      <div>
+                        <h3>mobile</h3>
+                        <p>390 x 1200 @2x</p>
+                      </div>
+                      <span>PASS</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/create">http://localhost:3001/create</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>780 x 5242</dd></div>
+                      <div><dt>Scroll height</dt><dd>2621px</dd></div>
+                      <div><dt>File size</dt><dd>1.46 MB</dd></div>
+                    </dl>
+                    <a class="image-link" href="create-mobile.png">
+                      <img src="create-mobile.png" alt="Create mobile screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+                    
+                  </article>
+                
+          </div>
+        </section>
+      
+
+        <section class="page-group">
+          <div class="page-heading">
+            <p class="eyebrow">/family-legacy-collection</p>
+            <h2>Family Legacy Collection</h2>
+          </div>
+          <div class="screenshot-grid">
+            
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>desktop</h3>
+                        <p>1440 x 1200</p>
+                      </div>
+                      <span>WARNING 1</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/family-legacy-collection">http://localhost:3001/family-legacy-collection</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>1440 x 3578</dd></div>
+                      <div><dt>Scroll height</dt><dd>3578px</dd></div>
+                      <div><dt>File size</dt><dd>1.73 MB</dd></div>
+                    </dl>
+                    <a class="image-link" href="collection-desktop.png">
+                      <img src="collection-desktop.png" alt="Family Legacy Collection desktop screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (1)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>tablet</h3>
+                        <p>768 x 1200</p>
+                      </div>
+                      <span>WARNING 1</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/family-legacy-collection">http://localhost:3001/family-legacy-collection</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>768 x 5454</dd></div>
+                      <div><dt>Scroll height</dt><dd>5454px</dd></div>
+                      <div><dt>File size</dt><dd>1.97 MB</dd></div>
+                    </dl>
+                    <a class="image-link" href="collection-tablet.png">
+                      <img src="collection-tablet.png" alt="Family Legacy Collection tablet screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (1)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>mobile</h3>
+                        <p>390 x 1200 @2x</p>
+                      </div>
+                      <span>WARNING 1</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/family-legacy-collection">http://localhost:3001/family-legacy-collection</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>780 x 10970</dd></div>
+                      <div><dt>Scroll height</dt><dd>5485px</dd></div>
+                      <div><dt>File size</dt><dd>4.04 MB</dd></div>
+                    </dl>
+                    <a class="image-link" href="collection-mobile.png">
+                      <img src="collection-mobile.png" alt="Family Legacy Collection mobile screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (1)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+          </div>
+        </section>
+      
+
+        <section class="page-group">
+          <div class="page-heading">
+            <p class="eyebrow">/checkout/AHL-20260701-01KWECW4</p>
+            <h2>Checkout</h2>
+          </div>
+          <div class="screenshot-grid">
+            
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>desktop</h3>
+                        <p>1440 x 1200</p>
+                      </div>
+                      <span>WARNING 2</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/checkout/AHL-20260701-01KWECW4">http://localhost:3001/checkout/AHL-20260701-01KWECW4</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>1440 x 2264</dd></div>
+                      <div><dt>Scroll height</dt><dd>2264px</dd></div>
+                      <div><dt>File size</dt><dd>596.6 KB</dd></div>
+                    </dl>
+                    <a class="image-link" href="checkout-desktop.png">
+                      <img src="checkout-desktop.png" alt="Checkout desktop screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (2)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+<li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>tablet</h3>
+                        <p>768 x 1200</p>
+                      </div>
+                      <span>WARNING 2</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/checkout/AHL-20260701-01KWECW4">http://localhost:3001/checkout/AHL-20260701-01KWECW4</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>768 x 2847</dd></div>
+                      <div><dt>Scroll height</dt><dd>2847px</dd></div>
+                      <div><dt>File size</dt><dd>525.8 KB</dd></div>
+                    </dl>
+                    <a class="image-link" href="checkout-tablet.png">
+                      <img src="checkout-tablet.png" alt="Checkout tablet screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (2)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+<li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>mobile</h3>
+                        <p>390 x 1200 @2x</p>
+                      </div>
+                      <span>WARNING 2</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/checkout/AHL-20260701-01KWECW4">http://localhost:3001/checkout/AHL-20260701-01KWECW4</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>780 x 6708</dd></div>
+                      <div><dt>Scroll height</dt><dd>3354px</dd></div>
+                      <div><dt>File size</dt><dd>1.16 MB</dd></div>
+                    </dl>
+                    <a class="image-link" href="checkout-mobile.png">
+                      <img src="checkout-mobile.png" alt="Checkout mobile screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (2)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+<li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+          </div>
+        </section>
+      
+
+        <section class="page-group">
+          <div class="page-heading">
+            <p class="eyebrow">/order-status/AHL-20260701-01KWECW4</p>
+            <h2>Order Status</h2>
+          </div>
+          <div class="screenshot-grid">
+            
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>desktop</h3>
+                        <p>1440 x 1200</p>
+                      </div>
+                      <span>WARNING 1</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/order-status/AHL-20260701-01KWECW4">http://localhost:3001/order-status/AHL-20260701-01KWECW4</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>1440 x 1521</dd></div>
+                      <div><dt>Scroll height</dt><dd>1521px</dd></div>
+                      <div><dt>File size</dt><dd>423.9 KB</dd></div>
+                    </dl>
+                    <a class="image-link" href="order-status-desktop.png">
+                      <img src="order-status-desktop.png" alt="Order Status desktop screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (1)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>tablet</h3>
+                        <p>768 x 1200</p>
+                      </div>
+                      <span>WARNING 1</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/order-status/AHL-20260701-01KWECW4">http://localhost:3001/order-status/AHL-20260701-01KWECW4</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>768 x 2308</dd></div>
+                      <div><dt>Scroll height</dt><dd>2308px</dd></div>
+                      <div><dt>File size</dt><dd>430.8 KB</dd></div>
+                    </dl>
+                    <a class="image-link" href="order-status-tablet.png">
+                      <img src="order-status-tablet.png" alt="Order Status tablet screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (1)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+
+                  <article class="shot-card warning">
+                    <header>
+                      <div>
+                        <h3>mobile</h3>
+                        <p>390 x 1200 @2x</p>
+                      </div>
+                      <span>WARNING 1</span>
+                    </header>
+                    <dl>
+                      <div><dt>URL</dt><dd><a href="http://localhost:3001/order-status/AHL-20260701-01KWECW4">http://localhost:3001/order-status/AHL-20260701-01KWECW4</a></dd></div>
+                      <div><dt>Screenshot</dt><dd>780 x 4862</dd></div>
+                      <div><dt>Scroll height</dt><dd>2431px</dd></div>
+                      <div><dt>File size</dt><dd>901.0 KB</dd></div>
+                    </dl>
+                    <a class="image-link" href="order-status-mobile.png">
+                      <img src="order-status-mobile.png" alt="Order Status mobile screenshot" loading="lazy" />
+                    </a>
+                    
+                    
+                    
+                    
+    <details class="details" open>
+      <summary>Console errors (1)</summary>
+      <ul>
+        <li>Failed to load resource: net::ERR_CONNECTION_REFUSED</li>
+      </ul>
+    </details>
+  
+                    
+                  </article>
+                
+          </div>
+        </section>
+      
     </main>
   </body>
 </html>

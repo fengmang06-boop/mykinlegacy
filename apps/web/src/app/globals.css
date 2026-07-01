@@ -1921,6 +1921,7 @@ textarea {
 .premium-page .card,
 .premium-page .journey-card,
 .premium-page .interview-preview,
+.premium-page .side-panel,
 .premium-page .faq-list,
 .premium-page .mock-crest,
 .premium-page .mock-certificate,
@@ -2504,6 +2505,320 @@ textarea {
   border-top: 1px solid var(--premium-line);
 }
 
+.premium-page.transaction-page .journey-shell,
+.premium-page.admin-debug-page .premium-section {
+  min-height: 640px;
+}
+
+.premium-page .transaction-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: start;
+}
+
+.premium-page .checkout-layout {
+  align-items: start;
+}
+
+.premium-page .transaction-visual-card,
+.premium-page .side-panel-visual {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border: 1px solid var(--premium-line);
+  border-radius: 16px;
+  background: var(--premium-panel);
+  box-shadow: 0 22px 58px rgba(0, 0, 0, 0.34);
+}
+
+.premium-page .transaction-visual-card {
+  min-height: 310px;
+  display: grid;
+  align-content: end;
+}
+
+.premium-page .transaction-visual-card img,
+.premium-page .side-panel-visual img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.premium-page .transaction-visual-card::after,
+.premium-page .side-panel-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(circle at 50% 12%, rgba(201, 162, 74, 0.16), transparent 16rem),
+    linear-gradient(180deg, rgba(10, 9, 8, 0.08), rgba(10, 9, 8, 0.84));
+}
+
+.premium-page .transaction-visual-card div {
+  padding: 22px;
+}
+
+.premium-page .transaction-visual-card span {
+  color: var(--premium-gold);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.premium-page .transaction-visual-card strong {
+  display: block;
+  max-width: 360px;
+  margin-top: 8px;
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.02;
+}
+
+.premium-page .side-panel-visual {
+  min-height: 190px;
+  margin-bottom: 18px;
+}
+
+.premium-page .transaction-side-panel p {
+  line-height: 1.62;
+}
+
+.premium-page .form {
+  max-width: none;
+}
+
+.premium-page .checkbox {
+  display: flex;
+  gap: 11px;
+  align-items: flex-start;
+  padding: 12px 13px;
+  border: 1px solid rgba(201, 162, 74, 0.2);
+  border-radius: 10px;
+  background: rgba(246, 235, 212, 0.045);
+  color: var(--premium-warm);
+}
+
+.premium-page .checkbox input {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  margin-top: 2px;
+  accent-color: var(--premium-gold);
+}
+
+.premium-page .field span,
+.premium-page .checkbox span {
+  color: var(--premium-ivory);
+}
+
+.premium-page textarea,
+.premium-page input,
+.premium-page select {
+  border-color: rgba(201, 162, 74, 0.32);
+  background: rgba(246, 235, 212, 0.08);
+  color: var(--premium-ivory);
+}
+
+.premium-page textarea:focus,
+.premium-page input:focus,
+.premium-page select:focus {
+  outline: 3px solid rgba(201, 162, 74, 0.2);
+  border-color: var(--premium-gold);
+}
+
+.premium-page .option {
+  min-height: 54px;
+  border-color: rgba(201, 162, 74, 0.24);
+  background: rgba(246, 235, 212, 0.055);
+  color: var(--premium-ivory);
+  font-weight: 750;
+}
+
+.premium-page .option:hover,
+.premium-page .option[data-selected="true"] {
+  border-color: var(--premium-gold);
+  background: rgba(201, 162, 74, 0.14);
+  outline: 3px solid rgba(201, 162, 74, 0.12);
+}
+
+.premium-page .status-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.premium-page .status-card {
+  min-height: 132px;
+}
+
+.premium-page .status-card h2 {
+  font-size: 24px;
+}
+
+.premium-page .status-card p {
+  margin: 8px 0 0;
+  color: var(--premium-ivory);
+  font-size: 18px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.premium-page .status-card[data-state="complete"] {
+  border-color: rgba(201, 162, 74, 0.52);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(201, 162, 74, 0.18), transparent 8rem),
+    rgba(246, 235, 212, 0.06);
+}
+
+.premium-page .vault-ready-panel {
+  display: grid;
+  gap: 7px;
+  padding: 18px;
+  border: 1px solid rgba(201, 162, 74, 0.48);
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 10% 20%, rgba(201, 162, 74, 0.16), transparent 14rem),
+    rgba(201, 162, 74, 0.08);
+}
+
+.premium-page .vault-ready-panel strong {
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 28px;
+}
+
+.premium-page .vault-ready-panel span {
+  color: var(--premium-warm);
+}
+
+.premium-page.admin-debug-page {
+  min-height: 100vh;
+}
+
+.premium-page .admin-debug-hero {
+  min-height: auto;
+}
+
+.premium-page .admin-debug-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.premium-page .admin-debug-tabs a {
+  min-height: 42px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--premium-line);
+  border-radius: 999px;
+  padding: 0 15px;
+  color: var(--premium-warm);
+  text-decoration: none;
+}
+
+.premium-page .admin-debug-tabs a[aria-current="page"] {
+  border-color: var(--premium-gold);
+  color: var(--premium-ivory);
+  background: rgba(201, 162, 74, 0.14);
+}
+
+.premium-page .admin-debug-card,
+.premium-page .admin-locked-card {
+  max-width: none;
+}
+
+.premium-page .admin-debug-summary {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.premium-page .admin-debug-summary span {
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  border: 1px solid rgba(201, 162, 74, 0.22);
+  border-radius: 10px;
+  padding: 10px 12px;
+  background: rgba(246, 235, 212, 0.045);
+  color: var(--premium-warm);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+  border: 1px solid var(--premium-line);
+  border-radius: 14px;
+}
+
+.admin-table {
+  width: 100%;
+  min-width: 980px;
+  border-collapse: collapse;
+}
+
+.admin-table th,
+.admin-table td {
+  padding: 13px 14px;
+  border-bottom: 1px solid rgba(201, 162, 74, 0.16);
+  color: var(--premium-warm);
+  font-size: 13px;
+  text-align: left;
+  vertical-align: top;
+}
+
+.admin-table th {
+  color: var(--premium-gold);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.admin-table tr:last-child td {
+  border-bottom: 0;
+}
+
+.admin-table a {
+  color: var(--premium-gold-bright);
+}
+
+.admin-status-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  border: 1px solid rgba(201, 162, 74, 0.26);
+  border-radius: 999px;
+  padding: 3px 9px;
+  color: var(--premium-warm);
+  background: rgba(246, 235, 212, 0.045);
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: capitalize;
+}
+
+.admin-status-pill[data-state="complete"] {
+  border-color: rgba(201, 162, 74, 0.52);
+  color: var(--premium-ivory);
+  background: rgba(201, 162, 74, 0.13);
+}
+
+.admin-status-pill[data-state="failed"] {
+  border-color: rgba(180, 71, 71, 0.5);
+  color: #ffc7bd;
+  background: rgba(180, 71, 71, 0.12);
+}
+
 @media (max-width: 800px) {
   .nav {
     min-height: 60px;
@@ -2575,6 +2890,12 @@ textarea {
   }
 
   .summary-row {
+    grid-template-columns: 1fr;
+  }
+
+  .premium-page .transaction-layout,
+  .premium-page .status-grid,
+  .premium-page .admin-debug-summary {
     grid-template-columns: 1fr;
   }
 }

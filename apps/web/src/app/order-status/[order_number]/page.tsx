@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default async function OrderStatusPage({ params }: { params: Promise<{ order_number: string }> }) {
   const { order_number: orderNumber } = await params;
   return (
-    <main>
+    <main className="premium-page transaction-page">
       <OrderStatusView orderNumber={orderNumber} />
     </main>
   );

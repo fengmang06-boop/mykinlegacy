@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function PaymentSuccessPage() {
   return (
-    <main>
+    <main className="premium-page transaction-page">
       <Suspense fallback={<div className="section">Payment received, verifying your order.</div>}>
         <PaymentSuccess />
       </Suspense>

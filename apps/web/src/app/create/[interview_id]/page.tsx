@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default async function InterviewPage({ params }: { params: Promise<{ interview_id: string }> }) {
   const { interview_id: interviewId } = await params;
   return (
-    <main>
+    <main className="premium-page create-page">
       <InterviewFlow interviewId={interviewId} />
     </main>
   );

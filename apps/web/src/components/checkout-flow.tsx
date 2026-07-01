@@ -1,10 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApiClient, type OrderStatus, type ProductDetail } from "../lib/api-client";
 import { trackEvent } from "../lib/analytics";
 import { formatMoneyFromCents } from "../lib/format";
+
+const finalHomepageAsset = "/assets/final-homepage";
 
 export const REQUIRED_CONSENTS = [
   "terms_accepted",
@@ -199,8 +202,12 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
     <section className="journey-shell">
       <div className="section checkout-layout">
         <div className="journey-card">
-          <p className="eyebrow">Secure checkout</p>
-          <h1>Confirm and prepare their private collection</h1>
+          <p className="eyebrow">Private vault checkout</p>
+          <h1>Reserve and prepare their Family Legacy Collection</h1>
+          <p className="lead">
+            Confirm the digital keepsake, accept the private delivery terms, and continue to secure
+            Stripe checkout.
+          </p>
           {error ? <p className="error">{error}</p> : null}
           <div className="grid">
             <section className="card">
@@ -212,7 +219,9 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
                   : "Loading price..."}
               </p>
               <p className="muted">Delivery email is stored securely with your private order.</p>
-              <p className="notice">Digital delivery only. Made for gifting and personal keeping.</p>
+              <p className="notice">
+                Prepared as a private digital collection for gifting and personal keeping.
+              </p>
             </section>
             <section className="card">
               <h2>Collection artifacts</h2>
@@ -288,6 +297,15 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
           ) : null}
         </div>
         <aside className="side-panel" aria-label="Secure checkout summary">
+          <div className="side-panel-visual">
+            <Image
+              src={`${finalHomepageAsset}/04_homepage/features/feature-private-vault.webp`}
+              width={520}
+              height={360}
+              alt=""
+              aria-hidden="true"
+            />
+          </div>
           <p className="eyebrow">Private vault</p>
           <h2>What happens next</h2>
           <div className="summary-list">
