@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://mykinlegacy.com",
-  "commit": "f6cc95c7be7ed432d807c4094832c399b8c45a62",
-  "capturedAt": "2026-07-01T15:00:51.273Z",
+  "commit": "7db1139df2ae0d14d8cd18f08421102ff0f832c1",
+  "capturedAt": "2026-07-01T15:12:24.242Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
     "Admin pages were captured with a redacted token in the URL."
@@ -92,7 +92,8 @@
           "consoleErrors": [],
           "pageErrors": []
         }
-      ]
+      ],
+      "warnings": []
     },
     {
       "key": "create",
@@ -179,7 +180,8 @@
           "consoleErrors": [],
           "pageErrors": []
         }
-      ]
+      ],
+      "warnings": []
     },
     {
       "key": "collection",
@@ -266,7 +268,8 @@
           "consoleErrors": [],
           "pageErrors": []
         }
-      ]
+      ],
+      "warnings": []
     },
     {
       "key": "interview",
@@ -353,7 +356,8 @@
           "consoleErrors": [],
           "pageErrors": []
         }
-      ]
+      ],
+      "warnings": []
     },
     {
       "key": "checkout",
@@ -440,7 +444,8 @@
           "consoleErrors": [],
           "pageErrors": []
         }
-      ]
+      ],
+      "warnings": []
     },
     {
       "key": "payment-success",
@@ -527,7 +532,8 @@
           "consoleErrors": [],
           "pageErrors": []
         }
-      ]
+      ],
+      "warnings": []
     },
     {
       "key": "order-status-latest",
@@ -614,7 +620,8 @@
           "consoleErrors": [],
           "pageErrors": []
         }
-      ]
+      ],
+      "warnings": []
     },
     {
       "key": "order-status-founder",
@@ -701,15 +708,14 @@
           "consoleErrors": [],
           "pageErrors": []
         }
-      ]
+      ],
+      "warnings": []
     },
     {
       "key": "admin-orders",
       "label": "Admin Orders",
       "path": "/admin/orders?token=[redacted]",
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "warnings": [],
       "screenshots": [
         {
           "pageKey": "admin-orders",
@@ -797,9 +803,7 @@
       "key": "admin-email-logs",
       "label": "Admin Email Logs",
       "path": "/admin/email-logs?token=[redacted]",
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "warnings": [],
       "screenshots": [
         {
           "pageKey": "admin-email-logs",
@@ -887,9 +891,7 @@
       "key": "admin-download-tokens",
       "label": "Admin Download Tokens",
       "path": "/admin/download-tokens?token=[redacted]",
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "warnings": [],
       "screenshots": [
         {
           "pageKey": "admin-download-tokens",
