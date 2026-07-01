@@ -13,7 +13,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: mykinlegacy-admin-visual-review
+  group: mykinlegacy-production
   cancel-in-progress: false
 
 jobs:
@@ -136,6 +136,22 @@ jobs:
       - name: Install Chromium
         shell: bash
         run: corepack pnpm exec playwright install chromium --with-deps
+
+      - name: Wait for production HTTP
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in {1..36}; do
+            status="$(curl -L -sS -o /tmp/mykinlegacy-home.html -w "%{http_code}" https://mykinlegacy.com/ || true)"
+            if [ "$status" = "200" ] && ! grep -qi "Web server is down" /tmp/mykinlegacy-home.html; then
+              echo "Production HTTP is ready."
+              exit 0
+            fi
+            echo "Production HTTP not ready yet. attempt=$attempt status=$status"
+            sleep 10
+          done
+          echo "Production HTTP did not become ready before visual capture." >&2
+          exit 1
 
       - name: Confirm admin routes authenticate
         shell: bash
