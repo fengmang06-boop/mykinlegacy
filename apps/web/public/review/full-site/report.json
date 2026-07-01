@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://mykinlegacy.com",
-  "commit": "1ec05b1df0f82f61d2850724302074badc9e5915",
-  "capturedAt": "2026-07-01T16:51:30.008Z",
+  "commit": "94a2dd7dd3117e479685df2604055478b89b12b0",
+  "capturedAt": "2026-07-01T18:26:07.907Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
     "Admin pages were captured with a redacted token in the URL."
@@ -554,17 +554,54 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1548
+            "height": 1200
           },
-          "scrollHeight": 1548,
+          "scrollHeight": 1200,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 526634,
+          "fileSize": 68121,
           "warnings": [],
           "failedImages": [],
-          "failedRequests": [],
-          "consoleErrors": [],
-          "pageErrors": []
+          "failedRequests": [
+            {
+              "url": "https://mykinlegacy.com/_next/static/chunks/app/order-status/%5Border_number%5D/page-2aa9c9ac0eb05a5d.js",
+              "resourceType": "script",
+              "errorText": "net::ERR_SSL_PROTOCOL_ERROR"
+            },
+            {
+              "url": "https://mykinlegacy.com/assets/final-homepage/01_brand/brand-pattern-ornate.webp",
+              "resourceType": "image",
+              "errorText": "net::ERR_SSL_PROTOCOL_ERROR"
+            }
+          ],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: net::ERR_SSL_PROTOCOL_ERROR",
+              "location": {
+                "url": "https://mykinlegacy.com/_next/static/chunks/app/order-status/%5Border_number%5D/page-2aa9c9ac0eb05a5d.js",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            },
+            {
+              "text": "Failed to load resource: net::ERR_SSL_PROTOCOL_ERROR",
+              "location": {
+                "url": "https://mykinlegacy.com/assets/final-homepage/01_brand/brand-pattern-ornate.webp",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
+          "pageErrors": [
+            {
+              "message": "Loading chunk 679 failed.\n(error: https://mykinlegacy.com/_next/static/chunks/app/order-status/%5Border_number%5D/page-2aa9c9ac0eb05a5d.js)",
+              "stack": "ChunkLoadError: Loading chunk 679 failed.\n(error: https://mykinlegacy.com/_next/static/chunks/app/order-status/%5Border_number%5D/page-2aa9c9ac0eb05a5d.js)\n    at r.f.j (https://mykinlegacy.com/_next/static/chunks/webpack-425ca07f5abc3d82.js:1:2812)\n    at https://mykinlegacy.com/_next/static/chunks/webpack-425ca07f5abc3d82.js:1:1211\n    at Array.reduce (<anonymous>)\n    at r.e (https://mykinlegacy.com/_next/static/chunks/webpack-425ca07f5abc3d82.js:1:1190)\n    at c (https://mykinlegacy.com/_next/static/chunks/785-778584e14f2dca51.js:1:2963)\n    at https://mykinlegacy.com/_next/static/chunks/785-778584e14f2dca51.js:1:17728\n    at t (https://mykinlegacy.com/_next/static/chunks/785-778584e14f2dca51.js:1:19186)"
+            }
+          ]
         },
         {
           "pageKey": "order-status-latest",
@@ -580,12 +617,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 2183
+            "height": 3020
           },
-          "scrollHeight": 2183,
+          "scrollHeight": 3020,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 502614,
+          "fileSize": 765350,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -608,12 +645,12 @@
           "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 4346
+            "height": 6358
           },
-          "scrollHeight": 2173,
+          "scrollHeight": 3179,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1054835,
+          "fileSize": 1591265,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -1488,17 +1525,54 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1548
+        "height": 1200
       },
-      "scrollHeight": 1548,
+      "scrollHeight": 1200,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 526634,
+      "fileSize": 68121,
       "warnings": [],
       "failedImages": [],
-      "failedRequests": [],
-      "consoleErrors": [],
-      "pageErrors": []
+      "failedRequests": [
+        {
+          "url": "https://mykinlegacy.com/_next/static/chunks/app/order-status/%5Border_number%5D/page-2aa9c9ac0eb05a5d.js",
+          "resourceType": "script",
+          "errorText": "net::ERR_SSL_PROTOCOL_ERROR"
+        },
+        {
+          "url": "https://mykinlegacy.com/assets/final-homepage/01_brand/brand-pattern-ornate.webp",
+          "resourceType": "image",
+          "errorText": "net::ERR_SSL_PROTOCOL_ERROR"
+        }
+      ],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: net::ERR_SSL_PROTOCOL_ERROR",
+          "location": {
+            "url": "https://mykinlegacy.com/_next/static/chunks/app/order-status/%5Border_number%5D/page-2aa9c9ac0eb05a5d.js",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        },
+        {
+          "text": "Failed to load resource: net::ERR_SSL_PROTOCOL_ERROR",
+          "location": {
+            "url": "https://mykinlegacy.com/assets/final-homepage/01_brand/brand-pattern-ornate.webp",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
+      "pageErrors": [
+        {
+          "message": "Loading chunk 679 failed.\n(error: https://mykinlegacy.com/_next/static/chunks/app/order-status/%5Border_number%5D/page-2aa9c9ac0eb05a5d.js)",
+          "stack": "ChunkLoadError: Loading chunk 679 failed.\n(error: https://mykinlegacy.com/_next/static/chunks/app/order-status/%5Border_number%5D/page-2aa9c9ac0eb05a5d.js)\n    at r.f.j (https://mykinlegacy.com/_next/static/chunks/webpack-425ca07f5abc3d82.js:1:2812)\n    at https://mykinlegacy.com/_next/static/chunks/webpack-425ca07f5abc3d82.js:1:1211\n    at Array.reduce (<anonymous>)\n    at r.e (https://mykinlegacy.com/_next/static/chunks/webpack-425ca07f5abc3d82.js:1:1190)\n    at c (https://mykinlegacy.com/_next/static/chunks/785-778584e14f2dca51.js:1:2963)\n    at https://mykinlegacy.com/_next/static/chunks/785-778584e14f2dca51.js:1:17728\n    at t (https://mykinlegacy.com/_next/static/chunks/785-778584e14f2dca51.js:1:19186)"
+        }
+      ]
     },
     {
       "pageKey": "order-status-latest",
@@ -1514,12 +1588,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 2183
+        "height": 3020
       },
-      "scrollHeight": 2183,
+      "scrollHeight": 3020,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 502614,
+      "fileSize": 765350,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1542,12 +1616,12 @@
       "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 4346
+        "height": 6358
       },
-      "scrollHeight": 2173,
+      "scrollHeight": 3179,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1054835,
+      "fileSize": 1591265,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
