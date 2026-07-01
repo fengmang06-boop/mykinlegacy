@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createWorkerApp, getWorkerStatus } from "./app";
+import { createWorkerApp, getWorkerStatus, recoverStuckPaidOrders } from "./app";
 
 const allQueueNames = [
   "payment-confirmation",
@@ -179,6 +179,53 @@ describe("worker app foundation", () => {
     delete process.env.EMAIL_DELIVERY_TEST_MODE;
     delete process.env.EMAIL_TEST_RECIPIENT;
   });
+
+  it("recovers paid orders that remain not_started", async () => {
+    process.env.EMAIL_DELIVERY_TEST_MODE = "true";
+    process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule({
+      stuckOrders: [
+        {
+          id: "order_1",
+          orderNumber: "AHL-STUCK",
+          totalCents: 4900n,
+          currency: "USD",
+          paidAt: new Date("2026-07-01T00:00:00.000Z"),
+          metadataJson: {
+            house_id: "house_1",
+            identity_version_id: "identity_version_1"
+          },
+          orderItems: [
+            {
+              id: "item_1",
+              productSnapshotJson: {
+                product_code: "family_legacy_collection",
+                package_code: "premium"
+              }
+            }
+          ]
+        }
+      ]
+    });
+
+    const result = await recoverStuckPaidOrders({
+      queueModule,
+      databaseModule: databaseModule as never,
+      orchestrationRepository: {},
+      emailModule: createMockEmailModule()
+    });
+
+    expect(result).toEqual({ scanned: 1, recovered: 1, failed: 0 });
+    expect(databaseModule.processOrderPaidOutbox).toHaveBeenCalled();
+    expect(databaseModule.runManifestDrivenGeneration).toHaveBeenCalled();
+    expect(databaseModule.state.sentDeliveryInput).toMatchObject({
+      raw_token_for_internal_delivery_only: "raw-token-once",
+      recipient_email: "founder-test@example.com"
+    });
+    delete process.env.EMAIL_DELIVERY_TEST_MODE;
+    delete process.env.EMAIL_TEST_RECIPIENT;
+  });
 });
 
 function createMockQueueModule() {
@@ -297,7 +344,7 @@ function createMockAiModule() {
   };
 }
 
-function createMockDatabaseModule() {
+function createMockDatabaseModule(options: { stuckOrders?: unknown[] } = {}) {
   currentDatabaseModuleState = {
     sentDeliveryInput: null,
     emailLogs: [] as unknown[]
@@ -305,7 +352,13 @@ function createMockDatabaseModule() {
   return {
     state: currentDatabaseModuleState,
     prisma: {
-      outboxEvent: {},
+      outboxEvent: {
+        findFirst: vi.fn(async () => null),
+        create: vi.fn(async (args: { data: unknown }) => args.data)
+      },
+      order: {
+        findMany: vi.fn(async () => options.stuckOrders ?? [])
+      },
       orderCustomerPii: {
         findUnique: vi.fn(async () => ({
           emailHash: "b".repeat(64),

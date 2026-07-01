@@ -1,8 +1,9 @@
 import { createHash, pbkdf2Sync, randomBytes, timingSafeEqual } from "node:crypto";
 
-import { HttpStatus, Injectable, Optional } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable, Optional } from "@nestjs/common";
 
 import { ApiException } from "../common/api-error";
+import { ORCHESTRATION_REPOSITORY } from "../database/orchestration.provider";
 import type { AdminAction, AdminAuditLog, AdminRole, AdminSession } from "./admin.types";
 
 const observability = requireObservability();
@@ -71,7 +72,11 @@ export class AdminService {
   private readonly sessions = new Map<string, AdminSession>();
   private readonly auditLogs: AdminAuditLog[] = [];
 
-  constructor(@Optional() private readonly orchestrationRepository?: object) {
+  constructor(
+    @Optional()
+    @Inject(ORCHESTRATION_REPOSITORY)
+    private readonly orchestrationRepository?: object
+  ) {
     this.bootstrapDevAdminIfAllowed();
   }
 

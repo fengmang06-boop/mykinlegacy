@@ -1,3 +1,5 @@
+import { randomBytes } from "node:crypto";
+
 import { loadWorkerConfig, type WorkerRuntimeConfig } from "./config";
 import { sendVaultReadyEmail } from "./vault-delivery";
 
@@ -35,8 +37,21 @@ interface RuntimeJob {
 }
 
 type Processor = (job: RuntimeJob) => Promise<unknown>;
+type JsonRecord = Record<string, unknown>;
 type RecoverySnapshot = Record<string, unknown>;
 type RecoveryIssue = Record<string, unknown>;
+
+type WorkerOutboxEvent = {
+  id: string;
+  event_type: string;
+  aggregate_type: string;
+  aggregate_id: string;
+  payload_json: JsonRecord;
+  status: "processing";
+  attempts: number;
+  created_at: string;
+  published_at: string | null;
+};
 
 interface SchedulerFoundation {
   recovery_scan_enabled: boolean;
@@ -86,9 +101,19 @@ interface QueueModule {
   }) => { dispatchOnce(): Promise<unknown> };
 }
 
+type OrderRecoveryDelegate = {
+  findMany(args: unknown): Promise<unknown[]>;
+};
+
+type OutboxRecoveryDelegate = {
+  findFirst(args: unknown): Promise<unknown | null>;
+  create(args: unknown): Promise<unknown>;
+};
+
 interface DatabaseModule {
   prisma: {
     outboxEvent: unknown;
+    order: OrderRecoveryDelegate;
     orderCustomerPii: unknown;
     emailLog: unknown;
     $disconnect(): Promise<void>;
@@ -197,6 +222,7 @@ export function createWorkerApp(options: WorkerAppOptions = {}): WorkerApp {
     runRepository: new aiModule.InMemoryAiGenerationRunRepository()
   };
   let outboxInterval: NodeJS.Timeout | null = null;
+  let outboxMaintenanceRunning = false;
   let recoveryScanInterval: NodeJS.Timeout | null = null;
   let lastRecoveryScanAt: string | null = null;
   const scheduler = observability.createSchedulerFoundation({
@@ -344,8 +370,36 @@ export function createWorkerApp(options: WorkerAppOptions = {}): WorkerApp {
       });
 
       if (config.enableOutboxDispatcher && outboxDispatcher) {
+        const runOutboxMaintenance = async () => {
+          if (outboxMaintenanceRunning) {
+            return;
+          }
+          outboxMaintenanceRunning = true;
+          try {
+            await outboxDispatcher.dispatchOnce();
+            await recoverStuckPaidOrders({
+              queueModule,
+              databaseModule,
+              orchestrationRepository,
+              emailModule
+            });
+          } catch (error) {
+            queueModule.writeWorkerLog({
+              level: "error",
+              message: "outbox_maintenance_failed",
+              queue_name: queueModule.QUEUE_NAMES.paymentConfirmation,
+              extra: {
+                error_message:
+                  error instanceof Error ? error.message : "Unknown outbox maintenance error"
+              }
+            });
+          } finally {
+            outboxMaintenanceRunning = false;
+          }
+        };
+        void runOutboxMaintenance();
         outboxInterval = setInterval(() => {
-          void outboxDispatcher.dispatchOnce();
+          void runOutboxMaintenance();
         }, config.pollIntervalMs);
       }
 
@@ -394,6 +448,65 @@ export function getWorkerStatus(queueModule: QueueModule = requireQueue()) {
   };
 }
 
+export async function recoverStuckPaidOrders(input: {
+  queueModule: QueueModule;
+  databaseModule: DatabaseModule;
+  orchestrationRepository: unknown;
+  emailModule: EmailModule;
+  now?: Date;
+}): Promise<{ scanned: number; recovered: number; failed: number }> {
+  const now = input.now ?? new Date();
+  const orders = await input.databaseModule.prisma.order.findMany({
+    where: { paymentStatus: "paid", fulfillmentStatus: "not_started" },
+    orderBy: { paidAt: "asc" },
+    take: 10,
+    include: {
+      orderItems: {
+        include: { product: true, package: true }
+      }
+    }
+  });
+  const result = { scanned: orders.length, recovered: 0, failed: 0 };
+
+  for (const orderRow of orders) {
+    try {
+      const outboxEvent = await findOrCreateOrderPaidOutbox(input.databaseModule.prisma, orderRow, now);
+      await fulfillOrderPaidOutbox({
+        databaseModule: input.databaseModule,
+        orchestrationRepository: input.orchestrationRepository,
+        emailModule: input.emailModule,
+        outboxEvent,
+        orderNumberFallback: recordString(orderRow, "orderNumber")
+      });
+      result.recovered += 1;
+      input.queueModule.writeWorkerLog({
+        level: "info",
+        message: "stuck_paid_order_recovered",
+        queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+        extra: {
+          order_id: recordString(orderRow, "id"),
+          order_number: recordString(orderRow, "orderNumber"),
+          raw_token_omitted: true
+        }
+      });
+    } catch (error) {
+      result.failed += 1;
+      input.queueModule.writeWorkerLog({
+        level: "error",
+        message: "stuck_paid_order_recovery_failed",
+        queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+        extra: {
+          order_id: recordString(orderRow, "id"),
+          order_number: recordString(orderRow, "orderNumber"),
+          error_message: error instanceof Error ? error.message : "Unknown stuck order recovery error"
+        }
+      });
+    }
+  }
+
+  return result;
+}
+
 function getPlaceholderProcessorQueues(queueModule: QueueModule): string[] {
   return [
     queueModule.QUEUE_NAMES.generationManifest,
@@ -412,24 +525,12 @@ function wrapPaymentConfirmationProcessor(
   return async (job: RuntimeJob) => {
     const startedAt = Date.now();
     const outboxEvent = toOrchestrationOutboxEvent(job.data.payload, job.attemptsMade);
-    const manifestResult = await databaseModule.processOrderPaidOutbox({
+    const fulfillment = await fulfillOrderPaidOutbox({
+      databaseModule,
+      orchestrationRepository,
+      emailModule,
       outboxEvent,
-      repository: orchestrationRepository,
-      now: new Date()
-    });
-    const generationResult = await databaseModule.runManifestDrivenGeneration({
-      manifest_id: manifestResult.manifest.id,
-      repository: orchestrationRepository,
-      now: new Date()
-    });
-    const deliveryResult = await sendVaultReadyEmail({
-      db: databaseModule.prisma as never,
-      emailModule: emailModule as never,
-      order_id: requireStringField(outboxEvent.payload_json, "order_id"),
-      order_number: job.data.order_number ?? requireStringField(outboxEvent.payload_json, "order_number"),
-      download_token_id: generationResult.download_token_id,
-      raw_token_for_email_only: generationResult.raw_token_for_email_only,
-      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60_000)
+      orderNumberFallback: job.data.order_number
     });
 
     queueModule.writeWorkerLog({
@@ -439,23 +540,62 @@ function wrapPaymentConfirmationProcessor(
       queue_name: queueModule.QUEUE_NAMES.paymentConfirmation,
       duration_ms: Date.now() - startedAt,
       extra: {
-        manifest_id: manifestResult.manifest.id,
-        generation_job_id: manifestResult.generation_job_id,
-        created: manifestResult.created,
-        download_token_id: generationResult.download_token_id,
-        email_delivery_status: deliveryResult.status,
-        email_recipient_source: deliveryResult.recipient_source,
+        manifest_id: fulfillment.manifest_id,
+        generation_job_id: fulfillment.generation_job_id,
+        created: fulfillment.created,
+        download_token_id: fulfillment.download_token_id,
+        email_delivery_status: fulfillment.email_delivery_status,
+        email_recipient_source: fulfillment.email_recipient_source,
         raw_token_omitted: true
       }
     });
 
     return {
-      manifest_id: manifestResult.manifest.id,
-      generation_job_id: manifestResult.generation_job_id,
-      download_token_id: generationResult.download_token_id,
-      email_delivery_status: deliveryResult.status,
+      manifest_id: fulfillment.manifest_id,
+      generation_job_id: fulfillment.generation_job_id,
+      download_token_id: fulfillment.download_token_id,
+      email_delivery_status: fulfillment.email_delivery_status,
       raw_token_omitted: true
     };
+  };
+}
+
+async function fulfillOrderPaidOutbox(input: {
+  databaseModule: DatabaseModule;
+  orchestrationRepository: unknown;
+  emailModule: EmailModule;
+  outboxEvent: WorkerOutboxEvent;
+  orderNumberFallback: string | null;
+}) {
+  const now = new Date();
+  const manifestResult = await input.databaseModule.processOrderPaidOutbox({
+    outboxEvent: input.outboxEvent,
+    repository: input.orchestrationRepository,
+    now
+  });
+  const generationResult = await input.databaseModule.runManifestDrivenGeneration({
+    manifest_id: manifestResult.manifest.id,
+    repository: input.orchestrationRepository,
+    now
+  });
+  const deliveryResult = await sendVaultReadyEmail({
+    db: input.databaseModule.prisma as never,
+    emailModule: input.emailModule as never,
+    order_id: requireStringField(input.outboxEvent.payload_json, "order_id"),
+    order_number:
+      input.orderNumberFallback ?? requireStringField(input.outboxEvent.payload_json, "order_number"),
+    download_token_id: generationResult.download_token_id,
+    raw_token_for_email_only: generationResult.raw_token_for_email_only,
+    expires_at: new Date(Date.now() + 30 * 24 * 60 * 60_000)
+  });
+
+  return {
+    manifest_id: manifestResult.manifest.id,
+    generation_job_id: manifestResult.generation_job_id,
+    created: manifestResult.created,
+    download_token_id: generationResult.download_token_id,
+    email_delivery_status: deliveryResult.status,
+    email_recipient_source: deliveryResult.recipient_source
   };
 }
 
@@ -480,7 +620,71 @@ function wrapPlaceholderProcessor(queueModule: QueueModule, queueName: string): 
   };
 }
 
-function toOrchestrationOutboxEvent(payload: unknown, attempts: number) {
+async function findOrCreateOrderPaidOutbox(
+  db: DatabaseModule["prisma"],
+  orderRow: unknown,
+  now: Date
+): Promise<WorkerOutboxEvent> {
+  const orderId = recordString(orderRow, "id");
+  const outboxDelegate = db.outboxEvent as OutboxRecoveryDelegate;
+  const existing = await outboxDelegate.findFirst({
+    where: { eventType: "order.paid", aggregateId: orderId },
+    orderBy: { createdAt: "asc" }
+  });
+  if (existing) {
+    return mapOutboxRow(existing);
+  }
+
+  const orderItem = firstRecord(recordValue(orderRow, "orderItems"));
+  if (!orderItem) {
+    throw new Error("stuck_paid_order_missing_order_item");
+  }
+  const metadata = recordObject(orderRow, "metadataJson");
+  const payload = {
+    order_id: orderId,
+    order_number: recordString(orderRow, "orderNumber"),
+    order_item_id: recordString(orderItem, "id"),
+    house_id: optionalString(metadata, "house_id"),
+    identity_version_id: optionalString(metadata, "identity_version_id"),
+    product_code: productCodeFromOrderItem(orderItem),
+    package_code: packageCodeFromOrderItem(orderItem),
+    amount_cents: Number(recordValue(orderRow, "totalCents") ?? 0),
+    currency: recordString(orderRow, "currency"),
+    paid_at: isoString(recordValue(orderRow, "paidAt")) ?? now.toISOString(),
+    recovery_created: true
+  };
+  const created = await outboxDelegate.create({
+    data: {
+      id: createWorkerId(),
+      eventType: "order.paid",
+      aggregateType: "order",
+      aggregateId: orderId,
+      payloadJson: payload,
+      status: "pending",
+      attempts: 0,
+      nextAttemptAt: null,
+      createdAt: now,
+      publishedAt: null
+    }
+  });
+  return mapOutboxRow(created);
+}
+
+function mapOutboxRow(row: unknown): WorkerOutboxEvent {
+  return {
+    id: recordString(row, "id"),
+    event_type: recordString(row, "eventType"),
+    aggregate_type: recordString(row, "aggregateType"),
+    aggregate_id: recordString(row, "aggregateId"),
+    payload_json: recordObject(row, "payloadJson"),
+    status: "processing",
+    attempts: Number(recordValue(row, "attempts") ?? 0),
+    created_at: isoString(recordValue(row, "createdAt")) ?? new Date().toISOString(),
+    published_at: isoString(recordValue(row, "publishedAt"))
+  };
+}
+
+function toOrchestrationOutboxEvent(payload: unknown, attempts: number): WorkerOutboxEvent {
   const payloadObject = toRecord(payload);
   return {
     id: requireStringField(payloadObject, "outbox_event_id"),
@@ -508,6 +712,68 @@ function toRecord(value: unknown): Record<string, unknown> {
     return {};
   }
   return value as Record<string, unknown>;
+}
+
+function recordValue(record: unknown, key: string): unknown {
+  if (!record || typeof record !== "object" || Array.isArray(record)) {
+    return undefined;
+  }
+  return (record as JsonRecord)[key];
+}
+
+function recordObject(record: unknown, key: string): JsonRecord {
+  return toRecord(recordValue(record, key));
+}
+
+function recordString(record: unknown, key: string): string {
+  const value = recordValue(record, key);
+  if (typeof value === "string" && value.length > 0) {
+    return value;
+  }
+  throw new Error(`missing_record_field:${key}`);
+}
+
+function optionalString(record: unknown, key: string): string | null {
+  const value = recordValue(record, key);
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function firstRecord(value: unknown): JsonRecord | null {
+  return Array.isArray(value) && value[0] && typeof value[0] === "object"
+    ? (value[0] as JsonRecord)
+    : null;
+}
+
+function isoString(value: unknown): string | null {
+  if (value instanceof Date) {
+    return value.toISOString();
+  }
+  return typeof value === "string" && value.length > 0 ? value : null;
+}
+
+function productCodeFromOrderItem(orderItem: JsonRecord): string | null {
+  const snapshot = toRecord(orderItem.productSnapshotJson);
+  return (
+    optionalString(snapshot, "product_code") ??
+    optionalString(recordObject(orderItem, "product"), "code")
+  );
+}
+
+function packageCodeFromOrderItem(orderItem: JsonRecord): string | null {
+  const snapshot = toRecord(orderItem.productSnapshotJson);
+  return (
+    optionalString(snapshot, "package_code") ??
+    optionalString(recordObject(orderItem, "package"), "code")
+  );
+}
+
+function createWorkerId(): string {
+  const alphabet = "0123456789ABCDEFGHJKMNPQRSTVWXYZ";
+  let id = "";
+  for (const byte of randomBytes(26)) {
+    id += alphabet[byte % alphabet.length];
+  }
+  return id;
 }
 
 function wrapAiImageProcessor(
