@@ -59,7 +59,31 @@ describe("OrdersService", () => {
         manifest_status: "completed",
         expected_assets_count: 1,
         generated_assets_count: 1,
-        failed_assets_count: 0
+        failed_assets_count: 0,
+        meaning_profile: {
+          source_level: "customer_informed",
+          themes: [
+            {
+              theme: "Protection",
+              confidence: "high",
+              evidence: "Family values mention protecting younger generations."
+            }
+          ],
+          symbols: [
+            {
+              symbol: "Oak",
+              meaning: "Strength",
+              rationale: "Selected for steady family protection.",
+              source: "customer_input"
+            }
+          ],
+          design_rationale: ["Use grounded, protective composition."],
+          story_direction: "A story about protection across generations.",
+          certificate_direction: "A keepsake certificate centered on family continuity.",
+          boundary_statement:
+            "MyKinLegacy creates personalized symbolic keepsakes. It does not provide official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records.",
+          validation: { valid: true, quality_flags: [], banned_claims_found: [] }
+        }
       },
       download_ready: true,
       download_vault_available: true
@@ -190,7 +214,36 @@ function createOrchestrationRepository(): ConstructorParameters<typeof OrdersSer
       manifest_status: "completed",
       expected_assets: [{ deliverable_code: "download_package_zip" }],
       generated_assets: [{ deliverable_code: "download_package_zip", asset_id: "asset_1" }],
-      failed_assets: []
+      failed_assets: [],
+      optional_assets: [
+        {
+          attachment_type: "meaning_engine",
+          meaning_profile: {
+            source_level: "customer_informed",
+            meaning_themes: [
+              {
+                theme: "Protection",
+                confidence: "high",
+                evidence: "Family values mention protecting younger generations."
+              }
+            ],
+            symbol_choices: [
+              {
+                symbol: "Oak",
+                meaning: "Strength",
+                rationale: "Selected for steady family protection.",
+                source: "customer_input"
+              }
+            ],
+            design_rationale: ["Use grounded, protective composition."],
+            story_direction: "A story about protection across generations.",
+            certificate_direction: "A keepsake certificate centered on family continuity.",
+            boundary_statement:
+              "MyKinLegacy creates personalized symbolic keepsakes. It does not provide official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records.",
+            validation: { valid: true, quality_flags: [], banned_claims_found: [] }
+          }
+        }
+      ]
     }),
     findDownloadTokenByOrder: async () => ({ id: "download_token_1", status: "active" })
   };

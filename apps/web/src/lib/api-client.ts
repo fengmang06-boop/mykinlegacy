@@ -49,8 +49,29 @@ export interface OrderStatus {
     expected_assets_count?: number;
     generated_assets_count?: number;
     manifest_status?: string;
+    meaning_profile?: VaultMeaningProfile | null;
   } | null;
   download_ready?: boolean;
+}
+
+export interface VaultMeaningProfile {
+  source_level?: string | null;
+  themes?: Array<{ theme?: string | null; confidence?: string | null; evidence?: string | null }>;
+  symbols?: Array<{
+    symbol?: string | null;
+    meaning?: string | null;
+    rationale?: string | null;
+    source?: string | null;
+  }>;
+  design_rationale?: string[];
+  story_direction?: string | null;
+  certificate_direction?: string | null;
+  boundary_statement?: string | null;
+  validation?: {
+    valid?: boolean;
+    quality_flags?: string[];
+    banned_claims_found?: string[];
+  };
 }
 
 export interface DownloadVault {

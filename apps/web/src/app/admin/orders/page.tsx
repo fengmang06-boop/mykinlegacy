@@ -38,6 +38,7 @@ export default async function AdminOrdersPage({
             "Fulfillment",
             "Assets",
             "Vault",
+            "Meaning",
             "Total",
             "Status page"
           ]}
@@ -51,6 +52,7 @@ export default async function AdminOrdersPage({
               order.expected_asset_count || order.asset_count
             }`,
             <StatusPill key="vault" value={order.download_ready ? "ready" : "not ready"} />,
+            <StatusPill key="meaning" value={order.meaning_profile ? "attached" : "missing"} />,
             order.total,
             <Link key="status" href={`/order-status/${order.order_number}`}>
               Open
@@ -77,6 +79,18 @@ export default async function AdminOrdersPage({
                     <p className="eyebrow">{order.order_number}</p>
                     <h3>{meaning.source_level}</h3>
                     <StatusPill value={meaning.validation_valid ? "valid" : "review"} />
+                  </div>
+                  <div className="admin-meaning-meta">
+                    <span>profile=yes</span>
+                    <span>themes={meaning.themes.length}</span>
+                    <span>symbols={meaning.symbols.length}</span>
+                    <span>design={meaning.design_rationale.length > 0 ? "yes" : "no"}</span>
+                    <span>boundary={meaning.boundary_statement ? "yes" : "no"}</span>
+                    <span>
+                      assets={order.generated_asset_count || order.asset_count}/
+                      {order.expected_asset_count || order.asset_count}
+                    </span>
+                    <span>vault={order.download_ready ? "ready" : "not ready"}</span>
                   </div>
                   <div>
                     <strong>Themes</strong>

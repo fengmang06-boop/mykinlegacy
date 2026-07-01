@@ -91,6 +91,7 @@ interface OrderGenerationRepository {
     expected_assets: unknown[];
     generated_assets: unknown[];
     failed_assets: unknown[];
+    optional_assets?: unknown[];
   } | null>;
   findDownloadTokenByOrder(orderId: string): Promise<{ id: string; status: string } | null>;
 }
@@ -386,7 +387,8 @@ async function getOrderGenerationSummary(input: {
           manifest_status: manifest.manifest_status,
           expected_assets_count: manifest.expected_assets.length,
           generated_assets_count: manifest.generated_assets.length,
-          failed_assets_count: manifest.failed_assets.length
+          failed_assets_count: manifest.failed_assets.length,
+          meaning_profile: meaningProfileSummary(manifest.optional_assets)
         }
       : null,
     download_ready: Boolean(token && manifest?.manifest_status === "completed"),
@@ -400,6 +402,68 @@ function friendlyProgress(fulfillmentStatus: string): string {
   if (fulfillmentStatus === "generating") return "generating_assets";
   if (fulfillmentStatus === "queued") return "generation_queued";
   return "waiting_for_generation";
+}
+
+function meaningProfileSummary(optionalAssets: unknown[] | undefined) {
+  const attachment = (optionalAssets ?? []).find(
+    (item) => isRecord(item) && item.attachment_type === "meaning_engine"
+  );
+  if (!isRecord(attachment)) return null;
+  const profile = recordObject(attachment, "meaning_profile");
+  if (!Object.keys(profile).length) return null;
+  const validation = recordObject(profile, "validation");
+
+  return {
+    source_level: stringOrNull(profile.source_level),
+    themes: recordArray(profile.meaning_themes).map((theme) => {
+      const record = isRecord(theme) ? theme : {};
+      return {
+        theme: stringOrNull(record.theme),
+        confidence: stringOrNull(record.confidence),
+        evidence: stringOrNull(record.evidence)
+      };
+    }),
+    symbols: recordArray(profile.symbol_choices).map((symbol) => {
+      const record = isRecord(symbol) ? symbol : {};
+      return {
+        symbol: stringOrNull(record.symbol),
+        meaning: stringOrNull(record.meaning),
+        rationale: stringOrNull(record.rationale),
+        source: stringOrNull(record.source)
+      };
+    }),
+    design_rationale: stringArray(profile.design_rationale),
+    story_direction: stringOrNull(profile.story_direction),
+    certificate_direction: stringOrNull(profile.certificate_direction),
+    boundary_statement: stringOrNull(profile.boundary_statement),
+    validation: {
+      valid: validation.valid === true,
+      quality_flags: stringArray(validation.quality_flags),
+      banned_claims_found: stringArray(validation.banned_claims_found)
+    }
+  };
+}
+
+function recordObject(value: unknown, key: string): Record<string, unknown> {
+  if (!isRecord(value)) return {};
+  const child = value[key];
+  return isRecord(child) ? child : {};
+}
+
+function recordArray(value: unknown): unknown[] {
+  return Array.isArray(value) ? value : [];
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+function stringOrNull(value: unknown): string | null {
+  return typeof value === "string" && value.trim() ? value : null;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
 function serializeOrder(order: OrderRecord) {
@@ -427,8 +491,4 @@ function throwPackageNotFound(packageCode: string): never {
     status: HttpStatus.NOT_FOUND,
     affectedField: "package_code"
   });
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }

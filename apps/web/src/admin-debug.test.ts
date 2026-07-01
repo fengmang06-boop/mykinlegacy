@@ -1,8 +1,13 @@
+import { readFile } from "node:fs/promises";
+import { dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
 import { afterEach, describe, expect, it } from "vitest";
 
 import { getAdminAccess } from "./lib/admin-debug";
 
 const originalAdminToken = process.env.ADMIN_ACCESS_TOKEN;
+const testDir = dirname(fileURLToPath(import.meta.url));
 
 afterEach(() => {
   if (originalAdminToken === undefined) {
@@ -38,5 +43,16 @@ describe("admin debug access", () => {
 
     expect(access.authorized).toBe(false);
     expect(access.reason).not.toContain("runtime-admin-token");
+  });
+
+  it("admin orders page includes safe meaning and vault indicators", async () => {
+    const source = await readFile(join(testDir, "app/admin/orders/page.tsx"), "utf8");
+
+    expect(source).toContain("profile=yes");
+    expect(source).toContain("themes=");
+    expect(source).toContain("symbols=");
+    expect(source).toContain("boundary=");
+    expect(source).toContain("vault=");
+    expect(source).toContain("raw vault tokens");
   });
 });

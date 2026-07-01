@@ -16,6 +16,7 @@ import { ApiClient, ApiClientError } from "./lib/api-client";
 import { sanitizeAnalyticsPayload } from "./lib/analytics";
 import { getSafetyMessage } from "./lib/safety";
 import { areRequiredConsentsAccepted } from "./components/checkout-flow";
+import { PrivateVaultPreview } from "./components/vault-meaning";
 
 const testDir = dirname(fileURLToPath(import.meta.url));
 
@@ -161,6 +162,62 @@ describe("customer frontend flow", () => {
     expect(downloadMetadata.robots).toMatchObject({ index: false, follow: false });
     expect(successMetadata.robots).toMatchObject({ index: false, follow: false });
     expect(cancelMetadata.robots).toMatchObject({ index: false, follow: false });
+  });
+
+  it("vault preview renders meaning content without JSON dump", () => {
+    const html = renderToStaticMarkup(
+      <PrivateVaultPreview
+        vaultReady
+        meaningProfile={{
+          source_level: "customer_informed",
+          themes: [
+            {
+              theme: "Protection",
+              confidence: "high",
+              evidence: "Family values mention protecting younger generations."
+            }
+          ],
+          symbols: [
+            {
+              symbol: "Oak",
+              meaning: "Strength",
+              rationale: "Selected for steady family protection.",
+              source: "customer_input"
+            }
+          ],
+          design_rationale: ["Use grounded, protective composition."],
+          story_direction: "A story about protection across generations.",
+          certificate_direction: "A keepsake certificate centered on family continuity.",
+          boundary_statement:
+            "MyKinLegacy creates personalized symbolic keepsakes. It does not provide official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records.",
+          validation: { valid: true, quality_flags: [], banned_claims_found: [] }
+        }}
+      />
+    );
+
+    expect(html).toContain("House Meaning Summary");
+    expect(html).toContain("Meaning Themes");
+    expect(html).toContain("Chosen Symbols");
+    expect(html).toContain("Why these symbols were chosen");
+    expect(html).toContain("Design Basis");
+    expect(html).toContain("Story Direction");
+    expect(html).toContain("Certificate Direction");
+    expect(html).toContain("Boundary Statement");
+    expect(html).toContain("Private Vault Includes");
+    expect(html).toContain("Oak");
+    expect(html).toContain("official coats of arms");
+    expect(html).not.toContain("{&quot;");
+    expect(html).not.toContain("raw_token");
+  });
+
+  it("vault preview keeps older orders compatible with meaning fallback", () => {
+    const html = renderToStaticMarkup(<PrivateVaultPreview vaultReady meaningProfile={null} />);
+
+    expect(html).toContain("Meaning Engine profile not attached");
+    expect(html).toContain(
+      "This collection was completed before the Meaning Engine profile was generated."
+    );
+    expect(html).toContain("Private Vault Includes");
   });
 
   it("payment cancel page renders a branded checkout recovery path", async () => {

@@ -2757,6 +2757,147 @@ textarea {
   color: var(--premium-warm);
 }
 
+.premium-page .private-vault-preview {
+  display: grid;
+  gap: 14px;
+  margin-top: 20px;
+  padding: 18px;
+  border: 1px solid rgba(201, 162, 74, 0.24);
+  border-radius: 18px;
+  background:
+    radial-gradient(circle at 15% 0%, rgba(201, 162, 74, 0.12), transparent 18rem),
+    linear-gradient(145deg, rgba(246, 235, 212, 0.055), rgba(246, 235, 212, 0.025));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.premium-page .vault-preview-header {
+  display: grid;
+  gap: 8px;
+}
+
+.premium-page .vault-preview-header h2,
+.premium-page .vault-meaning-card h3 {
+  margin: 0;
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.premium-page .vault-preview-header h2 {
+  font-size: clamp(30px, 4vw, 44px);
+}
+
+.premium-page .vault-preview-header p,
+.premium-page .vault-meaning-card p,
+.premium-page .vault-meaning-card li,
+.premium-page .vault-meaning-card small {
+  color: var(--premium-warm);
+  line-height: 1.58;
+}
+
+.premium-page .vault-meaning-card {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(201, 162, 74, 0.18);
+  border-radius: 14px;
+  background: rgba(10, 9, 8, 0.34);
+}
+
+.premium-page .vault-meaning-card span {
+  color: var(--premium-gold);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+}
+
+.premium-page .vault-meaning-summary {
+  border-color: rgba(201, 162, 74, 0.42);
+  background:
+    linear-gradient(135deg, rgba(201, 162, 74, 0.13), rgba(246, 235, 212, 0.035)),
+    rgba(10, 9, 8, 0.34);
+}
+
+.premium-page .vault-meaning-summary h3 {
+  max-width: 760px;
+  font-size: clamp(26px, 3.4vw, 38px);
+}
+
+.premium-page .vault-meaning-two-column {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.premium-page .vault-meaning-card.compact h3 {
+  font-size: 24px;
+}
+
+.premium-page .vault-meaning-card ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.premium-page .meaning-chip-list,
+.premium-page .symbol-rationale-list,
+.premium-page .included-items-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.premium-page .meaning-chip-list {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.premium-page .meaning-chip,
+.premium-page .symbol-rationale,
+.premium-page .included-items-grid div {
+  border: 1px solid rgba(201, 162, 74, 0.16);
+  border-radius: 12px;
+  padding: 12px;
+  background: rgba(246, 235, 212, 0.045);
+}
+
+.premium-page .meaning-chip strong,
+.premium-page .symbol-rationale strong {
+  display: block;
+  color: var(--premium-ivory);
+}
+
+.premium-page .meaning-chip small,
+.premium-page .symbol-rationale small {
+  display: block;
+  margin-top: 4px;
+}
+
+.premium-page .symbol-rationale-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.premium-page .symbol-rationale p {
+  margin: 6px 0 0;
+  color: var(--premium-ivory);
+}
+
+.premium-page .vault-meaning-card.boundary {
+  border-color: rgba(201, 162, 74, 0.36);
+}
+
+.premium-page .vault-meaning-fallback {
+  border-style: dashed;
+}
+
+.premium-page .included-items-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.premium-page .included-items-grid div {
+  color: var(--premium-ivory);
+  font-weight: 750;
+}
+
 .premium-page.admin-debug-page {
   min-height: 100vh;
 }
@@ -2849,6 +2990,22 @@ textarea {
   color: var(--premium-warm);
   font-size: 13px;
   line-height: 1.55;
+}
+
+.premium-page .admin-meaning-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.premium-page .admin-meaning-meta span {
+  border: 1px solid rgba(201, 162, 74, 0.18);
+  border-radius: 999px;
+  padding: 5px 8px;
+  background: rgba(246, 235, 212, 0.045);
+  color: var(--premium-warm);
+  font-size: 11px;
+  font-weight: 750;
 }
 
 .admin-table-wrap {
@@ -3029,6 +3186,37 @@ textarea {
 
   .premium-page .status-card p {
     font-size: 16px;
+  }
+
+  .premium-page .private-vault-preview {
+    gap: 12px;
+    margin-top: 16px;
+    padding: 14px;
+    border-radius: 15px;
+  }
+
+  .premium-page .vault-preview-header h2 {
+    font-size: 30px;
+  }
+
+  .premium-page .vault-meaning-card {
+    padding: 13px;
+  }
+
+  .premium-page .vault-meaning-summary h3 {
+    font-size: 25px;
+  }
+
+  .premium-page .vault-meaning-two-column,
+  .premium-page .meaning-chip-list,
+  .premium-page .symbol-rationale-list,
+  .premium-page .included-items-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .premium-page .vault-meaning-card.compact h3 {
+    font-size: 22px;
   }
 
   .premium-page .summary-list {

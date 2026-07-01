@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ApiClient, type OrderStatus as OrderStatusData } from "../lib/api-client";
 import { friendlyGenerationMessage } from "../lib/state";
 import { trackEvent } from "../lib/analytics";
+import { PrivateVaultPreview } from "./vault-meaning";
 
 const finalHomepageAsset = "/assets/final-homepage";
 
@@ -117,6 +118,10 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
               When your private vault is ready, the secure link will be sent to your delivery email.
             </p>
           )}
+          <PrivateVaultPreview
+            meaningProfile={order?.generation_manifest?.meaning_profile}
+            vaultReady={vaultReady}
+          />
           <ul>
             <li>Your payment is confirmed.</li>
             <li>Your House Identity is being prepared.</li>
