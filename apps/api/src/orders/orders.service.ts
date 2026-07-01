@@ -4,7 +4,7 @@ import { ulid } from "ulid";
 import { ApiException } from "../common/api-error";
 import {
   hashEmail,
-  placeholderEncryptEmail
+  encryptEmailForStorage
 } from "../common/security";
 import {
   optionalBoolean,
@@ -175,7 +175,7 @@ export class OrdersService {
         data: {
           id: ulid(),
           orderId: createdOrder.id,
-          emailEncrypted: placeholderEncryptEmail(customerEmail),
+          emailEncrypted: encryptEmailForStorage(customerEmail),
           emailHash: hashEmail(customerEmail),
           nameEncrypted: null,
           billingCountry: null,

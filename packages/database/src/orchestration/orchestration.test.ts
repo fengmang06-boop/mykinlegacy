@@ -59,6 +59,13 @@ describe("DB-backed orchestration foundation", () => {
     });
     expect(repository.downloadTokens.size).toBe(1);
     expect(repository.emailLogs.size).toBe(1);
+    expect(result.raw_token_for_email_only).toBeTruthy();
+    expect(JSON.stringify([...repository.downloadTokens.values()])).not.toContain(
+      result.raw_token_for_email_only
+    );
+    expect(JSON.stringify([...repository.emailLogs.values()])).not.toContain(
+      result.raw_token_for_email_only
+    );
     expect(repository.orders.get("order_1")).toMatchObject({
       order_status: "completed",
       fulfillment_status: "completed",

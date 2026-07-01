@@ -104,6 +104,8 @@ describe("worker app foundation", () => {
   });
 
   it("processes paid order queue jobs into a placeholder collection", async () => {
+    process.env.EMAIL_DELIVERY_TEST_MODE = "true";
+    process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";
     const queueModule = createMockQueueModule();
     const databaseModule = createMockDatabaseModule();
     const app = createWorkerApp({
@@ -163,11 +165,19 @@ describe("worker app foundation", () => {
       manifest_id: "manifest_1",
       generation_job_id: "generation_job_1",
       download_token_id: "download_token_1",
+      email_delivery_status: "sent",
       raw_token_omitted: true
     });
     expect(databaseModule.processOrderPaidOutbox).toHaveBeenCalled();
     expect(databaseModule.runManifestDrivenGeneration).toHaveBeenCalled();
+    expect(databaseModule.state.sentDeliveryInput).toMatchObject({
+      raw_token_for_internal_delivery_only: "raw-token-once",
+      recipient_email: "founder-test@example.com"
+    });
+    expect(JSON.stringify(databaseModule.state.emailLogs)).not.toContain("raw-token-once");
     await app.shutdown();
+    delete process.env.EMAIL_DELIVERY_TEST_MODE;
+    delete process.env.EMAIL_TEST_RECIPIENT;
   });
 });
 
@@ -239,7 +249,27 @@ function createMockEmailModule() {
   return {
     InMemoryEmailLogRepository: class MockEmailLogRepository {},
     MockEmailProvider: class MockEmailProvider {},
-    async sendDeliveryEmailJob() {
+    createEmailProviderFromEnv() {
+      return { provider_code: "mock" };
+    },
+    async sendDeliveryEmailJob(input: unknown, dependencies: { emailLogRepository: { createEmailLog(input: unknown): Promise<unknown> } }) {
+      currentDatabaseModuleState.sentDeliveryInput = input;
+      await dependencies.emailLogRepository.createEmailLog({
+        id: "email_log_2",
+        order_id: "order_1",
+        email_template_id: null,
+        provider: "mock",
+        provider_message_id: "mock_message_1",
+        recipient_email_hash: "a".repeat(64),
+        status: "sent",
+        error_message: null,
+        payload_json: {
+          masked_download_vault_link: "https://mykinlegacy.com/download/[redacted]",
+          download_token_id: "download_token_1"
+        },
+        created_at: new Date("2026-06-29T00:00:00.000Z"),
+        sent_at: new Date("2026-06-29T00:00:00.000Z")
+      });
       return { email_log_id: "email_log_1", status: "sent" };
     }
   };
@@ -268,9 +298,26 @@ function createMockAiModule() {
 }
 
 function createMockDatabaseModule() {
+  currentDatabaseModuleState = {
+    sentDeliveryInput: null,
+    emailLogs: [] as unknown[]
+  };
   return {
+    state: currentDatabaseModuleState,
     prisma: {
       outboxEvent: {},
+      orderCustomerPii: {
+        findUnique: vi.fn(async () => ({
+          emailHash: "b".repeat(64),
+          emailEncrypted: Buffer.from("placeholder:v1:not-decryptable")
+        }))
+      },
+      emailLog: {
+        create: vi.fn(async (args: { data: unknown }) => {
+          currentDatabaseModuleState.emailLogs.push(args.data);
+          return args.data;
+        })
+      },
       $disconnect: vi.fn(async () => undefined)
     },
     PrismaOrchestrationRepository: class MockPrismaOrchestrationRepository {},
@@ -280,10 +327,16 @@ function createMockDatabaseModule() {
       created: true
     })),
     runManifestDrivenGeneration: vi.fn(async () => ({
-      download_token_id: "download_token_1"
+      download_token_id: "download_token_1",
+      raw_token_for_email_only: "raw-token-once"
     }))
   };
 }
+
+let currentDatabaseModuleState: {
+  sentDeliveryInput: unknown;
+  emailLogs: unknown[];
+} = { sentDeliveryInput: null, emailLogs: [] };
 
 class MockQueue {
   public closed = false;

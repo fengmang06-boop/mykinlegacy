@@ -90,6 +90,16 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
               elapsed_minutes: elapsed
             })}
           </p>
+          {order?.download_ready ? (
+            <p className="notice">
+              Your private vault link has been sent to your delivery email. For your privacy, the
+              vault token is not shown on this page.
+            </p>
+          ) : (
+            <p className="notice">
+              When your private vault is ready, the secure link will be sent to your delivery email.
+            </p>
+          )}
           <ul>
             <li>Your payment is confirmed.</li>
             <li>Your House Identity is being prepared.</li>

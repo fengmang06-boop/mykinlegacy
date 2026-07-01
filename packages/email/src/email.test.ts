@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   InMemoryEmailLogRepository,
   MockEmailProvider,
+  createEmailProviderFromEnv,
   renderDeliveryReadyEmail,
   sendDeliveryEmailJob
 } from "./index";
@@ -39,6 +40,9 @@ describe("mock email provider and delivery rendering", () => {
     });
 
     expect(rendered.body_text).toContain("https://example.com/download/raw_token_once");
+    expect(rendered.subject).toBe("Your MyKinLegacy Private Vault Is Ready");
+    expect(rendered.body_text).toContain("crest artwork");
+    expect(rendered.body_text).toContain("legal heraldic grants");
     expect(rendered.body_text).not.toContain("signed-url");
     expect(rendered.body_text).not.toContain("storage_key");
     expect(rendered.sanitized_payload.masked_download_vault_link).toBe(
@@ -95,5 +99,16 @@ describe("mock email provider and delivery rendering", () => {
     expect(result.status).toBe("failed");
     expect(emailLogRepository.logs[0]?.status).toBe("failed");
     expect(emailLogRepository.logs[0]?.error_message).toBe("email_delivery_failed");
+  });
+
+  it("creates configurable provider from environment without hardcoded secrets", () => {
+    expect(createEmailProviderFromEnv({ EMAIL_PROVIDER: "log" }).provider_code).toBe("mock");
+    expect(
+      createEmailProviderFromEnv({
+        EMAIL_PROVIDER: "resend",
+        RESEND_API_KEY: "test_key",
+        EMAIL_FROM: "support@mykinlegacy.com"
+      }).provider_code
+    ).toBe("resend");
   });
 });

@@ -1,4 +1,4 @@
-import { createHash } from "node:crypto";
+import { createCipheriv, createHash, randomBytes } from "node:crypto";
 
 export function sha256(value: string): string {
   return createHash("sha256").update(value).digest("hex");
@@ -14,6 +14,26 @@ export function hashEmail(email: string): string {
 
 export function placeholderEncryptEmail(email: string): Buffer {
   return Buffer.from(`placeholder:v1:${hashEmail(email)}`, "utf8");
+}
+
+export function encryptEmailForStorage(email: string): Buffer {
+  const key = customerPiiEncryptionKey();
+  if (!key) {
+    return placeholderEncryptEmail(email);
+  }
+
+  const iv = randomBytes(12);
+  const cipher = createCipheriv("aes-256-gcm", key, iv);
+  const ciphertext = Buffer.concat([
+    cipher.update(normalizeEmail(email), "utf8"),
+    cipher.final()
+  ]);
+  const tag = cipher.getAuthTag();
+
+  return Buffer.from(
+    `enc:v1:${iv.toString("base64url")}:${tag.toString("base64url")}:${ciphertext.toString("base64url")}`,
+    "utf8"
+  );
 }
 
 export function maskEmail(email: string): string {
@@ -41,4 +61,12 @@ function sortValue(value: unknown): unknown {
     );
   }
   return value;
+}
+
+function customerPiiEncryptionKey(): Buffer | null {
+  const raw = process.env.CUSTOMER_PII_ENCRYPTION_KEY ?? process.env.PII_ENCRYPTION_KEY;
+  if (!raw || raw === "replace_with_customer_pii_encryption_key") {
+    return null;
+  }
+  return createHash("sha256").update(raw).digest();
 }

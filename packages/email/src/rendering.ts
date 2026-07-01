@@ -1,5 +1,5 @@
 export const DELIVERY_READY_EMAIL_DISCLAIMER =
-  "Your collection is a personalized, AI-generated, heritage-inspired symbolic design and is not an official, legally granted, or historically certified coat of arms.";
+  "MyKinLegacy creates personalized symbolic keepsakes. It does not provide official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records.";
 
 export interface DeliveryReadyEmailInput {
   order_number: string;
@@ -31,15 +31,22 @@ export function renderDeliveryReadyEmail(input: DeliveryReadyEmailInput): Render
     disclaimer: DELIVERY_READY_EMAIL_DISCLAIMER
   };
   const subject = renderTemplate(
-    input.subject_template ?? "Your Heritage Collection is ready: {{order_number}}",
+    input.subject_template ?? "Your MyKinLegacy Private Vault Is Ready",
     variables
   );
   const bodyText = renderTemplate(
     input.body_template ??
       [
-        "Your Heritage Collection for order {{order_number}} is ready.",
+        "Hello,",
         "",
-        "Download it here: {{download_vault_link}}",
+        "Your MyKinLegacy private vault is ready for order {{order_number}}.",
+        "",
+        "Open your private vault:",
+        "{{download_vault_link}}",
+        "",
+        "Inside you will find your private Family Legacy Collection artifacts, including crest artwork, a heritage certificate, family story materials, a symbol guide, and the complete collection archive.",
+        "",
+        "Privacy note: this vault link is private to your order. Please keep it somewhere safe and share it only with trusted family members.",
         "",
         "This link expires at {{expires_at}}.",
         "Need help? Contact {{support_email}}.",

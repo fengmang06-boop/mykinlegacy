@@ -64,6 +64,12 @@ export function PaymentSuccess() {
             Your private collection has been prepared for review. Open the vault to see the
             Heritage Certificate, Family Story, Symbol Guide, Crest Artwork, and Collection Letter.
           </p>
+          {!isFounderDemo ? (
+            <p className="notice">
+              When your private vault is ready, the secure vault link will be sent to your delivery
+              email. For your privacy, vault links are not shown on this page.
+            </p>
+          ) : null}
           {attempts >= 24 && !confirmed ? (
             <p className="notice">
               Payment may still be processing. Please do not pay again unless support confirms.

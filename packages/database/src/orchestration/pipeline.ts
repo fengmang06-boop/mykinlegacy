@@ -99,6 +99,7 @@ export async function runManifestDrivenGeneration(input: {
   manifest: OrchestrationManifest;
   assets: OrchestrationAsset[];
   download_token_id: string;
+  raw_token_for_email_only: string;
   email_log: OrchestrationEmailLog;
 }> {
   const manifest = await findManifest(input.repository, input.manifest_id);
@@ -147,6 +148,7 @@ export async function runManifestDrivenGeneration(input: {
     manifest: current,
     assets: createdAssets,
     download_token_id: completion.download_token_id,
+    raw_token_for_email_only: completion.raw_token_for_email_only,
     email_log: completion.email_log
   };
 }

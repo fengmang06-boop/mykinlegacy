@@ -1,4 +1,5 @@
 import { loadWorkerConfig, type WorkerRuntimeConfig } from "./config";
+import { sendVaultReadyEmail } from "./vault-delivery";
 
 const observability = requireObservability();
 
@@ -88,6 +89,8 @@ interface QueueModule {
 interface DatabaseModule {
   prisma: {
     outboxEvent: unknown;
+    orderCustomerPii: unknown;
+    emailLog: unknown;
     $disconnect(): Promise<void>;
   };
   PrismaOrchestrationRepository: new (db: unknown) => unknown;
@@ -98,6 +101,7 @@ interface DatabaseModule {
   }>;
   runManifestDrivenGeneration(input: unknown): Promise<{
     download_token_id: string;
+    raw_token_for_email_only?: string;
   }>;
 }
 
@@ -170,6 +174,7 @@ interface PdfModule {
 interface EmailModule {
   InMemoryEmailLogRepository: new () => unknown;
   MockEmailProvider: new () => unknown;
+  createEmailProviderFromEnv(env: Record<string, string | undefined>): unknown;
   sendDeliveryEmailJob(input: unknown, dependencies: unknown): Promise<unknown>;
 }
 
@@ -214,7 +219,7 @@ export function createWorkerApp(options: WorkerAppOptions = {}): WorkerApp {
   const paymentConfirmationWorker = workerFactory(
     queueModule.QUEUE_NAMES.paymentConfirmation,
     connection,
-    wrapPaymentConfirmationProcessor(queueModule, databaseModule, orchestrationRepository),
+    wrapPaymentConfirmationProcessor(queueModule, databaseModule, orchestrationRepository, emailModule),
     config.concurrency
   );
   attachRuntimeErrorLog(
@@ -401,7 +406,8 @@ function getPlaceholderProcessorQueues(queueModule: QueueModule): string[] {
 function wrapPaymentConfirmationProcessor(
   queueModule: QueueModule,
   databaseModule: DatabaseModule,
-  orchestrationRepository: unknown
+  orchestrationRepository: unknown,
+  emailModule: EmailModule
 ): Processor {
   return async (job: RuntimeJob) => {
     const startedAt = Date.now();
@@ -416,6 +422,15 @@ function wrapPaymentConfirmationProcessor(
       repository: orchestrationRepository,
       now: new Date()
     });
+    const deliveryResult = await sendVaultReadyEmail({
+      db: databaseModule.prisma as never,
+      emailModule: emailModule as never,
+      order_id: requireStringField(outboxEvent.payload_json, "order_id"),
+      order_number: job.data.order_number ?? requireStringField(outboxEvent.payload_json, "order_number"),
+      download_token_id: generationResult.download_token_id,
+      raw_token_for_email_only: generationResult.raw_token_for_email_only,
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60_000)
+    });
 
     queueModule.writeWorkerLog({
       level: "info",
@@ -428,6 +443,8 @@ function wrapPaymentConfirmationProcessor(
         generation_job_id: manifestResult.generation_job_id,
         created: manifestResult.created,
         download_token_id: generationResult.download_token_id,
+        email_delivery_status: deliveryResult.status,
+        email_recipient_source: deliveryResult.recipient_source,
         raw_token_omitted: true
       }
     });
@@ -436,6 +453,7 @@ function wrapPaymentConfirmationProcessor(
       manifest_id: manifestResult.manifest.id,
       generation_job_id: manifestResult.generation_job_id,
       download_token_id: generationResult.download_token_id,
+      email_delivery_status: deliveryResult.status,
       raw_token_omitted: true
     };
   };
