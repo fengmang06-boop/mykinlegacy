@@ -23,10 +23,10 @@ export function PrivateVaultPreview({ meaningProfile, vaultReady = false }: Vaul
     <section className="private-vault-preview" aria-label="Private vault collection preview">
       <div className="vault-preview-header">
         <p className="eyebrow">Collection meaning</p>
-        <h2>{vaultReady ? "Inside your private vault" : "What your vault is preparing"}</h2>
+        <h2>{vaultReady ? "Inside your private vault" : "The keepsake taking shape"}</h2>
         <p>
-          This preview explains the meaning basis behind the collection. It is written for the
-          family, not for internal production review.
+          A simple preview of the family meaning, symbols, and story that shaped this private
+          collection.
         </p>
       </div>
 
@@ -39,7 +39,7 @@ export function PrivateVaultPreview({ meaningProfile, vaultReady = false }: Vaul
             <DesignBasisPanel meaningProfile={meaningProfile} />
             <StoryDirectionPanel meaningProfile={meaningProfile} />
             <CertificateDirectionPanel meaningProfile={meaningProfile} />
-            <BoundaryStatementNotice meaningProfile={meaningProfile} />
+            <BoundaryStatementNotice />
           </div>
         </>
       ) : (
@@ -54,19 +54,16 @@ export function PrivateVaultPreview({ meaningProfile, vaultReady = false }: Vaul
 export function VaultMeaningSummary({ meaningProfile }: VaultMeaningProps) {
   const themes = cleanThemes(meaningProfile);
   const symbols = cleanSymbols(meaningProfile);
-  const strongestTheme = themes[0]?.theme ?? "family meaning";
+  const themePhrase = formatThemePhrase(themes.map((theme) => theme.theme).slice(0, 3));
   const strongestSymbol = symbols[0]?.symbol ?? "chosen symbols";
 
   return (
     <article className="vault-meaning-card vault-meaning-summary">
-      <span>House Meaning Summary</span>
-      <h3>
-        A private symbolic collection centered on {strongestTheme.toLowerCase()} and expressed
-        through {strongestSymbol.toLowerCase()}.
-      </h3>
+      <span>Your Collection At A Glance</span>
+      <h3>Your collection was shaped around {themePhrase.toLowerCase()}.</h3>
       <p>
-        The collection uses the family&apos;s values, memories, and symbolic choices to form a
-        keepsake that feels personal, gift-ready, and safe to preserve.
+        It translates those family qualities into a symbolic keepsake, with {strongestSymbol} as
+        one of the visual anchors.
       </p>
     </article>
   );
@@ -76,14 +73,19 @@ export function MeaningThemeList({ meaningProfile }: VaultMeaningProps) {
   const themes = cleanThemes(meaningProfile);
   return (
     <article className="vault-meaning-card">
-      <span>Meaning Themes</span>
-      <h3>What this family stands for</h3>
+      <span>The Meaning Behind This Collection</span>
+      <h3>What your family stands for</h3>
       <div className="meaning-chip-list">
         {themes.length ? (
           themes.map((theme) => (
             <div className="meaning-chip" key={`${theme.theme}-${theme.confidence}`}>
               <strong>{theme.theme}</strong>
-              <small>{theme.evidence || `${theme.confidence} confidence`}</small>
+              {theme.evidence ? (
+                <details>
+                  <summary>Why this matters</summary>
+                  <small>{theme.evidence}</small>
+                </details>
+              ) : null}
             </div>
           ))
         ) : (
@@ -98,15 +100,18 @@ export function SymbolRationaleList({ meaningProfile }: VaultMeaningProps) {
   const symbols = cleanSymbols(meaningProfile);
   return (
     <article className="vault-meaning-card">
-      <span>Chosen Symbols</span>
-      <h3>Why these symbols were chosen</h3>
+      <span>Symbols Chosen for Your Family</span>
+      <h3>What each symbol carries</h3>
       <div className="symbol-rationale-list">
         {symbols.length ? (
           symbols.map((symbol) => (
             <div className="symbol-rationale" key={`${symbol.symbol}-${symbol.meaning}`}>
               <strong>{symbol.symbol}</strong>
               <p>{symbol.meaning}</p>
-              <small>{symbol.rationale}</small>
+              <details>
+                <summary>Why it was chosen</summary>
+                <small>{symbol.rationale}</small>
+              </details>
             </div>
           ))
         ) : (
@@ -121,16 +126,24 @@ export function DesignBasisPanel({ meaningProfile }: VaultMeaningProps) {
   const rationale = cleanStrings(meaningProfile?.design_rationale);
   return (
     <article className="vault-meaning-card compact">
-      <span>Design Basis</span>
-      <h3>How the collection should feel</h3>
+      <span>Why It Was Designed This Way</span>
+      <h3>A visual direction with purpose</h3>
       {rationale.length ? (
-        <ul>
-          {rationale.map((item) => (
-            <li key={item}>{item}</li>
-          ))}
-        </ul>
+        <>
+          <p>{rationale[0]}</p>
+          {rationale.length > 1 ? (
+            <details>
+              <summary>More design notes</summary>
+              <ul>
+                {rationale.slice(1).map((item) => (
+                  <li key={item}>{item}</li>
+                ))}
+              </ul>
+            </details>
+          ) : null}
+        </>
       ) : (
-        <p>Design basis will appear here when the Meaning Engine profile is available.</p>
+        <p>The design direction will appear here when the meaning profile is available.</p>
       )}
     </article>
   );
@@ -139,7 +152,7 @@ export function DesignBasisPanel({ meaningProfile }: VaultMeaningProps) {
 export function StoryDirectionPanel({ meaningProfile }: VaultMeaningProps) {
   return (
     <article className="vault-meaning-card compact">
-      <span>Story Direction</span>
+      <span>The Story This Collection Tells</span>
       <h3>The story this collection should tell</h3>
       <p>{meaningProfile?.story_direction || "Story direction is not attached yet."}</p>
     </article>
@@ -149,21 +162,21 @@ export function StoryDirectionPanel({ meaningProfile }: VaultMeaningProps) {
 export function CertificateDirectionPanel({ meaningProfile }: VaultMeaningProps) {
   return (
     <article className="vault-meaning-card compact">
-      <span>Certificate Direction</span>
+      <span>How the Certificate Should Feel</span>
       <h3>How the keepsake should be presented</h3>
       <p>{meaningProfile?.certificate_direction || "Certificate direction is not attached yet."}</p>
     </article>
   );
 }
 
-export function BoundaryStatementNotice({ meaningProfile }: VaultMeaningProps) {
+export function BoundaryStatementNotice() {
   return (
     <article className="vault-meaning-card compact boundary">
-      <span>Boundary Statement</span>
-      <h3>Symbolic by design</h3>
+      <span>Important Note</span>
+      <h3>A symbolic family keepsake</h3>
       <p>
-        {meaningProfile?.boundary_statement ||
-          "MyKinLegacy creates personalized symbolic keepsakes. It does not provide official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records."}
+        This is a personalized symbolic keepsake. It is not an official coat of arms, legal
+        heraldic grant, noble title claim, or certified genealogical record.
       </p>
     </article>
   );
@@ -173,7 +186,7 @@ export function VaultIncludedItems() {
   return (
     <article className="vault-meaning-card vault-included-items">
       <span>Private Vault Includes</span>
-      <h3>Prepared as a private digital collection</h3>
+      <h3>Everything prepared for keeping</h3>
       <div className="included-items-grid">
         {includedItems.map((item) => (
           <div key={item}>{item}</div>
@@ -181,6 +194,14 @@ export function VaultIncludedItems() {
       </div>
     </article>
   );
+}
+
+function formatThemePhrase(themes: string[]) {
+  const clean = themes.filter(Boolean);
+  if (clean.length === 0) return "family meaning";
+  if (clean.length === 1) return clean[0] ?? "family meaning";
+  if (clean.length === 2) return `${clean[0]} and ${clean[1]}`;
+  return `${clean[0]}, ${clean[1]}, and ${clean[2]}`;
 }
 
 function MeaningFallback() {

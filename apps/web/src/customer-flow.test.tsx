@@ -195,17 +195,21 @@ describe("customer frontend flow", () => {
       />
     );
 
-    expect(html).toContain("House Meaning Summary");
-    expect(html).toContain("Meaning Themes");
-    expect(html).toContain("Chosen Symbols");
-    expect(html).toContain("Why these symbols were chosen");
-    expect(html).toContain("Design Basis");
-    expect(html).toContain("Story Direction");
-    expect(html).toContain("Certificate Direction");
-    expect(html).toContain("Boundary Statement");
+    expect(html).toContain("Your Collection At A Glance");
+    expect(html).toContain("Your collection was shaped around protection.");
+    expect(html).toContain("The Meaning Behind This Collection");
+    expect(html).toContain("Symbols Chosen for Your Family");
+    expect(html).toContain("Why it was chosen");
+    expect(html).toContain("Why It Was Designed This Way");
+    expect(html).toContain("The Story This Collection Tells");
+    expect(html).toContain("How the Certificate Should Feel");
     expect(html).toContain("Private Vault Includes");
+    expect(html).toContain("Important Note");
+    expect(html).toContain("A symbolic family keepsake");
     expect(html).toContain("Oak");
-    expect(html).toContain("official coats of arms");
+    expect(html).toContain("not an official coat of arms");
+    expect(html).not.toContain("Meaning Themes");
+    expect(html).not.toContain("Design Basis");
     expect(html).not.toContain("{&quot;");
     expect(html).not.toContain("raw_token");
   });
