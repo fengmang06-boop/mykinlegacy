@@ -239,6 +239,10 @@ export default function HomePage() {
                 aria-hidden="true"
                 priority
               />
+              <div className="home-hero-visual-caption">
+                <span>Private collection display</span>
+                <strong>Identity, story, certificate, and vault in one keepsake.</strong>
+              </div>
             </div>
             <div className="home-artifact-grid">
               {heroArtifacts.map(([title, description, icon]) => (
@@ -376,7 +380,7 @@ export default function HomePage() {
       <section className="home-final-cta">
         <div className="home-shell home-final-inner">
           <p className="home-eyebrow">Begin with confidence</p>
-          <h2>Review the collection before you begin</h2>
+          <h2>Begin a Legacy Worth Keeping</h2>
           <p>Your satisfaction is our promise. Love it, or we&apos;ll make it right.</p>
           <Link className="home-button home-button-primary" href="/create">
             Start Your Legacy Journey

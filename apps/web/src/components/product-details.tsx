@@ -35,7 +35,7 @@ export function ProductDetails() {
       })
       .catch(() => {
         if (active) {
-          setError("Product details could not be loaded. Please try again shortly.");
+          setError("Collection details are being prepared. Please continue when you are ready.");
         }
       });
     return () => {
@@ -44,16 +44,35 @@ export function ProductDetails() {
   }, [api]);
 
   if (error) {
-    return <p className="error">{error}</p>;
+    return (
+      <section className="product-details product-details-fallback">
+        <p className="eyebrow">Collection details</p>
+        <h2>Family Legacy Collection</h2>
+        <p className="lead">
+          A private symbolic keepsake for parents, grandparents, and families who deserve something
+          more meaningful than another ordinary gift.
+        </p>
+        <p className="notice">{error}</p>
+        <ul className="product-bullets">
+          {collectionArtifacts.map((artifact) => (
+            <li key={artifact}>{artifact}</li>
+          ))}
+        </ul>
+        <Link className="button" href="/create">
+          Begin Their Legacy
+        </Link>
+        <p className="notice">Digital product. No physical shipping.</p>
+      </section>
+    );
   }
   if (!product) {
-    return <p className="notice">Loading package details from the product API...</p>;
+    return <p className="notice">Your private collection preview is loading.</p>;
   }
 
   const translation = product.translations[0];
   const primaryPackage = product.packages[0];
   if (!primaryPackage) {
-    return <p className="error">No active package is currently available.</p>;
+    return <p className="notice">Collection details are being prepared.</p>;
   }
 
   return (

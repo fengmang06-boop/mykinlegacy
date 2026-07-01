@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 
 import { ProductDetails } from "../../components/product-details";
 import { publicMetadata } from "../../lib/seo";
+
+const finalHomepageAsset = "/assets/final-homepage";
 
 export const metadata: Metadata = publicMetadata({
   title: "Family Legacy Collection | MyKinLegacy",
@@ -16,31 +19,64 @@ export default function FamilyLegacyCollectionPage() {
       <section className="premium-hero product-hero">
         <div className="section product-layout">
           <div
-            className="premium-artifact-board product-mockup"
+            className="premium-artifact-board product-mockup product-collection-showcase"
             aria-label="Collection artifact preview"
           >
-            <article className="mockup-item featured">
-              <span className="mini-crest" aria-hidden="true" />
-              <strong>Crest Artwork</strong>
-              <span>Symbolic family centerpiece</span>
+            <article className="product-artifact-featured">
+              <Image
+                src={`${finalHomepageAsset}/02_homepage/hero/hero-main-crest.webp`}
+                width={760}
+                height={520}
+                alt=""
+                aria-hidden="true"
+                priority
+              />
+              <div>
+                <span>Symbolic centerpiece</span>
+                <strong>Crest Artwork</strong>
+              </div>
             </article>
-            <article className="mockup-item">
-              <span className="mini-certificate" aria-hidden="true" />
+            <article className="product-artifact-card">
+              <Image
+                src={`${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`}
+                width={280}
+                height={190}
+                alt=""
+                aria-hidden="true"
+              />
               <strong>Heritage Certificate</strong>
               <span>Personal keepsake</span>
             </article>
-            <article className="mockup-item">
-              <span className="mini-story" aria-hidden="true" />
+            <article className="product-artifact-card">
+              <Image
+                src={`${finalHomepageAsset}/04_homepage/features/feature-family-story.webp`}
+                width={280}
+                height={190}
+                alt=""
+                aria-hidden="true"
+              />
               <strong>Family Story</strong>
               <span>Meaningful family narrative</span>
             </article>
-            <article className="mockup-item">
-              <span className="mini-guide" aria-hidden="true" />
+            <article className="product-artifact-card">
+              <Image
+                src={`${finalHomepageAsset}/04_homepage/features/feature-symbol-guide.webp`}
+                width={280}
+                height={190}
+                alt=""
+                aria-hidden="true"
+              />
               <strong>Symbol Guide</strong>
               <span>Meaning notes</span>
             </article>
-            <article className="mockup-item wide">
-              <span className="mini-vault" aria-hidden="true" />
+            <article className="product-artifact-card product-artifact-wide">
+              <Image
+                src={`${finalHomepageAsset}/04_homepage/features/feature-private-vault.webp`}
+                width={420}
+                height={230}
+                alt=""
+                aria-hidden="true"
+              />
               <div>
                 <strong>Private Collection Vault</strong>
                 <span>Secure access for family keeping</span>
@@ -89,20 +125,46 @@ export default function FamilyLegacyCollectionPage() {
           gives family stories, symbols, and values a form your parents can return to.
         </p>
         <div className="preview-grid">
-          <article className="mock-crest">
+          <article className="mock-crest artifact-preview-card">
+            <Image
+              src={`${finalHomepageAsset}/04_homepage/features/feature-house-identity.webp`}
+              width={460}
+              height={320}
+              alt=""
+              aria-hidden="true"
+            />
             <span>Crest Artwork</span>
           </article>
-          <article className="mock-certificate">
+          <article className="mock-certificate artifact-preview-card">
+            <Image
+              src={`${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`}
+              width={460}
+              height={320}
+              alt=""
+              aria-hidden="true"
+            />
             <span>Heritage Certificate</span>
             <strong>Personal keepsake</strong>
           </article>
-          <article className="mock-page">
+          <article className="mock-page artifact-preview-card">
+            <Image
+              src={`${finalHomepageAsset}/04_homepage/features/feature-family-story.webp`}
+              width={460}
+              height={320}
+              alt=""
+              aria-hidden="true"
+            />
             <span>Family Story</span>
-            <p />
-            <p />
-            <p />
+            <strong>Written to feel recognized</strong>
           </article>
-          <article className="mock-vault">
+          <article className="mock-vault artifact-preview-card">
+            <Image
+              src={`${finalHomepageAsset}/09_extras/extra-private-archive-wide.webp`}
+              width={460}
+              height={320}
+              alt=""
+              aria-hidden="true"
+            />
             <span>Private Vault</span>
             <strong>Collection ready</strong>
           </article>

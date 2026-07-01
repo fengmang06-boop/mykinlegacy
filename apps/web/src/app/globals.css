@@ -1313,6 +1313,7 @@ textarea {
 
 .home-artifact-board {
   position: relative;
+  overflow: hidden;
   padding: 18px;
   border: 1px solid rgba(201, 162, 74, 0.3);
   border-radius: 22px;
@@ -1370,10 +1371,10 @@ textarea {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 10px;
-  margin-top: -36px;
-  padding: 0 12px;
+  grid-template-columns: 1.2fr repeat(4, minmax(0, 0.92fr));
+  gap: 9px;
+  margin-top: -46px;
+  padding: 0 14px 2px;
 }
 
 .home-hero-main-visual {
@@ -1403,9 +1404,45 @@ textarea {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 1.35;
+  aspect-ratio: 1.28;
   object-fit: cover;
   object-position: center;
+}
+
+.home-hero-visual-caption {
+  position: absolute;
+  right: 18px;
+  bottom: 18px;
+  left: 18px;
+  z-index: 1;
+  display: flex;
+  gap: 14px;
+  align-items: flex-end;
+  justify-content: space-between;
+  padding: 14px 16px;
+  border: 1px solid rgba(201, 162, 74, 0.26);
+  border-radius: 12px;
+  background: rgba(10, 9, 8, 0.7);
+  backdrop-filter: blur(14px);
+}
+
+.home-hero-visual-caption span {
+  color: var(--home-gold);
+  font-family: var(--font-label), Cinzel, Georgia, serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.home-hero-visual-caption strong {
+  max-width: 310px;
+  color: var(--home-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 20px;
+  font-weight: 600;
+  line-height: 1.05;
+  text-align: right;
 }
 
 .home-artifact-tile,
@@ -1424,20 +1461,32 @@ textarea {
 }
 
 .home-artifact-tile {
-  min-height: 146px;
+  min-height: 136px;
   display: grid;
   align-content: start;
-  gap: 10px;
+  gap: 8px;
   overflow: hidden;
-  padding: 12px;
+  padding: 10px;
+  backdrop-filter: blur(10px);
 }
 
 .home-artifact-tile img {
   width: 100%;
-  height: 78px;
+  height: 70px;
   border-radius: 12px;
   object-fit: cover;
   object-position: center;
+}
+
+.home-artifact-tile:first-child {
+  min-height: 152px;
+  background:
+    linear-gradient(180deg, rgba(201, 162, 74, 0.16), rgba(246, 235, 212, 0.035)),
+    rgba(17, 16, 13, 0.94);
+}
+
+.home-artifact-tile:first-child img {
+  height: 84px;
 }
 
 .home-artifact-tile h2 {
@@ -1764,7 +1813,7 @@ textarea {
 
 .premium-page h1,
 .premium-page h2 {
-  font-family: "Playfair Display", "Libre Baskerville", "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-heading), "Cormorant Garamond", "Playfair Display", Georgia, serif;
 }
 
 .premium-page h1 {
@@ -1780,14 +1829,18 @@ textarea {
 
 .premium-page h3 {
   margin: 0;
-  font-family: "Playfair Display", Georgia, serif;
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
   font-size: 22px;
   line-height: 1.18;
 }
 
 .premium-page .eyebrow {
   color: var(--premium-gold);
-  letter-spacing: 0;
+  font-family: var(--font-label), Cinzel, Georgia, serif;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
 }
 
 .premium-page .lead,
@@ -1904,6 +1957,66 @@ textarea {
   padding: 76px 0;
 }
 
+.premium-page .create-hero-visual {
+  position: relative;
+  min-height: 330px;
+  overflow: hidden;
+  display: grid;
+  align-content: end;
+  border: 1px solid var(--premium-line);
+  border-radius: 18px;
+  background: #0d0c0a;
+  box-shadow: 0 28px 70px rgba(0, 0, 0, 0.36);
+}
+
+.premium-page .create-hero-visual img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.premium-page .create-hero-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(10, 9, 8, 0.12), rgba(10, 9, 8, 0.88)),
+    radial-gradient(circle at 20% 0%, rgba(201, 162, 74, 0.18), transparent 18rem);
+}
+
+.premium-page .create-hero-visual div {
+  position: relative;
+  z-index: 1;
+  padding: 24px;
+}
+
+.premium-page .create-hero-visual span,
+.premium-page .product-artifact-featured span,
+.premium-page .product-artifact-card span,
+.premium-page .artifact-preview-card span {
+  display: block;
+  color: var(--premium-gold);
+  font-family: var(--font-label), Cinzel, Georgia, serif;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.premium-page .create-hero-visual strong {
+  display: block;
+  max-width: 280px;
+  margin-top: 6px;
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1;
+}
+
 .premium-page .premium-certificate-card {
   min-height: 300px;
   display: grid;
@@ -1940,10 +2053,57 @@ textarea {
 }
 
 .premium-page .preview-cover {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
   border: 1px solid rgba(201, 162, 74, 0.24);
   background:
     radial-gradient(circle at 50% 30%, rgba(201, 162, 74, 0.34), transparent 62px),
     linear-gradient(180deg, #241c10, #0f0e0c);
+}
+
+.premium-page .preview-cover::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(10, 9, 8, 0.2), rgba(10, 9, 8, 0.86));
+}
+
+.premium-page .preview-cover img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.premium-page .preview-artifacts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.premium-page .preview-artifacts span {
+  overflow: hidden;
+  border: 1px solid rgba(201, 162, 74, 0.22);
+  border-radius: 10px;
+  background: rgba(246, 235, 212, 0.055);
+  color: var(--premium-warm);
+  font-size: 11px;
+  font-weight: 800;
+  text-align: center;
+}
+
+.premium-page .preview-artifacts img {
+  display: block;
+  width: 100%;
+  height: 58px;
+  object-fit: cover;
+  object-position: center;
 }
 
 .premium-page .preview-step {
@@ -1972,7 +2132,7 @@ textarea {
 .premium-page .premium-artifact-board {
   position: relative;
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1.35fr 1fr;
   gap: 14px;
   padding: 18px;
   border: 1px solid var(--premium-line);
@@ -1982,6 +2142,91 @@ textarea {
     linear-gradient(180deg, rgba(246, 235, 212, 0.08), rgba(246, 235, 212, 0.035)),
     var(--premium-panel);
   box-shadow: 0 28px 70px rgba(0, 0, 0, 0.36);
+}
+
+.premium-page .product-collection-showcase {
+  align-items: stretch;
+}
+
+.premium-page .product-artifact-featured,
+.premium-page .product-artifact-card {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(201, 162, 74, 0.24);
+  border-radius: 14px;
+  background: rgba(246, 235, 212, 0.055);
+}
+
+.premium-page .product-artifact-featured {
+  grid-row: span 3;
+  min-height: 500px;
+  display: grid;
+  align-content: end;
+}
+
+.premium-page .product-artifact-featured img,
+.premium-page .product-artifact-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.premium-page .product-artifact-featured img {
+  position: absolute;
+  inset: 0;
+}
+
+.premium-page .product-artifact-featured::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(10, 9, 8, 0.1), rgba(10, 9, 8, 0.86)),
+    radial-gradient(circle at 50% 12%, rgba(201, 162, 74, 0.16), transparent 20rem);
+}
+
+.premium-page .product-artifact-featured div {
+  position: relative;
+  z-index: 1;
+  padding: 22px;
+}
+
+.premium-page .product-artifact-featured strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.premium-page .product-artifact-card {
+  min-height: 142px;
+  display: grid;
+  grid-template-columns: 108px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 10px;
+}
+
+.premium-page .product-artifact-card img {
+  height: 112px;
+  border-radius: 10px;
+}
+
+.premium-page .product-artifact-card strong {
+  display: block;
+  margin: 6px 0 4px;
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 21px;
+  font-weight: 600;
+}
+
+.premium-page .product-artifact-wide {
+  grid-template-columns: 132px 1fr;
 }
 
 .premium-page .premium-artifact-board::before {
@@ -2095,6 +2340,42 @@ textarea {
 
 .premium-page .preview-grid {
   margin-top: 34px;
+}
+
+.premium-page .artifact-preview-card {
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  align-content: end;
+  min-height: 300px;
+  isolation: isolate;
+  padding: 18px;
+}
+
+.premium-page .artifact-preview-card img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.premium-page .artifact-preview-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(180deg, rgba(10, 9, 8, 0.08), rgba(10, 9, 8, 0.78));
+}
+
+.premium-page .artifact-preview-card strong {
+  display: block;
+  margin-top: 6px;
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 24px;
 }
 
 .premium-page .mock-crest,
@@ -2409,6 +2690,26 @@ textarea {
     object-fit: cover;
   }
 
+  .home-artifact-tile:first-child img {
+    width: 82px;
+    height: 64px;
+  }
+
+  .home-hero-visual-caption {
+    right: 10px;
+    bottom: 10px;
+    left: 10px;
+    display: block;
+    padding: 10px;
+  }
+
+  .home-hero-visual-caption strong {
+    display: block;
+    margin-top: 4px;
+    font-size: 16px;
+    text-align: left;
+  }
+
   .home-artifact-tile h2 {
     font-size: 18px;
   }
@@ -2576,6 +2877,18 @@ textarea {
     min-height: 230px;
   }
 
+  .premium-page .create-hero-visual {
+    min-height: 230px;
+  }
+
+  .premium-page .create-hero-visual div {
+    padding: 18px;
+  }
+
+  .premium-page .create-hero-visual strong {
+    font-size: 28px;
+  }
+
   .premium-page .premium-artifact-board .mockup-item {
     min-height: 116px;
     padding: 13px;
@@ -2610,6 +2923,33 @@ textarea {
     padding: 50px 0 58px;
   }
 
+  .premium-page .product-collection-showcase {
+    grid-template-columns: 1fr;
+  }
+
+  .premium-page .product-artifact-featured {
+    grid-row: auto;
+    min-height: 260px;
+  }
+
+  .premium-page .product-artifact-featured strong {
+    font-size: 28px;
+  }
+
+  .premium-page .product-artifact-card,
+  .premium-page .product-artifact-wide {
+    grid-template-columns: 92px 1fr;
+    min-height: 108px;
+  }
+
+  .premium-page .product-artifact-card img {
+    height: 88px;
+  }
+
+  .premium-page .product-artifact-card strong {
+    font-size: 18px;
+  }
+
   .premium-page .journey-shell {
     padding: 50px 0 58px;
   }
@@ -2621,6 +2961,10 @@ textarea {
 
   .premium-page .interview-preview {
     padding: 14px;
+  }
+
+  .premium-page .preview-artifacts img {
+    height: 48px;
   }
 
   .premium-page .trust-strip-grid article {
@@ -2637,5 +2981,9 @@ textarea {
   .premium-page .mock-page,
   .premium-page .mock-vault {
     min-height: 220px;
+  }
+
+  .premium-page .artifact-preview-card {
+    min-height: 210px;
   }
 }

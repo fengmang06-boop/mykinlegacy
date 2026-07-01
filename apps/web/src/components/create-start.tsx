@@ -1,10 +1,13 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { ApiClient } from "../lib/api-client";
 import { trackEvent } from "../lib/analytics";
+
+const finalHomepageAsset = "/assets/final-homepage";
 
 export function CreateStart() {
   const [error, setError] = useState<string | null>(null);
@@ -62,9 +65,19 @@ export function CreateStart() {
               <span>Digital delivery</span>
             </div>
           </div>
-          <div className="mock-certificate premium-certificate-card">
-            <span>Their legacy begins</span>
-            <strong>with being recognized.</strong>
+          <div className="create-hero-visual" aria-label="Private legacy collection preview">
+            <Image
+              src={`${finalHomepageAsset}/09_extras/extra-study-wide.webp`}
+              width={760}
+              height={520}
+              alt=""
+              aria-hidden="true"
+              priority
+            />
+            <div>
+              <span>Their legacy begins</span>
+              <strong>with being recognized.</strong>
+            </div>
           </div>
         </div>
       </section>
@@ -94,8 +107,47 @@ export function CreateStart() {
           </div>
           <aside className="interview-preview" aria-label="Collection preview">
             <div className="preview-cover">
+              <Image
+                src={`${finalHomepageAsset}/09_extras/extra-private-archive-wide.webp`}
+                width={520}
+                height={360}
+                alt=""
+                aria-hidden="true"
+              />
               <strong>Collection Preview</strong>
               <span>Your answers help shape a private keepsake for someone your family loves.</span>
+            </div>
+            <div className="preview-artifacts" aria-label="Preview artifacts">
+              <span>
+                <Image
+                  src={`${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`}
+                  width={180}
+                  height={130}
+                  alt=""
+                  aria-hidden="true"
+                />
+                Certificate
+              </span>
+              <span>
+                <Image
+                  src={`${finalHomepageAsset}/04_homepage/features/feature-family-story.webp`}
+                  width={180}
+                  height={130}
+                  alt=""
+                  aria-hidden="true"
+                />
+                Story
+              </span>
+              <span>
+                <Image
+                  src={`${finalHomepageAsset}/04_homepage/features/feature-private-vault.webp`}
+                  width={180}
+                  height={130}
+                  alt=""
+                  aria-hidden="true"
+                />
+                Vault
+              </span>
             </div>
             <div className="preview-steps">
               <span className="preview-step">

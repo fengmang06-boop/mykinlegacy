@@ -68,7 +68,7 @@ API_PUBLIC_URL=https://mykinlegacy.com
 NEXT_PUBLIC_SITE_URL=https://mykinlegacy.com
 APP_BASE_URL=https://mykinlegacy.com
 API_BASE_URL=https://mykinlegacy.com
-NEXT_PUBLIC_API_BASE_URL=https://mykinlegacy.com/api/v1
+NEXT_PUBLIC_API_BASE_URL=/api/v1
 ```
 
 Then run:

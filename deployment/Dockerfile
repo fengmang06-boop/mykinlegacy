@@ -13,7 +13,7 @@ COPY apps ./apps
 COPY packages ./packages
 COPY e2e ./e2e
 
-ARG NEXT_PUBLIC_API_BASE_URL="https://mykinlegacy.com/api/v1"
+ARG NEXT_PUBLIC_API_BASE_URL="/api/v1"
 ARG NEXT_PUBLIC_SITE_URL="https://mykinlegacy.com"
 ARG APP_WEB_URL="https://mykinlegacy.com"
 ARG APP_BASE_URL="https://mykinlegacy.com"

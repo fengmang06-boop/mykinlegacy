@@ -40,7 +40,7 @@ services:
       context: ..
       dockerfile: deployment/Dockerfile
       args:
-        NEXT_PUBLIC_API_BASE_URL: https://${DOMAIN}/api/v1
+        NEXT_PUBLIC_API_BASE_URL: /api/v1
         NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
         APP_WEB_URL: https://${DOMAIN}
         APP_BASE_URL: https://${DOMAIN}
@@ -105,7 +105,7 @@ services:
       - .env.production
     environment:
       PORT: "3000"
-      NEXT_PUBLIC_API_BASE_URL: https://${DOMAIN}/api/v1
+      NEXT_PUBLIC_API_BASE_URL: /api/v1
       NEXT_PUBLIC_SITE_URL: https://${DOMAIN}
       APP_WEB_URL: https://${DOMAIN}
       APP_BASE_URL: https://${DOMAIN}
