@@ -570,8 +570,13 @@ function mergeScreenshots(existingScreenshots, newScreenshots) {
 }
 
 function mergePages(existingPages, screenshots) {
+  const activePageDefinitions = new Map(activePages.map((pageDefinition) => [pageDefinition.key, pageDefinition]));
+
   return existingPages.map((pageDefinition) => ({
     ...pageDefinition,
+    warnings: activePageDefinitions.has(pageDefinition.key)
+      ? (activePageDefinitions.get(pageDefinition.key).warnings ?? [])
+      : (pageDefinition.warnings ?? []),
     screenshots: screenshots.filter((screenshot) => screenshot.pageKey === pageDefinition.key)
   }));
 }
