@@ -26,7 +26,9 @@ type OrdersClient = {
     findUnique: (args: unknown) => Promise<OrderRecord | null>;
   };
   orderItem: { create: (args: unknown) => Promise<unknown> };
+  orderInput: { create: (args: unknown) => Promise<unknown> };
   orderCustomerPii: { create: (args: unknown) => Promise<unknown> };
+  houseIdentityVersion: { findUnique: (args: unknown) => Promise<HouseIdentityVersionRecord | null> };
   consentRecord: {
     create: (args: unknown) => Promise<unknown>;
     findFirst: (args: unknown) => Promise<ConsentRecord | null>;
@@ -58,6 +60,12 @@ interface OrderRecord {
   totalCents: bigint | number;
   currency: string;
   metadataJson: unknown;
+}
+
+interface HouseIdentityVersionRecord {
+  id: string;
+  houseId: string;
+  houseDnaSnapshotJson: unknown;
 }
 
 interface ConsentRecord {
@@ -113,6 +121,7 @@ export class OrdersService {
     );
     const customerEmail = validateEmail(requireString(data, "customer_email"), "customer_email");
     const product = await this.findProductWithPackage(productCode, packageCode);
+    const identityVersion = await this.findIdentityVersion(identityVersionId, houseId);
     const productPackage = product.packages[0];
     if (!productPackage) {
       throwPackageNotFound(packageCode);
@@ -123,6 +132,7 @@ export class OrdersService {
     const timestamp = new Date();
 
     const order = await this.prisma.$transaction(async (transaction) => {
+      const orderItemId = ulid();
       const createdOrder = await transaction.order.create({
         data: {
           id: ulid(),
@@ -151,7 +161,7 @@ export class OrdersService {
 
       await transaction.orderItem.create({
         data: {
-          id: ulid(),
+          id: orderItemId,
           orderId: createdOrder.id,
           productId: product.id,
           packageId: productPackage.id,
@@ -166,6 +176,26 @@ export class OrdersService {
             currency: productPackage.currency
           },
           status: "pending",
+          createdAt: timestamp,
+          updatedAt: timestamp
+        }
+      });
+
+      await transaction.orderInput.create({
+        data: {
+          id: ulid(),
+          orderId: createdOrder.id,
+          orderItemId,
+          productId: product.id,
+          inputSchemaVersion: "house_dna_snapshot.v1",
+          inputJson: {
+            source: "confirmed_house_identity_version",
+            house_id: houseId,
+            identity_version_id: identityVersion.id,
+            house_dna: identityVersion.houseDnaSnapshotJson
+          },
+          normalizedInputJson: identityVersion.houseDnaSnapshotJson,
+          locale: "en-US",
           createdAt: timestamp,
           updatedAt: timestamp
         }
@@ -315,6 +345,22 @@ export class OrdersService {
       throwPackageNotFound(packageCode);
     }
     return product;
+  }
+
+  private async findIdentityVersion(identityVersionId: string, houseId: string) {
+    const version = await this.prisma.houseIdentityVersion.findUnique({
+      where: { id: identityVersionId }
+    });
+    if (!version || version.houseId !== houseId) {
+      throw new ApiException({
+        errorCode: "validation_error",
+        message: `House identity version not found for order: ${identityVersionId}`,
+        userMessage: "The confirmed family identity could not be found. Please review the collection again.",
+        status: HttpStatus.BAD_REQUEST,
+        affectedField: "identity_version_id"
+      });
+    }
+    return version;
   }
 }
 

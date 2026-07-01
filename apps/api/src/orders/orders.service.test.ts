@@ -146,6 +146,7 @@ function createPrismaServiceMock(): PrismaService {
   const transactionClient = {
     order: { create: async () => order },
     orderItem: { create: async () => ({}) },
+    orderInput: { create: async () => ({}) },
     orderCustomerPii: { create: async () => ({}) }
   };
 
@@ -153,6 +154,18 @@ function createPrismaServiceMock(): PrismaService {
     db: {
       product: { findUnique: async () => product },
       order: { findUnique: async () => order },
+      houseIdentityVersion: {
+        findUnique: async () => ({
+          id: "01H00000000000000000000002",
+          houseId: "01H00000000000000000000001",
+          houseDnaSnapshotJson: {
+            house_name: "House of Alder",
+            surname: "Alder",
+            family_values: ["protection"],
+            colors: { primary: ["gold", "ivory"] }
+          }
+        })
+      },
       consentRecord: { create: async () => ({}) },
       $transaction: async <T>(handler: (client: typeof transactionClient) => Promise<T>) =>
         handler(transactionClient)

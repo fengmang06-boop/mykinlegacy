@@ -8,6 +8,8 @@ import type {
   OrchestrationEmailLog,
   OrchestrationManifest,
   OrchestrationOutboxEvent,
+  OrchestrationOrder,
+  OrchestrationOrderItem,
   OrchestrationRepository
 } from "./types";
 
@@ -73,7 +75,9 @@ export async function processOrderPaidOutbox(input: {
       expected_assets: createExpectedAssets(),
       generated_assets: [],
       missing_required_assets: [...REQUIRED_DELIVERABLES],
-      optional_assets: [],
+      optional_assets: [
+        createMeaningAttachment(meaningInputFromOrder({ order, orderItem, payload }), input.now ?? new Date())
+      ],
       failed_assets: [],
       manifest_status: "pending",
       created_at: timestamp,
@@ -225,7 +229,8 @@ export async function getOrderGenerationSummary(input: {
           manifest_status: manifest.manifest_status,
           expected_assets_count: manifest.expected_assets.length,
           generated_assets_count: manifest.generated_assets.length,
-          failed_assets_count: manifest.failed_assets.length
+          failed_assets_count: manifest.failed_assets.length,
+          meaning_profile: meaningProfileSummary(manifest)
         }
       : null,
     download_ready: Boolean(token && manifest?.manifest_status === "completed"),
@@ -261,7 +266,8 @@ export async function getAdminDbVisibilitySummary(input: {
           manifest_status: manifest.manifest_status,
           generated_assets: manifest.generated_assets,
           failed_assets: manifest.failed_assets,
-          missing_required_assets: manifest.missing_required_assets
+          missing_required_assets: manifest.missing_required_assets,
+          meaning_profile: meaningProfileSummary(manifest)
         }
       : null,
     assets: assets.map((asset) => ({
@@ -409,6 +415,136 @@ function friendlyProgress(fulfillmentStatus: string): string {
 function maskStorageKey(value: string): string {
   const parts = value.split("/");
   return parts.length > 2 ? `${parts[0]}/***/${parts.at(-1)}` : "***";
+}
+
+function meaningInputFromOrder(input: {
+  order: OrchestrationOrder;
+  orderItem: OrchestrationOrderItem;
+  payload: Record<string, unknown>;
+}) {
+  const orderInput = input.order.order_inputs?.[0];
+  const houseDna = firstRecord(
+    recordObject(orderInput?.input_json, "house_dna"),
+    orderInput?.normalized_input_json
+  );
+  const values = stringArray(recordValue(houseDna, "family_values"));
+  const symbols = [
+    ...stringArray(recordValue(houseDna, "symbols")),
+    ...stringArray(recordValue(houseDna, "guardian_animals")),
+    ...stringArray(recordValue(houseDna, "preferred_elements"))
+  ];
+  const colors = colorArray(recordValue(houseDna, "colors"));
+  return {
+    recipient: stringOrNull(recordValue(input.payload, "recipient")),
+    occasion: stringOrNull(recordValue(input.payload, "occasion")),
+    values,
+    memories: stringArray(recordValue(input.payload, "family_memories")),
+    preferred_tone: [
+      ...stringArray(recordValue(houseDna, "emotional_tone")),
+      stringOrNull(recordValue(houseDna, "visual_style"))
+    ].filter((value): value is string => Boolean(value)),
+    symbols,
+    colors,
+    surname: stringOrNull(recordValue(houseDna, "surname")),
+    house_name: stringOrNull(recordValue(houseDna, "house_name")),
+    motto: stringOrNull(recordValue(houseDna, "motto")),
+    source_level: orderInput ? "customer_confirmed" as const : "minimal" as const
+  };
+}
+
+function createMeaningAttachment(input: Record<string, unknown>, now: Date): Record<string, unknown> {
+  const meaningModule = loadMeaningEngine();
+  return meaningModule.createMeaningManifestAttachment(input, now) as Record<string, unknown>;
+}
+
+function loadMeaningEngine(): {
+  createMeaningManifestAttachment(input: Record<string, unknown>, now: Date): unknown;
+} {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const workspaceModule = require("@ai-heritage/domain") as {
+      createMeaningManifestAttachment(input: Record<string, unknown>, now: Date): unknown;
+    };
+    if (typeof workspaceModule.createMeaningManifestAttachment === "function") {
+      return workspaceModule;
+    }
+  } catch {
+    // Fall back to source below for package-level tests before domain dist is rebuilt.
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require("../../../domain/src/meaning/rules.ts") as {
+      createMeaningManifestAttachment(input: Record<string, unknown>, now: Date): unknown;
+    };
+  } catch {
+    throw new Error("meaning_engine_module_unavailable");
+  }
+}
+
+function meaningProfileSummary(manifest: OrchestrationManifest) {
+  const attachment = manifest.optional_assets.find(
+    (item) => isRecord(item) && item.attachment_type === "meaning_engine"
+  );
+  if (!isRecord(attachment)) return null;
+  const profile = recordObject(attachment, "meaning_profile");
+  return {
+    source_level: stringOrNull(recordValue(profile, "source_level")),
+    themes: recordArray<Record<string, unknown>>(profile, "meaning_themes").map((theme) => ({
+      theme: stringOrNull(recordValue(theme, "theme")),
+      confidence: stringOrNull(recordValue(theme, "confidence")),
+      evidence: stringOrNull(recordValue(theme, "evidence"))
+    })),
+    symbols: recordArray<Record<string, unknown>>(profile, "symbol_choices").map((symbol) => ({
+      symbol: stringOrNull(recordValue(symbol, "symbol")),
+      meaning: stringOrNull(recordValue(symbol, "meaning")),
+      rationale: stringOrNull(recordValue(symbol, "rationale")),
+      source: stringOrNull(recordValue(symbol, "source"))
+    })),
+    design_rationale: stringArray(recordValue(profile, "design_rationale")),
+    story_direction: stringOrNull(recordValue(profile, "story_direction")),
+    certificate_direction: stringOrNull(recordValue(profile, "certificate_direction")),
+    boundary_statement: stringOrNull(recordValue(profile, "boundary_statement")),
+    validation: recordObject(profile, "validation")
+  };
+}
+
+function firstRecord(...values: unknown[]): Record<string, unknown> {
+  return values.find(isRecord) ?? {};
+}
+
+function recordObject(record: unknown, key: string): Record<string, unknown> {
+  const value = recordValue(record, key);
+  return isRecord(value) ? value : {};
+}
+
+function recordArray<T>(record: unknown, key: string): T[] {
+  const value = recordValue(record, key);
+  return Array.isArray(value) ? (value as T[]) : [];
+}
+
+function recordValue(record: unknown, key: string): unknown {
+  return isRecord(record) ? record[key] : undefined;
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value)
+    ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
+    : [];
+}
+
+function colorArray(value: unknown): string[] {
+  if (!isRecord(value)) return [];
+  return [
+    ...stringArray(value.primary),
+    ...stringArray(value.secondary),
+    ...stringArray(value.metallic),
+    ...stringArray(value.accent)
+  ];
 }
 
 function sha256(value: string): string {

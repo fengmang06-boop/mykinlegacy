@@ -44,7 +44,15 @@ export interface OrchestrationOrder {
   total_cents: number;
   currency: string;
   metadata_json: Record<string, unknown>;
+  order_inputs?: OrchestrationOrderInput[];
   completed_at: string | null;
+}
+
+export interface OrchestrationOrderInput {
+  input_schema_version: string;
+  input_json: Record<string, unknown>;
+  normalized_input_json: Record<string, unknown>;
+  locale: string;
 }
 
 export interface OrchestrationOrderItem {
@@ -80,7 +88,7 @@ export interface OrchestrationManifest {
   expected_assets: ExpectedAssetContract[];
   generated_assets: GeneratedAssetContract[];
   missing_required_assets: string[];
-  optional_assets: string[];
+  optional_assets: Array<string | Record<string, unknown>>;
   failed_assets: FailedAssetContract[];
   manifest_status: ManifestStatus;
   created_at: string;

@@ -41,7 +41,10 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
   constructor(private readonly db: PrismaOrchestrationClient) {}
 
   async findOrder(orderId: string): Promise<OrchestrationOrder | null> {
-    const row = await this.db.order.findUnique({ where: { id: orderId } });
+    const row = await this.db.order.findUnique({
+      where: { id: orderId },
+      include: { orderInputs: true }
+    });
     return row ? mapOrder(row) : null;
   }
 
@@ -351,7 +354,17 @@ function mapOrder(row: unknown): OrchestrationOrder {
     total_cents: Number(recordValue(row, "totalCents")),
     currency: recordString(row, "currency"),
     metadata_json: recordJson(row, "metadataJson"),
+    order_inputs: recordArray<Record<string, unknown>>(row, "orderInputs").map(mapOrderInput),
     completed_at: isoOrNull(recordValue(row, "completedAt"))
+  };
+}
+
+function mapOrderInput(row: Record<string, unknown>) {
+  return {
+    input_schema_version: stringFromRecord(row, "inputSchemaVersion") ?? "unknown",
+    input_json: recordJson(row, "inputJson"),
+    normalized_input_json: recordJson(row, "normalizedInputJson"),
+    locale: stringFromRecord(row, "locale") ?? "en-US"
   };
 }
 
@@ -382,7 +395,7 @@ function mapManifest(row: unknown): OrchestrationManifest {
     expected_assets: recordArray<ExpectedAssetContract>(row, "expectedAssetsJson"),
     generated_assets: recordArray<GeneratedAssetContract>(row, "generatedAssetsJson"),
     missing_required_assets: recordArray<string>(row, "missingRequiredAssets"),
-    optional_assets: recordArray<string>(row, "optionalAssetsJson"),
+    optional_assets: recordArray<string | Record<string, unknown>>(row, "optionalAssetsJson"),
     failed_assets: recordArray<FailedAssetContract>(row, "failedAssetsJson"),
     manifest_status: recordString(row, "status") as OrchestrationManifest["manifest_status"],
     created_at: iso(recordValue(row, "createdAt")),

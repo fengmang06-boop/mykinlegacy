@@ -29,6 +29,17 @@ describe("DB-backed orchestration foundation", () => {
     expect(second.created).toBe(false);
     expect(repository.manifests.size).toBe(1);
     expect(repository.generationJobs.size).toBe(1);
+    expect(first.manifest.optional_assets).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          attachment_type: "meaning_engine",
+          meaning_profile: expect.objectContaining({
+            source_level: "customer_confirmed",
+            boundary_statement: expect.stringContaining("personalized symbolic keepsake")
+          })
+        })
+      ])
+    );
     expect(repository.outboxEvents.get("outbox_1")).toMatchObject({ status: "published" });
     expect(repository.orders.get("order_1")).toMatchObject({
       order_status: "processing",
@@ -87,7 +98,10 @@ describe("DB-backed orchestration foundation", () => {
     expect(summary.generation_manifest).toMatchObject({
       expected_assets_count: REQUIRED_DELIVERABLES.length,
       generated_assets_count: REQUIRED_DELIVERABLES.length,
-      failed_assets_count: 0
+      failed_assets_count: 0,
+      meaning_profile: {
+        source_level: "customer_confirmed"
+      }
     });
     expect(serialized).not.toContain("storage_key");
     expect(serialized).not.toContain("rendered_prompt");
@@ -100,7 +114,12 @@ describe("DB-backed orchestration foundation", () => {
     const summary = await getAdminDbVisibilitySummary({ order_id: "order_1", repository });
     const serialized = JSON.stringify(summary);
 
-    expect(summary.manifest).toMatchObject({ manifest_status: "completed" });
+    expect(summary.manifest).toMatchObject({
+      manifest_status: "completed",
+      meaning_profile: {
+        source_level: "customer_confirmed"
+      }
+    });
     expect(summary.assets).toHaveLength(REQUIRED_DELIVERABLES.length);
     expect(summary.assets[0]?.masked_storage_key).toContain("***");
     expect(summary.download_token).toMatchObject({
@@ -156,6 +175,26 @@ function createRepository() {
       house_id: "house_1",
       identity_version_id: "identity_version_1"
     },
+    order_inputs: [
+      {
+        input_schema_version: "house_dna_snapshot.v1",
+        input_json: {
+          house_dna: {
+            house_name: "House of Alder",
+            surname: "Alder",
+            family_values: ["protection", "resilience", "gratitude"],
+            symbols: ["shield"],
+            guardian_animals: ["lion"],
+            colors: { primary: ["dark gold", "ivory"] },
+            emotional_tone: ["warm", "dignified"],
+            visual_style: "classic_heritage",
+            motto: "Together through every season"
+          }
+        },
+        normalized_input_json: {},
+        locale: "en-US"
+      }
+    ],
     completed_at: null
   };
   const orderItem: OrchestrationOrderItem = {

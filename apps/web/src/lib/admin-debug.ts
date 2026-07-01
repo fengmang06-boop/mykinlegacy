@@ -24,6 +24,19 @@ export interface AdminOrderSummary {
   generated_asset_count: number;
   download_ready: boolean;
   email_log_count: number;
+  meaning_profile: AdminMeaningProfileSummary | null;
+}
+
+export interface AdminMeaningProfileSummary {
+  source_level: string;
+  themes: Array<{ theme: string; confidence: string; evidence: string }>;
+  symbols: Array<{ symbol: string; meaning: string; rationale: string; source: string }>;
+  design_rationale: string[];
+  story_direction: string;
+  certificate_direction: string;
+  boundary_statement: string;
+  validation_valid: boolean;
+  quality_flags: string[];
 }
 
 export interface AdminEmailLogSummary {
@@ -94,7 +107,8 @@ export async function getRecentOrders(): Promise<AdminOrderSummary[]> {
       generationManifests: {
         select: {
           expectedAssetsJson: true,
-          generatedAssetsJson: true
+          generatedAssetsJson: true,
+          optionalAssetsJson: true
         }
       }
     }
@@ -117,7 +131,8 @@ export async function getRecentOrders(): Promise<AdminOrderSummary[]> {
       expected_asset_count: expectedAssets.length,
       generated_asset_count: generatedAssets.length,
       download_ready: order.downloadTokens.some((token) => token.status === "active"),
-      email_log_count: order.emailLogs.length
+      email_log_count: order.emailLogs.length,
+      meaning_profile: summarizeMeaningProfile(manifest?.optionalAssetsJson)
     };
   });
 }
@@ -250,4 +265,44 @@ function summarizeDeliveryPayload(payload: Record<string, unknown>): string {
     parts.push("vault_link_only=true");
   }
   return parts.length > 0 ? parts.join("; ") : "no sensitive payload exposed";
+}
+
+function summarizeMeaningProfile(optionalAssetsJson: unknown): AdminMeaningProfileSummary | null {
+  const attachment = arrayFromJson(optionalAssetsJson).find(
+    (item) => objectFromJson(item).attachment_type === "meaning_engine"
+  );
+  const profile = objectFromJson(objectFromJson(attachment).meaning_profile);
+  if (!Object.keys(profile).length) return null;
+
+  const validation = objectFromJson(profile.validation);
+  return {
+    source_level: stringValue(profile.source_level) ?? "unknown",
+    themes: arrayFromJson(profile.meaning_themes).map((item) => {
+      const theme = objectFromJson(item);
+      return {
+        theme: stringValue(theme.theme) ?? "unknown",
+        confidence: stringValue(theme.confidence) ?? "unknown",
+        evidence: stringValue(theme.evidence) ?? ""
+      };
+    }),
+    symbols: arrayFromJson(profile.symbol_choices).map((item) => {
+      const symbol = objectFromJson(item);
+      return {
+        symbol: stringValue(symbol.symbol) ?? "unknown",
+        meaning: stringValue(symbol.meaning) ?? "",
+        rationale: stringValue(symbol.rationale) ?? "",
+        source: stringValue(symbol.source) ?? "unknown"
+      };
+    }),
+    design_rationale: arrayFromJson(profile.design_rationale).filter(
+      (item): item is string => typeof item === "string"
+    ),
+    story_direction: stringValue(profile.story_direction) ?? "",
+    certificate_direction: stringValue(profile.certificate_direction) ?? "",
+    boundary_statement: stringValue(profile.boundary_statement) ?? "",
+    validation_valid: validation.valid === true,
+    quality_flags: arrayFromJson(validation.quality_flags).filter(
+      (item): item is string => typeof item === "string"
+    )
+  };
 }

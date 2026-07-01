@@ -2813,6 +2813,44 @@ textarea {
   font-weight: 800;
 }
 
+.premium-page .admin-meaning-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.premium-page .admin-meaning-card {
+  display: grid;
+  gap: 14px;
+  border: 1px solid rgba(201, 162, 74, 0.2);
+  border-radius: 14px;
+  padding: 16px;
+  background: rgba(246, 235, 212, 0.035);
+}
+
+.premium-page .admin-meaning-card h3 {
+  margin: 0 0 8px;
+  color: var(--premium-ivory);
+  font-size: 20px;
+}
+
+.premium-page .admin-meaning-card strong {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--premium-gold);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.premium-page .admin-meaning-card p {
+  margin: 0;
+  color: var(--premium-warm);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
 .admin-table-wrap {
   overflow-x: auto;
   border: 1px solid var(--premium-line);
@@ -3604,6 +3642,15 @@ textarea {
 
   .premium-page.admin-debug-page .premium-section {
     padding-top: 34px;
+  }
+
+  .premium-page .admin-meaning-grid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .premium-page .admin-meaning-card {
+    padding: 13px;
   }
 
   .admin-table {
