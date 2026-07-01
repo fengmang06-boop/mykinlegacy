@@ -8,13 +8,19 @@ import { formatMoneyFromCents } from "../lib/format";
 import { trackEvent } from "../lib/analytics";
 
 const collectionArtifacts = [
-  "A private family collection",
-  "A recognition letter",
-  "A symbolic crest artwork",
-  "A heritage certificate",
-  "A family story",
-  "A symbol guide",
-  "A secure private vault"
+  "Private family collection",
+  "Recognition letter",
+  "Symbolic crest artwork",
+  "Heritage certificate",
+  "Family story",
+  "Symbol guide",
+  "Secure private vault"
+];
+
+const confidenceNotes = [
+  "Prepared as a private digital collection.",
+  "You can review the collection before final delivery.",
+  "Delivered for gifting, sharing, and personal keeping."
 ];
 
 export function ProductDetails() {
@@ -53,6 +59,11 @@ export function ProductDetails() {
           more meaningful than another ordinary gift.
         </p>
         <p className="notice">{error}</p>
+        <div className="product-confidence">
+          {confidenceNotes.map((note) => (
+            <span key={note}>{note}</span>
+          ))}
+        </div>
         <ul className="product-bullets">
           {collectionArtifacts.map((artifact) => (
             <li key={artifact}>{artifact}</li>
@@ -88,6 +99,11 @@ export function ProductDetails() {
           <li key={artifact}>{artifact}</li>
         ))}
       </ul>
+      <div className="product-confidence">
+        {confidenceNotes.map((note) => (
+          <span key={note}>{note}</span>
+        ))}
+      </div>
       <p className="lead">
         {formatMoneyFromCents(primaryPackage.price_cents, primaryPackage.currency)}
       </p>
@@ -116,7 +132,7 @@ export function ProductDetails() {
       </div>
 
       <div className="card product-detail-card">
-        <p className="eyebrow">Private vault contents</p>
+        <p className="eyebrow">What&apos;s included</p>
         <h2>Included artifacts</h2>
         <ul>
           {collectionArtifacts.map((artifact) => (

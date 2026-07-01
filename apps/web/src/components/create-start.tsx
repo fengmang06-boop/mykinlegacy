@@ -94,6 +94,12 @@ export function CreateStart() {
             <button className="button" type="button" onClick={begin} disabled={loading}>
               {loading ? "Starting..." : "Begin Their Legacy"}
             </button>
+            <div className="create-trust-strip" aria-label="Journey confidence">
+              <span>Takes about 3 minutes</span>
+              <span>Review before final delivery</span>
+              <span>Private by default</span>
+              <span>Gift-ready collection</span>
+            </div>
             {founderDemoMode ? (
               <button
                 className="secondary-button"

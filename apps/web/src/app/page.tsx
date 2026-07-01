@@ -26,18 +26,8 @@ const heroArtifacts = [
     `${finalHomepageAsset}/02_homepage/hero/hero-heritage-certificate.webp`
   ],
   [
-    "Family Story",
-    "A written reflection shaped around values, memory, and belonging.",
-    `${finalHomepageAsset}/02_homepage/hero/hero-family-story.webp`
-  ],
-  [
-    "Symbol Guide",
-    "A guide to the colors, animals, and symbols chosen for the collection.",
-    `${finalHomepageAsset}/02_homepage/hero/hero-symbol-guide.webp`
-  ],
-  [
-    "Private Collection Vault",
-    "A secure private space to receive and preserve the collection.",
+    "Private Vault",
+    "A secure space to receive and preserve the finished collection.",
     `${finalHomepageAsset}/02_homepage/hero/hero-private-vault.webp`
   ]
 ] as const;
