@@ -61,6 +61,37 @@ describe("PrismaOrchestrationRepository", () => {
       })
     );
   });
+
+  it("returns package deliverable codes when listing assets for delivery completion", async () => {
+    const db = {
+      asset: {
+        findMany: vi.fn(async () => [
+          {
+            ...createPrismaAsset("crest_variant_1_png"),
+            deliverableType: { id: "deliverable_type_crest", code: "crest_variant_png" },
+            assetDeliverableLinks: [
+              {
+                packageDeliverable: {
+                  id: "package_deliverable_1",
+                  deliverableCode: "crest_variant_1_png"
+                }
+              }
+            ]
+          }
+        ])
+      }
+    };
+    const repository = new PrismaOrchestrationRepository(db as never);
+
+    const assets = await repository.listAssetsByOrder("order_1");
+
+    expect(assets).toHaveLength(1);
+    expect(assets[0]).toMatchObject({
+      deliverable_code: "crest_variant_1_png",
+      asset_type: "image",
+      public_url: null
+    });
+  });
 });
 
 function createAsset(deliverableCode: string): OrchestrationAsset {
@@ -83,5 +114,28 @@ function createAsset(deliverableCode: string): OrchestrationAsset {
     checksum_sha256: "a".repeat(64),
     public_url: null,
     created_at: "2026-07-01T00:00:00.000Z"
+  };
+}
+
+function createPrismaAsset(deliverableCode: string) {
+  const asset = createAsset(deliverableCode);
+  return {
+    id: asset.id,
+    orderId: asset.order_id,
+    orderItemId: asset.order_item_id,
+    generationJobId: asset.generation_job_id,
+    deliverableTypeId: "deliverable_type_crest",
+    assetType: asset.asset_type,
+    assetKind: asset.asset_kind,
+    status: asset.status,
+    storageProvider: asset.storage_provider,
+    storageBucket: asset.storage_bucket,
+    storageKey: asset.storage_key,
+    fileName: asset.file_name,
+    mimeType: asset.mime_type,
+    fileExt: asset.file_ext,
+    sizeBytes: BigInt(asset.size_bytes),
+    checksumSha256: asset.checksum_sha256,
+    createdAt: new Date(asset.created_at)
   };
 }

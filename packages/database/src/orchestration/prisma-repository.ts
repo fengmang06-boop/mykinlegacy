@@ -214,7 +214,10 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
   async listAssetsByOrder(orderId: string): Promise<OrchestrationAsset[]> {
     const rows = await this.db.asset.findMany({
       where: { orderId },
-      include: { deliverableType: true }
+      include: {
+        deliverableType: true,
+        assetDeliverableLinks: { include: { packageDeliverable: true } }
+      }
     });
     return rows.map((row) => mapAsset(row));
   }
@@ -405,12 +408,20 @@ function mapGenerationJob(row: unknown): OrchestrationGenerationJob {
 
 function mapAsset(row: unknown, deliverableCode?: string): OrchestrationAsset {
   const deliverableType = recordObject(row, "deliverableType");
+  const deliverableLinks = recordArray<Record<string, unknown>>(row, "assetDeliverableLinks");
+  const packageDeliverable = deliverableLinks
+    .map((link) => recordObject(link, "packageDeliverable"))
+    .find((item) => stringFromRecord(item, "deliverableCode"));
   return {
     id: recordString(row, "id"),
     order_id: recordString(row, "orderId"),
     order_item_id: recordStringOrNull(row, "orderItemId") ?? "order_item_missing",
     generation_job_id: recordStringOrNull(row, "generationJobId") ?? "generation_job_missing",
-    deliverable_code: deliverableCode ?? stringFromRecord(deliverableType, "code") ?? recordString(row, "deliverableTypeId"),
+    deliverable_code:
+      deliverableCode ??
+      stringFromRecord(packageDeliverable ?? {}, "deliverableCode") ??
+      stringFromRecord(deliverableType, "code") ??
+      recordString(row, "deliverableTypeId"),
     asset_type: recordString(row, "assetType") as OrchestrationAsset["asset_type"],
     asset_kind: recordString(row, "assetKind") as OrchestrationAsset["asset_kind"],
     status: recordString(row, "status") as OrchestrationAsset["status"],
