@@ -3532,12 +3532,12 @@ textarea {
   }
 
   .premium-page .journey-shell {
-    padding: 50px 0 58px;
+    padding: 40px 0 48px;
   }
 
   .premium-page .journey-card {
     gap: 14px;
-    padding: 20px;
+    padding: 18px;
   }
 
   .premium-page .create-trust-strip {
@@ -3577,5 +3577,42 @@ textarea {
 
   .premium-page .artifact-preview-card {
     min-height: 210px;
+  }
+
+  .premium-page.transaction-page .journey-shell {
+    padding-top: 32px;
+  }
+
+  .premium-page.transaction-page .card,
+  .premium-page.transaction-page .side-panel,
+  .premium-page.admin-debug-page .admin-debug-card {
+    padding: 15px;
+  }
+
+  .premium-page.transaction-page .side-panel-visual {
+    min-height: 150px;
+    margin-bottom: 14px;
+  }
+
+  .premium-page.transaction-page .status-grid {
+    gap: 10px;
+  }
+
+  .premium-page.transaction-page .status-card {
+    padding: 14px;
+  }
+
+  .premium-page.admin-debug-page .premium-section {
+    padding-top: 34px;
+  }
+
+  .admin-table {
+    border-spacing: 0 10px;
+  }
+
+  .admin-table td {
+    grid-template-columns: minmax(78px, 0.36fr) minmax(0, 1fr);
+    gap: 10px;
+    padding: 10px 11px;
   }
 }

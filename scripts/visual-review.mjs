@@ -53,7 +53,8 @@ function parseArgs() {
     noClean: false,
     only: "",
     orderNumber: "",
-    outputDir: path.join(repoRoot, "artifacts", "visual-review")
+    outputDir: path.join(repoRoot, "artifacts", "visual-review"),
+    scope: ""
   };
 
   for (const arg of args) {
@@ -84,6 +85,9 @@ function parseArgs() {
     if (arg.startsWith("--only=")) {
       options.only = arg.slice("--only=".length);
     }
+    if (arg.startsWith("--scope=")) {
+      options.scope = arg.slice("--scope=".length);
+    }
   }
 
   return {
@@ -99,7 +103,8 @@ function parseArgs() {
       .map((item) => item.trim())
       .filter(Boolean),
     orderNumber: options.orderNumber.trim(),
-    outputDir: path.resolve(repoRoot, options.outputDir)
+    outputDir: path.resolve(repoRoot, options.outputDir),
+    scope: options.scope.trim()
   };
 }
 
@@ -178,6 +183,14 @@ function formatBytes(bytes) {
   }
 
   return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
+}
+
+function cacheBustValue(report) {
+  return encodeURIComponent(`${report.commit}-${report.capturedAt}`);
+}
+
+function screenshotUrl(item, report) {
+  return `${item.screenshot}?v=${cacheBustValue(report)}`;
 }
 
 async function pngDimensions(filePath) {
@@ -599,6 +612,26 @@ function reportNotes({ adminToken, existingReport }) {
   return [...notes];
 }
 
+function selectScopePages(scope, pages) {
+  if (!scope) {
+    return pages;
+  }
+
+  const scopes = {
+    transaction: ["create", "checkout", "payment-success", "order-status-latest"],
+    admin: ["admin-orders", "admin-email-logs", "admin-download-tokens"],
+    "full-site": pages.map((page) => page.key)
+  };
+  const selected = scopes[scope];
+
+  if (!selected) {
+    throw new Error(`Unsupported visual review scope: ${scope}`);
+  }
+
+  const allowed = new Set(selected);
+  return pages.filter((page) => allowed.has(page.key));
+}
+
 function detailsList(title, items, renderer) {
   if (items.length === 0) {
     return "";
@@ -659,8 +692,8 @@ function renderHtmlReport(report) {
                       <div><dt>Scroll height</dt><dd>${item.scrollHeight}px</dd></div>
                       <div><dt>File size</dt><dd>${formatBytes(item.fileSize)}</dd></div>
                     </dl>
-                    <a class="image-link" href="${escapeHtml(item.screenshot)}">
-                      <img src="${escapeHtml(item.screenshot)}" alt="${escapeHtml(
+                    <a class="image-link" href="${escapeHtml(screenshotUrl(item, report))}">
+                      <img src="${escapeHtml(screenshotUrl(item, report))}" alt="${escapeHtml(
                         `${item.pageLabel} ${item.viewport.key} screenshot`
                       )}" loading="lazy" />
                     </a>
@@ -935,12 +968,13 @@ async function main() {
     noClean,
     only,
     orderNumber,
-    outputDir
+    outputDir,
+    scope
   } = parseArgs();
   const capturedAt = new Date().toISOString();
   const commit = getGitCommit();
   activeOutputDir = outputDir;
-  activePages = fullSite
+  activePages = fullSite || scope
     ? createFullSitePages({ adminToken, founderOrder, latestOrder })
     : orderNumber
     ? [
@@ -957,6 +991,7 @@ async function main() {
         }
       ]
     : basePages;
+  activePages = selectScopePages(scope, activePages);
   if (only.length > 0) {
     const allowed = new Set(only);
     activePages = activePages.filter((page) => allowed.has(page.key));
