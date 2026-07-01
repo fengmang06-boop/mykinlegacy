@@ -29,6 +29,7 @@ type PrismaOrchestrationClient = {
   generationJob: PrismaDelegate;
   asset: PrismaDelegate;
   assetDeliverableLink: PrismaDelegate;
+  packageDeliverable: PrismaDelegate;
   deliverableType: PrismaDelegate;
   downloadToken: PrismaDelegate;
   downloadTokenAsset: PrismaDelegate;
@@ -163,10 +164,17 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
   }
 
   async createAsset(input: OrchestrationAsset): Promise<OrchestrationAsset> {
-    const deliverableType = await this.findDeliverableType(input.deliverable_code);
-    const existing = await this.db.asset.findFirst({
-      where: { orderId: input.order_id, deliverableTypeId: deliverableType.id }
-    });
+    const deliverable = await this.findDeliverableForAsset(input);
+    const existing = deliverable.packageDeliverableId
+      ? await this.db.asset.findFirst({
+          where: {
+            orderId: input.order_id,
+            assetDeliverableLinks: { some: { packageDeliverableId: deliverable.packageDeliverableId } }
+          }
+        })
+      : await this.db.asset.findFirst({
+          where: { orderId: input.order_id, deliverableTypeId: deliverable.deliverableTypeId }
+        });
     if (existing) return mapAsset(existing, input.deliverable_code);
 
     const row = await this.db.asset.create({
@@ -175,7 +183,7 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
         orderId: input.order_id,
         orderItemId: input.order_item_id,
         generationJobId: input.generation_job_id,
-        deliverableTypeId: deliverableType.id,
+        deliverableTypeId: deliverable.deliverableTypeId,
         assetType: input.asset_type,
         assetKind: input.asset_kind,
         status: input.status,
@@ -195,7 +203,8 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
       data: {
         id: ulid(),
         assetId: recordString(row, "id"),
-        deliverableTypeId: deliverableType.id,
+        packageDeliverableId: deliverable.packageDeliverableId,
+        deliverableTypeId: deliverable.deliverableTypeId,
         createdAt: new Date(input.created_at)
       }
     });
@@ -296,6 +305,31 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
       where: { id: outboxEventId },
       data: { status: "published", publishedAt: new Date(nowIso) }
     });
+  }
+
+  private async findDeliverableForAsset(input: OrchestrationAsset): Promise<{
+    deliverableTypeId: string;
+    packageDeliverableId: string | null;
+  }> {
+    const packageDeliverable = await this.db.packageDeliverable.findFirst({
+      where: {
+        deliverableCode: input.deliverable_code,
+        package: { orderItems: { some: { id: input.order_item_id } } }
+      },
+      include: { deliverableType: true }
+    });
+    if (packageDeliverable) {
+      return {
+        deliverableTypeId: recordString(packageDeliverable, "deliverableTypeId"),
+        packageDeliverableId: recordString(packageDeliverable, "id")
+      };
+    }
+
+    const deliverableType = await this.findDeliverableType(input.deliverable_code);
+    return {
+      deliverableTypeId: deliverableType.id,
+      packageDeliverableId: null
+    };
   }
 
   private async findDeliverableType(deliverableCode: string): Promise<{ id: string; code: string }> {
