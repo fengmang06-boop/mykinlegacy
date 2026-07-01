@@ -49,6 +49,7 @@ function parseArgs() {
     founderOrder: DEFAULT_FOUNDER_ORDER,
     fullSite: false,
     latestOrder: DEFAULT_LATEST_ORDER,
+    mergeExistingReport: false,
     noClean: false,
     only: "",
     orderNumber: "",
@@ -77,6 +78,9 @@ function parseArgs() {
     if (arg === "--no-clean") {
       options.noClean = true;
     }
+    if (arg === "--merge-existing-report") {
+      options.mergeExistingReport = true;
+    }
     if (arg.startsWith("--only=")) {
       options.only = arg.slice("--only=".length);
     }
@@ -88,6 +92,7 @@ function parseArgs() {
     founderOrder: options.founderOrder.trim(),
     fullSite: options.fullSite,
     latestOrder: options.latestOrder.trim(),
+    mergeExistingReport: options.mergeExistingReport,
     noClean: options.noClean,
     only: options.only
       .split(",")
@@ -516,6 +521,40 @@ function groupScreenshots(screenshots) {
   }));
 }
 
+async function loadExistingReport() {
+  const reportPath = path.join(activeOutputDir, "report.json");
+  if (!existsSync(reportPath)) {
+    throw new Error(`Cannot merge visual report because ${reportPath} does not exist.`);
+  }
+
+  return JSON.parse(await fs.readFile(reportPath, "utf8"));
+}
+
+function screenshotIdentity(screenshot) {
+  return `${screenshot.pageKey}:${screenshot.viewport.key}`;
+}
+
+function mergeScreenshots(existingScreenshots, newScreenshots) {
+  const newByIdentity = new Map(newScreenshots.map((screenshot) => [screenshotIdentity(screenshot), screenshot]));
+  const merged = existingScreenshots.map((screenshot) => {
+    const replacement = newByIdentity.get(screenshotIdentity(screenshot));
+    if (replacement) {
+      newByIdentity.delete(screenshotIdentity(screenshot));
+      return replacement;
+    }
+    return screenshot;
+  });
+
+  return [...merged, ...newByIdentity.values()];
+}
+
+function mergePages(existingPages, screenshots) {
+  return existingPages.map((pageDefinition) => ({
+    ...pageDefinition,
+    screenshots: screenshots.filter((screenshot) => screenshot.pageKey === pageDefinition.key)
+  }));
+}
+
 function detailsList(title, items, renderer) {
   if (items.length === 0) {
     return "";
@@ -842,7 +881,18 @@ async function writeReports(report) {
 }
 
 async function main() {
-  const { adminToken, baseUrl, founderOrder, fullSite, latestOrder, noClean, only, orderNumber, outputDir } = parseArgs();
+  const {
+    adminToken,
+    baseUrl,
+    founderOrder,
+    fullSite,
+    latestOrder,
+    mergeExistingReport,
+    noClean,
+    only,
+    orderNumber,
+    outputDir
+  } = parseArgs();
   const capturedAt = new Date().toISOString();
   const commit = getGitCommit();
   activeOutputDir = outputDir;
@@ -892,7 +942,16 @@ async function main() {
     await browser.close();
   }
 
+  const existingReport = mergeExistingReport ? await loadExistingReport() : null;
+  const reportScreenshots = existingReport
+    ? mergeScreenshots(existingReport.screenshots ?? [], screenshots)
+    : screenshots;
+  const reportPages = existingReport
+    ? mergePages(existingReport.pages ?? [], reportScreenshots)
+    : groupScreenshots(reportScreenshots);
+
   const report = {
+    ...(existingReport ?? {}),
     baseUrl,
     commit,
     capturedAt,
@@ -902,8 +961,8 @@ async function main() {
         ? "Admin pages were captured with a redacted token in the URL."
         : "ADMIN_ACCESS_TOKEN was not available locally; admin pages were captured in locked state."
     ],
-    pages: groupScreenshots(screenshots),
-    screenshots
+    pages: reportPages,
+    screenshots: reportScreenshots
   };
 
   const { htmlPath, jsonPath } = await writeReports(report);

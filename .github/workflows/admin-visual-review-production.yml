@@ -179,6 +179,9 @@ jobs:
         run: |
           corepack pnpm visual:review -- \
             --full-site \
+            --only=admin-orders,admin-email-logs,admin-download-tokens \
+            --no-clean \
+            --merge-existing-report \
             --base-url=https://mykinlegacy.com \
             --output-dir=apps/web/public/review/full-site \
             --latest-order=AHL-20260701-01KWEJEY \
