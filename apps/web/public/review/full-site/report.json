@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://mykinlegacy.com",
-  "commit": "e9545c21b4b8940a69a88d4f4033d8f0567446e5",
-  "capturedAt": "2026-07-01T16:14:26.006Z",
+  "commit": "8967c5b65a71193fab21e02c5adfccf0beb230ba",
+  "capturedAt": "2026-07-01T16:42:29.354Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
     "Admin pages were captured with a redacted token in the URL."
