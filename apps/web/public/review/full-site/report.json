@@ -1,10 +1,10 @@
 {
   "baseUrl": "https://mykinlegacy.com",
-  "commit": "8dae037eb3a11606f1b792c90f7e9c21128e9b46",
-  "capturedAt": "2026-07-01T13:59:38.404Z",
+  "commit": "140b501cf5f07fd0714af6eaab78751e8e85f1ed",
+  "capturedAt": "2026-07-01T14:27:37.715Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
-    "ADMIN_ACCESS_TOKEN was not available locally; admin pages were captured in locked state."
+    "Admin pages were captured with a redacted token in the URL."
   ],
   "pages": [
     {
@@ -23,19 +23,30 @@
             "height": 1200
           },
           "screenshot": "home-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/home-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 6997
+            "height": 1200
           },
-          "scrollHeight": 6997,
+          "scrollHeight": 1200,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 5848845,
+          "fileSize": 93982,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -49,19 +60,30 @@
             "height": 1200
           },
           "screenshot": "home-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/home-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 9695
+            "height": 1200
           },
-          "scrollHeight": 9695,
+          "scrollHeight": 1200,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 4967414,
+          "fileSize": 84864,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -77,19 +99,30 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "home-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/home-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 14502
+            "height": 2482
           },
-          "scrollHeight": 7251,
+          "scrollHeight": 1241,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 6538032,
+          "fileSize": 196878,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         }
       ]
@@ -110,19 +143,30 @@
             "height": 1200
           },
           "screenshot": "create-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/create-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1896
+            "height": 1200
           },
-          "scrollHeight": 1896,
+          "scrollHeight": 1200,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 639471,
+          "fileSize": 94217,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/create",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -136,19 +180,30 @@
             "height": 1200
           },
           "screenshot": "create-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/create-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 2563
+            "height": 1200
           },
-          "scrollHeight": 2563,
+          "scrollHeight": 1200,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 781324,
+          "fileSize": 84983,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/create",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -164,19 +219,30 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "create-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/create-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 5114
+            "height": 2482
           },
-          "scrollHeight": 2557,
+          "scrollHeight": 1241,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1516551,
+          "fileSize": 196841,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/create",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         }
       ]
@@ -197,19 +263,30 @@
             "height": 1200
           },
           "screenshot": "collection-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/collection-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 4295
+            "height": 1200
           },
-          "scrollHeight": 4295,
+          "scrollHeight": 1200,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 1920940,
+          "fileSize": 93894,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/family-legacy-collection",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -223,19 +300,30 @@
             "height": 1200
           },
           "screenshot": "collection-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/collection-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 6248
+            "height": 1200
           },
-          "scrollHeight": 6248,
+          "scrollHeight": 1200,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 2148199,
+          "fileSize": 85455,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/family-legacy-collection",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -251,19 +339,30 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "collection-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/collection-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 12620
+            "height": 2482
           },
-          "scrollHeight": 6310,
+          "scrollHeight": 1241,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 4589834,
+          "fileSize": 197305,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/family-legacy-collection",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         }
       ]
@@ -284,19 +383,30 @@
             "height": 1200
           },
           "screenshot": "interview-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/interview-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1769
+            "height": 1200
           },
-          "scrollHeight": 1769,
+          "scrollHeight": 1200,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 608507,
+          "fileSize": 94171,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [],
+          "consoleErrors": [
+            {
+              "text": "Failed to load resource: the server responded with a status of 521 ()",
+              "location": {
+                "url": "https://mykinlegacy.com/create/AHL-20260701-01KWEJEY",
+                "line": 0,
+                "column": 0,
+                "lineNumber": 0,
+                "columnNumber": 0
+              }
+            }
+          ],
           "pageErrors": []
         },
         {
@@ -310,7 +420,7 @@
             "height": 1200
           },
           "screenshot": "interview-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/interview-tablet.png",
           "dimensions": {
             "width": 768,
             "height": 2586
@@ -318,7 +428,7 @@
           "scrollHeight": 2586,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 764636,
+          "fileSize": 750801,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -338,15 +448,15 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "interview-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/interview-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 5500
+            "height": 5550
           },
-          "scrollHeight": 2750,
+          "scrollHeight": 2775,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1528035,
+          "fileSize": 1523407,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -371,7 +481,7 @@
             "height": 1200
           },
           "screenshot": "checkout-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/checkout-desktop.png",
           "dimensions": {
             "width": 1440,
             "height": 2096
@@ -379,7 +489,7 @@
           "scrollHeight": 2096,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 593175,
+          "fileSize": 547173,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -397,7 +507,7 @@
             "height": 1200
           },
           "screenshot": "checkout-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/checkout-tablet.png",
           "dimensions": {
             "width": 768,
             "height": 2715
@@ -405,7 +515,7 @@
           "scrollHeight": 2715,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 521183,
+          "fileSize": 493423,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -425,15 +535,15 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "checkout-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/checkout-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 6458
+            "height": 6498
           },
-          "scrollHeight": 3229,
+          "scrollHeight": 3249,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1184241,
+          "fileSize": 1104426,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -458,7 +568,7 @@
             "height": 1200
           },
           "screenshot": "payment-success-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/payment-success-desktop.png",
           "dimensions": {
             "width": 1440,
             "height": 1521
@@ -466,7 +576,7 @@
           "scrollHeight": 1521,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 511742,
+          "fileSize": 486709,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -484,7 +594,7 @@
             "height": 1200
           },
           "screenshot": "payment-success-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/payment-success-tablet.png",
           "dimensions": {
             "width": 768,
             "height": 1546
@@ -492,7 +602,7 @@
           "scrollHeight": 1546,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 348416,
+          "fileSize": 332125,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -512,7 +622,7 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "payment-success-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/payment-success-mobile.png",
           "dimensions": {
             "width": 780,
             "height": 3246
@@ -520,7 +630,7 @@
           "scrollHeight": 1623,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 645056,
+          "fileSize": 604478,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -545,7 +655,7 @@
             "height": 1200
           },
           "screenshot": "order-status-latest-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-latest-desktop.png",
           "dimensions": {
             "width": 1440,
             "height": 1548
@@ -553,7 +663,7 @@
           "scrollHeight": 1548,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 516729,
+          "fileSize": 494710,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -571,7 +681,7 @@
             "height": 1200
           },
           "screenshot": "order-status-latest-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-latest-tablet.png",
           "dimensions": {
             "width": 768,
             "height": 2365
@@ -579,7 +689,7 @@
           "scrollHeight": 2365,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 539587,
+          "fileSize": 524063,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -599,7 +709,7 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "order-status-latest-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-latest-mobile.png",
           "dimensions": {
             "width": 780,
             "height": 4890
@@ -607,7 +717,7 @@
           "scrollHeight": 2445,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1186615,
+          "fileSize": 1150510,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -632,7 +742,7 @@
             "height": 1200
           },
           "screenshot": "order-status-founder-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-founder-desktop.png",
           "dimensions": {
             "width": 1440,
             "height": 1548
@@ -640,7 +750,7 @@
           "scrollHeight": 1548,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 517368,
+          "fileSize": 495133,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -658,7 +768,7 @@
             "height": 1200
           },
           "screenshot": "order-status-founder-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-founder-tablet.png",
           "dimensions": {
             "width": 768,
             "height": 2365
@@ -666,7 +776,7 @@
           "scrollHeight": 2365,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 539977,
+          "fileSize": 524380,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -686,7 +796,7 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "order-status-founder-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-founder-mobile.png",
           "dimensions": {
             "width": 780,
             "height": 4890
@@ -694,7 +804,7 @@
           "scrollHeight": 2445,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1187571,
+          "fileSize": 1150967,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -707,9 +817,7 @@
       "key": "admin-orders",
       "label": "Admin Orders",
       "path": "/admin/orders?token=[redacted]",
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "warnings": [],
       "screenshots": [
         {
           "pageKey": "admin-orders",
@@ -722,18 +830,16 @@
             "height": 1200
           },
           "screenshot": "admin-orders-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1521
+            "height": 1625
           },
-          "scrollHeight": 1521,
+          "scrollHeight": 1625,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 429351,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 404873,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -750,7 +856,7 @@
             "height": 1200
           },
           "screenshot": "admin-orders-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-tablet.png",
           "dimensions": {
             "width": 768,
             "height": 1521
@@ -758,10 +864,8 @@
           "scrollHeight": 1521,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 340103,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 289022,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -780,18 +884,16 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "admin-orders-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 3144
+            "height": 3282
           },
-          "scrollHeight": 1572,
+          "scrollHeight": 1641,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 674331,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 633140,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -803,9 +905,7 @@
       "key": "admin-email-logs",
       "label": "Admin Email Logs",
       "path": "/admin/email-logs?token=[redacted]",
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "warnings": [],
       "screenshots": [
         {
           "pageKey": "admin-email-logs",
@@ -818,18 +918,16 @@
             "height": 1200
           },
           "screenshot": "admin-email-logs-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1521
+            "height": 1683
           },
-          "scrollHeight": 1521,
+          "scrollHeight": 1683,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 429016,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 419132,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -846,18 +944,16 @@
             "height": 1200
           },
           "screenshot": "admin-email-logs-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 1521
+            "height": 1752
           },
-          "scrollHeight": 1521,
+          "scrollHeight": 1752,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 340057,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 314679,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -876,18 +972,16 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "admin-email-logs-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 3144
+            "height": 3858
           },
-          "scrollHeight": 1572,
+          "scrollHeight": 1929,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 673659,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 676441,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -899,9 +993,7 @@
       "key": "admin-download-tokens",
       "label": "Admin Download Tokens",
       "path": "/admin/download-tokens?token=[redacted]",
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "warnings": [],
       "screenshots": [
         {
           "pageKey": "admin-download-tokens",
@@ -914,7 +1006,7 @@
             "height": 1200
           },
           "screenshot": "admin-download-tokens-desktop.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-desktop.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-desktop.png",
           "dimensions": {
             "width": 1440,
             "height": 1521
@@ -922,10 +1014,8 @@
           "scrollHeight": 1521,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 429183,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 402221,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -942,7 +1032,7 @@
             "height": 1200
           },
           "screenshot": "admin-download-tokens-tablet.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-tablet.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-tablet.png",
           "dimensions": {
             "width": 768,
             "height": 1521
@@ -950,10 +1040,8 @@
           "scrollHeight": 1521,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 339997,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 320452,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -972,7 +1060,7 @@
             "deviceScaleFactor": 2
           },
           "screenshot": "admin-download-tokens-mobile.png",
-          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-mobile.png",
+          "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-mobile.png",
           "dimensions": {
             "width": 780,
             "height": 3144
@@ -980,10 +1068,8 @@
           "scrollHeight": 1572,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 673607,
-          "warnings": [
-            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-          ],
+          "fileSize": 611608,
+          "warnings": [],
           "failedImages": [],
           "failedRequests": [],
           "consoleErrors": [],
@@ -1004,19 +1090,30 @@
         "height": 1200
       },
       "screenshot": "home-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/home-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 6997
+        "height": 1200
       },
-      "scrollHeight": 6997,
+      "scrollHeight": 1200,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 5848845,
+      "fileSize": 93982,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1030,19 +1127,30 @@
         "height": 1200
       },
       "screenshot": "home-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/home-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 9695
+        "height": 1200
       },
-      "scrollHeight": 9695,
+      "scrollHeight": 1200,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 4967414,
+      "fileSize": 84864,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1058,19 +1166,30 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "home-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/home-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 14502
+        "height": 2482
       },
-      "scrollHeight": 7251,
+      "scrollHeight": 1241,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 6538032,
+      "fileSize": 196878,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1084,19 +1203,30 @@
         "height": 1200
       },
       "screenshot": "create-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/create-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1896
+        "height": 1200
       },
-      "scrollHeight": 1896,
+      "scrollHeight": 1200,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 639471,
+      "fileSize": 94217,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/create",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1110,19 +1240,30 @@
         "height": 1200
       },
       "screenshot": "create-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/create-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 2563
+        "height": 1200
       },
-      "scrollHeight": 2563,
+      "scrollHeight": 1200,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 781324,
+      "fileSize": 84983,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/create",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1138,19 +1279,30 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "create-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/create-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 5114
+        "height": 2482
       },
-      "scrollHeight": 2557,
+      "scrollHeight": 1241,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1516551,
+      "fileSize": 196841,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/create",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1164,19 +1316,30 @@
         "height": 1200
       },
       "screenshot": "collection-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/collection-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 4295
+        "height": 1200
       },
-      "scrollHeight": 4295,
+      "scrollHeight": 1200,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 1920940,
+      "fileSize": 93894,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/family-legacy-collection",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1190,19 +1353,30 @@
         "height": 1200
       },
       "screenshot": "collection-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/collection-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 6248
+        "height": 1200
       },
-      "scrollHeight": 6248,
+      "scrollHeight": 1200,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 2148199,
+      "fileSize": 85455,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/family-legacy-collection",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1218,19 +1392,30 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "collection-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/collection-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 12620
+        "height": 2482
       },
-      "scrollHeight": 6310,
+      "scrollHeight": 1241,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 4589834,
+      "fileSize": 197305,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/family-legacy-collection",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1244,19 +1429,30 @@
         "height": 1200
       },
       "screenshot": "interview-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/interview-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1769
+        "height": 1200
       },
-      "scrollHeight": 1769,
+      "scrollHeight": 1200,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 608507,
+      "fileSize": 94171,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [],
+      "consoleErrors": [
+        {
+          "text": "Failed to load resource: the server responded with a status of 521 ()",
+          "location": {
+            "url": "https://mykinlegacy.com/create/AHL-20260701-01KWEJEY",
+            "line": 0,
+            "column": 0,
+            "lineNumber": 0,
+            "columnNumber": 0
+          }
+        }
+      ],
       "pageErrors": []
     },
     {
@@ -1270,7 +1466,7 @@
         "height": 1200
       },
       "screenshot": "interview-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/interview-tablet.png",
       "dimensions": {
         "width": 768,
         "height": 2586
@@ -1278,7 +1474,7 @@
       "scrollHeight": 2586,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 764636,
+      "fileSize": 750801,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1298,15 +1494,15 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "interview-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/interview-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 5500
+        "height": 5550
       },
-      "scrollHeight": 2750,
+      "scrollHeight": 2775,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1528035,
+      "fileSize": 1523407,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1324,7 +1520,7 @@
         "height": 1200
       },
       "screenshot": "checkout-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/checkout-desktop.png",
       "dimensions": {
         "width": 1440,
         "height": 2096
@@ -1332,7 +1528,7 @@
       "scrollHeight": 2096,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 593175,
+      "fileSize": 547173,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1350,7 +1546,7 @@
         "height": 1200
       },
       "screenshot": "checkout-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/checkout-tablet.png",
       "dimensions": {
         "width": 768,
         "height": 2715
@@ -1358,7 +1554,7 @@
       "scrollHeight": 2715,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 521183,
+      "fileSize": 493423,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1378,15 +1574,15 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "checkout-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/checkout-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 6458
+        "height": 6498
       },
-      "scrollHeight": 3229,
+      "scrollHeight": 3249,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1184241,
+      "fileSize": 1104426,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1404,7 +1600,7 @@
         "height": 1200
       },
       "screenshot": "payment-success-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/payment-success-desktop.png",
       "dimensions": {
         "width": 1440,
         "height": 1521
@@ -1412,7 +1608,7 @@
       "scrollHeight": 1521,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 511742,
+      "fileSize": 486709,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1430,7 +1626,7 @@
         "height": 1200
       },
       "screenshot": "payment-success-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/payment-success-tablet.png",
       "dimensions": {
         "width": 768,
         "height": 1546
@@ -1438,7 +1634,7 @@
       "scrollHeight": 1546,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 348416,
+      "fileSize": 332125,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1458,7 +1654,7 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "payment-success-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/payment-success-mobile.png",
       "dimensions": {
         "width": 780,
         "height": 3246
@@ -1466,7 +1662,7 @@
       "scrollHeight": 1623,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 645056,
+      "fileSize": 604478,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1484,7 +1680,7 @@
         "height": 1200
       },
       "screenshot": "order-status-latest-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-latest-desktop.png",
       "dimensions": {
         "width": 1440,
         "height": 1548
@@ -1492,7 +1688,7 @@
       "scrollHeight": 1548,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 516729,
+      "fileSize": 494710,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1510,7 +1706,7 @@
         "height": 1200
       },
       "screenshot": "order-status-latest-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-latest-tablet.png",
       "dimensions": {
         "width": 768,
         "height": 2365
@@ -1518,7 +1714,7 @@
       "scrollHeight": 2365,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 539587,
+      "fileSize": 524063,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1538,7 +1734,7 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "order-status-latest-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-latest-mobile.png",
       "dimensions": {
         "width": 780,
         "height": 4890
@@ -1546,7 +1742,7 @@
       "scrollHeight": 2445,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1186615,
+      "fileSize": 1150510,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1564,7 +1760,7 @@
         "height": 1200
       },
       "screenshot": "order-status-founder-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-founder-desktop.png",
       "dimensions": {
         "width": 1440,
         "height": 1548
@@ -1572,7 +1768,7 @@
       "scrollHeight": 1548,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 517368,
+      "fileSize": 495133,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1590,7 +1786,7 @@
         "height": 1200
       },
       "screenshot": "order-status-founder-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-founder-tablet.png",
       "dimensions": {
         "width": 768,
         "height": 2365
@@ -1598,7 +1794,7 @@
       "scrollHeight": 2365,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 539977,
+      "fileSize": 524380,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1618,7 +1814,7 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "order-status-founder-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/order-status-founder-mobile.png",
       "dimensions": {
         "width": 780,
         "height": 4890
@@ -1626,7 +1822,7 @@
       "scrollHeight": 2445,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1187571,
+      "fileSize": 1150967,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1644,18 +1840,16 @@
         "height": 1200
       },
       "screenshot": "admin-orders-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1521
+        "height": 1625
       },
-      "scrollHeight": 1521,
+      "scrollHeight": 1625,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 429351,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 404873,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1672,7 +1866,7 @@
         "height": 1200
       },
       "screenshot": "admin-orders-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-tablet.png",
       "dimensions": {
         "width": 768,
         "height": 1521
@@ -1680,10 +1874,8 @@
       "scrollHeight": 1521,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 340103,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 289022,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1702,18 +1894,16 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "admin-orders-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 3144
+        "height": 3282
       },
-      "scrollHeight": 1572,
+      "scrollHeight": 1641,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 674331,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 633140,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1730,18 +1920,16 @@
         "height": 1200
       },
       "screenshot": "admin-email-logs-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1521
+        "height": 1683
       },
-      "scrollHeight": 1521,
+      "scrollHeight": 1683,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 429016,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 419132,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1758,18 +1946,16 @@
         "height": 1200
       },
       "screenshot": "admin-email-logs-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 1521
+        "height": 1752
       },
-      "scrollHeight": 1521,
+      "scrollHeight": 1752,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 340057,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 314679,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1788,18 +1974,16 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "admin-email-logs-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 3144
+        "height": 3858
       },
-      "scrollHeight": 1572,
+      "scrollHeight": 1929,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 673659,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 676441,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1816,7 +2000,7 @@
         "height": 1200
       },
       "screenshot": "admin-download-tokens-desktop.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-desktop.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-desktop.png",
       "dimensions": {
         "width": 1440,
         "height": 1521
@@ -1824,10 +2008,8 @@
       "scrollHeight": 1521,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 429183,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 402221,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1844,7 +2026,7 @@
         "height": 1200
       },
       "screenshot": "admin-download-tokens-tablet.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-tablet.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-tablet.png",
       "dimensions": {
         "width": 768,
         "height": 1521
@@ -1852,10 +2034,8 @@
       "scrollHeight": 1521,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 339997,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 320452,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
@@ -1874,7 +2054,7 @@
         "deviceScaleFactor": 2
       },
       "screenshot": "admin-download-tokens-mobile.png",
-      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-mobile.png",
+      "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-mobile.png",
       "dimensions": {
         "width": 780,
         "height": 3144
@@ -1882,10 +2062,8 @@
       "scrollHeight": 1572,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 673607,
-      "warnings": [
-        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
-      ],
+      "fileSize": 611608,
+      "warnings": [],
       "failedImages": [],
       "failedRequests": [],
       "consoleErrors": [],
