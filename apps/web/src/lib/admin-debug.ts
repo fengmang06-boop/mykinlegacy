@@ -52,8 +52,9 @@ export interface AdminDownloadTokenSummary {
 }
 
 export function getAdminAccess(searchParams: SearchParams): AdminAccess {
-  const configuredToken = process.env.ADMIN_ACCESS_TOKEN;
+  const configuredToken = process.env.ADMIN_ACCESS_TOKEN?.trim();
   const providedToken = stringParam(searchParams.token);
+  const tokenCandidates = tokenCandidatesFromQuery(providedToken);
 
   if (!configuredToken || configuredToken.startsWith("replace_with_")) {
     return {
@@ -74,10 +75,11 @@ export function getAdminAccess(searchParams: SearchParams): AdminAccess {
   }
 
   return {
-    authorized: safeCompare(providedToken, configuredToken),
+    authorized: tokenCandidates.some((candidate) => safeCompare(candidate, configuredToken)),
     configured: true,
     token: providedToken,
-    reason: "The provided admin token did not match."
+    reason:
+      "The provided admin token did not match. If the token contains +, #, &, or =, URL-encode it before opening the page."
   };
 }
 
@@ -186,6 +188,18 @@ function stringParam(value: string | string[] | undefined): string {
     return value[0] ?? "";
   }
   return value ?? "";
+}
+
+function tokenCandidatesFromQuery(value: string): string[] {
+  const trimmed = value.trim();
+  const candidates = new Set<string>();
+
+  if (trimmed) {
+    candidates.add(trimmed);
+    candidates.add(trimmed.replaceAll(" ", "+"));
+  }
+
+  return [...candidates];
 }
 
 function safeCompare(a: string, b: string): boolean {
