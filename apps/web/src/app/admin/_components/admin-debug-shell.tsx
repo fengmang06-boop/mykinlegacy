@@ -87,7 +87,9 @@ export function AdminTable({
           {rows.map((row, index) => (
             <tr key={index}>
               {row.map((cell, cellIndex) => (
-                <td key={cellIndex}>{cell}</td>
+                <td data-label={columns[cellIndex]} key={cellIndex}>
+                  {cell}
+                </td>
               ))}
             </tr>
           ))}
