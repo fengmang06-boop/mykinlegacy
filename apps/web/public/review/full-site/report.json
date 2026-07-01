@@ -1,7 +1,7 @@
 {
   "baseUrl": "https://mykinlegacy.com",
-  "commit": "96ff73873d5c2f3e43bc1b7f914b5a0cd130acb7",
-  "capturedAt": "2026-07-01T14:52:07.312Z",
+  "commit": "f6cc95c7be7ed432d807c4094832c399b8c45a62",
+  "capturedAt": "2026-07-01T15:00:51.273Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
     "Admin pages were captured with a redacted token in the URL."
@@ -725,27 +725,16 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1200
+            "height": 1625
           },
-          "scrollHeight": 1200,
+          "scrollHeight": 1625,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 93615,
+          "fileSize": 404873,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [
-            {
-              "text": "Failed to load resource: the server responded with a status of 521 ()",
-              "location": {
-                "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
-                "line": 0,
-                "column": 0,
-                "lineNumber": 0,
-                "columnNumber": 0
-              }
-            }
-          ],
+          "consoleErrors": [],
           "pageErrors": []
         },
         {
@@ -762,27 +751,16 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 1200
+            "height": 1521
           },
-          "scrollHeight": 1200,
+          "scrollHeight": 1521,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 84821,
+          "fileSize": 289022,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [
-            {
-              "text": "Failed to load resource: the server responded with a status of 521 ()",
-              "location": {
-                "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
-                "line": 0,
-                "column": 0,
-                "lineNumber": 0,
-                "columnNumber": 0
-              }
-            }
-          ],
+          "consoleErrors": [],
           "pageErrors": []
         },
         {
@@ -801,27 +779,16 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 2482
+            "height": 3282
           },
-          "scrollHeight": 1241,
+          "scrollHeight": 1641,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 196488,
+          "fileSize": 633140,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [
-            {
-              "text": "Failed to load resource: the server responded with a status of 521 ()",
-              "location": {
-                "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
-                "line": 0,
-                "column": 0,
-                "lineNumber": 0,
-                "columnNumber": 0
-              }
-            }
-          ],
+          "consoleErrors": [],
           "pageErrors": []
         }
       ]
@@ -848,27 +815,16 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1200
+            "height": 1683
           },
-          "scrollHeight": 1200,
+          "scrollHeight": 1683,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 93757,
+          "fileSize": 419132,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [
-            {
-              "text": "Failed to load resource: the server responded with a status of 521 ()",
-              "location": {
-                "url": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
-                "line": 0,
-                "column": 0,
-                "lineNumber": 0,
-                "columnNumber": 0
-              }
-            }
-          ],
+          "consoleErrors": [],
           "pageErrors": []
         },
         {
@@ -885,27 +841,16 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 1200
+            "height": 1752
           },
-          "scrollHeight": 1200,
+          "scrollHeight": 1752,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 85388,
+          "fileSize": 314679,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
-          "consoleErrors": [
-            {
-              "text": "Failed to load resource: the server responded with a status of 521 ()",
-              "location": {
-                "url": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
-                "line": 0,
-                "column": 0,
-                "lineNumber": 0,
-                "columnNumber": 0
-              }
-            }
-          ],
+          "consoleErrors": [],
           "pageErrors": []
         },
         {
@@ -1684,27 +1629,16 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1200
+        "height": 1625
       },
-      "scrollHeight": 1200,
+      "scrollHeight": 1625,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 93615,
+      "fileSize": 404873,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [
-        {
-          "text": "Failed to load resource: the server responded with a status of 521 ()",
-          "location": {
-            "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
-            "line": 0,
-            "column": 0,
-            "lineNumber": 0,
-            "columnNumber": 0
-          }
-        }
-      ],
+      "consoleErrors": [],
       "pageErrors": []
     },
     {
@@ -1721,27 +1655,16 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 1200
+        "height": 1521
       },
-      "scrollHeight": 1200,
+      "scrollHeight": 1521,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 84821,
+      "fileSize": 289022,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [
-        {
-          "text": "Failed to load resource: the server responded with a status of 521 ()",
-          "location": {
-            "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
-            "line": 0,
-            "column": 0,
-            "lineNumber": 0,
-            "columnNumber": 0
-          }
-        }
-      ],
+      "consoleErrors": [],
       "pageErrors": []
     },
     {
@@ -1760,27 +1683,16 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 2482
+        "height": 3282
       },
-      "scrollHeight": 1241,
+      "scrollHeight": 1641,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 196488,
+      "fileSize": 633140,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [
-        {
-          "text": "Failed to load resource: the server responded with a status of 521 ()",
-          "location": {
-            "url": "https://mykinlegacy.com/admin/orders?token=[redacted]",
-            "line": 0,
-            "column": 0,
-            "lineNumber": 0,
-            "columnNumber": 0
-          }
-        }
-      ],
+      "consoleErrors": [],
       "pageErrors": []
     },
     {
@@ -1797,27 +1709,16 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1200
+        "height": 1683
       },
-      "scrollHeight": 1200,
+      "scrollHeight": 1683,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 93757,
+      "fileSize": 419132,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [
-        {
-          "text": "Failed to load resource: the server responded with a status of 521 ()",
-          "location": {
-            "url": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
-            "line": 0,
-            "column": 0,
-            "lineNumber": 0,
-            "columnNumber": 0
-          }
-        }
-      ],
+      "consoleErrors": [],
       "pageErrors": []
     },
     {
@@ -1834,27 +1735,16 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 1200
+        "height": 1752
       },
-      "scrollHeight": 1200,
+      "scrollHeight": 1752,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 85388,
+      "fileSize": 314679,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
-      "consoleErrors": [
-        {
-          "text": "Failed to load resource: the server responded with a status of 521 ()",
-          "location": {
-            "url": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
-            "line": 0,
-            "column": 0,
-            "lineNumber": 0,
-            "columnNumber": 0
-          }
-        }
-      ],
+      "consoleErrors": [],
       "pageErrors": []
     },
     {
