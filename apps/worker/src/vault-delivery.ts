@@ -205,7 +205,7 @@ function decryptEmail(value: Buffer, env: Record<string, string | undefined>): s
 
   const [, , ivBase64, tagBase64, ciphertextBase64] = serialized.split(":");
   const rawKey = env.CUSTOMER_PII_ENCRYPTION_KEY ?? env.PII_ENCRYPTION_KEY;
-  if (!rawKey || !ivBase64 || !tagBase64 || !ciphertextBase64) {
+  if (!rawKey || isPlaceholderSecret(rawKey) || !ivBase64 || !tagBase64 || !ciphertextBase64) {
     return null;
   }
 
@@ -243,6 +243,10 @@ function createLocalId(): string {
 
 function sha256(value: string): string {
   return createHash("sha256").update(value).digest("hex");
+}
+
+function isPlaceholderSecret(value: string): boolean {
+  return value === "disabled" || value === "replace_me" || value.startsWith("replace_with_");
 }
 
 function stringField(row: unknown, key: string): string | null {

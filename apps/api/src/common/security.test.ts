@@ -11,6 +11,15 @@ describe("PII security helpers", () => {
     expect(encrypted).not.toContain("customer@example.com");
   });
 
+  it("does not treat example placeholder secrets as usable encryption keys", () => {
+    process.env.CUSTOMER_PII_ENCRYPTION_KEY = "replace_with_customer_pii_encryption_key_from_secret_manager";
+    const encrypted = encryptEmailForStorage("customer@example.com").toString("utf8");
+
+    expect(encrypted).toContain("placeholder:v1:");
+    expect(encrypted).not.toContain("customer@example.com");
+    delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
+  });
+
   it("encrypts delivery email without storing raw email when key is configured", () => {
     process.env.CUSTOMER_PII_ENCRYPTION_KEY = "test-customer-pii-key";
     const encrypted = encryptEmailForStorage("customer@example.com").toString("utf8");

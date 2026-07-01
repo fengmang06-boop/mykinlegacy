@@ -65,8 +65,12 @@ function sortValue(value: unknown): unknown {
 
 function customerPiiEncryptionKey(): Buffer | null {
   const raw = process.env.CUSTOMER_PII_ENCRYPTION_KEY ?? process.env.PII_ENCRYPTION_KEY;
-  if (!raw || raw === "replace_with_customer_pii_encryption_key") {
+  if (!raw || isPlaceholderSecret(raw)) {
     return null;
   }
   return createHash("sha256").update(raw).digest();
+}
+
+function isPlaceholderSecret(value: string): boolean {
+  return value === "disabled" || value === "replace_me" || value.startsWith("replace_with_");
 }

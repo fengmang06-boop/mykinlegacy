@@ -89,6 +89,31 @@ describe("vault delivery email", () => {
       errorMessage: "customer_email_not_decryptable"
     });
   });
+
+  it("rejects placeholder pii keys during delivery lookup", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("customer@example.com", "replace_with_customer_pii_encryption_key_from_secret_manager"),
+      emailHash: sha256("customer@example.com")
+    });
+    const emailModule = createEmailModule();
+
+    const result = await sendVaultReadyEmail({
+      db: db as never,
+      emailModule: emailModule as never,
+      order_id: "order_1",
+      order_number: "AHL-TEST",
+      download_token_id: "download_token_1",
+      raw_token_for_email_only: "raw-token-once",
+      expires_at: "2026-07-29T00:00:00.000Z",
+      env: {
+        CUSTOMER_PII_ENCRYPTION_KEY: "replace_with_customer_pii_encryption_key_from_secret_manager",
+        EMAIL_PROVIDER: "log"
+      }
+    });
+
+    expect(result).toMatchObject({ status: "failed", recipient_source: "unavailable" });
+    expect(emailModule.state.lastInput).toBeNull();
+  });
 });
 
 function createDb(input: { emailEncrypted: Buffer; emailHash: string }) {
