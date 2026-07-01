@@ -6,6 +6,7 @@ on:
       - main
     paths:
       - ".github/workflows/admin-visual-review-production.yml"
+      - "scripts/visual-review.mjs"
   workflow_dispatch:
 
 permissions:
