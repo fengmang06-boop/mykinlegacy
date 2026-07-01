@@ -257,13 +257,12 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
   }
 
   async createEmailLog(input: OrchestrationEmailLog): Promise<OrchestrationEmailLog> {
-    const existing = await this.db.emailLog.findFirst({
-      where: {
-        orderId: input.order_id,
-        provider: input.provider,
-        payloadJson: { path: ["download_token_id"], equals: input.payload_json.download_token_id }
-      }
+    const candidates = await this.db.emailLog.findMany({
+      where: { orderId: input.order_id, provider: input.provider }
     });
+    const existing = candidates.find(
+      (row) => recordJson(row, "payloadJson").download_token_id === input.payload_json.download_token_id
+    );
     if (existing) return mapEmailLog(existing);
     const row = await this.db.emailLog.create({
       data: {
