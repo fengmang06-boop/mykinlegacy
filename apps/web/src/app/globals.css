@@ -27,7 +27,7 @@ body {
     72px 72px,
     auto;
   color: var(--ink);
-  font-family: Inter, Manrope, "Source Sans 3", Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Inter, Manrope, "Source Sans 3", Arial, Helvetica, sans-serif;
 }
 
 a {
@@ -65,7 +65,7 @@ select {
 }
 
 .nav {
-  min-height: 70px;
+  min-height: 68px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -75,21 +75,40 @@ select {
 .brand {
   display: inline-flex;
   align-items: center;
-  width: 214px;
-  min-height: 60px;
+  gap: 10px;
+  min-height: 52px;
   color: #f6ebd4;
   text-decoration: none;
 }
 
-.brand-logo-full,
-.brand-logo-mark {
-  display: block;
-  height: auto;
-  max-width: 100%;
+.brand-mark {
+  width: 38px;
+  height: 44px;
+  color: #c9a24a;
+  filter: drop-shadow(0 6px 16px rgba(201, 162, 74, 0.18));
 }
 
-.brand-logo-mark {
-  display: none;
+.brand-copy {
+  display: grid;
+  gap: 1px;
+  line-height: 1;
+}
+
+.brand-name {
+  color: #f6ebd4;
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.brand-tagline {
+  color: rgba(201, 162, 74, 0.86);
+  font-family: var(--font-label), Cinzel, Georgia, serif;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
 }
 
 .sr-only {
@@ -108,7 +127,8 @@ select {
   gap: 22px;
   align-items: center;
   color: rgba(246, 235, 212, 0.78);
-  font-size: 14px;
+  font-size: 13px;
+  letter-spacing: 0.01em;
 }
 
 .nav-links a {
@@ -124,7 +144,7 @@ select {
   display: inline-flex;
   align-items: center;
   padding: 0 18px;
-  border-radius: 5px;
+  border-radius: 999px;
   background: linear-gradient(180deg, #c99b48, #a97820);
   color: #fffdf8;
   box-shadow: 0 8px 20px rgba(184, 138, 59, 0.22);
@@ -376,7 +396,7 @@ h3 {
 
 h1,
 h2 {
-  font-family: "Playfair Display", "Libre Baskerville", "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-heading), "Cormorant Garamond", "Playfair Display", Georgia, serif;
 }
 
 h2 {
@@ -1052,10 +1072,9 @@ textarea {
   margin-bottom: 16px;
 }
 
-.footer-brand-row img {
-  display: block;
-  height: auto;
-  max-width: min(192px, 100%);
+.footer-brand {
+  width: fit-content;
+  min-height: auto;
 }
 
 .footer-inner p {
@@ -1085,7 +1104,7 @@ textarea {
   --home-gold-soft: rgba(201, 162, 74, 0.16);
   --home-ivory: #f6ebd4;
   --home-warm: #d6c6a6;
-  --home-muted: rgba(246, 235, 212, 0.68);
+  --home-muted: rgba(246, 235, 212, 0.72);
   --home-line: rgba(201, 162, 74, 0.28);
   min-height: 100vh;
   overflow: hidden;
@@ -1110,7 +1129,7 @@ textarea {
   background-size: 740px auto;
   background-position: center top;
   mix-blend-mode: screen;
-  opacity: 0.12;
+  opacity: 0.07;
 }
 
 .home-premium > *,
@@ -1148,8 +1167,8 @@ textarea {
 
 .home-hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.03fr) minmax(420px, 0.97fr);
-  gap: 64px;
+  grid-template-columns: minmax(0, 0.92fr) minmax(460px, 1.08fr);
+  gap: clamp(42px, 5vw, 78px);
   align-items: center;
   padding: 88px 0 82px;
 }
@@ -1161,9 +1180,10 @@ textarea {
 .home-eyebrow {
   margin: 0 0 16px;
   color: var(--home-gold);
-  font-size: 13px;
+  font-family: var(--font-label), Cinzel, Georgia, serif;
+  font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0;
+  letter-spacing: 0.16em;
   text-transform: uppercase;
 }
 
@@ -1175,30 +1195,33 @@ textarea {
 
 .home-premium h1,
 .home-premium h2 {
-  font-family: "Playfair Display", "Libre Baskerville", "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-heading), "Cormorant Garamond", "Playfair Display", Georgia, serif;
 }
 
 .home-premium h1 {
   margin: 0;
   max-width: 760px;
   color: var(--home-ivory);
-  font-size: clamp(44px, 6vw, 76px);
-  line-height: 1.02;
+  font-size: clamp(48px, 6.4vw, 82px);
+  font-weight: 500;
+  line-height: 0.96;
 }
 
 .home-premium h2 {
   margin: 0;
   color: var(--home-ivory);
-  font-size: clamp(32px, 4.2vw, 52px);
-  line-height: 1.08;
+  font-size: clamp(34px, 4.2vw, 56px);
+  font-weight: 500;
+  line-height: 1;
 }
 
 .home-premium h3 {
   margin: 0;
   color: var(--home-ivory);
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 22px;
-  line-height: 1.18;
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.08;
 }
 
 .home-hero-subtext,
@@ -1216,7 +1239,8 @@ textarea {
   max-width: 660px;
   margin: 24px 0 0;
   color: rgba(246, 235, 212, 0.82);
-  font-size: 20px;
+  font-size: 19px;
+  letter-spacing: 0.005em;
 }
 
 .home-cta-row {
@@ -1289,9 +1313,9 @@ textarea {
 
 .home-artifact-board {
   position: relative;
-  padding: 20px;
-  border: 1px solid rgba(201, 162, 74, 0.34);
-  border-radius: 18px;
+  padding: 18px;
+  border: 1px solid rgba(201, 162, 74, 0.3);
+  border-radius: 22px;
   background:
     radial-gradient(circle at 72% 8%, rgba(201, 162, 74, 0.18), transparent 15rem),
     linear-gradient(135deg, rgba(246, 235, 212, 0.08), transparent 42%), rgba(23, 20, 15, 0.88);
@@ -1307,7 +1331,7 @@ textarea {
   inset: 14px;
   pointer-events: none;
   border: 1px solid rgba(201, 162, 74, 0.18);
-  border-radius: 14px;
+  border-radius: 18px;
 }
 
 .home-board-header {
@@ -1316,7 +1340,7 @@ textarea {
   display: flex;
   gap: 14px;
   align-items: center;
-  padding: 4px 4px 18px;
+  padding: 4px 4px 14px;
 }
 
 .home-board-header img {
@@ -1332,8 +1356,9 @@ textarea {
 
 .home-board-header strong {
   color: var(--home-ivory);
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 21px;
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 23px;
+  font-weight: 600;
 }
 
 .home-board-header span {
@@ -1345,14 +1370,16 @@ textarea {
   position: relative;
   z-index: 1;
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 14px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: -36px;
+  padding: 0 12px;
 }
 
 .home-hero-main-visual {
   position: relative;
   z-index: 1;
-  margin-bottom: 14px;
+  margin-bottom: 0;
   overflow: hidden;
   border: 1px solid rgba(201, 162, 74, 0.28);
   border-radius: 14px;
@@ -1362,11 +1389,21 @@ textarea {
     inset 0 1px 0 rgba(246, 235, 212, 0.08);
 }
 
+.home-hero-main-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, transparent 50%, rgba(10, 9, 8, 0.74)),
+    radial-gradient(circle at 50% 18%, rgba(246, 235, 212, 0.08), transparent 22rem);
+}
+
 .home-hero-main-visual img {
   display: block;
   width: 100%;
   height: auto;
-  aspect-ratio: 1.5;
+  aspect-ratio: 1.35;
   object-fit: cover;
   object-position: center;
 }
@@ -1377,7 +1414,7 @@ textarea {
 .home-generation-card,
 .home-trust-block {
   border: 1px solid rgba(201, 162, 74, 0.28);
-  border-radius: 14px;
+  border-radius: 16px;
   background:
     linear-gradient(180deg, rgba(246, 235, 212, 0.07), rgba(246, 235, 212, 0.025)),
     rgba(17, 16, 13, 0.92);
@@ -1387,50 +1424,37 @@ textarea {
 }
 
 .home-artifact-tile {
-  min-height: 170px;
+  min-height: 146px;
   display: grid;
   align-content: start;
-  gap: 12px;
+  gap: 10px;
   overflow: hidden;
   padding: 12px;
 }
 
 .home-artifact-tile img {
   width: 100%;
-  height: 92px;
-  border-radius: 10px;
+  height: 78px;
+  border-radius: 12px;
   object-fit: cover;
   object-position: center;
 }
 
 .home-artifact-tile h2 {
-  font-family: "Playfair Display", Georgia, serif;
-  font-size: 20px;
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 19px;
+  font-weight: 600;
 }
 
 .home-artifact-tile p {
-  margin: 8px 0 0;
+  margin: 5px 0 0;
   color: var(--home-muted);
-  font-size: 14px;
-  line-height: 1.55;
-}
-
-.home-featured-tile {
-  grid-row: span 2;
-  min-height: 354px;
-  align-content: end;
-  background:
-    radial-gradient(circle at 50% 28%, rgba(201, 162, 74, 0.26), transparent 80px),
-    linear-gradient(180deg, rgba(246, 235, 212, 0.1), rgba(17, 16, 13, 0.95));
-}
-
-.home-featured-tile img {
-  width: 142px;
-  height: 104px;
+  font-size: 13px;
+  line-height: 1.42;
 }
 
 .home-section {
-  padding: 92px 0;
+  padding: 88px 0;
 }
 
 .home-section-ivory {
@@ -1461,14 +1485,14 @@ textarea {
 }
 
 .home-card {
-  min-height: 218px;
+  min-height: 214px;
   overflow: hidden;
   padding: 14px;
 }
 
 .home-card img {
   width: 100%;
-  height: 126px;
+  height: 132px;
   margin-bottom: 16px;
   border-radius: 10px;
   object-fit: cover;
@@ -1488,20 +1512,37 @@ textarea {
   min-height: 260px;
 }
 
+.home-receive-card:first-child {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(220px, 0.7fr);
+  gap: 18px;
+  align-items: end;
+  min-height: 330px;
+  padding: 18px;
+}
+
 .home-receive-card img {
   width: 100%;
   height: 142px;
 }
 
+.home-receive-card:first-child img {
+  grid-row: span 3;
+  height: 100%;
+  min-height: 290px;
+  order: 2;
+}
+
 .home-step-line {
   display: grid;
   grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 16px;
+  gap: 14px;
 }
 
 .home-step {
   position: relative;
-  min-height: 282px;
+  min-height: 250px;
   overflow: hidden;
   padding: 14px;
 }
@@ -1519,7 +1560,7 @@ textarea {
 
 .home-step img {
   width: 100%;
-  height: 112px;
+  height: 96px;
   margin: 16px 0;
   border-radius: 10px;
   object-fit: cover;
@@ -1541,31 +1582,42 @@ textarea {
 
 .home-generations-grid {
   display: grid;
-  grid-template-columns: minmax(0, 0.9fr) minmax(420px, 1.1fr);
+  grid-template-columns: minmax(0, 0.8fr) minmax(460px, 1.2fr);
   gap: 48px;
   align-items: center;
 }
 
 .home-generation-stack {
   display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
 .home-generation-card {
   display: grid;
-  grid-template-columns: 150px 1fr;
-  gap: 18px;
-  align-items: center;
+  grid-template-columns: 1fr;
+  gap: 14px;
+  align-items: end;
   overflow: hidden;
   padding: 14px;
 }
 
+.home-generation-card:first-child {
+  grid-row: span 2;
+  min-height: 420px;
+  align-content: end;
+}
+
 .home-generation-card img {
   width: 100%;
-  height: 110px;
+  height: 150px;
   border-radius: 10px;
   object-fit: cover;
   object-position: center;
+}
+
+.home-generation-card:first-child img {
+  height: 260px;
 }
 
 .home-generation-card p {
@@ -1579,18 +1631,35 @@ textarea {
 }
 
 .home-trust-block {
+  position: relative;
+  isolation: isolate;
   min-height: 390px;
   overflow: hidden;
-  padding: 18px;
+  display: grid;
+  align-content: end;
+  padding: 32px;
 }
 
 .home-trust-block img {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
   width: 100%;
-  height: 220px;
-  margin-bottom: 24px;
-  border-radius: 12px;
+  height: 100%;
+  margin: 0;
+  border-radius: 0;
   object-fit: cover;
   object-position: center;
+}
+
+.home-trust-block::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background:
+    linear-gradient(180deg, rgba(10, 9, 8, 0.18), rgba(10, 9, 8, 0.86)),
+    radial-gradient(circle at 20% 0%, rgba(201, 162, 74, 0.18), transparent 18rem);
 }
 
 .home-trust-block p:not(.home-eyebrow) {
@@ -2096,7 +2165,7 @@ textarea {
 
 @media (max-width: 800px) {
   .nav {
-    min-height: 62px;
+    min-height: 60px;
     align-items: center;
     flex-direction: row;
     padding: 8px 0;
@@ -2114,9 +2183,9 @@ textarea {
   }
 
   .nav-cta {
-    min-height: 38px;
-    padding: 0 13px;
-    font-size: 13px;
+    min-height: 36px;
+    padding: 0 12px;
+    font-size: 12px;
     white-space: nowrap;
   }
 
@@ -2193,22 +2262,33 @@ textarea {
   .home-step-line {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .home-receive-card:first-child {
+    grid-column: span 2;
+  }
+
+  .home-generation-stack {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
   .brand {
-    width: 38px;
-    min-height: 38px;
+    min-height: 40px;
+    gap: 8px;
   }
 
-  .brand-logo-full {
+  .brand-mark {
+    width: 31px;
+    height: 36px;
+  }
+
+  .brand-name {
+    font-size: 19px;
+  }
+
+  .brand-tagline {
     display: none;
-  }
-
-  .brand-logo-mark {
-    display: block;
-    width: 38px;
-    height: 38px;
   }
 
   .home-shell {
@@ -2216,29 +2296,30 @@ textarea {
   }
 
   .home-hero-grid {
-    gap: 28px;
-    padding: 42px 0 38px;
+    gap: 26px;
+    padding: 36px 0 34px;
   }
 
   .home-eyebrow {
-    margin-bottom: 10px;
-    font-size: 11px;
+    margin-bottom: 9px;
+    font-size: 10px;
+    letter-spacing: 0.15em;
   }
 
   .home-premium h1 {
-    font-size: clamp(32px, 9.4vw, 39px);
-    line-height: 1.06;
+    font-size: clamp(34px, 10.4vw, 42px);
+    line-height: 0.98;
   }
 
   .home-premium h2 {
-    font-size: clamp(28px, 8.2vw, 36px);
-    line-height: 1.1;
+    font-size: clamp(29px, 8.6vw, 38px);
+    line-height: 1.02;
   }
 
   .home-hero-subtext {
-    margin-top: 16px;
-    font-size: 16px;
-    line-height: 1.62;
+    margin-top: 15px;
+    font-size: 15.5px;
+    line-height: 1.58;
   }
 
   .home-cta-row {
@@ -2264,7 +2345,12 @@ textarea {
   }
 
   .home-artifact-board {
-    padding: 12px;
+    padding: 10px;
+  }
+
+  .home-hero-main-visual img {
+    aspect-ratio: 1.12;
+    object-position: center 28%;
   }
 
   .home-board-header {
@@ -2281,12 +2367,27 @@ textarea {
   }
 
   .home-artifact-grid,
-  .home-card-grid,
-  .home-occasion-grid,
   .home-step-line,
   .home-faq-list div {
     grid-template-columns: 1fr;
     gap: 12px;
+  }
+
+  .home-card-grid,
+  .home-occasion-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+  }
+
+  .home-artifact-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    margin-top: -24px;
+    padding: 0 8px;
+  }
+
+  .home-artifact-tile:nth-child(n + 4) {
+    display: none;
   }
 
   .home-artifact-tile,
@@ -2297,12 +2398,14 @@ textarea {
   }
 
   .home-artifact-tile {
-    gap: 9px;
+    grid-template-columns: 82px 1fr;
+    gap: 10px;
+    align-items: center;
   }
 
   .home-artifact-tile img {
-    width: 100%;
-    height: 92px;
+    width: 82px;
+    height: 64px;
     object-fit: cover;
   }
 
@@ -2313,8 +2416,8 @@ textarea {
   .home-artifact-tile p,
   .home-card p,
   .home-step p {
-    font-size: 14px;
-    line-height: 1.52;
+    font-size: 13px;
+    line-height: 1.45;
   }
 
   .home-featured-tile {
@@ -2329,27 +2432,41 @@ textarea {
 
   .home-card img {
     width: 100%;
-    height: 118px;
-    margin-bottom: 12px;
+    height: 82px;
+    margin-bottom: 10px;
   }
 
   .home-card h3 {
-    margin-bottom: 7px;
-    font-size: 20px;
+    margin-bottom: 6px;
+    font-size: 19px;
   }
 
   .home-receive-card {
     min-height: auto;
   }
 
+  .home-receive-card:first-child {
+    grid-column: 1 / -1;
+    display: block;
+    min-height: auto;
+    padding: 14px;
+  }
+
   .home-receive-card img {
     width: 100%;
-    height: 128px;
+    height: 96px;
+  }
+
+  .home-receive-card:first-child img {
+    min-height: 148px;
+    height: 148px;
+    margin-bottom: 12px;
+    order: initial;
   }
 
   .home-step img {
     width: 100%;
-    height: 118px;
+    height: 86px;
     margin: 14px 0;
   }
 
@@ -2361,7 +2478,7 @@ textarea {
 
   .home-section,
   .home-final-cta {
-    padding: 52px 0;
+    padding: 46px 0;
   }
 
   .home-section-heading {
@@ -2374,13 +2491,22 @@ textarea {
   }
 
   .home-generation-card {
-    grid-template-columns: 112px 1fr;
+    grid-template-columns: 96px 1fr;
     gap: 13px;
     padding: 14px;
   }
 
+  .home-generation-card:first-child {
+    grid-row: auto;
+    min-height: auto;
+  }
+
   .home-generation-card img {
-    height: 86px;
+    height: 76px;
+  }
+
+  .home-generation-card:first-child img {
+    height: 76px;
   }
 
   .home-generation-card p {
@@ -2389,14 +2515,14 @@ textarea {
   }
 
   .home-trust-block {
-    min-height: auto;
+    min-height: 260px;
     padding: 18px;
   }
 
   .home-trust-block img {
     width: 100%;
-    height: 160px;
-    margin-bottom: 16px;
+    height: 100%;
+    margin-bottom: 0;
   }
 
   .home-trust-block p:not(.home-eyebrow) {

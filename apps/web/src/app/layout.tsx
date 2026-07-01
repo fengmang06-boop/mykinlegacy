@@ -1,11 +1,31 @@
 import type { Metadata } from "next";
-import Image from "next/image";
+import { Cinzel, Cormorant_Garamond, Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { BRAND_NAME, PRODUCT_NAME, SITE_URL, SUPPORT_EMAIL } from "../lib/seo";
 
 import "./globals.css";
+
+const bodyFont = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-body"
+});
+
+const headingFont = Cormorant_Garamond({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-heading",
+  weight: ["400", "500", "600", "700"]
+});
+
+const labelFont = Cinzel({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-label",
+  weight: ["500", "600", "700"]
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -34,6 +54,28 @@ export const metadata: Metadata = {
   }
 };
 
+function BrandMark() {
+  return (
+    <svg className="brand-mark" viewBox="0 0 64 72" aria-hidden="true" focusable="false">
+      <path
+        d="M32 4 55 13v19c0 16.2-8.6 28.8-23 35.7C17.6 60.8 9 48.2 9 32V13L32 4Z"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="3"
+      />
+      <path
+        d="M21 47V24l11 13 11-13v23M21 24l11 15 11-15"
+        fill="none"
+        stroke="currentColor"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="3"
+      />
+      <path d="M17 17h30" stroke="currentColor" strokeLinecap="round" strokeWidth="2" />
+    </svg>
+  );
+}
+
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const organizationJsonLd = {
     "@context": "https://schema.org",
@@ -45,7 +87,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
 
   return (
     <html lang="en">
-      <body>
+      <body className={`${bodyFont.variable} ${headingFont.variable} ${labelFont.variable}`}>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
@@ -53,25 +95,11 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <header className="site-header">
           <nav className="nav" aria-label="Primary navigation">
             <Link className="brand" href="/">
-              <Image
-                className="brand-logo-full"
-                src="/assets/final-homepage/01_brand/logo-primary.webp"
-                width={214}
-                height={60}
-                alt=""
-                aria-hidden="true"
-                priority
-              />
-              <Image
-                className="brand-logo-mark"
-                src="/assets/final-homepage/01_brand/logo-mark.webp"
-                width={42}
-                height={42}
-                alt=""
-                aria-hidden="true"
-                priority
-              />
-              <span className="sr-only">MyKinLegacy - Legacy, Designed.</span>
+              <BrandMark />
+              <span className="brand-copy">
+                <span className="brand-name">MyKinLegacy</span>
+                <span className="brand-tagline">Legacy, Designed.</span>
+              </span>
             </Link>
             <div className="nav-links">
               <Link href="/family-legacy-collection">Collection</Link>
@@ -88,12 +116,13 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <footer className="site-footer">
           <div className="footer-inner">
             <div className="footer-brand-row">
-              <Image
-                src="/assets/final-homepage/01_brand/logo-primary.webp"
-                width={192}
-                height={48}
-                alt="MyKinLegacy - Legacy, Designed."
-              />
+              <Link className="brand footer-brand" href="/">
+                <BrandMark />
+                <span className="brand-copy">
+                  <span className="brand-name">MyKinLegacy</span>
+                  <span className="brand-tagline">Legacy, Designed.</span>
+                </span>
+              </Link>
             </div>
             <p>
               Private by default. Personalized heritage-inspired symbolic keepsakes for gifting and

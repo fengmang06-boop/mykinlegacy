@@ -1,7 +1,20 @@
 import { readFile, readdir } from "node:fs/promises";
 import { join } from "node:path";
 
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+vi.mock("next/font/google", () => {
+  const font = ({ variable = "" }: { variable?: string } = {}) => ({
+    className: variable.replace("--", ""),
+    variable
+  });
+
+  return {
+    Cinzel: font,
+    Cormorant_Garamond: font,
+    Inter: font
+  };
+});
 
 import { metadata as rootMetadata } from "./app/layout";
 import robots from "./app/robots";
