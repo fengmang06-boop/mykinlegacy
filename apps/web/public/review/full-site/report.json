@@ -1,0 +1,1895 @@
+{
+  "baseUrl": "https://mykinlegacy.com",
+  "commit": "8dae037eb3a11606f1b792c90f7e9c21128e9b46",
+  "capturedAt": "2026-07-01T13:59:38.404Z",
+  "notes": [
+    "Internal visual review only. Do not link from public navigation.",
+    "ADMIN_ACCESS_TOKEN was not available locally; admin pages were captured in locked state."
+  ],
+  "pages": [
+    {
+      "key": "home",
+      "label": "Homepage",
+      "path": "/",
+      "screenshots": [
+        {
+          "pageKey": "home",
+          "pageLabel": "Homepage",
+          "pagePath": "/",
+          "pageUrl": "https://mykinlegacy.com/",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "home-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 6997
+          },
+          "scrollHeight": 6997,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 5848845,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "home",
+          "pageLabel": "Homepage",
+          "pagePath": "/",
+          "pageUrl": "https://mykinlegacy.com/",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "home-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 9695
+          },
+          "scrollHeight": 9695,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 4967414,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "home",
+          "pageLabel": "Homepage",
+          "pagePath": "/",
+          "pageUrl": "https://mykinlegacy.com/",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "home-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 14502
+          },
+          "scrollHeight": 7251,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 6538032,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "create",
+      "label": "Create",
+      "path": "/create",
+      "screenshots": [
+        {
+          "pageKey": "create",
+          "pageLabel": "Create",
+          "pagePath": "/create",
+          "pageUrl": "https://mykinlegacy.com/create",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "create-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 1896
+          },
+          "scrollHeight": 1896,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 639471,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "create",
+          "pageLabel": "Create",
+          "pagePath": "/create",
+          "pageUrl": "https://mykinlegacy.com/create",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "create-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 2563
+          },
+          "scrollHeight": 2563,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 781324,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "create",
+          "pageLabel": "Create",
+          "pagePath": "/create",
+          "pageUrl": "https://mykinlegacy.com/create",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "create-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 5114
+          },
+          "scrollHeight": 2557,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 1516551,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "collection",
+      "label": "Family Legacy Collection",
+      "path": "/family-legacy-collection",
+      "screenshots": [
+        {
+          "pageKey": "collection",
+          "pageLabel": "Family Legacy Collection",
+          "pagePath": "/family-legacy-collection",
+          "pageUrl": "https://mykinlegacy.com/family-legacy-collection",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "collection-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 4295
+          },
+          "scrollHeight": 4295,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 1920940,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "collection",
+          "pageLabel": "Family Legacy Collection",
+          "pagePath": "/family-legacy-collection",
+          "pageUrl": "https://mykinlegacy.com/family-legacy-collection",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "collection-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 6248
+          },
+          "scrollHeight": 6248,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 2148199,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "collection",
+          "pageLabel": "Family Legacy Collection",
+          "pagePath": "/family-legacy-collection",
+          "pageUrl": "https://mykinlegacy.com/family-legacy-collection",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "collection-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 12620
+          },
+          "scrollHeight": 6310,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 4589834,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "interview",
+      "label": "Guided Interview",
+      "path": "/create/AHL-20260701-01KWEJEY",
+      "screenshots": [
+        {
+          "pageKey": "interview",
+          "pageLabel": "Guided Interview",
+          "pagePath": "/create/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/create/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "interview-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 1769
+          },
+          "scrollHeight": 1769,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 608507,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "interview",
+          "pageLabel": "Guided Interview",
+          "pagePath": "/create/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/create/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "interview-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 2586
+          },
+          "scrollHeight": 2586,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 764636,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "interview",
+          "pageLabel": "Guided Interview",
+          "pagePath": "/create/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/create/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "interview-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 5500
+          },
+          "scrollHeight": 2750,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 1528035,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "checkout",
+      "label": "Checkout",
+      "path": "/checkout/AHL-20260701-01KWEJEY",
+      "screenshots": [
+        {
+          "pageKey": "checkout",
+          "pageLabel": "Checkout",
+          "pagePath": "/checkout/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/checkout/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "checkout-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 2096
+          },
+          "scrollHeight": 2096,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 593175,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "checkout",
+          "pageLabel": "Checkout",
+          "pagePath": "/checkout/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/checkout/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "checkout-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 2715
+          },
+          "scrollHeight": 2715,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 521183,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "checkout",
+          "pageLabel": "Checkout",
+          "pagePath": "/checkout/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/checkout/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "checkout-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 6458
+          },
+          "scrollHeight": 3229,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 1184241,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "payment-success",
+      "label": "Payment Success",
+      "path": "/payment/success?order_number=AHL-20260701-01KWEJEY",
+      "screenshots": [
+        {
+          "pageKey": "payment-success",
+          "pageLabel": "Payment Success",
+          "pagePath": "/payment/success?order_number=AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/payment/success?order_number=AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "payment-success-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 1521
+          },
+          "scrollHeight": 1521,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 511742,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "payment-success",
+          "pageLabel": "Payment Success",
+          "pagePath": "/payment/success?order_number=AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/payment/success?order_number=AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "payment-success-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 1546
+          },
+          "scrollHeight": 1546,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 348416,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "payment-success",
+          "pageLabel": "Payment Success",
+          "pagePath": "/payment/success?order_number=AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/payment/success?order_number=AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "payment-success-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 3246
+          },
+          "scrollHeight": 1623,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 645056,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "order-status-latest",
+      "label": "Order Status Latest",
+      "path": "/order-status/AHL-20260701-01KWEJEY",
+      "screenshots": [
+        {
+          "pageKey": "order-status-latest",
+          "pageLabel": "Order Status Latest",
+          "pagePath": "/order-status/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "order-status-latest-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 1548
+          },
+          "scrollHeight": 1548,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 516729,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "order-status-latest",
+          "pageLabel": "Order Status Latest",
+          "pagePath": "/order-status/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "order-status-latest-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 2365
+          },
+          "scrollHeight": 2365,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 539587,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "order-status-latest",
+          "pageLabel": "Order Status Latest",
+          "pagePath": "/order-status/AHL-20260701-01KWEJEY",
+          "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWEJEY",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "order-status-latest-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 4890
+          },
+          "scrollHeight": 2445,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 1186615,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "order-status-founder",
+      "label": "Order Status Founder",
+      "path": "/order-status/AHL-20260701-01KWECW4",
+      "screenshots": [
+        {
+          "pageKey": "order-status-founder",
+          "pageLabel": "Order Status Founder",
+          "pagePath": "/order-status/AHL-20260701-01KWECW4",
+          "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWECW4",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "order-status-founder-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 1548
+          },
+          "scrollHeight": 1548,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 517368,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "order-status-founder",
+          "pageLabel": "Order Status Founder",
+          "pagePath": "/order-status/AHL-20260701-01KWECW4",
+          "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWECW4",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "order-status-founder-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 2365
+          },
+          "scrollHeight": 2365,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 539977,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "order-status-founder",
+          "pageLabel": "Order Status Founder",
+          "pagePath": "/order-status/AHL-20260701-01KWECW4",
+          "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWECW4",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "order-status-founder-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 4890
+          },
+          "scrollHeight": 2445,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 1187571,
+          "warnings": [],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "admin-orders",
+      "label": "Admin Orders",
+      "path": "/admin/orders?token=[redacted]",
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "screenshots": [
+        {
+          "pageKey": "admin-orders",
+          "pageLabel": "Admin Orders",
+          "pagePath": "/admin/orders?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "admin-orders-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 1521
+          },
+          "scrollHeight": 1521,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 429351,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "admin-orders",
+          "pageLabel": "Admin Orders",
+          "pagePath": "/admin/orders?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "admin-orders-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 1521
+          },
+          "scrollHeight": 1521,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 340103,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "admin-orders",
+          "pageLabel": "Admin Orders",
+          "pagePath": "/admin/orders?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "admin-orders-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 3144
+          },
+          "scrollHeight": 1572,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 674331,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "admin-email-logs",
+      "label": "Admin Email Logs",
+      "path": "/admin/email-logs?token=[redacted]",
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "screenshots": [
+        {
+          "pageKey": "admin-email-logs",
+          "pageLabel": "Admin Email Logs",
+          "pagePath": "/admin/email-logs?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "admin-email-logs-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 1521
+          },
+          "scrollHeight": 1521,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 429016,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "admin-email-logs",
+          "pageLabel": "Admin Email Logs",
+          "pagePath": "/admin/email-logs?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "admin-email-logs-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 1521
+          },
+          "scrollHeight": 1521,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 340057,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "admin-email-logs",
+          "pageLabel": "Admin Email Logs",
+          "pagePath": "/admin/email-logs?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "admin-email-logs-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 3144
+          },
+          "scrollHeight": 1572,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 673659,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    },
+    {
+      "key": "admin-download-tokens",
+      "label": "Admin Download Tokens",
+      "path": "/admin/download-tokens?token=[redacted]",
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "screenshots": [
+        {
+          "pageKey": "admin-download-tokens",
+          "pageLabel": "Admin Download Tokens",
+          "pagePath": "/admin/download-tokens?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/download-tokens?token=[redacted]",
+          "viewport": {
+            "key": "desktop",
+            "width": 1440,
+            "height": 1200
+          },
+          "screenshot": "admin-download-tokens-desktop.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-desktop.png",
+          "dimensions": {
+            "width": 1440,
+            "height": 1521
+          },
+          "scrollHeight": 1521,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "fileSize": 429183,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "admin-download-tokens",
+          "pageLabel": "Admin Download Tokens",
+          "pagePath": "/admin/download-tokens?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/download-tokens?token=[redacted]",
+          "viewport": {
+            "key": "tablet",
+            "width": 768,
+            "height": 1200
+          },
+          "screenshot": "admin-download-tokens-tablet.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-tablet.png",
+          "dimensions": {
+            "width": 768,
+            "height": 1521
+          },
+          "scrollHeight": 1521,
+          "scrollWidth": 768,
+          "clientWidth": 768,
+          "fileSize": 339997,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        },
+        {
+          "pageKey": "admin-download-tokens",
+          "pageLabel": "Admin Download Tokens",
+          "pagePath": "/admin/download-tokens?token=[redacted]",
+          "pageUrl": "https://mykinlegacy.com/admin/download-tokens?token=[redacted]",
+          "viewport": {
+            "key": "mobile",
+            "width": 390,
+            "height": 1200,
+            "isMobile": true,
+            "deviceScaleFactor": 2
+          },
+          "screenshot": "admin-download-tokens-mobile.png",
+          "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-mobile.png",
+          "dimensions": {
+            "width": 780,
+            "height": 3144
+          },
+          "scrollHeight": 1572,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "fileSize": 673607,
+          "warnings": [
+            "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+          ],
+          "failedImages": [],
+          "failedRequests": [],
+          "consoleErrors": [],
+          "pageErrors": []
+        }
+      ]
+    }
+  ],
+  "screenshots": [
+    {
+      "pageKey": "home",
+      "pageLabel": "Homepage",
+      "pagePath": "/",
+      "pageUrl": "https://mykinlegacy.com/",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "home-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 6997
+      },
+      "scrollHeight": 6997,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 5848845,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "home",
+      "pageLabel": "Homepage",
+      "pagePath": "/",
+      "pageUrl": "https://mykinlegacy.com/",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "home-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 9695
+      },
+      "scrollHeight": 9695,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 4967414,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "home",
+      "pageLabel": "Homepage",
+      "pagePath": "/",
+      "pageUrl": "https://mykinlegacy.com/",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "home-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\home-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 14502
+      },
+      "scrollHeight": 7251,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 6538032,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "create",
+      "pageLabel": "Create",
+      "pagePath": "/create",
+      "pageUrl": "https://mykinlegacy.com/create",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "create-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1896
+      },
+      "scrollHeight": 1896,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 639471,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "create",
+      "pageLabel": "Create",
+      "pagePath": "/create",
+      "pageUrl": "https://mykinlegacy.com/create",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "create-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 2563
+      },
+      "scrollHeight": 2563,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 781324,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "create",
+      "pageLabel": "Create",
+      "pagePath": "/create",
+      "pageUrl": "https://mykinlegacy.com/create",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "create-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\create-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 5114
+      },
+      "scrollHeight": 2557,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 1516551,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "collection",
+      "pageLabel": "Family Legacy Collection",
+      "pagePath": "/family-legacy-collection",
+      "pageUrl": "https://mykinlegacy.com/family-legacy-collection",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "collection-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 4295
+      },
+      "scrollHeight": 4295,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 1920940,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "collection",
+      "pageLabel": "Family Legacy Collection",
+      "pagePath": "/family-legacy-collection",
+      "pageUrl": "https://mykinlegacy.com/family-legacy-collection",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "collection-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 6248
+      },
+      "scrollHeight": 6248,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 2148199,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "collection",
+      "pageLabel": "Family Legacy Collection",
+      "pagePath": "/family-legacy-collection",
+      "pageUrl": "https://mykinlegacy.com/family-legacy-collection",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "collection-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\collection-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 12620
+      },
+      "scrollHeight": 6310,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 4589834,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "interview",
+      "pageLabel": "Guided Interview",
+      "pagePath": "/create/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/create/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "interview-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1769
+      },
+      "scrollHeight": 1769,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 608507,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "interview",
+      "pageLabel": "Guided Interview",
+      "pagePath": "/create/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/create/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "interview-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 2586
+      },
+      "scrollHeight": 2586,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 764636,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "interview",
+      "pageLabel": "Guided Interview",
+      "pagePath": "/create/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/create/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "interview-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\interview-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 5500
+      },
+      "scrollHeight": 2750,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 1528035,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "checkout",
+      "pageLabel": "Checkout",
+      "pagePath": "/checkout/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/checkout/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "checkout-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 2096
+      },
+      "scrollHeight": 2096,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 593175,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "checkout",
+      "pageLabel": "Checkout",
+      "pagePath": "/checkout/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/checkout/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "checkout-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 2715
+      },
+      "scrollHeight": 2715,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 521183,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "checkout",
+      "pageLabel": "Checkout",
+      "pagePath": "/checkout/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/checkout/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "checkout-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\checkout-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 6458
+      },
+      "scrollHeight": 3229,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 1184241,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "payment-success",
+      "pageLabel": "Payment Success",
+      "pagePath": "/payment/success?order_number=AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/payment/success?order_number=AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "payment-success-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1521
+      },
+      "scrollHeight": 1521,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 511742,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "payment-success",
+      "pageLabel": "Payment Success",
+      "pagePath": "/payment/success?order_number=AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/payment/success?order_number=AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "payment-success-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 1546
+      },
+      "scrollHeight": 1546,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 348416,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "payment-success",
+      "pageLabel": "Payment Success",
+      "pagePath": "/payment/success?order_number=AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/payment/success?order_number=AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "payment-success-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\payment-success-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 3246
+      },
+      "scrollHeight": 1623,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 645056,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "order-status-latest",
+      "pageLabel": "Order Status Latest",
+      "pagePath": "/order-status/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "order-status-latest-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1548
+      },
+      "scrollHeight": 1548,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 516729,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "order-status-latest",
+      "pageLabel": "Order Status Latest",
+      "pagePath": "/order-status/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "order-status-latest-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 2365
+      },
+      "scrollHeight": 2365,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 539587,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "order-status-latest",
+      "pageLabel": "Order Status Latest",
+      "pagePath": "/order-status/AHL-20260701-01KWEJEY",
+      "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWEJEY",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "order-status-latest-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-latest-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 4890
+      },
+      "scrollHeight": 2445,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 1186615,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "order-status-founder",
+      "pageLabel": "Order Status Founder",
+      "pagePath": "/order-status/AHL-20260701-01KWECW4",
+      "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWECW4",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "order-status-founder-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1548
+      },
+      "scrollHeight": 1548,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 517368,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "order-status-founder",
+      "pageLabel": "Order Status Founder",
+      "pagePath": "/order-status/AHL-20260701-01KWECW4",
+      "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWECW4",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "order-status-founder-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 2365
+      },
+      "scrollHeight": 2365,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 539977,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "order-status-founder",
+      "pageLabel": "Order Status Founder",
+      "pagePath": "/order-status/AHL-20260701-01KWECW4",
+      "pageUrl": "https://mykinlegacy.com/order-status/AHL-20260701-01KWECW4",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "order-status-founder-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\order-status-founder-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 4890
+      },
+      "scrollHeight": 2445,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 1187571,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-orders",
+      "pageLabel": "Admin Orders",
+      "pagePath": "/admin/orders?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "admin-orders-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1521
+      },
+      "scrollHeight": 1521,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 429351,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-orders",
+      "pageLabel": "Admin Orders",
+      "pagePath": "/admin/orders?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "admin-orders-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 1521
+      },
+      "scrollHeight": 1521,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 340103,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-orders",
+      "pageLabel": "Admin Orders",
+      "pagePath": "/admin/orders?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/orders?token=[redacted]",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "admin-orders-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-orders-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 3144
+      },
+      "scrollHeight": 1572,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 674331,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-email-logs",
+      "pageLabel": "Admin Email Logs",
+      "pagePath": "/admin/email-logs?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "admin-email-logs-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1521
+      },
+      "scrollHeight": 1521,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 429016,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-email-logs",
+      "pageLabel": "Admin Email Logs",
+      "pagePath": "/admin/email-logs?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "admin-email-logs-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 1521
+      },
+      "scrollHeight": 1521,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 340057,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-email-logs",
+      "pageLabel": "Admin Email Logs",
+      "pagePath": "/admin/email-logs?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/email-logs?token=[redacted]",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "admin-email-logs-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-email-logs-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 3144
+      },
+      "scrollHeight": 1572,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 673659,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-download-tokens",
+      "pageLabel": "Admin Download Tokens",
+      "pagePath": "/admin/download-tokens?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/download-tokens?token=[redacted]",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "admin-download-tokens-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 1521
+      },
+      "scrollHeight": 1521,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 429183,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-download-tokens",
+      "pageLabel": "Admin Download Tokens",
+      "pagePath": "/admin/download-tokens?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/download-tokens?token=[redacted]",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "admin-download-tokens-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 1521
+      },
+      "scrollHeight": 1521,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 339997,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "admin-download-tokens",
+      "pageLabel": "Admin Download Tokens",
+      "pagePath": "/admin/download-tokens?token=[redacted]",
+      "pageUrl": "https://mykinlegacy.com/admin/download-tokens?token=[redacted]",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "admin-download-tokens-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\admin-download-tokens-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 3144
+      },
+      "scrollHeight": 1572,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 673607,
+      "warnings": [
+        "ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."
+      ],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    }
+  ]
+}

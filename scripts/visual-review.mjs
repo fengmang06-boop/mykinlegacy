@@ -9,6 +9,8 @@ import { chromium } from "playwright";
 
 const DEFAULT_BASE_URL = "http://localhost:3000";
 const MIN_SCREENSHOT_BYTES = 20 * 1024;
+const DEFAULT_LATEST_ORDER = "AHL-20260701-01KWEJEY";
+const DEFAULT_FOUNDER_ORDER = "AHL-20260701-01KWECW4";
 
 const basePages = [
   { key: "home", label: "Homepage", path: "/" },
@@ -21,6 +23,7 @@ const basePages = [
 ];
 
 let activePages = basePages;
+let activeOutputDir = path.join(path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."), "artifacts", "visual-review");
 
 const viewports = [
   { key: "desktop", width: 1440, height: 1200 },
@@ -37,11 +40,20 @@ const viewports = [
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const repoRoot = path.resolve(__dirname, "..");
-const outputDir = path.join(repoRoot, "artifacts", "visual-review");
 
 function parseArgs() {
   const args = process.argv.slice(2);
-  const options = { baseUrl: DEFAULT_BASE_URL, orderNumber: "" };
+  const options = {
+    adminToken: process.env.ADMIN_ACCESS_TOKEN ?? "",
+    baseUrl: DEFAULT_BASE_URL,
+    founderOrder: DEFAULT_FOUNDER_ORDER,
+    fullSite: false,
+    latestOrder: DEFAULT_LATEST_ORDER,
+    noClean: false,
+    only: "",
+    orderNumber: "",
+    outputDir: path.join(repoRoot, "artifacts", "visual-review")
+  };
 
   for (const arg of args) {
     if (arg.startsWith("--base-url=")) {
@@ -50,11 +62,39 @@ function parseArgs() {
     if (arg.startsWith("--order-number=")) {
       options.orderNumber = arg.slice("--order-number=".length);
     }
+    if (arg.startsWith("--latest-order=")) {
+      options.latestOrder = arg.slice("--latest-order=".length);
+    }
+    if (arg.startsWith("--founder-order=")) {
+      options.founderOrder = arg.slice("--founder-order=".length);
+    }
+    if (arg.startsWith("--output-dir=")) {
+      options.outputDir = arg.slice("--output-dir=".length);
+    }
+    if (arg === "--full-site") {
+      options.fullSite = true;
+    }
+    if (arg === "--no-clean") {
+      options.noClean = true;
+    }
+    if (arg.startsWith("--only=")) {
+      options.only = arg.slice("--only=".length);
+    }
   }
 
   return {
+    adminToken: options.adminToken.trim(),
     baseUrl: options.baseUrl.replace(/\/+$/, ""),
-    orderNumber: options.orderNumber.trim()
+    founderOrder: options.founderOrder.trim(),
+    fullSite: options.fullSite,
+    latestOrder: options.latestOrder.trim(),
+    noClean: options.noClean,
+    only: options.only
+      .split(",")
+      .map((item) => item.trim())
+      .filter(Boolean),
+    orderNumber: options.orderNumber.trim(),
+    outputDir: path.resolve(repoRoot, options.outputDir)
   };
 }
 
@@ -75,6 +115,18 @@ function buildPageUrl(baseUrl, pagePath) {
   }
 
   return `${baseUrl}${pagePath}`;
+}
+
+function displayPath(pageDefinition) {
+  return pageDefinition.reportPath ?? pageDefinition.path;
+}
+
+function capturePath(pageDefinition) {
+  return pageDefinition.capturePath ?? pageDefinition.path;
+}
+
+function sanitizeUrl(value) {
+  return String(value).replace(/([?&]token=)[^&#]*/gi, "$1[redacted]");
 }
 
 function escapeHtml(value) {
@@ -119,15 +171,17 @@ async function pngDimensions(filePath) {
   };
 }
 
-async function prepareOutputDir() {
-  const resolvedOutput = path.resolve(outputDir);
+async function prepareOutputDir({ noClean = false } = {}) {
+  const resolvedOutput = path.resolve(activeOutputDir);
   const resolvedRepo = path.resolve(repoRoot);
 
   if (!resolvedOutput.startsWith(resolvedRepo)) {
     throw new Error(`Refusing to clean output outside repository: ${resolvedOutput}`);
   }
 
-  await fs.rm(resolvedOutput, { recursive: true, force: true });
+  if (!noClean) {
+    await fs.rm(resolvedOutput, { recursive: true, force: true });
+  }
   await fs.mkdir(resolvedOutput, { recursive: true });
 }
 
@@ -321,13 +375,14 @@ function simplifyResponseFailure(response) {
 }
 
 async function captureScreenshot(browser, baseUrl, pageDefinition, viewportDefinition) {
-  const warnings = [];
+  const warnings = [...(pageDefinition.warnings ?? [])];
   const consoleErrors = [];
   const pageErrors = [];
   const failedRequests = [];
   const fileName = `${pageDefinition.key}-${viewportDefinition.key}.png`;
-  const filePath = path.join(outputDir, fileName);
-  const pageUrl = buildPageUrl(baseUrl, pageDefinition.path);
+  const filePath = path.join(activeOutputDir, fileName);
+  const pageUrl = buildPageUrl(baseUrl, capturePath(pageDefinition));
+  const reportPageUrl = buildPageUrl(baseUrl, displayPath(pageDefinition));
 
   const context = await browser.newContext({
     viewport: {
@@ -405,8 +460,8 @@ async function captureScreenshot(browser, baseUrl, pageDefinition, viewportDefin
     return {
       pageKey: pageDefinition.key,
       pageLabel: pageDefinition.label,
-      pagePath: pageDefinition.path,
-      pageUrl,
+      pagePath: displayPath(pageDefinition),
+      pageUrl: reportPageUrl,
       viewport: viewportDefinition,
       screenshot: fileName,
       screenshotPath: filePath,
@@ -416,8 +471,11 @@ async function captureScreenshot(browser, baseUrl, pageDefinition, viewportDefin
       clientWidth: metrics.clientWidth,
       fileSize,
       warnings,
-      failedImages,
-      failedRequests,
+      failedImages: failedImages.map((image) => ({ ...image, url: sanitizeUrl(image.url) })),
+      failedRequests: failedRequests.map((request) => ({
+        ...request,
+        url: sanitizeUrl(request.url)
+      })),
       consoleErrors,
       pageErrors
     };
@@ -427,8 +485,8 @@ async function captureScreenshot(browser, baseUrl, pageDefinition, viewportDefin
     return {
       pageKey: pageDefinition.key,
       pageLabel: pageDefinition.label,
-      pagePath: pageDefinition.path,
-      pageUrl,
+      pagePath: displayPath(pageDefinition),
+      pageUrl: reportPageUrl,
       viewport: viewportDefinition,
       screenshot: fileName,
       screenshotPath: filePath,
@@ -451,6 +509,9 @@ async function captureScreenshot(browser, baseUrl, pageDefinition, viewportDefin
 function groupScreenshots(screenshots) {
   return activePages.map((pageDefinition) => ({
     ...pageDefinition,
+    path: displayPath(pageDefinition),
+    capturePath: undefined,
+    reportPath: undefined,
     screenshots: screenshots.filter((screenshot) => screenshot.pageKey === pageDefinition.key)
   }));
 }
@@ -756,6 +817,7 @@ function renderHtmlReport(report) {
       <section class="hero">
         <p class="eyebrow">MyKinLegacy QA</p>
         <h1>Visual Review Report</h1>
+        <p>Internal visual review only. Do not link from public navigation.</p>
         <div class="meta">
           <div><strong>Captured:</strong> ${escapeHtml(report.capturedAt)}</div>
           <div><strong>Base URL:</strong> ${escapeHtml(report.baseUrl)}</div>
@@ -770,8 +832,8 @@ function renderHtmlReport(report) {
 }
 
 async function writeReports(report) {
-  const jsonPath = path.join(outputDir, "report.json");
-  const htmlPath = path.join(outputDir, "index.html");
+  const jsonPath = path.join(activeOutputDir, "report.json");
+  const htmlPath = path.join(activeOutputDir, "index.html");
 
   await fs.writeFile(jsonPath, `${JSON.stringify(report, null, 2)}\n`, "utf8");
   await fs.writeFile(htmlPath, renderHtmlReport(report), "utf8");
@@ -780,10 +842,13 @@ async function writeReports(report) {
 }
 
 async function main() {
-  const { baseUrl, orderNumber } = parseArgs();
+  const { adminToken, baseUrl, founderOrder, fullSite, latestOrder, noClean, only, orderNumber, outputDir } = parseArgs();
   const capturedAt = new Date().toISOString();
   const commit = getGitCommit();
-  activePages = orderNumber
+  activeOutputDir = outputDir;
+  activePages = fullSite
+    ? createFullSitePages({ adminToken, founderOrder, latestOrder })
+    : orderNumber
     ? [
         ...basePages,
         {
@@ -798,8 +863,12 @@ async function main() {
         }
       ]
     : basePages;
+  if (only.length > 0) {
+    const allowed = new Set(only);
+    activePages = activePages.filter((page) => allowed.has(page.key));
+  }
 
-  await prepareOutputDir();
+  await prepareOutputDir({ noClean });
 
   const browser = await chromium.launch({ headless: true });
   const screenshots = [];
@@ -808,7 +877,7 @@ async function main() {
     for (const pageDefinition of activePages) {
       for (const viewportDefinition of viewports) {
         console.log(
-          `Capturing ${pageDefinition.path} at ${viewportDefinition.key} from ${baseUrl}`
+          `Capturing ${displayPath(pageDefinition)} at ${viewportDefinition.key} from ${baseUrl}`
         );
         const result = await captureScreenshot(
           browser,
@@ -827,6 +896,12 @@ async function main() {
     baseUrl,
     commit,
     capturedAt,
+    notes: [
+      "Internal visual review only. Do not link from public navigation.",
+      adminToken
+        ? "Admin pages were captured with a redacted token in the URL."
+        : "ADMIN_ACCESS_TOKEN was not available locally; admin pages were captured in locked state."
+    ],
     pages: groupScreenshots(screenshots),
     screenshots
   };
@@ -847,6 +922,72 @@ async function main() {
   console.log(`JSON report: ${jsonPath}`);
   console.log(`Screenshots: ${screenshots.length}`);
   console.log(`Warnings/errors recorded: ${warningCount}`);
+}
+
+function createFullSitePages({ adminToken, founderOrder, latestOrder }) {
+  const adminSuffix = adminToken ? `?token=${encodeURIComponent(adminToken)}` : "";
+  const adminWarning = adminToken
+    ? []
+    : ["ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."];
+
+  return [
+    { key: "home", label: "Homepage", path: "/" },
+    { key: "create", label: "Create", path: "/create" },
+    {
+      key: "collection",
+      label: "Family Legacy Collection",
+      path: "/family-legacy-collection"
+    },
+    {
+      key: "interview",
+      label: "Guided Interview",
+      path: `/create/${encodeURIComponent(latestOrder)}`
+    },
+    {
+      key: "checkout",
+      label: "Checkout",
+      path: `/checkout/${encodeURIComponent(latestOrder)}`
+    },
+    {
+      key: "payment-success",
+      label: "Payment Success",
+      path: `/payment/success?order_number=${encodeURIComponent(latestOrder)}`
+    },
+    {
+      key: "order-status-latest",
+      label: "Order Status Latest",
+      path: `/order-status/${encodeURIComponent(latestOrder)}`
+    },
+    {
+      key: "order-status-founder",
+      label: "Order Status Founder",
+      path: `/order-status/${encodeURIComponent(founderOrder)}`
+    },
+    {
+      key: "admin-orders",
+      label: "Admin Orders",
+      capturePath: `/admin/orders${adminSuffix}`,
+      path: "/admin/orders",
+      reportPath: "/admin/orders?token=[redacted]",
+      warnings: adminWarning
+    },
+    {
+      key: "admin-email-logs",
+      label: "Admin Email Logs",
+      capturePath: `/admin/email-logs${adminSuffix}`,
+      path: "/admin/email-logs",
+      reportPath: "/admin/email-logs?token=[redacted]",
+      warnings: adminWarning
+    },
+    {
+      key: "admin-download-tokens",
+      label: "Admin Download Tokens",
+      capturePath: `/admin/download-tokens${adminSuffix}`,
+      path: "/admin/download-tokens",
+      reportPath: "/admin/download-tokens?token=[redacted]",
+      warnings: adminWarning
+    }
+  ];
 }
 
 main().catch((error) => {
