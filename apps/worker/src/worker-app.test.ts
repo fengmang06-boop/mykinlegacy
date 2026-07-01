@@ -88,6 +88,7 @@ describe("worker app foundation", () => {
     expect(queueModule.createdWorkers).toHaveLength(13);
     expect(queueModule.createdWorkers.map((worker) => worker.queueName)).toEqual(
       expect.arrayContaining([
+        "payment-confirmation",
         "ai-image-generation",
         "ai-text-generation",
         "image-postprocess",
@@ -100,6 +101,73 @@ describe("worker app foundation", () => {
     );
     expect(queueModule.createdWorkers.every((worker) => worker.closed)).toBe(true);
     expect(queueModule.createdQueues.every((queue) => queue.closed)).toBe(true);
+  });
+
+  it("processes paid order queue jobs into a placeholder collection", async () => {
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule();
+    const app = createWorkerApp({
+      config: {
+        redisUrl: "redis://localhost:6379",
+        concurrency: 1,
+        pollIntervalMs: 60_000,
+        enableOutboxDispatcher: false,
+        environment: "test",
+        recoveryScanEnabled: false,
+        recoveryScanIntervalMs: 300_000,
+        cleanupDestructiveEnabled: false,
+        stuckOrderThresholdMinutes: 30
+      },
+      queueModule,
+      databaseModule,
+      aiModule: createMockAiModule(),
+      storageModule: createMockStorageModule(),
+      pdfModule: createMockPdfModule(),
+      emailModule: createMockEmailModule()
+    });
+
+    const worker = queueModule.createdWorkers.find(
+      (candidate) => candidate.queueName === "payment-confirmation"
+    );
+    if (!worker) throw new Error("payment_worker_missing");
+
+    const result = await worker.run({
+      data: {
+        job_id: "job_1",
+        job_name: "payment_confirmed_placeholder",
+        queue_name: "payment-confirmation",
+        correlation_id: "corr_1",
+        order_id: "order_1",
+        order_number: "A100",
+        manifest_id: null,
+        identity_version_id: null,
+        attempt: 0,
+        max_attempts: 3,
+        idempotency_key: "outbox:evt_1",
+        created_at: "2026-06-29T00:00:00.000Z",
+        payload: {
+          outbox_event_id: "evt_1",
+          event_type: "order.paid",
+          aggregate_type: "order",
+          aggregate_id: "order_1",
+          event_payload: {
+            order_id: "order_1",
+            order_item_id: "item_1"
+          }
+        }
+      },
+      attemptsMade: 0
+    });
+
+    expect(result).toMatchObject({
+      manifest_id: "manifest_1",
+      generation_job_id: "generation_job_1",
+      download_token_id: "download_token_1",
+      raw_token_omitted: true
+    });
+    expect(databaseModule.processOrderPaidOutbox).toHaveBeenCalled();
+    expect(databaseModule.runManifestDrivenGeneration).toHaveBeenCalled();
+    await app.shutdown();
   });
 });
 
@@ -204,7 +272,16 @@ function createMockDatabaseModule() {
     prisma: {
       outboxEvent: {},
       $disconnect: vi.fn(async () => undefined)
-    }
+    },
+    PrismaOrchestrationRepository: class MockPrismaOrchestrationRepository {},
+    processOrderPaidOutbox: vi.fn(async () => ({
+      manifest: { id: "manifest_1" },
+      generation_job_id: "generation_job_1",
+      created: true
+    })),
+    runManifestDrivenGeneration: vi.fn(async () => ({
+      download_token_id: "download_token_1"
+    }))
   };
 }
 
@@ -229,6 +306,11 @@ class MockWorker {
 
   async close() {
     this.closed = true;
+  }
+
+  async run(job: unknown) {
+    const processor = this.processor as (job: unknown) => Promise<unknown>;
+    return processor(job);
   }
 }
 

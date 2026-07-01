@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Optional } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable, Optional } from "@nestjs/common";
 import { ulid } from "ulid";
 
 import { ApiException } from "../common/api-error";
@@ -17,6 +17,7 @@ import {
   validateUlid
 } from "../common/validation";
 import { PrismaService } from "../database/prisma.service";
+import { ORCHESTRATION_REPOSITORY } from "../database/orchestration.provider";
 
 type OrdersClient = {
   product: { findUnique: (args: unknown) => Promise<ProductRecord | null> };
@@ -93,6 +94,7 @@ export class OrdersService {
   constructor(
     prismaService: PrismaService,
     @Optional()
+    @Inject(ORCHESTRATION_REPOSITORY)
     private readonly orchestrationRepository?: OrderGenerationRepository
   ) {
     this.prisma = prismaService.db as unknown as OrdersClient;

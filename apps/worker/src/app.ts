@@ -90,6 +90,15 @@ interface DatabaseModule {
     outboxEvent: unknown;
     $disconnect(): Promise<void>;
   };
+  PrismaOrchestrationRepository: new (db: unknown) => unknown;
+  processOrderPaidOutbox(input: unknown): Promise<{
+    manifest: { id: string };
+    generation_job_id: string;
+    created: boolean;
+  }>;
+  runManifestDrivenGeneration(input: unknown): Promise<{
+    download_token_id: string;
+  }>;
 }
 
 export interface WorkerAppOptions {
@@ -197,6 +206,23 @@ export function createWorkerApp(options: WorkerAppOptions = {}): WorkerApp {
     attachRuntimeErrorLog(queueModule, queue, queueName);
     queues.set(queueName, queue);
   }
+
+  const orchestrationRepository = new databaseModule.PrismaOrchestrationRepository(
+    databaseModule.prisma
+  );
+
+  const paymentConfirmationWorker = workerFactory(
+    queueModule.QUEUE_NAMES.paymentConfirmation,
+    connection,
+    wrapPaymentConfirmationProcessor(queueModule, databaseModule, orchestrationRepository),
+    config.concurrency
+  );
+  attachRuntimeErrorLog(
+    queueModule,
+    paymentConfirmationWorker,
+    queueModule.QUEUE_NAMES.paymentConfirmation
+  );
+  workers.push(paymentConfirmationWorker);
 
   for (const queueName of getPlaceholderProcessorQueues(queueModule)) {
     const worker = workerFactory(
@@ -365,12 +391,54 @@ export function getWorkerStatus(queueModule: QueueModule = requireQueue()) {
 
 function getPlaceholderProcessorQueues(queueModule: QueueModule): string[] {
   return [
-    queueModule.QUEUE_NAMES.paymentConfirmation,
     queueModule.QUEUE_NAMES.generationManifest,
     queueModule.QUEUE_NAMES.generation,
     queueModule.QUEUE_NAMES.cleanup,
     queueModule.QUEUE_NAMES.deadLetter
   ];
+}
+
+function wrapPaymentConfirmationProcessor(
+  queueModule: QueueModule,
+  databaseModule: DatabaseModule,
+  orchestrationRepository: unknown
+): Processor {
+  return async (job: RuntimeJob) => {
+    const startedAt = Date.now();
+    const outboxEvent = toOrchestrationOutboxEvent(job.data.payload, job.attemptsMade);
+    const manifestResult = await databaseModule.processOrderPaidOutbox({
+      outboxEvent,
+      repository: orchestrationRepository,
+      now: new Date()
+    });
+    const generationResult = await databaseModule.runManifestDrivenGeneration({
+      manifest_id: manifestResult.manifest.id,
+      repository: orchestrationRepository,
+      now: new Date()
+    });
+
+    queueModule.writeWorkerLog({
+      level: "info",
+      message: "paid_order_placeholder_collection_ready",
+      envelope: job.data,
+      queue_name: queueModule.QUEUE_NAMES.paymentConfirmation,
+      duration_ms: Date.now() - startedAt,
+      extra: {
+        manifest_id: manifestResult.manifest.id,
+        generation_job_id: manifestResult.generation_job_id,
+        created: manifestResult.created,
+        download_token_id: generationResult.download_token_id,
+        raw_token_omitted: true
+      }
+    });
+
+    return {
+      manifest_id: manifestResult.manifest.id,
+      generation_job_id: manifestResult.generation_job_id,
+      download_token_id: generationResult.download_token_id,
+      raw_token_omitted: true
+    };
+  };
 }
 
 function wrapPlaceholderProcessor(queueModule: QueueModule, queueName: string): Processor {
@@ -392,6 +460,36 @@ function wrapPlaceholderProcessor(queueModule: QueueModule, queueName: string): 
 
     return result;
   };
+}
+
+function toOrchestrationOutboxEvent(payload: unknown, attempts: number) {
+  const payloadObject = toRecord(payload);
+  return {
+    id: requireStringField(payloadObject, "outbox_event_id"),
+    event_type: requireStringField(payloadObject, "event_type"),
+    aggregate_type: requireStringField(payloadObject, "aggregate_type"),
+    aggregate_id: requireStringField(payloadObject, "aggregate_id"),
+    payload_json: toRecord(payloadObject.event_payload),
+    status: "processing",
+    attempts,
+    created_at: new Date().toISOString(),
+    published_at: null
+  };
+}
+
+function requireStringField(record: Record<string, unknown>, key: string): string {
+  const value = record[key];
+  if (typeof value !== "string" || value.length === 0) {
+    throw new Error(`missing_job_payload_field:${key}`);
+  }
+  return value;
+}
+
+function toRecord(value: unknown): Record<string, unknown> {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+  return value as Record<string, unknown>;
 }
 
 function wrapAiImageProcessor(

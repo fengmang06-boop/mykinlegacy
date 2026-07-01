@@ -10,6 +10,8 @@ import HomePage from "./app/page";
 import { metadata as checkoutMetadata } from "./app/checkout/[order_number]/page";
 import { metadata as createMetadata } from "./app/create/page";
 import { metadata as downloadMetadata } from "./app/download/[token]/page";
+import { metadata as cancelMetadata } from "./app/payment/cancel/page";
+import { metadata as successMetadata } from "./app/payment/success/page";
 import { ApiClient, ApiClientError } from "./lib/api-client";
 import { sanitizeAnalyticsPayload } from "./lib/analytics";
 import { getSafetyMessage } from "./lib/safety";
@@ -157,5 +159,15 @@ describe("customer frontend flow", () => {
     expect(createMetadata.robots).toMatchObject({ index: false, follow: false });
     expect(checkoutMetadata.robots).toMatchObject({ index: false, follow: false });
     expect(downloadMetadata.robots).toMatchObject({ index: false, follow: false });
+    expect(successMetadata.robots).toMatchObject({ index: false, follow: false });
+    expect(cancelMetadata.robots).toMatchObject({ index: false, follow: false });
+  });
+
+  it("payment cancel page renders a branded checkout recovery path", async () => {
+    const source = await readFile(join(testDir, "app/payment/cancel/page.tsx"), "utf8");
+
+    expect(source).toContain("Payment was cancelled.");
+    expect(source).toContain("Return to checkout");
+    expect(source).toContain("/checkout/");
   });
 });

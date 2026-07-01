@@ -44,6 +44,28 @@ describe("OrdersService", () => {
     expect(result.download_ready).toBe(false);
   });
 
+  it("gets paid order generation and vault readiness from orchestration repository", async () => {
+    const service = new OrdersService(
+      createPrismaServiceMock(),
+      createOrchestrationRepository()
+    );
+    const result = await service.getOrder("AHL-20260629-TEST");
+
+    expect(result).toMatchObject({
+      order_number: "AHL-20260629-TEST",
+      payment_status: "paid",
+      fulfillment_status: "completed",
+      generation_manifest: {
+        manifest_status: "completed",
+        expected_assets_count: 1,
+        generated_assets_count: 1,
+        failed_assets_count: 0
+      },
+      download_ready: true,
+      download_vault_available: true
+    });
+  });
+
   it("rejects missing heritage disclaimer consent", async () => {
     const service = new OrdersService(createPrismaServiceMock());
 
@@ -136,4 +158,27 @@ function createPrismaServiceMock(): PrismaService {
         handler(transactionClient)
     }
   } as unknown as PrismaService;
+}
+
+function createOrchestrationRepository(): ConstructorParameters<typeof OrdersService>[1] {
+  return {
+    findOrder: async () => ({
+      id: "01H00000000000000000000020",
+      order_number: "AHL-20260629-TEST",
+      order_status: "completed",
+      payment_status: "paid",
+      fulfillment_status: "completed"
+    }),
+    listOrderItemsByOrder: async () => [
+      { id: "01H00000000000000000000021", order_id: "01H00000000000000000000020" }
+    ],
+    findManifestByOrderItem: async () => ({
+      id: "manifest_1",
+      manifest_status: "completed",
+      expected_assets: [{ deliverable_code: "download_package_zip" }],
+      generated_assets: [{ deliverable_code: "download_package_zip", asset_id: "asset_1" }],
+      failed_assets: []
+    }),
+    findDownloadTokenByOrder: async () => ({ id: "download_token_1", status: "active" })
+  };
 }

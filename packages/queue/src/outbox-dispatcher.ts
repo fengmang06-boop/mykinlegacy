@@ -144,7 +144,8 @@ export class OutboxDispatcher {
         outbox_event_id: event.id,
         event_type: event.eventType,
         aggregate_type: event.aggregateType,
-        aggregate_id: event.aggregateId
+        aggregate_id: event.aggregateId,
+        event_payload: payload
       }
     });
 

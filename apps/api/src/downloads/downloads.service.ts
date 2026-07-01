@@ -1,6 +1,7 @@
-import { HttpStatus, Injectable, Optional } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable, Optional } from "@nestjs/common";
 
 import { ApiException, type ApiErrorCode } from "../common/api-error";
+import { DOWNLOAD_VAULT_REPOSITORY } from "./download-vault.provider";
 
 interface DownloadVaultRepository {
   createToken(input: unknown): Promise<unknown>;
@@ -62,6 +63,7 @@ export class DownloadsService {
 
   constructor(
     @Optional()
+    @Inject(DOWNLOAD_VAULT_REPOSITORY)
     repository?: DownloadVaultRepository,
     @Optional()
     storage?: StorageProviderAdapter,

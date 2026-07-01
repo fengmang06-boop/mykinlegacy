@@ -78,7 +78,13 @@ describe("outbox dispatcher", () => {
       job_name: "payment_confirmed_placeholder",
       order_id: "order_1",
       order_number: "A100",
-      idempotency_key: "outbox:evt_1"
+      idempotency_key: "outbox:evt_1",
+      payload: expect.objectContaining({
+        event_payload: expect.objectContaining({
+          order_id: "order_1",
+          order_number: "A100"
+        })
+      })
     });
     expect(event.status).toBe("published");
     expect(event.publishedAt?.toISOString()).toBe(fixedNow().toISOString());
