@@ -134,6 +134,27 @@ function sanitizeUrl(value) {
   return String(value).replace(/([?&]token=)[^&#]*/gi, "$1[redacted]");
 }
 
+function sanitizeConsoleErrors(consoleErrors) {
+  return consoleErrors.map((error) => ({
+    ...error,
+    text: sanitizeUrl(error.text),
+    location: error.location
+      ? {
+          ...error.location,
+          url: sanitizeUrl(error.location.url ?? "")
+        }
+      : error.location
+  }));
+}
+
+function sanitizePageErrors(pageErrors) {
+  return pageErrors.map((error) => ({
+    ...error,
+    message: sanitizeUrl(error.message),
+    stack: sanitizeUrl(error.stack)
+  }));
+}
+
 function escapeHtml(value) {
   return String(value)
     .replaceAll("&", "&amp;")
@@ -481,8 +502,8 @@ async function captureScreenshot(browser, baseUrl, pageDefinition, viewportDefin
         ...request,
         url: sanitizeUrl(request.url)
       })),
-      consoleErrors,
-      pageErrors
+      consoleErrors: sanitizeConsoleErrors(consoleErrors),
+      pageErrors: sanitizePageErrors(pageErrors)
     };
   } catch (error) {
     warnings.push(`Capture failed: ${error.message}`);
@@ -503,8 +524,8 @@ async function captureScreenshot(browser, baseUrl, pageDefinition, viewportDefin
       warnings,
       failedImages: [],
       failedRequests,
-      consoleErrors,
-      pageErrors
+      consoleErrors: sanitizeConsoleErrors(consoleErrors),
+      pageErrors: sanitizePageErrors(pageErrors)
     };
   } finally {
     await context.close();
