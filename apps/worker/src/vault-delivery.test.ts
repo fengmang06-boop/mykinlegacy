@@ -104,6 +104,82 @@ describe("vault delivery email", () => {
     expect(JSON.stringify(emailModule.state.lastInput)).not.toContain("service@mykinlegacy.com");
   });
 
+  it("uses normalized resend provider for live customer delivery", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("customer@example.com", "pii-key"),
+      emailHash: sha256("customer@example.com")
+    });
+    const emailModule = createEmailModule({ providerCode: "resend" });
+    const logs: unknown[] = [];
+
+    const result = await sendVaultReadyEmail({
+      db: db as never,
+      emailModule: emailModule as never,
+      order_id: "order_1",
+      order_number: "AHL-TEST",
+      download_token_id: "download_token_1",
+      raw_token_for_email_only: "raw-token-once",
+      expires_at: "2026-07-29T00:00:00.000Z",
+      env: {
+        CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+        EMAIL_DELIVERY_TEST_MODE: "false",
+        NEXT_PUBLIC_SITE_URL: "https://mykinlegacy.com",
+        EMAIL_PROVIDER: ' "resend" ',
+        NODE_ENV: "production"
+      },
+      log: (entry) => logs.push(entry)
+    });
+
+    expect(result).toMatchObject({ status: "sent", recipient_source: "customer_pii" });
+    expect(emailModule.state.providerEnv).toMatchObject({ EMAIL_PROVIDER: ' "resend" ' });
+    expect(logs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ message: "EMAIL_JOB_CREATED" }),
+        expect.objectContaining({ message: "EMAIL_TRIGGERED" })
+      ])
+    );
+  });
+
+  it("fails live production delivery if provider resolves to mock", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("customer@example.com", "pii-key"),
+      emailHash: sha256("customer@example.com")
+    });
+    const emailModule = createEmailModule({ providerCode: "mock" });
+    const logs: unknown[] = [];
+
+    const result = await sendVaultReadyEmail({
+      db: db as never,
+      emailModule: emailModule as never,
+      order_id: "order_1",
+      order_number: "AHL-TEST",
+      download_token_id: "download_token_1",
+      raw_token_for_email_only: "raw-token-once",
+      expires_at: "2026-07-29T00:00:00.000Z",
+      env: {
+        CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+        EMAIL_DELIVERY_TEST_MODE: "false",
+        NEXT_PUBLIC_SITE_URL: "https://mykinlegacy.com",
+        EMAIL_PROVIDER: "log",
+        NODE_ENV: "production"
+      },
+      log: (entry) => logs.push(entry)
+    });
+
+    expect(result).toMatchObject({ status: "failed", recipient_source: "customer_pii" });
+    expect(emailModule.state.lastInput).toBeNull();
+    expect(db.state.emailLogs[0]).toMatchObject({
+      status: "failed",
+      errorMessage: "email_delivery_exception:live_email_provider_mock_not_allowed"
+    });
+    expect(logs).toContainEqual(
+      expect.objectContaining({
+        message: "EMAIL_SKIPPED_REASON",
+        extra: expect.objectContaining({ reason: "live_email_provider_mock_not_allowed" })
+      })
+    );
+  });
+
   it("logs failure for internal service inbox as a live customer delivery recipient", async () => {
     const db = createDb({
       emailEncrypted: encryptEmail("service@mykinlegacy.com", "pii-key"),
@@ -237,11 +313,14 @@ function createDb(input: { emailEncrypted: Buffer; emailHash: string }) {
   };
 }
 
-function createEmailModule() {
-  const state = { lastInput: null as unknown };
+function createEmailModule(options: { providerCode?: "mock" | "resend" } = {}) {
+  const state = { lastInput: null as unknown, providerEnv: null as unknown };
   return {
     state,
-    createEmailProviderFromEnv: vi.fn(() => ({ provider_code: "mock" })),
+    createEmailProviderFromEnv: vi.fn((env: unknown) => {
+      state.providerEnv = env;
+      return { provider_code: options.providerCode ?? "mock" };
+    }),
     sendDeliveryEmailJob: vi.fn(async (input: unknown, dependencies: { emailLogRepository: { createEmailLog(input: unknown): Promise<unknown> } }) => {
       state.lastInput = input;
       await dependencies.emailLogRepository.createEmailLog({

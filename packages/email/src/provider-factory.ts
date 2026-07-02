@@ -6,7 +6,7 @@ import type { EmailProviderAdapter } from "./types";
 export function createEmailProviderFromEnv(
   env: Record<string, string | undefined> = process.env
 ): EmailProviderAdapter {
-  const provider = (env.EMAIL_PROVIDER ?? "mock").toLowerCase();
+  const provider = normalizeEmailProviderCode(env.EMAIL_PROVIDER);
   if (provider === "mock" || provider === "log") {
     return new MockEmailProvider("success");
   }
@@ -24,4 +24,10 @@ export function createEmailProviderFromEnv(
     return new DisabledEmailProvider("ses");
   }
   return new MockEmailProvider("success");
+}
+
+export function normalizeEmailProviderCode(value: string | undefined): string {
+  const trimmed = (value ?? "mock").trim();
+  const unquoted = trimmed.replace(/^['"]|['"]$/g, "");
+  return unquoted.trim().toLowerCase();
 }

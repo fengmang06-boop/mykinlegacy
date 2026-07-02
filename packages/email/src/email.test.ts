@@ -167,9 +167,10 @@ describe("mock email provider and delivery rendering", () => {
 
   it("creates configurable provider from environment without hardcoded secrets", () => {
     expect(createEmailProviderFromEnv({ EMAIL_PROVIDER: "log" }).provider_code).toBe("mock");
+    expect(createEmailProviderFromEnv({ EMAIL_PROVIDER: ' "log" ' }).provider_code).toBe("mock");
     expect(
       createEmailProviderFromEnv({
-        EMAIL_PROVIDER: "resend",
+        EMAIL_PROVIDER: ' "resend" ',
         RESEND_API_KEY: "test_key",
         EMAIL_FROM: "support@mykinlegacy.com"
       }).provider_code

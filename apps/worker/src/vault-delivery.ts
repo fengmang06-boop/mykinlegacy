@@ -31,6 +31,11 @@ export interface VaultDeliveryInput {
   raw_token_for_email_only?: string;
   expires_at: string | Date;
   env?: Record<string, string | undefined>;
+  log?: (input: {
+    level: "info" | "warn" | "error";
+    message: "EMAIL_JOB_CREATED" | "EMAIL_TRIGGERED" | "EMAIL_SKIPPED_REASON";
+    extra?: Record<string, unknown>;
+  }) => void;
 }
 
 export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
@@ -42,6 +47,17 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
   const env = input.env ?? process.env;
   const recipient = await resolveRecipient(input.db, input.order_id, env);
   if (!recipient.email) {
+    input.log?.({
+      level: "warn",
+      message: "EMAIL_SKIPPED_REASON",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        reason: recipient.reason ?? "delivery_recipient_unavailable",
+        recipient_source: "unavailable",
+        raw_token_omitted: true
+      }
+    });
     await createFailedEmailLog({
       db: input.db,
       order_id: input.order_id,
@@ -61,6 +77,24 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
   let result: Awaited<ReturnType<EmailModule["sendDeliveryEmailJob"]>>;
   try {
     const provider = input.emailModule.createEmailProviderFromEnv(env);
+    if (!recipient.test_mode && env.NODE_ENV === "production" && provider.provider_code === "mock") {
+      throw new Error("live_email_provider_mock_not_allowed");
+    }
+    input.log?.({
+      level: "info",
+      message: "EMAIL_JOB_CREATED",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        provider: provider.provider_code,
+        recipient_source: recipient.source,
+        delivery_test_mode: recipient.test_mode,
+        intended_recipient_hash: recipient.intended_email_hash,
+        actual_recipient_hash: sha256(recipient.email.trim().toLowerCase()),
+        download_token_id: input.download_token_id,
+        raw_token_omitted: true
+      }
+    });
     result = await input.emailModule.sendDeliveryEmailJob(
       {
         order_id: input.order_id,
@@ -82,7 +116,34 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         emailLogRepository: new PrismaEmailLogRepository(input.db)
       }
     );
+    input.log?.({
+      level: result.status === "sent" ? "info" : "error",
+      message: result.status === "sent" ? "EMAIL_TRIGGERED" : "EMAIL_SKIPPED_REASON",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        provider: provider.provider_code,
+        delivery_status: result.status,
+        recipient_source: recipient.source,
+        delivery_test_mode: recipient.test_mode,
+        download_token_id: input.download_token_id,
+        raw_token_omitted: true
+      }
+    });
   } catch (error) {
+    input.log?.({
+      level: "error",
+      message: "EMAIL_SKIPPED_REASON",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        reason: error instanceof Error ? error.message : "email_delivery_exception",
+        recipient_source: recipient.source,
+        delivery_test_mode: recipient.test_mode,
+        download_token_id: input.download_token_id,
+        raw_token_omitted: true
+      }
+    });
     await createFailedEmailLog({
       db: input.db,
       order_id: input.order_id,

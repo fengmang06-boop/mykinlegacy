@@ -1,4 +1,4 @@
-import { randomBytes } from "node:crypto";
+import { createHash, randomBytes } from "node:crypto";
 
 import { loadWorkerConfig, type WorkerRuntimeConfig } from "./config";
 import { sendVaultReadyEmail } from "./vault-delivery";
@@ -105,6 +105,14 @@ type OrderRecoveryDelegate = {
   findMany(args: unknown): Promise<unknown[]>;
 };
 
+type DownloadTokenRecoveryDelegate = {
+  create(args: unknown): Promise<unknown>;
+};
+
+type DownloadTokenAssetRecoveryDelegate = {
+  create(args: unknown): Promise<unknown>;
+};
+
 type OutboxRecoveryDelegate = {
   findFirst(args: unknown): Promise<unknown | null>;
   create(args: unknown): Promise<unknown>;
@@ -116,6 +124,8 @@ interface DatabaseModule {
     order: OrderRecoveryDelegate;
     orderCustomerPii: unknown;
     emailLog: unknown;
+    downloadToken?: DownloadTokenRecoveryDelegate;
+    downloadTokenAsset?: DownloadTokenAssetRecoveryDelegate;
     $disconnect(): Promise<void>;
   };
   PrismaOrchestrationRepository: new (db: unknown) => unknown;
@@ -383,6 +393,12 @@ export function createWorkerApp(options: WorkerAppOptions = {}): WorkerApp {
               orchestrationRepository,
               emailModule
             });
+            await recoverCompletedOrdersMissingDeliveryEmail({
+              queueModule,
+              databaseModule,
+              orchestrationRepository,
+              emailModule
+            });
           } catch (error) {
             queueModule.writeWorkerLog({
               level: "error",
@@ -472,6 +488,7 @@ export async function recoverStuckPaidOrders(input: {
     try {
       const outboxEvent = await findOrCreateOrderPaidOutbox(input.databaseModule.prisma, orderRow, now);
       await fulfillOrderPaidOutbox({
+        queueModule: input.queueModule,
         databaseModule: input.databaseModule,
         orchestrationRepository: input.orchestrationRepository,
         emailModule: input.emailModule,
@@ -526,6 +543,7 @@ function wrapPaymentConfirmationProcessor(
     const startedAt = Date.now();
     const outboxEvent = toOrchestrationOutboxEvent(job.data.payload, job.attemptsMade);
     const fulfillment = await fulfillOrderPaidOutbox({
+      queueModule,
       databaseModule,
       orchestrationRepository,
       emailModule,
@@ -561,6 +579,7 @@ function wrapPaymentConfirmationProcessor(
 }
 
 async function fulfillOrderPaidOutbox(input: {
+  queueModule: QueueModule;
   databaseModule: DatabaseModule;
   orchestrationRepository: unknown;
   emailModule: EmailModule;
@@ -586,7 +605,10 @@ async function fulfillOrderPaidOutbox(input: {
       input.orderNumberFallback ?? requireStringField(input.outboxEvent.payload_json, "order_number"),
     download_token_id: generationResult.download_token_id,
     raw_token_for_email_only: generationResult.raw_token_for_email_only,
-    expires_at: new Date(Date.now() + 30 * 24 * 60 * 60_000)
+    expires_at: new Date(Date.now() + 30 * 24 * 60 * 60_000),
+    log: (entry) => {
+      inputLogDelivery(entry, input.queueModule, input.outboxEvent);
+    }
   });
   if (deliveryResult.status !== "sent") {
     await updateOrderDeliveryStatus({
@@ -615,6 +637,191 @@ async function fulfillOrderPaidOutbox(input: {
     email_delivery_status: deliveryResult.status,
     email_recipient_source: deliveryResult.recipient_source
   };
+}
+
+export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
+  queueModule: QueueModule;
+  databaseModule: DatabaseModule;
+  orchestrationRepository: unknown;
+  emailModule: EmailModule;
+  now?: Date;
+}): Promise<{ scanned: number; recovered: number; failed: number }> {
+  const now = input.now ?? new Date();
+  const recentCutoff = new Date(now.getTime() - 10 * 60_000);
+  const orders = await input.databaseModule.prisma.order.findMany({
+    where: {
+      paymentStatus: "paid",
+      fulfillmentStatus: "completed",
+      downloadTokens: { some: { status: "active" } },
+      AND: [
+        { emailLogs: { none: { provider: "resend", status: "sent" } } },
+        { emailLogs: { none: { provider: "resend", createdAt: { gte: recentCutoff } } } }
+      ]
+    },
+    orderBy: { updatedAt: "asc" },
+    take: 10,
+    include: {
+      downloadTokens: {
+        where: { status: "active" },
+        orderBy: { createdAt: "desc" },
+        include: { downloadTokenAssets: true }
+      },
+      emailLogs: true
+    }
+  });
+  const result = { scanned: orders.length, recovered: 0, failed: 0 };
+
+  for (const orderRow of orders) {
+    const orderId = recordString(orderRow, "id");
+    const orderNumber = recordString(orderRow, "orderNumber");
+    try {
+      const token = await createFreshVaultTokenFromExistingVault({
+        db: input.databaseModule.prisma,
+        orderRow,
+        now
+      });
+      const deliveryResult = await sendVaultReadyEmail({
+        db: input.databaseModule.prisma as never,
+        emailModule: input.emailModule as never,
+        order_id: orderId,
+        order_number: orderNumber,
+        download_token_id: token.download_token_id,
+        raw_token_for_email_only: token.raw_token_for_email_only,
+        expires_at: token.expires_at,
+        log: (entry) => inputLogRecoveryDelivery(entry, input.queueModule)
+      });
+
+      if (deliveryResult.status !== "sent") {
+        await updateOrderDeliveryStatus({
+          orchestrationRepository: input.orchestrationRepository,
+          orderId,
+          orderStatus: "processing",
+          fulfillmentStatus: "failed",
+          completedAt: null
+        });
+        throw new Error(`delivery_email_${deliveryResult.status}`);
+      }
+
+      result.recovered += 1;
+      input.queueModule.writeWorkerLog({
+        level: "info",
+        message: "completed_order_missing_email_recovered",
+        queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+        extra: {
+          order_id: orderId,
+          order_number: orderNumber,
+          download_token_id: token.download_token_id,
+          raw_token_omitted: true
+        }
+      });
+    } catch (error) {
+      result.failed += 1;
+      input.queueModule.writeWorkerLog({
+        level: "error",
+        message: "completed_order_missing_email_recovery_failed",
+        queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+        extra: {
+          order_id: orderId,
+          order_number: orderNumber,
+          error_message:
+            error instanceof Error ? error.message : "Unknown missing email recovery error",
+          raw_token_omitted: true
+        }
+      });
+    }
+  }
+
+  return result;
+}
+
+async function createFreshVaultTokenFromExistingVault(input: {
+  db: DatabaseModule["prisma"];
+  orderRow: unknown;
+  now: Date;
+}): Promise<{ download_token_id: string; raw_token_for_email_only: string; expires_at: Date }> {
+  const orderId = recordString(input.orderRow, "id");
+  const activeToken = firstRecord(recordValue(input.orderRow, "downloadTokens"));
+  if (!activeToken) {
+    throw new Error("vault_ready_token_missing");
+  }
+  const tokenAssets = recordArray(activeToken, "downloadTokenAssets");
+  const assetIds = tokenAssets.map((link) => recordString(link, "assetId"));
+  if (assetIds.length === 0) {
+    throw new Error("vault_ready_assets_missing");
+  }
+  if (!input.db.downloadToken || !input.db.downloadTokenAsset) {
+    throw new Error("download_token_delegate_missing");
+  }
+
+  const rawToken = randomBytes(32).toString("base64url");
+  const downloadTokenId = createWorkerId();
+  const expiresAt = new Date(input.now.getTime() + 30 * 24 * 60 * 60_000);
+  const created = await input.db.downloadToken.create({
+    data: {
+      id: downloadTokenId,
+      orderId,
+      tokenHash: sha256(rawToken),
+      status: "active",
+      expiresAt,
+      maxDownloads: 20,
+      downloadCount: 0,
+      createdBy: "system",
+      createdAt: input.now
+    }
+  });
+  const createdId = recordString(created, "id");
+  for (const assetId of assetIds) {
+    await input.db.downloadTokenAsset.create({
+      data: {
+        id: createWorkerId(),
+        downloadTokenId: createdId,
+        assetId,
+        createdAt: input.now
+      }
+    });
+  }
+
+  return {
+    download_token_id: createdId,
+    raw_token_for_email_only: rawToken,
+    expires_at: expiresAt
+  };
+}
+
+function inputLogDelivery(
+  entry: {
+    level: "info" | "warn" | "error";
+    message: "EMAIL_JOB_CREATED" | "EMAIL_TRIGGERED" | "EMAIL_SKIPPED_REASON";
+    extra?: Record<string, unknown>;
+  },
+  queueModule: QueueModule,
+  outboxEvent: WorkerOutboxEvent
+) {
+  queueModule.writeWorkerLog({
+    level: entry.level,
+    message: entry.message,
+    queue_name: queueModule.QUEUE_NAMES.paymentConfirmation,
+    extra: {
+      outbox_event_id: outboxEvent.id,
+      ...entry.extra
+    }
+  });
+}
+
+function inputLogRecoveryDelivery(
+  entry: {
+    level: "info" | "warn" | "error";
+    message: "EMAIL_JOB_CREATED" | "EMAIL_TRIGGERED" | "EMAIL_SKIPPED_REASON";
+    extra?: Record<string, unknown>;
+  },
+  queueModule: QueueModule
+) {
+  queueModule.writeWorkerLog({
+    level: entry.level,
+    message: entry.message,
+    queue_name: queueModule.QUEUE_NAMES.paymentConfirmation,
+    extra: entry.extra
+  });
 }
 
 async function updateOrderDeliveryStatus(input: {
@@ -788,6 +995,13 @@ function firstRecord(value: unknown): JsonRecord | null {
     : null;
 }
 
+function recordArray(record: unknown, key: string): JsonRecord[] {
+  const value = recordValue(record, key);
+  return Array.isArray(value)
+    ? value.filter((item): item is JsonRecord => Boolean(item) && typeof item === "object" && !Array.isArray(item))
+    : [];
+}
+
 function isoString(value: unknown): string | null {
   if (value instanceof Date) {
     return value.toISOString();
@@ -818,6 +1032,10 @@ function createWorkerId(): string {
     id += alphabet[byte % alphabet.length];
   }
   return id;
+}
+
+function sha256(value: string): string {
+  return createHash("sha256").update(value).digest("hex");
 }
 
 function wrapAiImageProcessor(

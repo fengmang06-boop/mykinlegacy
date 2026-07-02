@@ -1,6 +1,11 @@
 import { describe, expect, it, vi } from "vitest";
 
-import { createWorkerApp, getWorkerStatus, recoverStuckPaidOrders } from "./app";
+import {
+  createWorkerApp,
+  getWorkerStatus,
+  recoverCompletedOrdersMissingDeliveryEmail,
+  recoverStuckPaidOrders
+} from "./app";
 
 const allQueueNames = [
   "payment-confirmation",
@@ -314,6 +319,63 @@ describe("worker app foundation", () => {
     delete process.env.EMAIL_DELIVERY_TEST_MODE;
     delete process.env.EMAIL_TEST_RECIPIENT;
   });
+
+  it("recovers completed vault-ready orders that are missing resend delivery", async () => {
+    process.env.EMAIL_DELIVERY_TEST_MODE = "true";
+    process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule({
+      completedMissingEmailOrders: [
+        {
+          id: "order_1",
+          orderNumber: "AHL-MISSING-EMAIL",
+          downloadTokens: [
+            {
+              id: "download_token_old",
+              downloadTokenAssets: [{ assetId: "asset_1" }, { assetId: "asset_2" }]
+            }
+          ],
+          emailLogs: []
+        }
+      ]
+    });
+
+    const result = await recoverCompletedOrdersMissingDeliveryEmail({
+      queueModule,
+      databaseModule: databaseModule as never,
+      orchestrationRepository: {
+        async updateOrderStatus(input: unknown) {
+          databaseModule.state.orderUpdates.push(input);
+          return input;
+        }
+      },
+      emailModule: createMockEmailModule(),
+      now: new Date("2026-07-02T00:00:00.000Z")
+    });
+
+    expect(result).toEqual({ scanned: 1, recovered: 1, failed: 0 });
+    expect(databaseModule.state.downloadTokens).toHaveLength(1);
+    expect(databaseModule.state.downloadTokenAssets).toHaveLength(2);
+    expect(databaseModule.state.sentDeliveryInput).toMatchObject({
+      download_token_id: databaseModule.state.downloadTokens[0]?.id,
+      raw_token_for_internal_delivery_only: expect.any(String),
+      recipient_email: "founder-test@example.com"
+    });
+    const sentDeliveryInput = databaseModule.state.sentDeliveryInput as {
+      raw_token_for_internal_delivery_only?: string;
+    };
+    expect(JSON.stringify(databaseModule.state.downloadTokens)).not.toContain(
+      sentDeliveryInput.raw_token_for_internal_delivery_only
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "EMAIL_JOB_CREATED" })
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "EMAIL_TRIGGERED" })
+    );
+    delete process.env.EMAIL_DELIVERY_TEST_MODE;
+    delete process.env.EMAIL_TEST_RECIPIENT;
+  });
 });
 
 function createMockQueueModule() {
@@ -433,11 +495,13 @@ function createMockAiModule() {
   };
 }
 
-function createMockDatabaseModule(options: { stuckOrders?: unknown[] } = {}) {
+function createMockDatabaseModule(options: { stuckOrders?: unknown[]; completedMissingEmailOrders?: unknown[] } = {}) {
   currentDatabaseModuleState = {
     sentDeliveryInput: null,
     emailLogs: [] as unknown[],
-    orderUpdates: [] as unknown[]
+    orderUpdates: [] as unknown[],
+    downloadTokens: [] as Array<Record<string, unknown>>,
+    downloadTokenAssets: [] as Array<Record<string, unknown>>
   };
   const repository = class MockPrismaOrchestrationRepository {
     async updateOrderStatus(input: unknown) {
@@ -453,7 +517,13 @@ function createMockDatabaseModule(options: { stuckOrders?: unknown[] } = {}) {
         create: vi.fn(async (args: { data: unknown }) => args.data)
       },
       order: {
-        findMany: vi.fn(async () => options.stuckOrders ?? [])
+        findMany: vi.fn(async (args: unknown) => {
+          const where = (args as { where?: Record<string, unknown> }).where ?? {};
+          if (where.fulfillmentStatus === "completed") {
+            return options.completedMissingEmailOrders ?? [];
+          }
+          return options.stuckOrders ?? [];
+        })
       },
       orderCustomerPii: {
         findUnique: vi.fn(async () => ({
@@ -464,6 +534,18 @@ function createMockDatabaseModule(options: { stuckOrders?: unknown[] } = {}) {
       emailLog: {
         create: vi.fn(async (args: { data: unknown }) => {
           currentDatabaseModuleState.emailLogs.push(args.data);
+          return args.data;
+        })
+      },
+      downloadToken: {
+        create: vi.fn(async (args: { data: Record<string, unknown> }) => {
+          currentDatabaseModuleState.downloadTokens.push(args.data);
+          return args.data;
+        })
+      },
+      downloadTokenAsset: {
+        create: vi.fn(async (args: { data: Record<string, unknown> }) => {
+          currentDatabaseModuleState.downloadTokenAssets.push(args.data);
           return args.data;
         })
       },
@@ -486,7 +568,15 @@ let currentDatabaseModuleState: {
   sentDeliveryInput: unknown;
   emailLogs: unknown[];
   orderUpdates: unknown[];
-} = { sentDeliveryInput: null, emailLogs: [], orderUpdates: [] };
+  downloadTokens: Array<Record<string, unknown>>;
+  downloadTokenAssets: Array<Record<string, unknown>>;
+} = {
+  sentDeliveryInput: null,
+  emailLogs: [],
+  orderUpdates: [],
+  downloadTokens: [],
+  downloadTokenAssets: []
+};
 
 class MockQueue {
   public closed = false;
