@@ -326,17 +326,10 @@ describe("worker app foundation", () => {
     const queueModule = createMockQueueModule();
     const databaseModule = createMockDatabaseModule({
       completedMissingEmailOrders: [
-        {
+        buildVaultReadyOrder({
           id: "order_1",
-          orderNumber: "AHL-MISSING-EMAIL",
-          downloadTokens: [
-            {
-              id: "download_token_old",
-              downloadTokenAssets: [{ assetId: "asset_1" }, { assetId: "asset_2" }]
-            }
-          ],
-          emailLogs: []
-        }
+          orderNumber: "AHL-MISSING-EMAIL"
+        })
       ]
     });
 
@@ -375,6 +368,135 @@ describe("worker app foundation", () => {
     );
     delete process.env.EMAIL_DELIVERY_TEST_MODE;
     delete process.env.EMAIL_TEST_RECIPIENT;
+  });
+
+  it("includes failed fulfillment orders when vault is ready and resend delivery is missing", async () => {
+    process.env.EMAIL_DELIVERY_TEST_MODE = "true";
+    process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule({
+      completedMissingEmailOrders: [
+        buildVaultReadyOrder({
+          id: "order_failed_email",
+          orderNumber: "AHL-FAILED-EMAIL",
+          fulfillmentStatus: "failed",
+          emailLogs: [
+            {
+              provider: "resend",
+              status: "failed",
+              createdAt: new Date("2026-07-01T00:00:00.000Z")
+            }
+          ]
+        })
+      ]
+    });
+
+    const result = await recoverCompletedOrdersMissingDeliveryEmail({
+      queueModule,
+      databaseModule: databaseModule as never,
+      orchestrationRepository: {
+        async updateOrderStatus(input: unknown) {
+          databaseModule.state.orderUpdates.push(input);
+          return input;
+        }
+      },
+      emailModule: createMockEmailModule(),
+      now: new Date("2026-07-02T00:00:00.000Z")
+    });
+
+    expect(result).toEqual({ scanned: 1, recovered: 1, failed: 0 });
+    expect(databaseModule.state.downloadTokens).toHaveLength(1);
+    expect(JSON.stringify(databaseModule.state.downloadTokens)).not.toContain(
+      (databaseModule.state.sentDeliveryInput as { raw_token_for_internal_delivery_only?: string })
+        .raw_token_for_internal_delivery_only
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "recovery_candidate_order",
+        extra: expect.objectContaining({
+          order_number: "AHL-FAILED-EMAIL",
+          fulfillment_status: "failed"
+        })
+      })
+    );
+    delete process.env.EMAIL_DELIVERY_TEST_MODE;
+    delete process.env.EMAIL_TEST_RECIPIENT;
+  });
+
+  it("does not treat mock email logs as successful resend delivery", async () => {
+    process.env.EMAIL_DELIVERY_TEST_MODE = "true";
+    process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule({
+      completedMissingEmailOrders: [
+        buildVaultReadyOrder({
+          id: "order_mock_sent",
+          orderNumber: "AHL-MOCK-SENT",
+          emailLogs: [
+            {
+              provider: "mock",
+              status: "sent",
+              createdAt: new Date("2026-07-02T00:00:00.000Z")
+            }
+          ]
+        })
+      ]
+    });
+
+    const result = await recoverCompletedOrdersMissingDeliveryEmail({
+      queueModule,
+      databaseModule: databaseModule as never,
+      orchestrationRepository: {},
+      emailModule: createMockEmailModule(),
+      now: new Date("2026-07-02T00:05:00.000Z")
+    });
+
+    expect(result).toEqual({ scanned: 1, recovered: 1, failed: 0 });
+    expect(databaseModule.state.sentDeliveryInput).toMatchObject({
+      recipient_email: "founder-test@example.com"
+    });
+    delete process.env.EMAIL_DELIVERY_TEST_MODE;
+    delete process.env.EMAIL_TEST_RECIPIENT;
+  });
+
+  it("excludes orders with successful resend delivery", async () => {
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule({
+      completedMissingEmailOrders: [
+        buildVaultReadyOrder({
+          id: "order_resend_sent",
+          orderNumber: "AHL-RESEND-SENT",
+          emailLogs: [
+            {
+              provider: "resend",
+              status: "sent",
+              providerMessageId: "resend_message_1",
+              createdAt: new Date("2026-07-02T00:00:00.000Z")
+            }
+          ]
+        })
+      ]
+    });
+
+    const result = await recoverCompletedOrdersMissingDeliveryEmail({
+      queueModule,
+      databaseModule: databaseModule as never,
+      orchestrationRepository: {},
+      emailModule: createMockEmailModule(),
+      now: new Date("2026-07-02T00:05:00.000Z")
+    });
+
+    expect(result).toEqual({ scanned: 1, recovered: 0, failed: 0 });
+    expect(databaseModule.state.downloadTokens).toHaveLength(0);
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "scanner_candidate_excluded_reason",
+        extra: expect.objectContaining({
+          order_number: "AHL-RESEND-SENT",
+          reason: "resend_already_sent"
+        })
+      })
+    );
   });
 });
 
@@ -495,6 +617,28 @@ function createMockAiModule() {
   };
 }
 
+function buildVaultReadyOrder(input: {
+  id: string;
+  orderNumber: string;
+  fulfillmentStatus?: string;
+  emailLogs?: unknown[];
+}) {
+  return {
+    id: input.id,
+    orderNumber: input.orderNumber,
+    paymentStatus: "paid",
+    fulfillmentStatus: input.fulfillmentStatus ?? "completed",
+    downloadTokens: [
+      {
+        id: `${input.id}_download_token_old`,
+        status: "active",
+        downloadTokenAssets: [{ assetId: "asset_1" }, { assetId: "asset_2" }]
+      }
+    ],
+    emailLogs: input.emailLogs ?? []
+  };
+}
+
 function createMockDatabaseModule(options: { stuckOrders?: unknown[]; completedMissingEmailOrders?: unknown[] } = {}) {
   currentDatabaseModuleState = {
     sentDeliveryInput: null,
@@ -519,7 +663,7 @@ function createMockDatabaseModule(options: { stuckOrders?: unknown[]; completedM
       order: {
         findMany: vi.fn(async (args: unknown) => {
           const where = (args as { where?: Record<string, unknown> }).where ?? {};
-          if (where.fulfillmentStatus === "completed") {
+          if (where.downloadTokens) {
             return options.completedMissingEmailOrders ?? [];
           }
           return options.stuckOrders ?? [];

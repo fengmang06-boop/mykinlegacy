@@ -666,19 +666,13 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
   now?: Date;
 }): Promise<{ scanned: number; recovered: number; failed: number }> {
   const now = input.now ?? new Date();
-  const recentCutoff = new Date(now.getTime() - 10 * 60_000);
-  const orders = await input.databaseModule.prisma.order.findMany({
+  const vaultReadyOrders = await input.databaseModule.prisma.order.findMany({
     where: {
       paymentStatus: "paid",
-      fulfillmentStatus: "completed",
-      downloadTokens: { some: { status: "active" } },
-      AND: [
-        { emailLogs: { none: { provider: "resend", status: "sent" } } },
-        { emailLogs: { none: { provider: "resend", createdAt: { gte: recentCutoff } } } }
-      ]
+      downloadTokens: { some: { status: "active" } }
     },
     orderBy: { updatedAt: "asc" },
-    take: 10,
+    take: 25,
     include: {
       downloadTokens: {
         where: { status: "active" },
@@ -688,7 +682,44 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
       emailLogs: true
     }
   });
-  const result = { scanned: orders.length, recovered: 0, failed: 0 };
+  const orders: unknown[] = [];
+  const excludedReasons: Record<string, number> = {};
+
+  for (const orderRow of vaultReadyOrders) {
+    const exclusionReason = getEmailRecoveryExclusionReason(orderRow);
+    if (exclusionReason) {
+      excludedReasons[exclusionReason] = (excludedReasons[exclusionReason] ?? 0) + 1;
+      input.queueModule.writeWorkerLog({
+        level: "info",
+        message: "scanner_candidate_excluded_reason",
+        queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+        extra: {
+          order_id: recordString(orderRow, "id"),
+          order_number: recordString(orderRow, "orderNumber"),
+          reason: exclusionReason,
+          fulfillment_status: recordValue(orderRow, "fulfillmentStatus"),
+          raw_token_omitted: true
+        }
+      });
+      continue;
+    }
+    orders.push(orderRow);
+  }
+
+  const result = { scanned: vaultReadyOrders.length, recovered: 0, failed: 0 };
+
+  if (Object.keys(excludedReasons).length > 0) {
+    input.queueModule.writeWorkerLog({
+      level: "info",
+      message: "scanner_candidate_exclusion_summary",
+      queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+      extra: {
+        scanned: vaultReadyOrders.length,
+        candidates: orders.length,
+        excluded_reasons: excludedReasons
+      }
+    });
+  }
 
   for (const orderRow of orders) {
     const orderId = recordString(orderRow, "id");
@@ -765,6 +796,23 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
   }
 
   return result;
+}
+
+function getEmailRecoveryExclusionReason(orderRow: unknown): string | null {
+  const fulfillmentStatus = recordValue(orderRow, "fulfillmentStatus");
+  if (fulfillmentStatus !== "completed" && fulfillmentStatus !== "failed") {
+    return "fulfillment_not_completed_or_failed";
+  }
+
+  const emailLogs = recordArray(orderRow, "emailLogs");
+  const hasSuccessfulResend = emailLogs.some(
+    (log) => recordValue(log, "provider") === "resend" && recordValue(log, "status") === "sent"
+  );
+  if (hasSuccessfulResend) {
+    return "resend_already_sent";
+  }
+
+  return null;
 }
 
 async function createFreshVaultTokenFromExistingVault(input: {
