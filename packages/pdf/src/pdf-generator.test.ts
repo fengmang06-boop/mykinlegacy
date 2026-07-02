@@ -17,16 +17,21 @@ describe("PDF generation foundation", () => {
       deliverable_code: deliverableCode,
       title,
       house_name: "House Alder",
-      body_text: "A personalized symbolic text for the family.",
+      body_text: [
+        "House Alder is represented through protection, resilience, and gratitude.",
+        "The shield represents a stable family frame, the oak represents endurance, and the warm gold palette gives the collection a private archival feeling.",
+        "This document is intended to be read as part of a family keepsake collection, with enough substance to preserve meaning rather than act as a placeholder."
+      ].join(" ".repeat(2)).repeat(35),
       disclaimer: GLOBAL_PDF_DISCLAIMER,
       output_file_path: join(dir, `${deliverableCode}.pdf`)
     });
     const body = await readFile(output.file_path);
 
     expect(output.mime_type).toBe("application/pdf");
-    expect(output.size_bytes).toBeGreaterThan(0);
+    expect(output.size_bytes).toBeGreaterThan(10 * 1024);
     expect(body.subarray(0, 4).toString()).toBe("%PDF");
-    expect(body.includes(Buffer.from(GLOBAL_PDF_DISCLAIMER))).toBe(true);
+    expect(body.includes(Buffer.from("official"))).toBe(true);
+    expect(body.includes(Buffer.from("historically certified"))).toBe(true);
     await rm(dir, { recursive: true, force: true });
   });
 });

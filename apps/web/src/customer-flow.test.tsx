@@ -234,9 +234,11 @@ describe("customer frontend flow", () => {
     expect(html).toContain("Your Private Legacy Vault");
     expect(html).toContain("Vault Documents");
     expect(html).toContain("Open / Read");
-    expect(html).toContain("Download PDF");
-    expect(html).toContain("Download Collection ZIP");
-    expect(html).toContain("Download files will be available in the next delivery step.");
+    expect(html).toContain("Final Downloads");
+    expect(html).toContain("Your downloadable artifacts are prepared below");
+    expect(html).toContain("complete collection archive");
+    expect(html).not.toContain("Files will be prepared next");
+    expect(html).not.toContain("Download files will be available in the next delivery step.");
     expect(html).toContain("House Meaning Summary");
     expect(html).toContain("Family Story");
     expect(html).toContain("Heritage Certificate Text");

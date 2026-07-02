@@ -40,9 +40,22 @@ describe("downloads public API service", () => {
     const { service, rawToken, repository } = await createServiceFixture();
     const signed = await service.createSignedUrl(rawToken, "asset_1");
 
-    expect(signed.signed_url).toContain("local-private://");
+    expect(signed.signed_url).toBe("/api/v1/downloads/raw_token_once/assets/asset_1/file");
     expect(signed.expires_at).toBeTruthy();
     expect(JSON.stringify(repository.events)).not.toContain("local-private://");
+  });
+
+  it("streams linked private asset bytes through the public download endpoint", async () => {
+    const { service, rawToken } = await createServiceFixture();
+    const file = await service.getAssetFile(rawToken, "asset_1");
+
+    expect(file).toMatchObject({
+      asset_id: "asset_1",
+      file_name: "crest-variant-1.png",
+      mime_type: "image/png"
+    });
+    expect(file.body.byteLength).toBeGreaterThan(512);
+    expect(JSON.stringify(file)).not.toContain("storage_key");
   });
 
   it("uses ErrorContract v1.1 envelope for invalid tokens", async () => {
@@ -78,7 +91,7 @@ async function createServiceFixture() {
         asset_type: "image",
         file_ext: "png",
         mime_type: "image/png",
-        size_bytes: 100,
+        size_bytes: 2048,
         status: "available",
         storage_provider: "local_private",
         storage_bucket: "private-assets",
@@ -191,6 +204,28 @@ class FakeDownloadRepository {
   public readonly events: unknown[] = [];
 
   constructor(public readonly input: unknown) {}
+
+  findTokenByHash = async (tokenHash: string) => {
+    return this.tokens.find((token) => token.token_hash === tokenHash) ?? null;
+  };
+
+  findLinkedAsset = async (input: { download_token_id: string; asset_id: string }) => {
+    const linked = this.tokenAssets.some(
+      (item) =>
+        item.download_token_id === input.download_token_id && item.asset_id === input.asset_id
+    );
+    if (!linked) return null;
+    const assets = (this.input as { assets?: unknown[] }).assets ?? [];
+    return (
+      assets.find(
+        (asset) =>
+          typeof asset === "object" &&
+          asset !== null &&
+          "asset_id" in asset &&
+          asset.asset_id === input.asset_id
+      ) ?? null
+    );
+  };
 }
 
 class FakeStorageAdapter {
@@ -198,6 +233,10 @@ class FakeStorageAdapter {
 
   async createSignedUrl() {
     return "local-private://private-assets/redacted?expires=600";
+  }
+
+  async getObject() {
+    return Buffer.from("PNG".repeat(1024));
   }
 }
 

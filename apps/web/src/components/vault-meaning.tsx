@@ -11,8 +11,6 @@ const includedItems = [
   "Private Vault Access"
 ];
 
-const futureDownloads = ["Download PDF", "Download Collection ZIP"];
-
 interface VaultMeaningProps {
   meaningProfile?: VaultMeaningProfile | null;
   collectionContent?: VaultCollectionContent | null;
@@ -43,7 +41,7 @@ export function PrivateVaultPreview({
         <>
           <VaultMeaningSummary meaningProfile={meaningProfile} />
           <CollectionDocuments collectionContent={collectionContent} />
-          <FutureDownloadPlaceholders />
+          <VaultDownloadReadyNote />
         </>
       ) : hasMeaning ? (
         <>
@@ -161,19 +159,15 @@ function SymbolGuideDocument({ collectionContent }: { collectionContent: VaultCo
   );
 }
 
-function FutureDownloadPlaceholders() {
+function VaultDownloadReadyNote() {
   return (
-    <article className="vault-meaning-card vault-download-placeholders">
-      <span>Future Downloads</span>
-      <h3>Files will be prepared next</h3>
-      <p>Download files will be available in the next delivery step.</p>
-      <div>
-        {futureDownloads.map((label) => (
-          <button key={label} type="button" disabled>
-            {label}
-          </button>
-        ))}
-      </div>
+    <article className="vault-meaning-card vault-download-ready-note">
+      <span>Final Downloads</span>
+      <h3>Your downloadable artifacts are prepared below</h3>
+      <p>
+        Use the private artifacts section to open crest artwork, PDF documents, and the complete
+        collection archive.
+      </p>
     </article>
   );
 }

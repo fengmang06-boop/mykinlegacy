@@ -173,16 +173,22 @@ export function DownloadVault({ token }: { token: string }) {
   const sortedAssets = [...assets].sort((a, b) => artifactOrder(a) - artifactOrder(b));
   const hasPlaceholderAssets = sortedAssets.some(isPlaceholderAsset);
   const hasMeaningContext = Boolean(vault?.meaning_profile || vault?.collection_content);
+  const firstPdfAsset = sortedAssets.find(
+    (asset) => asset.file_ext === "pdf" && asset.available && !isPlaceholderAsset(asset)
+  );
+  const completeCollectionAsset = sortedAssets.find(
+    (asset) =>
+      asset.deliverable_code === "download_package_zip" &&
+      asset.available &&
+      !isPlaceholderAsset(asset)
+  );
 
   async function downloadCompleteCollection() {
-    const completeCollection =
-      sortedAssets.find((asset) => asset.deliverable_code === "download_package_zip") ??
-      sortedAssets.find((asset) => asset.available);
-    if (!completeCollection) {
-      setError("The complete collection is not ready yet.");
+    if (!completeCollectionAsset) {
+      setError("The complete collection archive is not ready yet.");
       return;
     }
-    await download(completeCollection);
+    await download(completeCollectionAsset);
   }
 
   return (
@@ -257,6 +263,28 @@ export function DownloadVault({ token }: { token: string }) {
             Review each part of the collection, then save the complete private collection for family
             keeping.
           </p>
+          <div className="vault-download-actions" aria-label="Primary vault downloads">
+            <button
+              className="secondary-button"
+              type="button"
+              onClick={() => (firstPdfAsset ? void download(firstPdfAsset) : undefined)}
+              disabled={!firstPdfAsset || downloadingAsset === firstPdfAsset.asset_id}
+            >
+              {firstPdfAsset && downloadingAsset === firstPdfAsset.asset_id
+                ? "Preparing PDF..."
+                : "Download PDF"}
+            </button>
+            <button
+              className="button"
+              type="button"
+              onClick={() => void downloadCompleteCollection()}
+              disabled={!completeCollectionAsset || downloadingAsset === completeCollectionAsset.asset_id}
+            >
+              {completeCollectionAsset && downloadingAsset === completeCollectionAsset.asset_id
+                ? "Preparing ZIP..."
+                : "Download Collection ZIP"}
+            </button>
+          </div>
           {hasPlaceholderAssets ? (
             <p className="notice alpha-vault-notice">
               This internal alpha order contains placeholder collection artifacts. Future real
@@ -297,7 +325,7 @@ export function DownloadVault({ token }: { token: string }) {
             className="button"
             type="button"
             onClick={() => void downloadCompleteCollection()}
-            disabled={sortedAssets.length === 0}
+            disabled={!completeCollectionAsset}
           >
             Download Complete Collection
           </button>
@@ -332,7 +360,11 @@ export function DownloadVault({ token }: { token: string }) {
 }
 
 export function isPlaceholderAsset(asset: Pick<DownloadAsset, "size_bytes" | "status">): boolean {
-  return asset.size_bytes > 0 && asset.size_bytes <= 512 && asset.status === "available_for_download";
+  return (
+    asset.size_bytes > 0 &&
+    asset.size_bytes <= 512 &&
+    (asset.status === "available_for_download" || asset.status === "available")
+  );
 }
 
 export function formatArtifactSizeLabel(asset: Pick<DownloadAsset, "size_bytes" | "status">): string | null {

@@ -1,4 +1,8 @@
-import { describe, expect, it } from "vitest";
+import { mkdtemp, readFile, rm } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 
 import {
   InMemoryOrchestrationRepository,
@@ -15,8 +19,20 @@ import type {
 } from "./types";
 
 const now = new Date("2026-06-29T00:00:00.000Z");
+const originalLocalStorageDir = process.env.LOCAL_STORAGE_DIR;
+let localStorageDir = "";
 
 describe("DB-backed orchestration foundation", () => {
+  beforeEach(async () => {
+    localStorageDir = await mkdtemp(join(tmpdir(), "mykinlegacy-orchestration-"));
+    process.env.LOCAL_STORAGE_DIR = localStorageDir;
+  });
+
+  afterEach(async () => {
+    process.env.LOCAL_STORAGE_DIR = originalLocalStorageDir;
+    await rm(localStorageDir, { recursive: true, force: true });
+  });
+
   it("turns order.paid outbox into exactly one manifest and generation job", async () => {
     const repository = createRepository();
     const outbox = repository.outboxEvents.get("outbox_1");
@@ -63,6 +79,35 @@ describe("DB-backed orchestration foundation", () => {
       [...REQUIRED_DELIVERABLES].sort()
     );
     expect(result.assets.every((asset) => asset.public_url === null)).toBe(true);
+    expect(result.assets.every((asset) => asset.status === "available")).toBe(true);
+    expect(
+      result.assets
+        .filter((asset) => asset.file_ext === "png" || asset.file_ext === "pdf")
+        .filter((asset) => asset.size_bytes <= 10 * 1024)
+        .map((asset) => ({ deliverable_code: asset.deliverable_code, size_bytes: asset.size_bytes }))
+    ).toEqual([]);
+    expect(result.assets.every((asset) => asset.size_bytes !== 100)).toBe(true);
+    const pdfAsset = result.assets.find((asset) => asset.deliverable_code === "family_story_pdf");
+    const pngAsset = result.assets.find((asset) => asset.deliverable_code === "crest_variant_1_png");
+    const zipAsset = result.assets.find((asset) => asset.deliverable_code === "download_package_zip");
+    if (!pdfAsset || !pngAsset || !zipAsset) throw new Error("expected_artifacts_missing");
+    const pdfBody = await readStoredAsset(pdfAsset);
+    const pngBody = await readStoredAsset(pngAsset);
+    const zipBody = await readStoredAsset(zipAsset);
+    expect(pdfBody.subarray(0, 4).toString()).toBe("%PDF");
+    expect(pdfBody.toString("latin1")).toContain("House of Alder");
+    expect(pdfBody.toString("latin1")).toContain("private symbolic keepsake");
+    expect(pdfBody.toString("latin1")).not.toMatch(
+      /proves your ancestry|official family crest|legally granted arms|noble bloodline/i
+    );
+    expect(pngBody.subarray(1, 4).toString()).toBe("PNG");
+    expect(listZipEntries(zipBody)).toEqual(
+      expect.arrayContaining([
+        expect.stringContaining("family-story-pdf.pdf"),
+        expect.stringContaining("crest-variant-1-png.png"),
+        "read-me/read-me.txt"
+      ])
+    );
     expect(result.manifest).toMatchObject({
       manifest_status: "completed",
       missing_required_assets: [],
@@ -159,6 +204,32 @@ describe("DB-backed orchestration foundation", () => {
       completed_at: null
     });
   });
+
+  it("repairs existing placeholder assets in place when generation is rerun", async () => {
+    const repository = await completedRepository();
+    const manifest = [...repository.manifests.values()][0];
+    if (!manifest) throw new Error("missing_manifest");
+    const original = [...repository.assets.values()].find(
+      (asset) => asset.deliverable_code === "family_story_pdf"
+    );
+    if (!original) throw new Error("missing_family_story_asset");
+
+    repository.assets.set(original.id, {
+      ...original,
+      size_bytes: 100,
+      checksum_sha256: "0".repeat(64),
+      storage_key: "orders/placeholder/family_story_pdf.pdf"
+    });
+
+    await runManifestDrivenGeneration({ manifest_id: manifest.id, repository, now });
+    const repaired = repository.assets.get(original.id);
+
+    expect(repaired?.id).toBe(original.id);
+    expect(repaired?.deliverable_code).toBe("family_story_pdf");
+    expect(repaired?.size_bytes).toBeGreaterThan(1024);
+    expect(repaired?.storage_key).not.toBe("orders/placeholder/family_story_pdf.pdf");
+    expect(repository.downloadTokens.size).toBeGreaterThanOrEqual(2);
+  });
 });
 
 async function completedRepository() {
@@ -243,4 +314,22 @@ function createRepository() {
     orderItems: [orderItem],
     outboxEvents: [outbox]
   });
+}
+
+async function readStoredAsset(asset: { storage_bucket: string; storage_key: string }) {
+  return readFile(join(localStorageDir, asset.storage_bucket, asset.storage_key));
+}
+
+function listZipEntries(buffer: Buffer): string[] {
+  const entries: string[] = [];
+  let offset = 0;
+  while (offset < buffer.length - 4) {
+    if (buffer.readUInt32LE(offset) !== 0x04034b50) break;
+    const fileNameLength = buffer.readUInt16LE(offset + 26);
+    const extraLength = buffer.readUInt16LE(offset + 28);
+    const compressedSize = buffer.readUInt32LE(offset + 18);
+    entries.push(buffer.subarray(offset + 30, offset + 30 + fileNameLength).toString());
+    offset += 30 + fileNameLength + extraLength + compressedSize;
+  }
+  return entries;
 }

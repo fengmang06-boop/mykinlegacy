@@ -12,9 +12,10 @@ export async function generateHeritagePdf(input: PdfGenerationInput): Promise<Pd
     input.title,
     `House: ${input.house_name}`,
     "",
-    sanitizeOfficialClaims(input.body_text),
+    input.disclaimer,
     "",
-    input.disclaimer
+    sanitizeOfficialClaims(input.body_text),
+    ""
   ].join("\n");
   const pdf = buildSimplePdf(text);
 
@@ -32,7 +33,7 @@ export async function generateHeritagePdf(input: PdfGenerationInput): Promise<Pd
 }
 
 export function buildSimplePdf(text: string): Buffer {
-  const lines = text.split(/\r?\n/).slice(0, 40);
+  const lines = text.split(/\r?\n/).flatMap((line) => wrapLine(line, 88)).slice(0, 160);
   const content = [
     "BT",
     "/F1 14 Tf",
@@ -78,4 +79,22 @@ export function sanitizeOfficialClaims(text: string): string {
 
 function escapePdfText(value: string): string {
   return value.replace(/\\/g, "\\\\").replace(/\(/g, "\\(").replace(/\)/g, "\\)");
+}
+
+function wrapLine(value: string, width: number): string[] {
+  if (value.length <= width) return [value];
+  const words = value.split(/\s+/);
+  const lines: string[] = [];
+  let line = "";
+  for (const word of words) {
+    const next = line ? `${line} ${word}` : word;
+    if (next.length > width && line) {
+      lines.push(line);
+      line = word;
+    } else {
+      line = next;
+    }
+  }
+  if (line) lines.push(line);
+  return lines;
 }

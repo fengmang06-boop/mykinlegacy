@@ -55,7 +55,7 @@ export async function generateZipPackage(input: {
     buffers.push({ name: normalizeZipPath(entry.archive_path), body });
   }
 
-  const zip = buildZip(buffers);
+  const zip = buildZipBuffer(buffers);
   await mkdir(dirname(input.output_file_path), { recursive: true });
   await writeFile(input.output_file_path, zip);
 
@@ -85,7 +85,7 @@ export function listZipEntries(buffer: Buffer): string[] {
   return entries;
 }
 
-function buildZip(entries: Array<{ name: string; body: Buffer }>): Buffer {
+export function buildZipBuffer(entries: Array<{ name: string; body: Buffer }>): Buffer {
   const locals: Buffer[] = [];
   const centrals: Buffer[] = [];
   let offset = 0;

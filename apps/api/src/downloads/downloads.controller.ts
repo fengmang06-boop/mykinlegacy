@@ -1,5 +1,5 @@
-import { Controller, Get, Param, Post, Req } from "@nestjs/common";
-import type { Request } from "express";
+import { Controller, Get, Param, Post, Req, Res, StreamableFile } from "@nestjs/common";
+import type { Request, Response } from "express";
 
 import { DownloadsService } from "./downloads.service";
 
@@ -24,6 +24,24 @@ export class DownloadsController {
     @Req() request: Request
   ) {
     return this.downloadsService.createSignedUrl(token, assetId, getRequestSignals(request));
+  }
+
+  @Get(":token/assets/:assetId/file")
+  async downloadFile(
+    @Param("token") token: string,
+    @Param("assetId") assetId: string,
+    @Req() request: Request,
+    @Res({ passthrough: true }) response: Response
+  ) {
+    const file = await this.downloadsService.getAssetFile(token, assetId, getRequestSignals(request));
+    response.setHeader("content-type", file.mime_type);
+    response.setHeader("content-length", String(file.body.byteLength));
+    response.setHeader(
+      "content-disposition",
+      `attachment; filename="${file.file_name.replace(/"/g, "")}"`
+    );
+    response.setHeader("cache-control", "private, no-store");
+    return new StreamableFile(file.body);
   }
 }
 

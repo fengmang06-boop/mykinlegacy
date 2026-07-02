@@ -1,3 +1,5 @@
+import { createHash } from "node:crypto";
+
 import { HttpStatus, Inject, Injectable, Optional } from "@nestjs/common";
 
 import { ApiException, type ApiErrorCode } from "../common/api-error";
@@ -17,6 +19,7 @@ interface DownloadVaultRepository {
 interface StorageProviderAdapter {
   provider_code: string;
   createSignedUrl(input: unknown): Promise<string>;
+  getObject(input: unknown): Promise<Buffer>;
 }
 
 interface StorageModule {
@@ -56,6 +59,13 @@ export interface SignedUrlResponse {
   asset_id: string;
   signed_url: string;
   expires_at: string;
+}
+
+export interface DownloadedAssetFile {
+  asset_id: string;
+  file_name: string;
+  mime_type: string;
+  body: Buffer;
 }
 
 @Injectable()
@@ -103,8 +113,8 @@ export class DownloadsService {
     assetId: string,
     context: { ip?: string | null; userAgent?: string | null } = {}
   ) {
-    return this.wrapDownloadError(() =>
-      this.storageModule.createSignedAssetUrl({
+    return this.wrapDownloadError(async () => {
+      const signed = await this.storageModule.createSignedAssetUrl({
         raw_token: token,
         asset_id: assetId,
         repository: this.repository,
@@ -112,8 +122,44 @@ export class DownloadsService {
         expires_in_seconds: 600,
         ip: context.ip,
         user_agent: context.userAgent
-      })
-    );
+      });
+      return {
+        ...signed,
+        signed_url: this.publicAssetDownloadPath(token, assetId)
+      };
+    });
+  }
+
+  getAssetFile(
+    token: string,
+    assetId: string,
+    context: { ip?: string | null; userAgent?: string | null } = {}
+  ): Promise<DownloadedAssetFile> {
+    return this.wrapDownloadError(async () => {
+      await this.createSignedUrl(token, assetId, context);
+      const tokenRecord = await this.repository.findTokenByHash(hashDownloadToken(token));
+      const tokenId = stringField(tokenRecord, "id");
+      const asset = await this.repository.findLinkedAsset({
+        download_token_id: tokenId,
+        asset_id: assetId
+      });
+      if (!asset) throw downloadVaultError("asset_not_linked_to_token");
+      if (stringField(asset, "status") !== "available") throw downloadVaultError("asset_not_available");
+
+      const body = await this.storage.getObject({
+        storage_provider: stringField(asset, "storage_provider"),
+        storage_bucket: stringField(asset, "storage_bucket"),
+        storage_key: stringField(asset, "storage_key")
+      });
+      if (body.byteLength <= 512) throw downloadVaultError("asset_not_available");
+
+      return {
+        asset_id: assetId,
+        file_name: safeFileName(stringField(asset, "friendly_name"), stringField(asset, "file_ext")),
+        mime_type: stringField(asset, "mime_type"),
+        body
+      };
+    });
   }
 
   private async wrapDownloadError<T>(handler: () => Promise<T>): Promise<T> {
@@ -170,6 +216,10 @@ export class DownloadsService {
     }
     return "The requested download cannot be completed.";
   }
+
+  private publicAssetDownloadPath(token: string, assetId: string): string {
+    return `/api/v1/downloads/${encodeURIComponent(token)}/assets/${encodeURIComponent(assetId)}/file`;
+  }
 }
 
 function isDownloadVaultError(error: unknown): error is { code: ApiErrorCode } {
@@ -179,6 +229,34 @@ function isDownloadVaultError(error: unknown): error is { code: ApiErrorCode } {
     "code" in error &&
     typeof (error as { code?: unknown }).code === "string"
   );
+}
+
+function hashDownloadToken(rawToken: string): string {
+  return createHash("sha256").update(rawToken).digest("hex");
+}
+
+function stringField(record: unknown, key: string): string {
+  if (!isRecord(record) || typeof record[key] !== "string" || !record[key]) {
+    throw downloadVaultError("asset_not_available");
+  }
+  return record[key];
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
+}
+
+function safeFileName(name: string, ext: string): string {
+  const cleaned = name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 80);
+  return `${cleaned || "mykinlegacy-artifact"}.${ext.replace(/[^a-z0-9]/g, "") || "bin"}`;
+}
+
+function downloadVaultError(code: ApiErrorCode): Error & { code: ApiErrorCode } {
+  return Object.assign(new Error(code), { code });
 }
 
 function requireStorage(): StorageModule {

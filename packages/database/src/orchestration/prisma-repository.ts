@@ -178,7 +178,29 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
       : await this.db.asset.findFirst({
           where: { orderId: input.order_id, deliverableTypeId: deliverable.deliverableTypeId }
         });
-    if (existing) return mapAsset(existing, input.deliverable_code);
+    if (existing) {
+      const row = await this.db.asset.update({
+        where: { id: recordString(existing, "id") },
+        data: {
+          orderItemId: input.order_item_id,
+          generationJobId: input.generation_job_id,
+          deliverableTypeId: deliverable.deliverableTypeId,
+          assetType: input.asset_type,
+          assetKind: input.asset_kind,
+          status: input.status,
+          storageProvider: input.storage_provider,
+          storageBucket: input.storage_bucket,
+          storageKey: input.storage_key,
+          fileName: input.file_name,
+          mimeType: input.mime_type,
+          fileExt: input.file_ext,
+          sizeBytes: BigInt(input.size_bytes),
+          checksumSha256: input.checksum_sha256,
+          updatedAt: new Date(input.created_at)
+        }
+      });
+      return mapAsset(row, input.deliverable_code);
+    }
 
     const row = await this.db.asset.create({
       data: {
@@ -228,8 +250,6 @@ export class PrismaOrchestrationRepository implements OrchestrationRepository {
   async createDownloadToken(
     input: OrchestrationDownloadToken
   ): Promise<OrchestrationDownloadToken> {
-    const existing = await this.findDownloadTokenByOrder(input.order_id);
-    if (existing) return existing;
     const row = await this.db.downloadToken.create({
       data: {
         id: input.id,

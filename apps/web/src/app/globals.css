@@ -3131,25 +3131,22 @@ textarea {
   display: block;
 }
 
-.premium-page .vault-download-placeholders {
+.premium-page .vault-download-ready-note {
   gap: 12px;
-  border-style: dashed;
+  border-style: solid;
 }
 
-.premium-page .vault-download-placeholders div {
+.premium-page .vault-download-actions {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+  margin: 18px 0 8px;
 }
 
-.premium-page .vault-download-placeholders button {
-  cursor: not-allowed;
-  border: 1px solid rgba(201, 162, 74, 0.28);
-  border-radius: 999px;
-  padding: 10px 14px;
-  background: rgba(246, 235, 212, 0.04);
-  color: rgba(246, 235, 212, 0.62);
-  font-weight: 800;
+.premium-page .vault-download-actions .button,
+.premium-page .vault-download-actions .secondary-button {
+  min-height: 44px;
+  justify-content: center;
 }
 
 .premium-page .artifact-visibility-panel {
@@ -3665,11 +3662,12 @@ textarea {
     padding: 0 12px 12px;
   }
 
-  .premium-page .vault-download-placeholders div {
+  .premium-page .vault-download-actions {
     display: grid;
   }
 
-  .premium-page .vault-download-placeholders button {
+  .premium-page .vault-download-actions .button,
+  .premium-page .vault-download-actions .secondary-button {
     width: 100%;
   }
 

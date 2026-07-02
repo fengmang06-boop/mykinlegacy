@@ -104,7 +104,11 @@ export class InMemoryOrchestrationRepository implements OrchestrationRepository 
       (asset) =>
         asset.order_id === input.order_id && asset.deliverable_code === input.deliverable_code
     );
-    if (existing) return existing;
+    if (existing) {
+      const updated = { ...input, id: existing.id };
+      this.assets.set(existing.id, updated);
+      return updated;
+    }
     this.assets.set(input.id, input);
     return input;
   }
@@ -114,8 +118,6 @@ export class InMemoryOrchestrationRepository implements OrchestrationRepository 
   }
 
   async createDownloadToken(input: OrchestrationDownloadToken): Promise<OrchestrationDownloadToken> {
-    const existing = await this.findDownloadTokenByOrder(input.order_id);
-    if (existing) return existing;
     this.downloadTokens.set(input.id, input);
     return input;
   }

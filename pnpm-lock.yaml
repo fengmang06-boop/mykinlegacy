@@ -171,6 +171,12 @@ importers:
       '@ai-heritage/domain':
         specifier: workspace:*
         version: link:../domain
+      '@ai-heritage/pdf':
+        specifier: workspace:*
+        version: link:../pdf
+      '@ai-heritage/storage':
+        specifier: workspace:*
+        version: link:../storage
       '@prisma/client':
         specifier: ^6.19.0
         version: 6.19.0(prisma@6.19.0(typescript@5.9.3))(typescript@5.9.3)

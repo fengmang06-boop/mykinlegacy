@@ -269,7 +269,7 @@ describe("MVP E2E happy path with mock providers", () => {
     } finally {
       await rm(tempDir, { recursive: true, force: true });
     }
-  });
+  }, 20_000);
 });
 
 async function storeAvailableAsset(input: {

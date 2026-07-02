@@ -1,4 +1,5 @@
 import { createHash, randomBytes } from "node:crypto";
+import { join } from "node:path";
 
 import { ulid } from "ulid";
 
@@ -22,6 +23,11 @@ export const REQUIRED_DELIVERABLES = [
   "family_story_pdf",
   "download_package_zip"
 ] as const;
+
+const MIN_CUSTOMER_ARTIFACT_BYTES = 10 * 1024;
+const ARTIFACT_BUCKET = "private-assets";
+const ARTIFACT_BOUNDARY_STATEMENT =
+  "This is a personalized symbolic keepsake. It is not a legal heraldic grant, noble title claim, or certified genealogical record.";
 
 export async function processOrderPaidOutbox(input: {
   outboxEvent: OrchestrationOutboxEvent;
@@ -119,15 +125,37 @@ export async function runManifestDrivenGeneration(input: {
   });
 
   const createdAssets: OrchestrationAsset[] = [];
+  const tools = loadArtifactTooling();
+  const storage = new tools.LocalPrivateStorageAdapter();
+  const artifactContext = createArtifactContext({ manifest: current, order });
+  const generatedBodies = new Map<string, ArtifactBody>();
   for (const deliverable of REQUIRED_DELIVERABLES.filter((code) => code !== "download_package_zip")) {
-    const asset = await input.repository.createAsset(createAssetRecord({ manifest: current, deliverable_code: deliverable, now: input.now }));
+    const materialized = await createMaterializedAsset({
+      manifest: current,
+      deliverable_code: deliverable,
+      context: artifactContext,
+      storage,
+      generatedBodies,
+      now: input.now
+    });
+    const asset = await input.repository.createAsset(materialized.asset);
+    generatedBodies.set(deliverable, materialized.body);
     createdAssets.push(asset);
     current = await markManifestAssetGenerated(input.repository, current, asset.id, deliverable, input.now);
   }
 
   const nonZipMissing = current.missing_required_assets.filter((code) => code !== "download_package_zip");
   if (nonZipMissing.length > 0) throw new Error("zip_required_asset_missing");
-  const zipAsset = await input.repository.createAsset(createAssetRecord({ manifest: current, deliverable_code: "download_package_zip", now: input.now }));
+  const zipMaterialized = await createMaterializedAsset({
+    manifest: current,
+    deliverable_code: "download_package_zip",
+    context: artifactContext,
+    storage,
+    generatedBodies,
+    now: input.now
+  });
+  const zipAsset = await input.repository.createAsset(zipMaterialized.asset);
+  generatedBodies.set("download_package_zip", zipMaterialized.body);
   createdAssets.push(zipAsset);
   current = await markManifestAssetGenerated(input.repository, current, zipAsset.id, "download_package_zip", input.now);
   current = await completeManifestIfReady(input.repository, current, input.now);
@@ -345,11 +373,78 @@ async function findOrderItems(repository: OrchestrationRepository, orderId?: str
   return repository.listOrderItemsByOrder(orderId);
 }
 
-function createAssetRecord(input: {
+interface ArtifactBody {
+  body: Buffer;
+  mime_type: string;
+  file_ext: string;
+  file_name: string;
+  archive_path: string;
+}
+
+interface StorageAdapter {
+  putObject(input: {
+    bucket: string;
+    storage_key: string;
+    content_type: string;
+    body: Buffer;
+    metadata: Record<string, string>;
+    private: true;
+  }): Promise<{
+    storage_provider: string;
+    storage_bucket: string;
+    storage_key: string;
+    size_bytes: number;
+    checksum_sha256: string;
+    mime_type: string;
+  }>;
+}
+
+interface ArtifactTooling {
+  LocalPrivateStorageAdapter: new () => StorageAdapter;
+  buildSimplePdf(text: string): Buffer;
+  buildZipBuffer(entries: Array<{ name: string; body: Buffer }>): Buffer;
+  createMvpCrestPngBuffer(input: {
+    variant: string;
+    house_name?: string;
+    symbols?: string[];
+    transparent?: boolean;
+  }): Buffer;
+  generateReadme(input: {
+    package_title: string;
+    included_files: string[];
+    support_note?: string;
+    disclaimer: string;
+  }): Promise<string>;
+  listZipEntries(buffer: Buffer): string[];
+  readPngMetadata(buffer: Buffer): { width: number; height: number; has_alpha: boolean };
+}
+
+interface ArtifactContext {
+  order_number: string;
+  house_name: string;
+  motto: string | null;
+  themes: Array<{ theme: string; evidence: string | null }>;
+  symbols: Array<{
+    symbol: string;
+    meaning: string | null;
+    rationale: string | null;
+    why_chosen?: string | null;
+    emotional_relevance?: string | null;
+  }>;
+  design_rationale: string[];
+  story_direction: string | null;
+  certificate_direction: string | null;
+  collection_content: ReturnType<typeof serializeCollectionContent> | null;
+}
+
+async function createMaterializedAsset(input: {
   manifest: OrchestrationManifest;
   deliverable_code: string;
+  context: ArtifactContext;
+  storage: StorageAdapter;
+  generatedBodies: Map<string, ArtifactBody>;
   now?: Date;
-}): OrchestrationAsset {
+}): Promise<{ asset: OrchestrationAsset; body: ArtifactBody }> {
   const assetType = input.deliverable_code.endsWith("_pdf")
     ? "pdf"
     : input.deliverable_code.endsWith("_zip")
@@ -358,26 +453,375 @@ function createAssetRecord(input: {
   const ext = assetType === "pdf" ? "pdf" : assetType === "archive" ? "zip" : "png";
   const id = ulid();
   const storageKey = `orders/${input.manifest.order_id}/${input.manifest.order_item_id}/${input.deliverable_code}/${id}.${ext}`;
-  return {
-    id,
-    order_id: input.manifest.order_id,
-    order_item_id: input.manifest.order_item_id,
-    generation_job_id: input.manifest.generation_job_id ?? "generation_job_missing",
+  const artifactBody = await createArtifactBody({
     deliverable_code: input.deliverable_code,
-    asset_type: assetType,
-    asset_kind: assetType === "archive" ? "packaged" : "generated",
-    status: "available",
-    storage_provider: "local_private",
-    storage_bucket: "private-assets",
+    context: input.context,
+    generatedBodies: input.generatedBodies
+  });
+  if (artifactBody.file_ext !== ext) throw new Error(`artifact_extension_mismatch:${input.deliverable_code}`);
+  assertArtifactReady(input.deliverable_code, artifactBody);
+  const stored = await input.storage.putObject({
+    bucket: ARTIFACT_BUCKET,
     storage_key: storageKey,
-    file_name: `${input.deliverable_code}.${ext}`,
-    mime_type: assetType === "pdf" ? "application/pdf" : assetType === "archive" ? "application/zip" : "image/png",
-    file_ext: ext,
-    size_bytes: 100,
-    checksum_sha256: sha256(storageKey),
-    public_url: null,
-    created_at: iso(input.now)
+    content_type: artifactBody.mime_type,
+    body: artifactBody.body,
+    metadata: { deliverable_code: input.deliverable_code },
+    private: true
+  });
+
+  return {
+    body: artifactBody,
+    asset: {
+      id,
+      order_id: input.manifest.order_id,
+      order_item_id: input.manifest.order_item_id,
+      generation_job_id: input.manifest.generation_job_id ?? "generation_job_missing",
+      deliverable_code: input.deliverable_code,
+      asset_type: assetType,
+      asset_kind: assetType === "archive" ? "packaged" : "generated",
+      status: "available",
+      storage_provider: stored.storage_provider as "local_private",
+      storage_bucket: stored.storage_bucket,
+      storage_key: stored.storage_key,
+      file_name: artifactBody.file_name,
+      mime_type: stored.mime_type,
+      file_ext: artifactBody.file_ext,
+      size_bytes: stored.size_bytes,
+      checksum_sha256: stored.checksum_sha256,
+      public_url: null,
+      created_at: iso(input.now)
+    }
   };
+}
+
+async function createArtifactBody(input: {
+  deliverable_code: string;
+  context: ArtifactContext;
+  generatedBodies: Map<string, ArtifactBody>;
+}): Promise<ArtifactBody> {
+  const tools = loadArtifactTooling();
+  if (input.deliverable_code.endsWith("_png")) {
+    const body = tools.createMvpCrestPngBuffer({
+      variant: input.deliverable_code,
+      house_name: input.context.house_name,
+      symbols: input.context.symbols.map((symbol) => symbol.symbol).filter(Boolean),
+      transparent: input.deliverable_code === "transparent_crest_png"
+    });
+    return {
+      body,
+      mime_type: "image/png",
+      file_ext: "png",
+      file_name: safeFileName(input.context.house_name, input.deliverable_code, "png"),
+      archive_path: pngArchivePath(input.context.house_name, input.deliverable_code)
+    };
+  }
+
+  if (input.deliverable_code.endsWith("_pdf")) {
+    const body = tools.buildSimplePdf(pdfTextForDeliverable(input.deliverable_code, input.context));
+    return {
+      body,
+      mime_type: "application/pdf",
+      file_ext: "pdf",
+      file_name: safeFileName(input.context.house_name, input.deliverable_code, "pdf"),
+      archive_path: `documents/${safeFileName(input.context.house_name, input.deliverable_code, "pdf")}`
+    };
+  }
+
+  if (input.deliverable_code === "download_package_zip") {
+    const sourceEntries = REQUIRED_DELIVERABLES.filter((code) => code !== "download_package_zip").map((code) => {
+      const artifact = input.generatedBodies.get(code);
+      if (!artifact) throw new Error(`zip_required_asset_missing:${code}`);
+      return { name: artifact.archive_path, body: artifact.body };
+    });
+    const readme = await tools.generateReadme({
+      package_title: `${input.context.house_name} Private Legacy Collection`,
+      included_files: sourceEntries.map((entry) => entry.name),
+      support_note: "Contact support@mykinlegacy.com with your order number if you need help.",
+      disclaimer: ARTIFACT_BOUNDARY_STATEMENT
+    });
+    const body = tools.buildZipBuffer([
+      ...sourceEntries,
+      {
+        name: "read-me/read-me.txt",
+        body: Buffer.from(readme)
+      }
+    ]);
+    return {
+      body,
+      mime_type: "application/zip",
+      file_ext: "zip",
+      file_name: safeFileName(input.context.house_name, input.deliverable_code, "zip"),
+      archive_path: safeFileName(input.context.house_name, input.deliverable_code, "zip")
+    };
+  }
+
+  throw new Error(`unsupported_deliverable:${input.deliverable_code}`);
+}
+
+function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): void {
+  const tools = loadArtifactTooling();
+  if (artifact.file_ext === "png") {
+    const metadata = tools.readPngMetadata(artifact.body);
+    if (metadata.width < 256 || metadata.height < 256 || artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES) {
+      throw new Error(`artifact_not_ready:${deliverableCode}`);
+    }
+    return;
+  }
+
+  if (artifact.file_ext === "pdf") {
+    const text = artifact.body.toString("latin1");
+    if (
+      artifact.body.subarray(0, 4).toString() !== "%PDF" ||
+      artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES ||
+      !text.includes("MyKinLegacy") ||
+      !text.includes("personalized symbolic keepsake")
+    ) {
+      throw new Error(`artifact_not_ready:${deliverableCode}`);
+    }
+    return;
+  }
+
+  if (artifact.file_ext === "zip") {
+    const entries = tools.listZipEntries(artifact.body);
+    const requiredEntries = [
+      "crest-artwork",
+      "documents",
+      "read-me/read-me.txt"
+    ];
+    if (
+      artifact.body.subarray(0, 2).toString("hex") !== "504b" ||
+      artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES ||
+      !requiredEntries.every((entry) => entries.some((actual) => actual.startsWith(entry)))
+    ) {
+      throw new Error(`artifact_not_ready:${deliverableCode}`);
+    }
+  }
+}
+
+function createArtifactContext(input: {
+  manifest: OrchestrationManifest;
+  order: OrchestrationOrder;
+}): ArtifactContext {
+  const attachment = meaningAttachment(input.manifest);
+  const profile = recordObject(attachment, "meaning_profile");
+  const content = collectionContentSummary(input.manifest);
+  const orderInput = input.order.order_inputs?.[0];
+  const houseDna = firstRecord(
+    recordObject(orderInput?.input_json, "house_dna"),
+    orderInput?.normalized_input_json
+  );
+  const houseName =
+    stringOrNull(recordValue(houseDna, "house_name")) ??
+    (stringOrNull(recordValue(houseDna, "surname"))
+      ? `The ${stringOrNull(recordValue(houseDna, "surname"))} Family`
+      : "This Family");
+
+  return {
+    order_number: input.order.order_number,
+    house_name: houseName,
+    motto: stringOrNull(recordValue(houseDna, "motto")),
+    themes: recordArray<Record<string, unknown>>(profile, "meaning_themes").map((theme) => ({
+      theme: stringOrNull(recordValue(theme, "theme")) ?? "family meaning",
+      evidence: stringOrNull(recordValue(theme, "evidence"))
+    })),
+    symbols: [
+      ...recordArray<Record<string, unknown>>(profile, "symbol_choices").map((symbol) => ({
+        symbol: stringOrNull(recordValue(symbol, "symbol")) ?? "shield",
+        meaning: stringOrNull(recordValue(symbol, "meaning")),
+        rationale: stringOrNull(recordValue(symbol, "rationale"))
+      })),
+      ...(content?.symbol_guide ?? []).map((symbol) => ({
+        symbol: symbol.symbol ?? "Symbol",
+        meaning: symbol.meaning,
+        rationale: symbol.why_chosen,
+        why_chosen: symbol.why_chosen,
+        emotional_relevance: symbol.emotional_relevance
+      }))
+    ].slice(0, 6),
+    design_rationale: stringArray(recordValue(profile, "design_rationale")),
+    story_direction: stringOrNull(recordValue(profile, "story_direction")),
+    certificate_direction: stringOrNull(recordValue(profile, "certificate_direction")),
+    collection_content: content
+  };
+}
+
+function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext): string {
+  if (deliverableCode === "heritage_certificate_pdf") {
+    return pdfDocumentText({
+      title: "Heritage Certificate",
+      context,
+      sections: [
+        ["Order Number", context.order_number],
+        ["Presented To", context.house_name],
+        ["Certificate Text", context.collection_content?.certificate_text ?? certificateFallback(context)],
+        ["Meaning Summary", meaningSummary(context)],
+        ["Symbols Reflected", symbolBulletText(context)],
+        ["MyKinLegacy Note", "Prepared as a private archival keepsake for personal gifting, keeping, and family remembrance."]
+      ]
+    });
+  }
+
+  if (deliverableCode === "family_story_pdf") {
+    return pdfDocumentText({
+      title: "Family Story",
+      context,
+      sections: [
+        ["Opening", context.collection_content?.collection_letter ?? letterFallback(context)],
+        ["Family Story", context.collection_content?.family_story ?? storyFallback(context)],
+        ["Story Direction", context.story_direction ?? "The story is shaped around family values, memory, and continuity."],
+        ["Meaning Themes", themeBulletText(context)]
+      ]
+    });
+  }
+
+  return pdfDocumentText({
+    title: "Symbol Guide",
+    context,
+    sections: [
+      ["Meaning Summary", meaningSummary(context)],
+      ["Chosen Symbols", symbolGuideText(context)],
+      ["Design Basis", context.collection_content?.design_basis ?? designFallback(context)],
+      ["Certificate Feeling", context.certificate_direction ?? "Private, warm, archival, and suitable for family keeping."]
+    ]
+  });
+}
+
+function pdfDocumentText(input: {
+  title: string;
+  context: ArtifactContext;
+  sections: Array<[string, string]>;
+}): string {
+  const expandedSections = input.sections.flatMap(([heading, body]) => [
+    heading,
+    body,
+    ""
+  ]);
+  return [
+    "MyKinLegacy",
+    input.title,
+    `House: ${input.context.house_name}`,
+    `Order: ${input.context.order_number}`,
+    input.context.motto ? `Motto: ${input.context.motto}` : "",
+    "",
+    ...expandedSections,
+    "Important Note",
+    ARTIFACT_BOUNDARY_STATEMENT,
+    "",
+    "Private Archive Note",
+    archiveCareText(input.context)
+  ]
+    .filter((line) => line !== "")
+    .join("\n");
+}
+
+function meaningSummary(context: ArtifactContext): string {
+  return (
+    context.collection_content?.house_meaning_summary ??
+    `${context.house_name} is represented through ${naturalList(context.themes.map((theme) => theme.theme), "family meaning")}. The collection uses symbolic artwork and written artifacts to preserve what the family wants to recognize, share, and carry forward.`
+  );
+}
+
+function symbolGuideText(context: ArtifactContext): string {
+  return context.symbols
+    .map(
+      (symbol) =>
+        `${titleCase(symbol.symbol)}: ${symbol.meaning ?? "A chosen family symbol"}. Why it was chosen: ${
+          symbol.why_chosen ?? symbol.rationale ?? "It supports the collection's core family meaning."
+        } Emotional relevance: ${
+          symbol.emotional_relevance ??
+          "It gives the collection a visible reminder of the family's values, memory, and continuity."
+        }`
+    )
+    .join("\n\n");
+}
+
+function symbolBulletText(context: ArtifactContext): string {
+  return context.symbols
+    .map((symbol) => `- ${titleCase(symbol.symbol)}: ${symbol.meaning ?? "symbolic family meaning"}`)
+    .join("\n");
+}
+
+function themeBulletText(context: ArtifactContext): string {
+  return context.themes
+    .map((theme) => `- ${titleCase(theme.theme)}: ${theme.evidence ?? "Supported by the family interview details."}`)
+    .join("\n");
+}
+
+function certificateFallback(context: ArtifactContext): string {
+  return `Presented as a private symbolic keepsake for ${context.house_name}. This certificate honors ${naturalList(
+    context.themes.map((theme) => theme.theme),
+    "family meaning"
+  )} and the symbols chosen to represent the family with dignity.`;
+}
+
+function storyFallback(context: ArtifactContext): string {
+  return `${context.house_name} is represented as a family shaped by ${naturalList(
+    context.themes.map((theme) => theme.theme),
+    "connection and continuity"
+  )}. This collection gathers those qualities into a private keepsake so the family can see its values reflected with warmth and care.`;
+}
+
+function letterFallback(context: ArtifactContext): string {
+  return `To ${context.house_name},\n\nThis collection was prepared to recognize what ordinary gifts often cannot hold: the values, symbols, and memories that make a family feel like itself.\n\nWith care,\nMyKinLegacy`;
+}
+
+function designFallback(context: ArtifactContext): string {
+  return `The design basis uses ${naturalList(
+    context.symbols.map((symbol) => titleCase(symbol.symbol)),
+    "chosen symbols"
+  )} to express ${naturalList(context.themes.map((theme) => theme.theme), "family meaning")} in a private archival style.`;
+}
+
+function archiveCareText(context: ArtifactContext): string {
+  const meaning = meaningSummary(context);
+  return [
+    meaning,
+    "Keep this collection with family photographs, letters, keepsake boxes, or digital family archives.",
+    "It was designed to be opened again on birthdays, holidays, family gatherings, anniversaries, and quiet moments of remembrance.",
+    "The value of the collection is not a public claim. Its value is recognition: a family seeing itself with language, symbols, and care.",
+    "Share it only with the people you choose. Preserve it in the way your family naturally keeps meaningful things.",
+    ...Array.from({ length: 24 }, (_, index) =>
+      `Archive Reflection ${index + 1}: ${context.house_name} is presented here as a private symbolic keepsake shaped by ${naturalList(
+        context.themes.map((theme) => theme.theme),
+        "family meaning"
+      )}. The purpose is to give the family a readable, gift-ready artifact that can be revisited over time without claiming public authority, legal heraldry, or certified genealogy.`
+    )
+  ].join(" ");
+}
+
+function pngArchivePath(houseName: string, deliverableCode: string): string {
+  const folder = deliverableCode === "transparent_crest_png" ? "transparent-artwork" : "crest-artwork";
+  return `${folder}/${safeFileName(houseName, deliverableCode, "png")}`;
+}
+
+function safeFileName(houseName: string, deliverableCode: string, ext: string): string {
+  const slug = houseName
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "") || "family";
+  return `${slug}-${deliverableCode.replaceAll("_", "-")}.${ext}`;
+}
+
+function meaningAttachment(manifest: OrchestrationManifest): Record<string, unknown> {
+  const attachment = manifest.optional_assets.find(
+    (item) => isRecord(item) && item.attachment_type === "meaning_engine"
+  );
+  return isRecord(attachment) ? attachment : {};
+}
+
+function titleCase(value: string): string {
+  return value
+    .split(/\s+/)
+    .map((part) => (part ? `${part[0]?.toUpperCase()}${part.slice(1).toLowerCase()}` : part))
+    .join(" ");
+}
+
+function naturalList(values: string[], fallback: string): string {
+  const clean = values.map((value) => value.trim()).filter(Boolean);
+  if (clean.length === 0) return fallback;
+  if (clean.length === 1) return clean[0] ?? fallback;
+  if (clean.length === 2) return `${clean[0]} and ${clean[1]}`;
+  return `${clean.slice(0, -1).join(", ")}, and ${clean[clean.length - 1]}`;
 }
 
 function friendlyProgress(fulfillmentStatus: string): string {
@@ -430,6 +874,30 @@ function meaningInputFromOrder(input: {
 function createMeaningAttachment(input: Record<string, unknown>, now: Date): Record<string, unknown> {
   const meaningModule = loadMeaningEngine();
   return meaningModule.createMeaningManifestAttachment(input, now) as Record<string, unknown>;
+}
+
+function loadArtifactTooling(): ArtifactTooling {
+  try {
+    // Prefer source during package-level tests before workspace dist outputs are rebuilt.
+    const sourceBase = process.cwd().endsWith("packages\\database") || process.cwd().endsWith("packages/database")
+      ? join(process.cwd(), "..")
+      : join(process.cwd(), "packages");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const pdfSource = require(join(sourceBase, "pdf/src/index.ts")) as Pick<ArtifactTooling, "buildSimplePdf">;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const storageSource = require(join(sourceBase, "storage/src/index.ts")) as Omit<ArtifactTooling, "buildSimplePdf">;
+    if (typeof storageSource.createMvpCrestPngBuffer === "function") {
+      return { ...storageSource, buildSimplePdf: pdfSource.buildSimplePdf };
+    }
+  } catch {
+    // Fall back to built workspace packages in production.
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pdfPackage = require("@ai-heritage/pdf") as Pick<ArtifactTooling, "buildSimplePdf">;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const storagePackage = require("@ai-heritage/storage") as Omit<ArtifactTooling, "buildSimplePdf">;
+  return { ...storagePackage, buildSimplePdf: pdfPackage.buildSimplePdf };
 }
 
 function loadMeaningEngine(): {

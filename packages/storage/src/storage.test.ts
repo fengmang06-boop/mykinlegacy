@@ -75,8 +75,9 @@ describe("private storage and assets", () => {
     });
     const validation = await validateImageFile(filePath);
 
-    expect(result).toMatchObject({ width: 1, height: 1, has_alpha: true });
+    expect(result).toMatchObject({ width: 640, height: 640, has_alpha: true });
     expect(validation.valid).toBe(true);
+    expect(validation.size_bytes).toBeGreaterThan(10 * 1024);
     await rm(dir, { recursive: true, force: true });
   });
 
@@ -88,6 +89,10 @@ describe("private storage and assets", () => {
     await expect(validateTransparentPng(filePath)).resolves.toMatchObject({
       valid: true,
       has_alpha: true
+    });
+    await expect(validateImageFile(filePath)).resolves.toMatchObject({
+      valid: true,
+      size_bytes: expect.any(Number)
     });
     await rm(dir, { recursive: true, force: true });
   });
