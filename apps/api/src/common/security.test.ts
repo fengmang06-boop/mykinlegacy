@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 
 import {
+  decryptEmailFromStorageForVerification,
   encryptEmailForStorage,
   encryptEmailForStorageStrict,
   isCustomerPiiEncryptionConfigured,
@@ -35,6 +36,9 @@ describe("PII security helpers", () => {
     expect(isCustomerPiiEncryptionConfigured()).toBe(true);
     expect(encrypted).toContain("enc:v1:");
     expect(isValidEncryptedEmailPayload(Buffer.from(encrypted))).toBe(true);
+    expect(decryptEmailFromStorageForVerification(Buffer.from(encrypted))).toBe(
+      "customer@example.com"
+    );
     expect(encrypted).not.toContain("customer@example.com");
     delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
   });

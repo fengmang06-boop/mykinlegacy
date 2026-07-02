@@ -150,8 +150,11 @@ function safePayload(payload) {
     latest_download_token_asset_count: order.downloadTokens[0]?.downloadTokenAssets.length ?? 0,
     email_log_count: order.emailLogs.length,
     customer_pii_exists: Boolean(order.orderCustomerPii),
+    customer_pii_row_exists: Boolean(order.orderCustomerPii) ? "yes" : "no",
+    pii_order_id_matches: order.orderCustomerPii?.orderId === order.id ? "yes" : "no",
     customer_email_pii_exists: Boolean(order.orderCustomerPii?.emailEncrypted),
     customer_email_pii_format: piiPayloadFormat(order.orderCustomerPii?.emailEncrypted),
+    customer_email_payload_format: piiPayloadFormat(order.orderCustomerPii?.emailEncrypted),
     customer_email_decryptable: decryptableEmail(order.orderCustomerPii?.emailEncrypted),
     latest_email_log: latestEmailLog
       ? {
@@ -189,5 +192,5 @@ echo
 
 echo "Worker logs from last 60 minutes (delivery-related)"
 compose logs --since=60m worker 2>/dev/null | grep -E \
-  'worker_started|scanner_started|scanner_found_candidates|recovery_candidate_order|delivery_attempt_start|delivery_recipient_source|resend_provider_selected|resend_send_start|resend_send_success|delivery_failure_reason|EMAIL_DECRYPTION_SUCCESS|EMAIL_DECRYPTION_FAILED|EMAIL_JOB_CREATED|EMAIL_TRIGGERED|EMAIL_SKIPPED_REASON|delivery_email_failed|unsafe_live_email_recipient_internal_inbox|customer_email|payment-confirmation|vault|resend' \
+  'worker_started|scanner_started|scanner_found_candidates|recovery_candidate_order|EMAIL_JOB_ENQUEUED|EMAIL_JOB_CONSUMED|EMAIL_HANDLER_EXECUTED|delivery_attempt_start|delivery_recipient_source|resend_provider_selected|resend_send_start|resend_send_success|delivery_failure_reason|EMAIL_DECRYPTION_SUCCESS|EMAIL_DECRYPTION_FAILED|EMAIL_JOB_CREATED|EMAIL_TRIGGERED|EMAIL_SKIPPED_REASON|delivery_email_failed|unsafe_live_email_recipient_internal_inbox|customer_email|payment-confirmation|vault|resend' \
   || echo "No matching worker delivery logs found in the last 60 minutes."

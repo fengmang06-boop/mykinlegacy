@@ -38,6 +38,7 @@ export default async function AdminOrdersPage({
             "Fulfillment",
             "Assets",
             "Vault",
+            "Customer PII",
             "Meaning",
             "Total",
             "Status page"
@@ -52,6 +53,12 @@ export default async function AdminOrdersPage({
               order.expected_asset_count || order.asset_count
             }`,
             <StatusPill key="vault" value={order.download_ready ? "ready" : "not ready"} />,
+            [
+              `row=${order.customer_pii_status.present ? "present" : "missing"}`,
+              `format=${order.customer_pii_status.payload_format}`,
+              `decryptable=${order.customer_pii_status.decryptable ? "yes" : "no"}`,
+              `order_id=${order.customer_pii_status.order_id_matches ? "match" : "mismatch"}`
+            ].join("; "),
             <StatusPill key="meaning" value={order.meaning_profile ? "attached" : "missing"} />,
             order.total,
             <Link key="status" href={`/order-status/${order.order_number}`}>

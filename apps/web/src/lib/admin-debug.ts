@@ -1,4 +1,4 @@
-import { createHash, timingSafeEqual } from "node:crypto";
+import { createDecipheriv, createHash, timingSafeEqual } from "node:crypto";
 
 import { prisma } from "@ai-heritage/database";
 
@@ -24,8 +24,16 @@ export interface AdminOrderSummary {
   generated_asset_count: number;
   download_ready: boolean;
   email_log_count: number;
+  customer_pii_status: AdminCustomerPiiStatus;
   meaning_profile: AdminMeaningProfileSummary | null;
   collection_content_status: AdminCollectionContentStatus;
+}
+
+export interface AdminCustomerPiiStatus {
+  present: boolean;
+  payload_format: "encrypted" | "placeholder" | "malformed" | "missing";
+  decryptable: boolean;
+  order_id_matches: boolean;
 }
 
 export interface AdminCollectionContentStatus {
@@ -119,6 +127,12 @@ export async function getRecentOrders(): Promise<AdminOrderSummary[]> {
       assets: { select: { id: true } },
       downloadTokens: { select: { status: true } },
       emailLogs: { select: { id: true } },
+      orderCustomerPii: {
+        select: {
+          orderId: true,
+          emailEncrypted: true
+        }
+      },
       generationManifests: {
         select: {
           expectedAssetsJson: true,
@@ -147,6 +161,7 @@ export async function getRecentOrders(): Promise<AdminOrderSummary[]> {
       generated_asset_count: generatedAssets.length,
       download_ready: order.downloadTokens.some((token) => token.status === "active"),
       email_log_count: order.emailLogs.length,
+      customer_pii_status: summarizeCustomerPii(order.id, order.orderCustomerPii),
       meaning_profile: summarizeMeaningProfile(manifest?.optionalAssetsJson),
       collection_content_status: summarizeCollectionContentStatus(manifest?.optionalAssetsJson)
     };
@@ -303,6 +318,55 @@ function summarizeDeliveryPayload(payload: Record<string, unknown>): string {
     parts.push("vault_link_only=true");
   }
   return parts.length > 0 ? parts.join("; ") : "no sensitive payload exposed";
+}
+
+function summarizeCustomerPii(
+  orderId: string,
+  pii: { orderId: string; emailEncrypted: Buffer | Uint8Array } | null
+): AdminCustomerPiiStatus {
+  return {
+    present: Boolean(pii),
+    payload_format: piiPayloadFormat(pii?.emailEncrypted ?? null),
+    decryptable: decryptableEmailPayload(pii?.emailEncrypted ?? null),
+    order_id_matches: pii?.orderId === orderId
+  };
+}
+
+function piiPayloadFormat(value: Buffer | Uint8Array | null): AdminCustomerPiiStatus["payload_format"] {
+  if (!value) return "missing";
+  const serialized = Buffer.from(value).toString("utf8");
+  if (serialized.startsWith("enc:v1:")) return "encrypted";
+  if (serialized.startsWith("placeholder:v1:")) return "placeholder";
+  return "malformed";
+}
+
+function decryptableEmailPayload(value: Buffer | Uint8Array | null): boolean {
+  if (!value || piiPayloadFormat(value) !== "encrypted") return false;
+  const [, , ivBase64, tagBase64, ciphertextBase64] = Buffer.from(value).toString("utf8").split(":");
+  const rawKey = process.env.CUSTOMER_PII_ENCRYPTION_KEY ?? process.env.PII_ENCRYPTION_KEY;
+  if (
+    !rawKey ||
+    rawKey === "disabled" ||
+    rawKey === "replace_me" ||
+    rawKey.startsWith("replace_with_") ||
+    !ivBase64 ||
+    !tagBase64 ||
+    !ciphertextBase64
+  ) {
+    return false;
+  }
+  try {
+    const key = createHash("sha256").update(rawKey).digest();
+    const decipher = createDecipheriv("aes-256-gcm", key, Buffer.from(ivBase64, "base64url"));
+    decipher.setAuthTag(Buffer.from(tagBase64, "base64url"));
+    Buffer.concat([
+      decipher.update(Buffer.from(ciphertextBase64, "base64url")),
+      decipher.final()
+    ]).toString("utf8");
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 function summarizeMeaningProfile(optionalAssetsJson: unknown): AdminMeaningProfileSummary | null {

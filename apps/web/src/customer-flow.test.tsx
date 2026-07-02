@@ -67,6 +67,13 @@ describe("customer frontend flow", () => {
     expect(source).not.toContain("price_cents");
   });
 
+  it("confirm flow sends delivery email into order creation payload", async () => {
+    const source = await readFile(join(testDir, "components/confirm-flow.tsx"), "utf8");
+
+    expect(source).toContain("customer_email: email");
+    expect(source).toContain("Delivery email");
+  });
+
   it("API client sends Idempotency-Key on interview answer submit", async () => {
     const fetchMock = vi.fn(async () => ({
       ok: true,

@@ -3,6 +3,7 @@ import { ulid } from "ulid";
 
 import { ApiException } from "../common/api-error";
 import {
+  decryptEmailFromStorageForVerification,
   hashEmail,
   encryptEmailForStorageStrict,
   isCustomerPiiEncryptionConfigured,
@@ -29,7 +30,10 @@ type OrdersClient = {
   };
   orderItem: { create: (args: unknown) => Promise<unknown> };
   orderInput: { create: (args: unknown) => Promise<unknown> };
-  orderCustomerPii: { create: (args: unknown) => Promise<unknown> };
+  orderCustomerPii: {
+    create: (args: unknown) => Promise<unknown>;
+    findUnique: (args: unknown) => Promise<OrderCustomerPiiRecord | null>;
+  };
   houseIdentityVersion: { findUnique: (args: unknown) => Promise<HouseIdentityVersionRecord | null> };
   consentRecord: {
     create: (args: unknown) => Promise<unknown>;
@@ -76,6 +80,12 @@ interface ConsentRecord {
   heritageDisclaimerAccepted: boolean;
   aiGenerationConsent: boolean;
   emailDeliveryConsent: boolean;
+}
+
+interface OrderCustomerPiiRecord {
+  orderId: string;
+  emailEncrypted: Buffer | Uint8Array | null;
+  emailHash: string | null;
 }
 
 interface OrderGenerationRepository {
@@ -232,6 +242,14 @@ export class OrdersService {
           createdAt: timestamp,
           updatedAt: timestamp
         }
+      });
+      const persistedPii = await transaction.orderCustomerPii.findUnique({
+        where: { orderId: createdOrder.id }
+      });
+      this.assertPersistedCustomerEmailPii({
+        pii: persistedPii,
+        orderId: createdOrder.id,
+        customerEmailHash
       });
 
       return createdOrder;
@@ -468,6 +486,32 @@ export class OrdersService {
         customer_email_hash: customerEmailHash
       });
       throwCustomerEmailEncryptionError("Customer email encryption failed before order creation.");
+    }
+  }
+
+  private assertPersistedCustomerEmailPii(input: {
+    pii: OrderCustomerPiiRecord | null;
+    orderId: string;
+    customerEmailHash: string;
+  }) {
+    const emailEncrypted = toBuffer(input.pii?.emailEncrypted ?? null);
+    if (
+      !input.pii ||
+      input.pii.orderId !== input.orderId ||
+      input.pii.emailHash !== input.customerEmailHash ||
+      !isValidEncryptedEmailPayload(emailEncrypted) ||
+      !decryptEmailFromStorageForVerification(emailEncrypted)
+    ) {
+      this.logger.error("ORDER_REJECTED_INVALID_EMAIL", {
+        reason: "customer_pii_post_write_verification_failed",
+        order_id: input.orderId,
+        customer_email_hash: input.customerEmailHash,
+        customer_pii_row_exists: Boolean(input.pii),
+        pii_order_id_matches: input.pii?.orderId === input.orderId,
+        encrypted_payload_format: isValidEncryptedEmailPayload(emailEncrypted) ? "enc:v1" : "invalid",
+        customer_email_decryptable: Boolean(decryptEmailFromStorageForVerification(emailEncrypted))
+      });
+      throwCustomerEmailEncryptionError("Customer email PII was not persisted correctly for this order.");
     }
   }
 
@@ -829,6 +873,11 @@ function throwCustomerEmailEncryptionError(message: string): never {
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     affectedField: "customer_email"
   });
+}
+
+function toBuffer(value: Buffer | Uint8Array | null): Buffer | null {
+  if (!value) return null;
+  return Buffer.isBuffer(value) ? value : Buffer.from(value);
 }
 
 function createOrderNumber(): string {

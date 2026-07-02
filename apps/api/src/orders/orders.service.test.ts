@@ -25,7 +25,8 @@ describe("OrdersService", () => {
 
   it("creates pending order using database package price", async () => {
     process.env.CUSTOMER_PII_ENCRYPTION_KEY = "test-customer-pii-key";
-    const service = new OrdersService(createPrismaServiceMock());
+    const prismaService = createPrismaServiceMock();
+    const service = new OrdersService(prismaService);
     const result = await service.createOrder(validOrderBody());
 
     expect(result.amount.total_cents).toBe(4900);
@@ -35,6 +36,26 @@ describe("OrdersService", () => {
     expect(JSON.stringify(result)).not.toContain("customer@example.com");
     expect(JSON.stringify(result)).not.toContain("storage_key");
     expect(JSON.stringify(result)).not.toContain("prompt");
+    expect(prismaService.__state.orderCustomerPiiRows).toHaveLength(1);
+    expect(prismaService.__state.orderCustomerPiiRows[0]).toMatchObject({
+      orderId: "01H00000000000000000000020",
+      emailHash: "e233d4a29013e9d87150c6237c6777bedf379ebf1acdc5d6126fec7e8bb74fb5"
+    });
+    expect(
+      Buffer.from(prismaService.__state.orderCustomerPiiRows[0]?.emailEncrypted as Buffer)
+        .toString("utf8")
+        .startsWith("enc:v1:")
+    ).toBe(true);
+    delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
+  });
+
+  it("rejects order creation if customer PII cannot be read back after write", async () => {
+    process.env.CUSTOMER_PII_ENCRYPTION_KEY = "test-customer-pii-key";
+    const service = new OrdersService(createPrismaServiceMock({ piiReadBackMissing: true }));
+
+    await expect(service.createOrder(validOrderBody())).rejects.toMatchObject({
+      errorCode: "customer_pii_encryption_not_configured"
+    });
     delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
   });
 
@@ -299,7 +320,9 @@ function validOrderBody() {
   };
 }
 
-function createPrismaServiceMock(): PrismaService {
+function createPrismaServiceMock(options: { piiReadBackMissing?: boolean } = {}): PrismaService & {
+  __state: { orderCustomerPiiRows: Array<Record<string, unknown>> };
+} {
   const product = {
     id: "01H00000000000000000000010",
     code: "family_legacy_collection",
@@ -326,14 +349,27 @@ function createPrismaServiceMock(): PrismaService {
       house_id: "01H00000000000000000000001"
     }
   };
+  const state = { orderCustomerPiiRows: [] as Array<Record<string, unknown>> };
   const transactionClient = {
     order: { create: async () => order },
     orderItem: { create: async () => ({}) },
     orderInput: { create: async () => ({}) },
-    orderCustomerPii: { create: async () => ({}) }
+    orderCustomerPii: {
+      create: async (args: { data: Record<string, unknown> }) => {
+        state.orderCustomerPiiRows.push(args.data);
+        return args.data;
+      },
+      findUnique: async (args: { where: { orderId: string } }) => {
+        if (options.piiReadBackMissing) return null;
+        return (
+          state.orderCustomerPiiRows.find((row) => row.orderId === args.where.orderId) ?? null
+        );
+      }
+    }
   };
 
   return {
+    __state: state,
     db: {
       product: { findUnique: async () => product },
       order: { findUnique: async () => order },
@@ -353,7 +389,9 @@ function createPrismaServiceMock(): PrismaService {
       $transaction: async <T>(handler: (client: typeof transactionClient) => Promise<T>) =>
         handler(transactionClient)
     }
-  } as unknown as PrismaService;
+  } as unknown as PrismaService & {
+    __state: { orderCustomerPiiRows: Array<Record<string, unknown>> };
+  };
 }
 
 function createOrchestrationRepository(

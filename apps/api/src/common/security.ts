@@ -1,4 +1,4 @@
-import { createCipheriv, createHash, randomBytes } from "node:crypto";
+import { createCipheriv, createDecipheriv, createHash, randomBytes } from "node:crypto";
 
 export function sha256(value: string): string {
   return createHash("sha256").update(value).digest("hex");
@@ -56,6 +56,39 @@ export function isValidEncryptedEmailPayload(value: Buffer | null | undefined): 
   }
   const [, , ivBase64, tagBase64, ciphertextBase64] = parts;
   return [ivBase64, tagBase64, ciphertextBase64].every(isBase64UrlSegment);
+}
+
+export function decryptEmailFromStorageForVerification(
+  value: Buffer | null | undefined
+): string | null {
+  if (!value) {
+    return null;
+  }
+  if (!isValidEncryptedEmailPayload(value)) {
+    return null;
+  }
+  const rawKey = process.env.CUSTOMER_PII_ENCRYPTION_KEY ?? process.env.PII_ENCRYPTION_KEY;
+  if (!rawKey || !isCustomerPiiEncryptionConfigured(process.env)) {
+    return null;
+  }
+
+  const encrypted = Buffer.from(value);
+  const [, , ivBase64, tagBase64, ciphertextBase64] = encrypted.toString("utf8").split(":");
+  if (!ivBase64 || !tagBase64 || !ciphertextBase64) {
+    return null;
+  }
+
+  try {
+    const key = createHash("sha256").update(rawKey).digest();
+    const decipher = createDecipheriv("aes-256-gcm", key, Buffer.from(ivBase64, "base64url"));
+    decipher.setAuthTag(Buffer.from(tagBase64, "base64url"));
+    return Buffer.concat([
+      decipher.update(Buffer.from(ciphertextBase64, "base64url")),
+      decipher.final()
+    ]).toString("utf8");
+  } catch {
+    return null;
+  }
 }
 
 export function isCustomerPiiEncryptionConfigured(
