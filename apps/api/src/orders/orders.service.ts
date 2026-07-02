@@ -1,11 +1,12 @@
-import { HttpStatus, Inject, Injectable, Optional } from "@nestjs/common";
+import { HttpStatus, Inject, Injectable, Logger, Optional } from "@nestjs/common";
 import { ulid } from "ulid";
 
 import { ApiException } from "../common/api-error";
 import {
   hashEmail,
-  encryptEmailForStorage,
-  isCustomerPiiEncryptionConfigured
+  encryptEmailForStorageStrict,
+  isCustomerPiiEncryptionConfigured,
+  isValidEncryptedEmailPayload
 } from "../common/security";
 import {
   optionalBoolean,
@@ -113,6 +114,7 @@ interface OrderArtifactRecord {
 
 @Injectable()
 export class OrdersService {
+  private readonly logger = new Logger(OrdersService.name);
   private readonly prisma: OrdersClient;
 
   constructor(
@@ -136,7 +138,8 @@ export class OrdersService {
       "identity_version_id"
     );
     const customerEmail = validateEmail(requireString(data, "customer_email"), "customer_email");
-    assertCustomerEmailCanBeEncrypted();
+    const customerEmailHash = hashEmail(customerEmail);
+    const encryptedCustomerEmail = this.encryptCustomerEmailOrThrow(customerEmail, customerEmailHash);
     const product = await this.findProductWithPackage(productCode, packageCode);
     const identityVersion = await this.findIdentityVersion(identityVersionId, houseId);
     const productPackage = product.packages[0];
@@ -222,8 +225,8 @@ export class OrdersService {
         data: {
           id: ulid(),
           orderId: createdOrder.id,
-          emailEncrypted: encryptEmailForStorage(customerEmail),
-          emailHash: hashEmail(customerEmail),
+          emailEncrypted: encryptedCustomerEmail,
+          emailHash: customerEmailHash,
           nameEncrypted: null,
           billingCountry: null,
           createdAt: timestamp,
@@ -434,6 +437,38 @@ export class OrdersService {
       });
     }
     return version;
+  }
+
+  private encryptCustomerEmailOrThrow(customerEmail: string, customerEmailHash: string): Buffer {
+    if (!isCustomerPiiEncryptionConfigured()) {
+      this.logger.error("ORDER_REJECTED_INVALID_EMAIL", {
+        reason: "customer_pii_encryption_not_configured",
+        customer_email_hash: customerEmailHash
+      });
+      throwCustomerEmailEncryptionError("CUSTOMER_PII_ENCRYPTION_KEY must be configured before creating paid orders.");
+    }
+
+    try {
+      const encrypted = encryptEmailForStorageStrict(customerEmail);
+      if (!isValidEncryptedEmailPayload(encrypted)) {
+        throw new Error("invalid_encrypted_email_payload");
+      }
+      this.logger.log("EMAIL_ENCRYPTION_SUCCESS", {
+        customer_email_hash: customerEmailHash,
+        encrypted_payload_format: "enc:v1"
+      });
+      return encrypted;
+    } catch (error) {
+      this.logger.error("EMAIL_ENCRYPTION_FAILED", {
+        reason: error instanceof Error ? error.message : "customer_email_encryption_failed",
+        customer_email_hash: customerEmailHash
+      });
+      this.logger.error("ORDER_REJECTED_INVALID_EMAIL", {
+        reason: "customer_email_encryption_failed",
+        customer_email_hash: customerEmailHash
+      });
+      throwCustomerEmailEncryptionError("Customer email encryption failed before order creation.");
+    }
   }
 
   private async getOrderArtifactContext(orderNumber: string) {
@@ -786,14 +821,10 @@ function serializeOrder(order: OrderRecord) {
   };
 }
 
-function assertCustomerEmailCanBeEncrypted(): void {
-  if (isCustomerPiiEncryptionConfigured()) {
-    return;
-  }
-
+function throwCustomerEmailEncryptionError(message: string): never {
   throw new ApiException({
     errorCode: "customer_pii_encryption_not_configured",
-    message: "CUSTOMER_PII_ENCRYPTION_KEY must be configured before creating paid orders.",
+    message,
     userMessage: "We could not securely prepare delivery for this order. Please contact support.",
     status: HttpStatus.INTERNAL_SERVER_ERROR,
     affectedField: "customer_email"

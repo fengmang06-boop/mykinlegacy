@@ -881,6 +881,8 @@ function inputLogDelivery(
       | "resend_provider_selected"
       | "resend_send_start"
       | "resend_send_success"
+      | "EMAIL_DECRYPTION_SUCCESS"
+      | "EMAIL_DECRYPTION_FAILED"
       | "delivery_failure_reason";
     extra?: Record<string, unknown>;
   },
@@ -910,6 +912,8 @@ function inputLogRecoveryDelivery(
       | "resend_provider_selected"
       | "resend_send_start"
       | "resend_send_success"
+      | "EMAIL_DECRYPTION_SUCCESS"
+      | "EMAIL_DECRYPTION_FAILED"
       | "delivery_failure_reason";
     extra?: Record<string, unknown>;
   },

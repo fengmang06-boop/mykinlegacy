@@ -134,6 +134,7 @@ describe("vault delivery email", () => {
     expect(emailModule.state.providerEnv).toMatchObject({ EMAIL_PROVIDER: ' "resend" ' });
     expect(logs).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({ message: "EMAIL_DECRYPTION_SUCCESS" }),
         expect.objectContaining({ message: "EMAIL_JOB_CREATED" }),
         expect.objectContaining({ message: "EMAIL_TRIGGERED" })
       ])
@@ -311,6 +312,10 @@ describe("vault delivery email", () => {
     expect(logs).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
+          message: "EMAIL_DECRYPTION_FAILED",
+          extra: expect.objectContaining({ reason: "customer_email_not_decryptable" })
+        }),
+        expect.objectContaining({
           message: "delivery_failure_reason",
           extra: expect.objectContaining({ reason: "customer_email_not_decryptable" })
         })
@@ -342,9 +347,53 @@ describe("vault delivery email", () => {
     expect(result).toMatchObject({ status: "failed", recipient_source: "unavailable" });
     expect(emailModule.state.lastInput).toBeNull();
   });
+
+  it("logs missing customer email as a visible delivery failure", async () => {
+    const db = createDb({
+      emailEncrypted: null,
+      emailHash: null
+    });
+    const emailModule = createEmailModule({ providerCode: "resend" });
+    const logs: unknown[] = [];
+
+    const result = await sendVaultReadyEmail({
+      db: db as never,
+      emailModule: emailModule as never,
+      order_id: "order_1",
+      order_number: "AHL-TEST",
+      download_token_id: "download_token_1",
+      raw_token_for_email_only: "raw-token-once",
+      expires_at: "2026-07-29T00:00:00.000Z",
+      env: {
+        CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+        EMAIL_PROVIDER: "resend",
+        EMAIL_DELIVERY_TEST_MODE: "false"
+      },
+      log: (entry) => logs.push(entry)
+    });
+
+    expect(result).toMatchObject({ status: "failed", recipient_source: "unavailable" });
+    expect(emailModule.state.lastInput).toBeNull();
+    expect(db.state.emailLogs[0]).toMatchObject({
+      provider: "resend",
+      status: "failed",
+      errorMessage: "customer_email_missing",
+      payloadJson: expect.objectContaining({
+        email_delivery_status: "failed_missing_email"
+      })
+    });
+    expect(logs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          message: "EMAIL_DECRYPTION_FAILED",
+          extra: expect.objectContaining({ reason: "customer_email_missing" })
+        })
+      ])
+    );
+  });
 });
 
-function createDb(input: { emailEncrypted: Buffer; emailHash: string }) {
+function createDb(input: { emailEncrypted: Buffer | null; emailHash: string | null }) {
   const state = { emailLogs: [] as unknown[] };
   return {
     state,

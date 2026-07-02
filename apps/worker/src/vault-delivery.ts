@@ -42,6 +42,8 @@ export interface VaultDeliveryInput {
       | "resend_provider_selected"
       | "resend_send_start"
       | "resend_send_success"
+      | "EMAIL_DECRYPTION_SUCCESS"
+      | "EMAIL_DECRYPTION_FAILED"
       | "delivery_failure_reason";
     extra?: Record<string, unknown>;
   }) => void;
@@ -66,6 +68,31 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
     }
   });
   const recipient = await resolveRecipient(input.db, input.order_id, env);
+  if (recipient.source === "customer_pii" && recipient.email) {
+    input.log?.({
+      level: "info",
+      message: "EMAIL_DECRYPTION_SUCCESS",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        intended_email_hash: recipient.intended_email_hash,
+        raw_token_omitted: true
+      }
+    });
+  }
+  if (recipient.source === "customer_pii" && !recipient.email) {
+    input.log?.({
+      level: "error",
+      message: "EMAIL_DECRYPTION_FAILED",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        reason: recipient.reason ?? "customer_email_not_decryptable",
+        intended_email_hash: recipient.intended_email_hash,
+        raw_token_omitted: true
+      }
+    });
+  }
   if (!recipient.email) {
     input.log?.({
       level: "warn",
@@ -340,8 +367,28 @@ async function resolveRecipient(
   }
 
   const row = await db.orderCustomerPii.findUnique({ where: { orderId } });
+  if (!row) {
+    return {
+      email: null,
+      email_hash: null,
+      intended_email_hash: null,
+      source: "customer_pii",
+      test_mode: false,
+      reason: "customer_email_missing"
+    };
+  }
   const emailHash = stringField(row, "emailHash");
   const encrypted = bufferField(row, "emailEncrypted");
+  if (!emailHash || !encrypted) {
+    return {
+      email: null,
+      email_hash: emailHash,
+      intended_email_hash: emailHash,
+      source: "customer_pii",
+      test_mode: false,
+      reason: "customer_email_missing"
+    };
+  }
   const email = encrypted ? decryptEmail(encrypted, env) : null;
   if (email && isInternalDeliveryInbox(email, testRecipient)) {
     return {
@@ -403,10 +450,7 @@ async function createFailedEmailLog(input: {
       payloadJson: {
         order_number: input.order_number,
         download_token_id: input.download_token_id,
-        email_delivery_status:
-          input.error_message === "customer_email_not_decryptable"
-            ? "failed_decryption"
-            : "failed",
+        email_delivery_status: emailDeliveryFailureStatus(input.error_message),
         recipient_source: input.recipient_source,
         delivery_test_mode: input.delivery_test_mode,
         raw_token_present: false,
@@ -417,6 +461,16 @@ async function createFailedEmailLog(input: {
     }
   });
   return id;
+}
+
+function emailDeliveryFailureStatus(errorMessage: string): "failed" | "failed_decryption" | "failed_missing_email" {
+  if (errorMessage === "customer_email_missing") {
+    return "failed_missing_email";
+  }
+  if (errorMessage === "customer_email_not_decryptable") {
+    return "failed_decryption";
+  }
+  return "failed";
 }
 
 function providerCodeForFailure(env: Record<string, string | undefined>): "mock" | "resend" | "sendgrid" | "ses" {

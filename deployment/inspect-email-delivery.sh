@@ -189,5 +189,5 @@ echo
 
 echo "Worker logs from last 60 minutes (delivery-related)"
 compose logs --since=60m worker 2>/dev/null | grep -E \
-  'worker_started|scanner_started|scanner_found_candidates|recovery_candidate_order|delivery_attempt_start|delivery_recipient_source|resend_provider_selected|resend_send_start|resend_send_success|delivery_failure_reason|EMAIL_JOB_CREATED|EMAIL_TRIGGERED|EMAIL_SKIPPED_REASON|delivery_email_failed|unsafe_live_email_recipient_internal_inbox|customer_email|payment-confirmation|vault|resend' \
+  'worker_started|scanner_started|scanner_found_candidates|recovery_candidate_order|delivery_attempt_start|delivery_recipient_source|resend_provider_selected|resend_send_start|resend_send_success|delivery_failure_reason|EMAIL_DECRYPTION_SUCCESS|EMAIL_DECRYPTION_FAILED|EMAIL_JOB_CREATED|EMAIL_TRIGGERED|EMAIL_SKIPPED_REASON|delivery_email_failed|unsafe_live_email_recipient_internal_inbox|customer_email|payment-confirmation|vault|resend' \
   || echo "No matching worker delivery logs found in the last 60 minutes."

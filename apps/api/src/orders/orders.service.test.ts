@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 
 import { ApiException } from "../common/api-error";
 import type { PrismaService } from "../database/prisma.service";
@@ -46,6 +46,21 @@ describe("OrdersService", () => {
     await expect(service.createOrder(validOrderBody())).rejects.toMatchObject({
       errorCode: "customer_pii_encryption_not_configured"
     });
+  });
+
+  it("fails before any order insert when email encryption is unavailable", async () => {
+    delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
+    delete process.env.PII_ENCRYPTION_KEY;
+    const prismaService = createPrismaServiceMock() as unknown as {
+      db: { $transaction: ReturnType<typeof vi.fn> };
+    };
+    prismaService.db.$transaction = vi.fn();
+    const service = new OrdersService(prismaService as unknown as PrismaService);
+
+    await expect(service.createOrder(validOrderBody())).rejects.toMatchObject({
+      errorCode: "customer_pii_encryption_not_configured"
+    });
+    expect(prismaService.db.$transaction).not.toHaveBeenCalled();
   });
 
   it("gets order status without download or manifest", async () => {
