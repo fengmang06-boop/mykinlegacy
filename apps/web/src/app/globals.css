@@ -2863,7 +2863,7 @@ textarea {
 }
 
 .premium-page .collection-documents {
-  gap: 14px;
+  gap: 16px;
   border-color: rgba(201, 162, 74, 0.38);
   background:
     radial-gradient(circle at 0% 0%, rgba(201, 162, 74, 0.11), transparent 14rem),
@@ -2872,23 +2872,78 @@ textarea {
 
 .premium-page .collection-document-list {
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
 }
 
-.premium-page .collection-document-list details,
+.premium-page .collection-document-card,
 .premium-page .collection-symbol-guide-item {
   border: 1px solid rgba(201, 162, 74, 0.16);
-  border-radius: 12px;
-  padding: 13px;
+  border-radius: 14px;
+  padding: 0;
   background: rgba(246, 235, 212, 0.04);
+  overflow: hidden;
 }
 
-.premium-page .collection-document-list summary {
-  font-size: 14px;
+.premium-page .collection-document-card[open] {
+  grid-column: 1 / -1;
+  border-color: rgba(201, 162, 74, 0.34);
+  background:
+    linear-gradient(135deg, rgba(201, 162, 74, 0.1), rgba(246, 235, 212, 0.035)),
+    rgba(10, 9, 8, 0.42);
+}
+
+.premium-page .collection-document-card summary {
+  display: grid;
+  gap: 7px;
+  width: auto;
+  padding: 14px;
+  list-style: none;
+}
+
+.premium-page .collection-document-card summary::-webkit-details-marker {
+  display: none;
+}
+
+.premium-page .document-card-title {
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 24px;
+  font-weight: 650;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.premium-page .document-card-description {
+  color: var(--premium-warm);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.premium-page .document-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 2px;
+}
+
+.premium-page .document-card-meta span {
+  border: 1px solid rgba(201, 162, 74, 0.22);
+  border-radius: 999px;
+  padding: 5px 8px;
+  color: var(--premium-gold);
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.02em;
+  text-transform: none;
 }
 
 .premium-page .collection-document-list p {
   margin: 0;
+  padding: 0 14px 14px;
   white-space: pre-line;
 }
 
@@ -2908,6 +2963,7 @@ textarea {
 .premium-page .collection-symbol-guide-item {
   display: grid;
   gap: 6px;
+  padding: 13px;
 }
 
 .premium-page .collection-symbol-guide-item strong {
@@ -2916,6 +2972,27 @@ textarea {
 
 .premium-page .collection-symbol-guide-item small {
   display: block;
+}
+
+.premium-page .vault-download-placeholders {
+  gap: 12px;
+  border-style: dashed;
+}
+
+.premium-page .vault-download-placeholders div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.premium-page .vault-download-placeholders button {
+  cursor: not-allowed;
+  border: 1px solid rgba(201, 162, 74, 0.28);
+  border-radius: 999px;
+  padding: 10px 14px;
+  background: rgba(246, 235, 212, 0.04);
+  color: rgba(246, 235, 212, 0.62);
+  font-weight: 800;
 }
 
 .premium-page .meaning-chip-list,
@@ -3307,6 +3384,7 @@ textarea {
   }
 
   .premium-page .vault-meaning-two-column,
+  .premium-page .collection-document-list,
   .premium-page .meaning-chip-list,
   .premium-page .symbol-rationale-list,
   .premium-page .included-items-grid {
@@ -3326,6 +3404,34 @@ textarea {
 
   .premium-page .vault-meaning-card summary {
     font-size: 12px;
+  }
+
+  .premium-page .collection-documents {
+    gap: 12px;
+  }
+
+  .premium-page .collection-document-card summary {
+    padding: 12px;
+  }
+
+  .premium-page .document-card-title {
+    font-size: 22px;
+  }
+
+  .premium-page .document-card-description {
+    font-size: 13px;
+  }
+
+  .premium-page .collection-document-list p {
+    padding: 0 12px 12px;
+  }
+
+  .premium-page .vault-download-placeholders div {
+    display: grid;
+  }
+
+  .premium-page .vault-download-placeholders button {
+    width: 100%;
   }
 
   .premium-page .summary-list {

@@ -11,6 +11,8 @@ const includedItems = [
   "Private Vault Access"
 ];
 
+const futureDownloads = ["Download PDF", "Download Collection ZIP"];
+
 interface VaultMeaningProps {
   meaningProfile?: VaultMeaningProfile | null;
   collectionContent?: VaultCollectionContent | null;
@@ -28,18 +30,24 @@ export function PrivateVaultPreview({
   return (
     <section className="private-vault-preview" aria-label="Private vault collection preview">
       <div className="vault-preview-header">
-        <p className="eyebrow">Collection meaning</p>
-        <h2>{vaultReady ? "Inside your private vault" : "The keepsake taking shape"}</h2>
+        <p className="eyebrow">Private archive</p>
+        <h2>{hasContent ? "Your Private Legacy Vault" : vaultReady ? "Inside your private vault" : "The keepsake taking shape"}</h2>
         <p>
-          A simple preview of the family meaning, symbols, and story that shaped this private
-          collection.
+          {hasContent
+            ? "Your collection is ready to be opened as a set of private archive documents."
+            : "A simple preview of the family meaning, symbols, and story that shaped this private collection."}
         </p>
       </div>
 
-      {hasMeaning ? (
+      {hasContent ? (
         <>
           <VaultMeaningSummary meaningProfile={meaningProfile} />
           <CollectionDocuments collectionContent={collectionContent} />
+          <FutureDownloadPlaceholders />
+        </>
+      ) : hasMeaning ? (
+        <>
+          <VaultMeaningSummary meaningProfile={meaningProfile} />
           <MeaningThemeList meaningProfile={meaningProfile} />
           <SymbolRationaleList meaningProfile={meaningProfile} />
           <div className="vault-meaning-two-column">
@@ -65,61 +73,107 @@ export function CollectionDocuments({ collectionContent }: VaultMeaningProps) {
   const documents = [
     {
       title: "House Meaning Summary",
+      description: "A short opening explanation of what this collection represents.",
       body: collectionContent.house_meaning_summary
     },
     {
+      title: "Symbol Guide",
+      description: "The symbols chosen for your family and what each one carries.",
+      body: null
+    },
+    {
       title: "Family Story",
+      description: "A warm family narrative shaped from the meaning profile.",
       body: collectionContent.family_story
     },
     {
-      title: "Certificate Text",
+      title: "Heritage Certificate Text",
+      description: "Ceremonial wording for the private keepsake certificate.",
       body: collectionContent.certificate_text
     },
     {
       title: "Collection Letter",
+      description: "A short opening letter that can be used as a gift message.",
       body: collectionContent.collection_letter
     },
     {
       title: "Design Basis",
+      description: "Why the symbols, tone, and archive style were selected.",
       body: collectionContent.design_basis
+    },
+    {
+      title: "Important Note",
+      description: "The clear symbolic boundary for this private keepsake.",
+      body: collectionContent.boundary_statement ?? defaultBoundaryStatement
     }
-  ].filter((item): item is { title: string; body: string } => Boolean(cleanText(item.body)));
+  ].filter((item) => item.title === "Symbol Guide" || Boolean(cleanText(item.body)));
 
   return (
-    <article className="vault-meaning-card collection-documents">
-      <span>Collection Documents</span>
-      <h3>Written for your private archive</h3>
+    <article className="vault-meaning-card collection-documents" aria-label="Vault Documents">
+      <span>Vault Documents</span>
+      <h3>Open the pieces of your collection</h3>
       <p>
-        These are the first customer-readable sections prepared from the family meaning profile.
+        Each document is ready to read here first. Downloadable files will follow in the next
+        delivery step.
       </p>
       <div className="collection-document-list">
         {documents.map((document, index) => (
-          <details key={document.title} open={index === 0}>
-            <summary>{document.title}</summary>
-            <p>{document.body}</p>
+          <details className="collection-document-card" key={document.title} open={index === 0}>
+            <summary>
+              <span className="document-card-title">{document.title}</span>
+              <span className="document-card-description">{document.description}</span>
+              <span className="document-card-meta">
+                <span>Ready</span>
+                <span>Open / Read</span>
+              </span>
+            </summary>
+            {document.title === "Symbol Guide" ? (
+              <SymbolGuideDocument collectionContent={collectionContent} />
+            ) : (
+              <p>{document.body}</p>
+            )}
           </details>
         ))}
       </div>
-      {collectionContent.symbol_guide?.length ? (
-        <section className="collection-symbol-guide" aria-label="Symbol guide">
-          <h4>Symbol Guide</h4>
-          {collectionContent.symbol_guide.map((symbol) => (
-            <div className="collection-symbol-guide-item" key={`${symbol.symbol}-${symbol.meaning}`}>
-              <strong>{cleanText(symbol.symbol) ?? "Symbol"}</strong>
-              <p>{cleanText(symbol.meaning) ?? "A symbolic part of this collection."}</p>
-              <details>
-                <summary>Why it belongs here</summary>
-                <small>{cleanText(symbol.why_chosen) ?? "Selected from the family meaning profile."}</small>
-                <small>
-                  {cleanText(symbol.emotional_relevance) ??
-                    "Included to make the collection feel personal and memorable."}
-                </small>
-              </details>
-            </div>
-          ))}
-        </section>
-      ) : null}
-      <BoundaryStatementNotice boundaryStatement={collectionContent.boundary_statement} />
+    </article>
+  );
+}
+
+function SymbolGuideDocument({ collectionContent }: { collectionContent: VaultCollectionContent }) {
+  if (!collectionContent.symbol_guide?.length) {
+    return <p>The symbol guide will appear here when symbols are attached to the collection.</p>;
+  }
+
+  return (
+    <section className="collection-symbol-guide" aria-label="Symbol guide">
+      {collectionContent.symbol_guide.map((symbol) => (
+        <div className="collection-symbol-guide-item" key={`${symbol.symbol}-${symbol.meaning}`}>
+          <strong>{cleanText(symbol.symbol) ?? "Symbol"}</strong>
+          <p>{cleanText(symbol.meaning) ?? "A symbolic part of this collection."}</p>
+          <small>{cleanText(symbol.why_chosen) ?? "Selected from the family meaning profile."}</small>
+          <small>
+            {cleanText(symbol.emotional_relevance) ??
+              "Included to make the collection feel personal and memorable."}
+          </small>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function FutureDownloadPlaceholders() {
+  return (
+    <article className="vault-meaning-card vault-download-placeholders">
+      <span>Future Downloads</span>
+      <h3>Files will be prepared next</h3>
+      <p>Download files will be available in the next delivery step.</p>
+      <div>
+        {futureDownloads.map((label) => (
+          <button key={label} type="button" disabled>
+            {label}
+          </button>
+        ))}
+      </div>
     </article>
   );
 }
