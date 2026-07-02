@@ -211,7 +211,7 @@ export function DownloadVault({ token }: { token: string }) {
             <div className="file-thumb png" aria-hidden="true" />
             <div>
               <span className="muted">Order Number</span>
-              <h2>{vault.order_number}</h2>
+              <h2 className="vault-order-number">{vault.order_number}</h2>
             </div>
             <div>
               <span className="muted">Expires On</span>

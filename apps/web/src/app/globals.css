@@ -912,7 +912,7 @@ textarea {
 
 .vault-summary {
   display: grid;
-  grid-template-columns: 180px repeat(3, 1fr);
+  grid-template-columns: 88px minmax(320px, 1.55fr) minmax(140px, 0.72fr) minmax(150px, 0.72fr);
   gap: 24px;
   margin-top: -42px;
   padding: 24px;
@@ -926,6 +926,24 @@ textarea {
 .vault-summary h2,
 .vault-summary strong {
   color: var(--cream);
+}
+
+.vault-summary .vault-order-number {
+  max-width: 100%;
+  margin: 4px 0 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  font-size: clamp(24px, 2.45vw, 36px);
+  line-height: 1.02;
+  letter-spacing: 0;
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+  scrollbar-width: none;
+}
+
+.vault-summary .vault-order-number::-webkit-scrollbar {
+  display: none;
 }
 
 .vault-summary .muted {

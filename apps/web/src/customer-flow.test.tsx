@@ -298,6 +298,17 @@ describe("customer frontend flow", () => {
     expect(html).not.toContain("216.128.154.152");
   });
 
+  it("download vault protects long order numbers from ugly hyphen wrapping", async () => {
+    const componentSource = await readFile(join(testDir, "components/download-vault.tsx"), "utf8");
+    const globalStyles = await readFile(join(testDir, "app/globals.css"), "utf8");
+
+    expect(componentSource).toContain('className="vault-order-number"');
+    expect(globalStyles).toContain(".vault-summary .vault-order-number");
+    expect(globalStyles).toContain("white-space: nowrap");
+    expect(globalStyles).toContain("word-break: normal");
+    expect(globalStyles).toContain("overflow-wrap: normal");
+  });
+
   it("payment cancel page renders a branded checkout recovery path", async () => {
     const source = await readFile(join(testDir, "app/payment/cancel/page.tsx"), "utf8");
 

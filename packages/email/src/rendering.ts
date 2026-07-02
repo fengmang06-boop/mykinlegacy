@@ -99,6 +99,7 @@ function renderBrandedDeliveryHtml(variables: Record<string, string>): string {
     '<tr>',
     '<td style="background:#11100d;padding:26px 28px;border-bottom:1px solid rgba(201,162,74,0.45);">',
     '<div style="color:#c9a24a;font-size:12px;letter-spacing:2px;text-transform:uppercase;font-weight:bold;">MyKinLegacy</div>',
+    '<div style="color:#d8c9aa;font-size:11px;letter-spacing:1.6px;text-transform:uppercase;margin-top:4px;">Legacy, Designed.</div>',
     '<div style="color:#f7ead0;font-size:28px;line-height:1.1;font-weight:bold;margin-top:8px;">Your Private Vault Is Ready</div>',
     '<div style="color:#d8c9aa;font-size:14px;line-height:1.6;margin-top:10px;">A private Family Legacy Collection has been prepared for your order.</div>',
     '</td>',
