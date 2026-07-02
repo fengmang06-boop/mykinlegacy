@@ -120,6 +120,7 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
           )}
           <PrivateVaultPreview
             meaningProfile={order?.generation_manifest?.meaning_profile}
+            collectionContent={order?.generation_manifest?.collection_content}
             vaultReady={vaultReady}
           />
           <ul>

@@ -83,6 +83,23 @@ describe("OrdersService", () => {
           boundary_statement:
             "MyKinLegacy creates personalized symbolic keepsakes. It does not provide official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records.",
           validation: { valid: true, quality_flags: [], banned_claims_found: [] }
+        },
+        collection_content: {
+          house_meaning_summary: "A private symbolic keepsake shaped around protection.",
+          symbol_guide: [
+            {
+              symbol: "Oak",
+              meaning: "Strength",
+              why_chosen: "Chosen because the family values protection.",
+              emotional_relevance: "Oak gives the collection a steady family anchor."
+            }
+          ],
+          family_story: "A warm story about protection across generations.",
+          certificate_text: "Presented as a private symbolic keepsake.",
+          collection_letter: "To the family, this collection honors what matters.",
+          design_basis: "The design uses oak as a protective anchor.",
+          boundary_statement:
+            "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record."
         }
       },
       download_ready: true,
@@ -241,6 +258,23 @@ function createOrchestrationRepository(): ConstructorParameters<typeof OrdersSer
             boundary_statement:
               "MyKinLegacy creates personalized symbolic keepsakes. It does not provide official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records.",
             validation: { valid: true, quality_flags: [], banned_claims_found: [] }
+          },
+          collection_content: {
+            house_meaning_summary: "A private symbolic keepsake shaped around protection.",
+            symbol_guide: [
+              {
+                symbol: "Oak",
+                meaning: "Strength",
+                why_chosen: "Chosen because the family values protection.",
+                emotional_relevance: "Oak gives the collection a steady family anchor."
+              }
+            ],
+            family_story: "A warm story about protection across generations.",
+            certificate_text: "Presented as a private symbolic keepsake.",
+            collection_letter: "To the family, this collection honors what matters.",
+            design_basis: "The design uses oak as a protective anchor.",
+            boundary_statement:
+              "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record."
           }
         }
       ]

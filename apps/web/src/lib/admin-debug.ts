@@ -25,6 +25,17 @@ export interface AdminOrderSummary {
   download_ready: boolean;
   email_log_count: number;
   meaning_profile: AdminMeaningProfileSummary | null;
+  collection_content_status: AdminCollectionContentStatus;
+}
+
+export interface AdminCollectionContentStatus {
+  exists: boolean;
+  summary_exists: boolean;
+  symbol_guide_exists: boolean;
+  family_story_exists: boolean;
+  certificate_text_exists: boolean;
+  collection_letter_exists: boolean;
+  design_basis_exists: boolean;
 }
 
 export interface AdminMeaningProfileSummary {
@@ -132,7 +143,8 @@ export async function getRecentOrders(): Promise<AdminOrderSummary[]> {
       generated_asset_count: generatedAssets.length,
       download_ready: order.downloadTokens.some((token) => token.status === "active"),
       email_log_count: order.emailLogs.length,
-      meaning_profile: summarizeMeaningProfile(manifest?.optionalAssetsJson)
+      meaning_profile: summarizeMeaningProfile(manifest?.optionalAssetsJson),
+      collection_content_status: summarizeCollectionContentStatus(manifest?.optionalAssetsJson)
     };
   });
 }
@@ -304,5 +316,22 @@ function summarizeMeaningProfile(optionalAssetsJson: unknown): AdminMeaningProfi
     quality_flags: arrayFromJson(validation.quality_flags).filter(
       (item): item is string => typeof item === "string"
     )
+  };
+}
+
+function summarizeCollectionContentStatus(optionalAssetsJson: unknown): AdminCollectionContentStatus {
+  const attachment = arrayFromJson(optionalAssetsJson).find(
+    (item) => objectFromJson(item).attachment_type === "meaning_engine"
+  );
+  const content = objectFromJson(objectFromJson(attachment).collection_content);
+  const symbolGuide = arrayFromJson(content.symbol_guide);
+  return {
+    exists: Object.keys(content).length > 0,
+    summary_exists: Boolean(stringValue(content.house_meaning_summary)),
+    symbol_guide_exists: symbolGuide.length > 0,
+    family_story_exists: Boolean(stringValue(content.family_story)),
+    certificate_text_exists: Boolean(stringValue(content.certificate_text)),
+    collection_letter_exists: Boolean(stringValue(content.collection_letter)),
+    design_basis_exists: Boolean(stringValue(content.design_basis))
   };
 }

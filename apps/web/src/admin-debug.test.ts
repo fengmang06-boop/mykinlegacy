@@ -52,6 +52,9 @@ describe("admin debug access", () => {
     expect(source).toContain("themes=");
     expect(source).toContain("symbols=");
     expect(source).toContain("boundary=");
+    expect(source).toContain("content=");
+    expect(source).toContain("symbol guide=");
+    expect(source).toContain("certificate=");
     expect(source).toContain("vault=");
     expect(source).toContain("raw vault tokens");
   });

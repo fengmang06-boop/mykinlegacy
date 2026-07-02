@@ -192,11 +192,36 @@ describe("customer frontend flow", () => {
             "MyKinLegacy creates personalized symbolic keepsakes. It does not provide official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records.",
           validation: { valid: true, quality_flags: [], banned_claims_found: [] }
         }}
+        collectionContent={{
+          house_meaning_summary: "A private symbolic keepsake shaped around protection.",
+          symbol_guide: [
+            {
+              symbol: "Oak",
+              meaning: "Strength",
+              why_chosen: "Chosen because the family values protection.",
+              emotional_relevance: "Oak gives the collection a steady family anchor."
+            }
+          ],
+          family_story: "The family story should remember how protection became a shared value.",
+          certificate_text: "Presented as a private symbolic keepsake.",
+          collection_letter: "To the family,\n\nThis collection honors what matters.",
+          design_basis: "The design uses oak as a protective anchor.",
+          boundary_statement:
+            "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record."
+        }}
       />
     );
 
     expect(html).toContain("Your Collection At A Glance");
     expect(html).toContain("Your collection was shaped around protection.");
+    expect(html).toContain("Collection Documents");
+    expect(html).toContain("House Meaning Summary");
+    expect(html).toContain("Family Story");
+    expect(html).toContain("Certificate Text");
+    expect(html).toContain("Collection Letter");
+    expect(html).toContain("Design Basis");
+    expect(html).toContain("Symbol Guide");
+    expect(html).toContain("A private symbolic keepsake shaped around protection.");
     expect(html).toContain("The Meaning Behind This Collection");
     expect(html).toContain("Symbols Chosen for Your Family");
     expect(html).toContain("Why it was chosen");
@@ -209,7 +234,6 @@ describe("customer frontend flow", () => {
     expect(html).toContain("Oak");
     expect(html).toContain("not an official coat of arms");
     expect(html).not.toContain("Meaning Themes");
-    expect(html).not.toContain("Design Basis");
     expect(html).not.toContain("{&quot;");
     expect(html).not.toContain("raw_token");
   });
@@ -222,6 +246,27 @@ describe("customer frontend flow", () => {
       "This collection was completed before the Meaning Engine profile was generated."
     );
     expect(html).toContain("Private Vault Includes");
+  });
+
+  it("vault preview falls back when meaning exists but collection documents are missing", () => {
+    const html = renderToStaticMarkup(
+      <PrivateVaultPreview
+        vaultReady
+        meaningProfile={{
+          source_level: "customer_informed",
+          themes: [{ theme: "Protection", confidence: "high", evidence: "Family value." }],
+          symbols: [{ symbol: "Oak", meaning: "Strength", rationale: "Chosen from input." }],
+          design_rationale: ["Use grounded composition."],
+          story_direction: "A story about protection.",
+          certificate_direction: "A certificate with warmth.",
+          boundary_statement:
+            "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record."
+        }}
+        collectionContent={null}
+      />
+    );
+
+    expect(html).toContain("Documents are being prepared");
   });
 
   it("payment cancel page renders a branded checkout recovery path", async () => {

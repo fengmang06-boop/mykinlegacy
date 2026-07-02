@@ -388,7 +388,8 @@ async function getOrderGenerationSummary(input: {
           expected_assets_count: manifest.expected_assets.length,
           generated_assets_count: manifest.generated_assets.length,
           failed_assets_count: manifest.failed_assets.length,
-          meaning_profile: meaningProfileSummary(manifest.optional_assets)
+          meaning_profile: meaningProfileSummary(manifest.optional_assets),
+          collection_content: collectionContentSummary(manifest.optional_assets)
         }
       : null,
     download_ready: Boolean(token && manifest?.manifest_status === "completed"),
@@ -441,6 +442,32 @@ function meaningProfileSummary(optionalAssets: unknown[] | undefined) {
       quality_flags: stringArray(validation.quality_flags),
       banned_claims_found: stringArray(validation.banned_claims_found)
     }
+  };
+}
+
+function collectionContentSummary(optionalAssets: unknown[] | undefined) {
+  const attachment = (optionalAssets ?? []).find(
+    (item) => isRecord(item) && item.attachment_type === "meaning_engine"
+  );
+  if (!isRecord(attachment)) return null;
+  const content = recordObject(attachment, "collection_content");
+  if (!Object.keys(content).length) return null;
+  return {
+    house_meaning_summary: stringOrNull(content.house_meaning_summary),
+    symbol_guide: recordArray(content.symbol_guide).map((symbol) => {
+      const record = isRecord(symbol) ? symbol : {};
+      return {
+        symbol: stringOrNull(record.symbol),
+        meaning: stringOrNull(record.meaning),
+        why_chosen: stringOrNull(record.why_chosen),
+        emotional_relevance: stringOrNull(record.emotional_relevance)
+      };
+    }),
+    family_story: stringOrNull(content.family_story),
+    certificate_text: stringOrNull(content.certificate_text),
+    collection_letter: stringOrNull(content.collection_letter),
+    design_basis: stringOrNull(content.design_basis),
+    boundary_statement: stringOrNull(content.boundary_statement)
   };
 }
 

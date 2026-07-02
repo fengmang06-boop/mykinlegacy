@@ -1,6 +1,6 @@
 import React from "react";
 
-import type { VaultMeaningProfile } from "../lib/api-client";
+import type { VaultCollectionContent, VaultMeaningProfile } from "../lib/api-client";
 
 const includedItems = [
   "Heritage Certificate",
@@ -13,11 +13,17 @@ const includedItems = [
 
 interface VaultMeaningProps {
   meaningProfile?: VaultMeaningProfile | null;
+  collectionContent?: VaultCollectionContent | null;
   vaultReady?: boolean;
 }
 
-export function PrivateVaultPreview({ meaningProfile, vaultReady = false }: VaultMeaningProps) {
+export function PrivateVaultPreview({
+  meaningProfile,
+  collectionContent,
+  vaultReady = false
+}: VaultMeaningProps) {
   const hasMeaning = hasMeaningProfile(meaningProfile);
+  const hasContent = hasCollectionContent(collectionContent);
 
   return (
     <section className="private-vault-preview" aria-label="Private vault collection preview">
@@ -33,6 +39,7 @@ export function PrivateVaultPreview({ meaningProfile, vaultReady = false }: Vaul
       {hasMeaning ? (
         <>
           <VaultMeaningSummary meaningProfile={meaningProfile} />
+          <CollectionDocuments collectionContent={collectionContent} />
           <MeaningThemeList meaningProfile={meaningProfile} />
           <SymbolRationaleList meaningProfile={meaningProfile} />
           <div className="vault-meaning-two-column">
@@ -46,8 +53,74 @@ export function PrivateVaultPreview({ meaningProfile, vaultReady = false }: Vaul
         <MeaningFallback />
       )}
 
+      {!hasContent && hasMeaning ? <CollectionContentFallback /> : null}
       <VaultIncludedItems />
     </section>
+  );
+}
+
+export function CollectionDocuments({ collectionContent }: VaultMeaningProps) {
+  if (!hasCollectionContent(collectionContent)) return null;
+
+  const documents = [
+    {
+      title: "House Meaning Summary",
+      body: collectionContent.house_meaning_summary
+    },
+    {
+      title: "Family Story",
+      body: collectionContent.family_story
+    },
+    {
+      title: "Certificate Text",
+      body: collectionContent.certificate_text
+    },
+    {
+      title: "Collection Letter",
+      body: collectionContent.collection_letter
+    },
+    {
+      title: "Design Basis",
+      body: collectionContent.design_basis
+    }
+  ].filter((item): item is { title: string; body: string } => Boolean(cleanText(item.body)));
+
+  return (
+    <article className="vault-meaning-card collection-documents">
+      <span>Collection Documents</span>
+      <h3>Written for your private archive</h3>
+      <p>
+        These are the first customer-readable sections prepared from the family meaning profile.
+      </p>
+      <div className="collection-document-list">
+        {documents.map((document, index) => (
+          <details key={document.title} open={index === 0}>
+            <summary>{document.title}</summary>
+            <p>{document.body}</p>
+          </details>
+        ))}
+      </div>
+      {collectionContent.symbol_guide?.length ? (
+        <section className="collection-symbol-guide" aria-label="Symbol guide">
+          <h4>Symbol Guide</h4>
+          {collectionContent.symbol_guide.map((symbol) => (
+            <div className="collection-symbol-guide-item" key={`${symbol.symbol}-${symbol.meaning}`}>
+              <strong>{cleanText(symbol.symbol) ?? "Symbol"}</strong>
+              <p>{cleanText(symbol.meaning) ?? "A symbolic part of this collection."}</p>
+              <details>
+                <summary>Why it belongs here</summary>
+                <small>{cleanText(symbol.why_chosen) ?? "Selected from the family meaning profile."}</small>
+                <small>
+                  {cleanText(symbol.emotional_relevance) ??
+                    "Included to make the collection feel personal and memorable."}
+                </small>
+              </details>
+            </div>
+          ))}
+        </section>
+      ) : null}
+      <BoundaryStatementNotice boundaryStatement={collectionContent.boundary_statement} />
+    </article>
   );
 }
 
@@ -169,15 +242,12 @@ export function CertificateDirectionPanel({ meaningProfile }: VaultMeaningProps)
   );
 }
 
-export function BoundaryStatementNotice() {
+export function BoundaryStatementNotice({ boundaryStatement }: { boundaryStatement?: string | null } = {}) {
   return (
     <article className="vault-meaning-card compact boundary">
       <span>Important Note</span>
       <h3>A symbolic family keepsake</h3>
-      <p>
-        This is a personalized symbolic keepsake. It is not an official coat of arms, legal
-        heraldic grant, noble title claim, or certified genealogical record.
-      </p>
+      <p>{cleanText(boundaryStatement) ?? defaultBoundaryStatement}</p>
     </article>
   );
 }
@@ -217,6 +287,20 @@ function MeaningFallback() {
   );
 }
 
+function CollectionContentFallback() {
+  return (
+    <article className="vault-meaning-card vault-meaning-fallback">
+      <span>Collection Documents</span>
+      <h3>Documents are being prepared</h3>
+      <p>
+        This order has a Meaning Engine profile, but the final customer-readable collection
+        documents were not attached yet. Future completed orders will show the written collection
+        sections here.
+      </p>
+    </article>
+  );
+}
+
 function hasMeaningProfile(profile?: VaultMeaningProfile | null): profile is VaultMeaningProfile {
   return Boolean(
     profile &&
@@ -226,6 +310,19 @@ function hasMeaningProfile(profile?: VaultMeaningProfile | null): profile is Vau
         profile.story_direction ||
         profile.certificate_direction ||
         profile.boundary_statement)
+  );
+}
+
+function hasCollectionContent(content?: VaultCollectionContent | null): content is VaultCollectionContent {
+  return Boolean(
+    content &&
+      (cleanText(content.house_meaning_summary) ||
+        cleanText(content.family_story) ||
+        cleanText(content.certificate_text) ||
+        cleanText(content.collection_letter) ||
+        cleanText(content.design_basis) ||
+        cleanText(content.boundary_statement) ||
+        (content.symbol_guide?.length ?? 0) > 0)
   );
 }
 
@@ -256,3 +353,6 @@ function cleanStrings(values?: string[]) {
 function cleanText(value?: string | null) {
   return typeof value === "string" && value.trim() ? value.trim() : null;
 }
+
+const defaultBoundaryStatement =
+  "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record.";

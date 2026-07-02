@@ -101,6 +101,14 @@ describe("DB-backed orchestration foundation", () => {
       failed_assets_count: 0,
       meaning_profile: {
         source_level: "customer_confirmed"
+      },
+      collection_content: {
+        house_meaning_summary: expect.any(String),
+        family_story: expect.any(String),
+        certificate_text: expect.any(String),
+        collection_letter: expect.any(String),
+        design_basis: expect.any(String),
+        boundary_statement: expect.stringContaining("not an official coat of arms")
       }
     });
     expect(serialized).not.toContain("storage_key");
@@ -118,6 +126,10 @@ describe("DB-backed orchestration foundation", () => {
       manifest_status: "completed",
       meaning_profile: {
         source_level: "customer_confirmed"
+      },
+      collection_content: {
+        house_meaning_summary: expect.any(String),
+        symbol_guide: expect.any(Array)
       }
     });
     expect(summary.assets).toHaveLength(REQUIRED_DELIVERABLES.length);

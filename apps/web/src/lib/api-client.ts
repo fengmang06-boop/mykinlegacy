@@ -50,6 +50,7 @@ export interface OrderStatus {
     generated_assets_count?: number;
     manifest_status?: string;
     meaning_profile?: VaultMeaningProfile | null;
+    collection_content?: VaultCollectionContent | null;
   } | null;
   download_ready?: boolean;
 }
@@ -72,6 +73,21 @@ export interface VaultMeaningProfile {
     quality_flags?: string[];
     banned_claims_found?: string[];
   };
+}
+
+export interface VaultCollectionContent {
+  house_meaning_summary?: string | null;
+  symbol_guide?: Array<{
+    symbol?: string | null;
+    meaning?: string | null;
+    why_chosen?: string | null;
+    emotional_relevance?: string | null;
+  }>;
+  family_story?: string | null;
+  certificate_text?: string | null;
+  collection_letter?: string | null;
+  design_basis?: string | null;
+  boundary_statement?: string | null;
 }
 
 export interface DownloadVault {

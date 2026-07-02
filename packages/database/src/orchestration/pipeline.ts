@@ -230,7 +230,8 @@ export async function getOrderGenerationSummary(input: {
           expected_assets_count: manifest.expected_assets.length,
           generated_assets_count: manifest.generated_assets.length,
           failed_assets_count: manifest.failed_assets.length,
-          meaning_profile: meaningProfileSummary(manifest)
+          meaning_profile: meaningProfileSummary(manifest),
+          collection_content: collectionContentSummary(manifest)
         }
       : null,
     download_ready: Boolean(token && manifest?.manifest_status === "completed"),
@@ -267,7 +268,8 @@ export async function getAdminDbVisibilitySummary(input: {
           generated_assets: manifest.generated_assets,
           failed_assets: manifest.failed_assets,
           missing_required_assets: manifest.missing_required_assets,
-          meaning_profile: meaningProfileSummary(manifest)
+          meaning_profile: meaningProfileSummary(manifest),
+          collection_content: collectionContentSummary(manifest)
         }
       : null,
     assets: assets.map((asset) => ({
@@ -465,7 +467,11 @@ function loadMeaningEngine(): {
     const workspaceModule = require("@ai-heritage/domain") as {
       createMeaningManifestAttachment(input: Record<string, unknown>, now: Date): unknown;
     };
-    if (typeof workspaceModule.createMeaningManifestAttachment === "function") {
+    const sample =
+      typeof workspaceModule.createMeaningManifestAttachment === "function"
+        ? workspaceModule.createMeaningManifestAttachment({}, new Date(0))
+        : null;
+    if (isRecord(sample) && isRecord(sample.collection_content)) {
       return workspaceModule;
     }
   } catch {
@@ -506,6 +512,33 @@ function meaningProfileSummary(manifest: OrchestrationManifest) {
     certificate_direction: stringOrNull(recordValue(profile, "certificate_direction")),
     boundary_statement: stringOrNull(recordValue(profile, "boundary_statement")),
     validation: recordObject(profile, "validation")
+  };
+}
+
+function collectionContentSummary(manifest: OrchestrationManifest) {
+  const attachment = manifest.optional_assets.find(
+    (item) => isRecord(item) && item.attachment_type === "meaning_engine"
+  );
+  if (!isRecord(attachment)) return null;
+  const content = recordObject(attachment, "collection_content");
+  if (!Object.keys(content).length) return null;
+  return serializeCollectionContent(content);
+}
+
+function serializeCollectionContent(content: Record<string, unknown>) {
+  return {
+    house_meaning_summary: stringOrNull(recordValue(content, "house_meaning_summary")),
+    symbol_guide: recordArray<Record<string, unknown>>(content, "symbol_guide").map((symbol) => ({
+      symbol: stringOrNull(recordValue(symbol, "symbol")),
+      meaning: stringOrNull(recordValue(symbol, "meaning")),
+      why_chosen: stringOrNull(recordValue(symbol, "why_chosen")),
+      emotional_relevance: stringOrNull(recordValue(symbol, "emotional_relevance"))
+    })),
+    family_story: stringOrNull(recordValue(content, "family_story")),
+    certificate_text: stringOrNull(recordValue(content, "certificate_text")),
+    collection_letter: stringOrNull(recordValue(content, "collection_letter")),
+    design_basis: stringOrNull(recordValue(content, "design_basis")),
+    boundary_statement: stringOrNull(recordValue(content, "boundary_statement"))
   };
 }
 

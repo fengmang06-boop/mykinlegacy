@@ -87,6 +87,26 @@ export default async function AdminOrdersPage({
                     <span>design={meaning.design_rationale.length > 0 ? "yes" : "no"}</span>
                     <span>boundary={meaning.boundary_statement ? "yes" : "no"}</span>
                     <span>
+                      content={order.collection_content_status.exists ? "yes" : "no"}
+                    </span>
+                    <span>
+                      summary={order.collection_content_status.summary_exists ? "yes" : "no"}
+                    </span>
+                    <span>
+                      symbol guide=
+                      {order.collection_content_status.symbol_guide_exists ? "yes" : "no"}
+                    </span>
+                    <span>
+                      story={order.collection_content_status.family_story_exists ? "yes" : "no"}
+                    </span>
+                    <span>
+                      certificate=
+                      {order.collection_content_status.certificate_text_exists ? "yes" : "no"}
+                    </span>
+                    <span>
+                      letter={order.collection_content_status.collection_letter_exists ? "yes" : "no"}
+                    </span>
+                    <span>
                       assets={order.generated_asset_count || order.asset_count}/
                       {order.expected_asset_count || order.asset_count}
                     </span>

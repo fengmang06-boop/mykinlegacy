@@ -2,6 +2,9 @@ import { describe, expect, it } from "vitest";
 
 import {
   BOUNDARY_STATEMENT,
+  COLLECTION_BOUNDARY_STATEMENT,
+  buildCollectionContent,
+  buildGenerationBrief,
   buildMeaningProfile,
   createMeaningManifestAttachment,
   validateMeaningProfile
@@ -59,5 +62,35 @@ describe("rule-based Meaning Engine", () => {
     expect(attachment.attachment_type).toBe("meaning_engine");
     expect(attachment.generation_brief.text_strategy.include_text_in_image).toBe(false);
     expect(attachment.meaning_profile.symbol_choices.length).toBeGreaterThan(0);
+    expect(attachment.collection_content.house_meaning_summary).toContain("private symbolic keepsake");
+    expect(attachment.collection_content.symbol_guide.length).toBeGreaterThan(0);
+  });
+
+  it("generates customer-readable collection content with required sections and safe boundaries", () => {
+    const brief = buildGenerationBrief({
+      recipient: "father",
+      occasion: "retirement",
+      values: ["protection", "gratitude"],
+      memories: ["He kept everyone steady when the family needed him."],
+      surname: "Alder"
+    });
+    const content = buildCollectionContent(brief, new Date("2026-06-29T00:00:00.000Z"));
+    const serialized = JSON.stringify(content).toLowerCase();
+
+    expect(content.house_meaning_summary).toContain("The Alder family");
+    expect(content.symbol_guide[0]).toMatchObject({
+      symbol: expect.any(String),
+      meaning: expect.any(String),
+      why_chosen: expect.any(String),
+      emotional_relevance: expect.any(String)
+    });
+    expect(content.family_story).toContain("He kept everyone steady");
+    expect(content.certificate_text).toContain("private symbolic keepsake");
+    expect(content.collection_letter).toContain("To the family");
+    expect(content.design_basis).toContain("private");
+    expect(content.boundary_statement).toBe(COLLECTION_BOUNDARY_STATEMENT);
+    expect(serialized).not.toContain("proves your ancestry");
+    expect(serialized).not.toContain("royal lineage");
+    expect(serialized).not.toContain("legally granted arms");
   });
 });

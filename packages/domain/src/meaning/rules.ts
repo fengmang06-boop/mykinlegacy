@@ -1,4 +1,5 @@
 import type {
+  CollectionContent,
   GenerationBrief,
   MeaningConfidence,
   MeaningCustomerInputs,
@@ -11,6 +12,9 @@ import type {
 
 export const BOUNDARY_STATEMENT =
   "This is a personalized symbolic keepsake and customer-informed symbolic interpretation. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record.";
+
+export const COLLECTION_BOUNDARY_STATEMENT =
+  "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record.";
 
 export const BANNED_MEANING_CLAIMS = [
   "official coat of arms",
@@ -198,7 +202,50 @@ export function createMeaningManifestAttachment(
     attachment_type: "meaning_engine",
     version: "1.0",
     meaning_profile: generationBrief.meaning_profile,
-    generation_brief: generationBrief
+    generation_brief: generationBrief,
+    collection_content: buildCollectionContent(generationBrief, now)
+  };
+}
+
+export function buildCollectionContent(
+  generationBrief: GenerationBrief,
+  now = new Date()
+): CollectionContent {
+  const profile = generationBrief.meaning_profile;
+  const inputs = profile.customer_inputs;
+  const familyName = displayFamilyName(inputs);
+  const recipientPhrase = inputs.recipient ? ` for ${inputs.recipient}` : "";
+  const occasionPhrase = inputs.occasion ? ` for ${inputs.occasion}` : "";
+  const themes = profile.meaning_themes.map((theme) => titleCase(theme.theme));
+  const themePhrase = naturalList(themes.slice(0, 3), "family meaning");
+  const symbolNames = profile.symbol_choices.map((symbol) => titleCase(symbol.symbol));
+  const symbolPhrase = naturalList(symbolNames.slice(0, 3), "chosen symbols");
+  const firstMemory = inputs.memories[0];
+  const valuePhrase = naturalList(inputs.values.slice(0, 3).map(titleCase), themePhrase);
+
+  return {
+    contract_version: "1.0",
+    schema_version: "collection_content.v1",
+    created_at: now.toISOString(),
+    source: "rule_based_meaning_engine",
+    house_meaning_summary: `${familyName} was shaped around ${themePhrase.toLowerCase()}. This collection brings those qualities into a private symbolic keepsake${recipientPhrase}, using ${symbolPhrase.toLowerCase()} to express what the family wants to remember, honor, and carry forward.`,
+    symbol_guide: profile.symbol_choices.map((symbol) => ({
+      symbol: titleCase(symbol.symbol),
+      meaning: sentenceCase(symbol.meaning),
+      why_chosen: sentenceCase(symbol.rationale),
+      emotional_relevance: `${titleCase(symbol.symbol)} gives the collection a visible reminder of ${symbol.meaning.toLowerCase()}, so the design feels connected to the family's lived values rather than decoration alone.`
+    })),
+    family_story: buildFamilyStory({
+      familyName,
+      themePhrase,
+      valuePhrase,
+      firstMemory,
+      occasionPhrase
+    }),
+    certificate_text: `Presented as a private symbolic keepsake for ${familyName}. This certificate honors the values of ${themePhrase.toLowerCase()} and the family story carried through ${symbolPhrase.toLowerCase()}. It is prepared for personal keeping, gifting, and remembrance.`,
+    collection_letter: `To the family,\n\nThis collection was created to recognize what ordinary gifts often cannot hold: the values, memories, and symbols that make a family feel like itself. May it serve as a private reminder of ${valuePhrase.toLowerCase()} and a keepsake you can return to, share, and pass forward.\n\nWith care,\nMyKinLegacy`,
+    design_basis: buildDesignBasis(generationBrief, themePhrase, symbolPhrase),
+    boundary_statement: COLLECTION_BOUNDARY_STATEMENT
   };
 }
 
@@ -359,6 +406,30 @@ function buildStoryDirection(themes: MeaningTheme[], input: MeaningCustomerInput
     : `The family story should emphasize ${themeList}${recipient}${occasion}, while staying clear that this is a symbolic interpretation rather than a genealogical claim.`;
 }
 
+function buildFamilyStory(input: {
+  familyName: string;
+  themePhrase: string;
+  valuePhrase: string;
+  firstMemory?: string;
+  occasionPhrase: string;
+}): string {
+  const memorySentence = input.firstMemory
+    ? `At the heart of the story is a remembered detail: ${input.firstMemory}`
+    : `At the heart of the story is the desire to name what this family has carried quietly over time.`;
+
+  return `${input.familyName} is represented here as a family shaped by ${input.themePhrase.toLowerCase()}. ${memorySentence} This collection gathers those qualities into a private keepsake${input.occasionPhrase}, so the family can see its values reflected with dignity, warmth, and continuity. It is less about claiming a public title and more about recognizing the private meaning a family already holds.`;
+}
+
+function buildDesignBasis(
+  generationBrief: GenerationBrief,
+  themePhrase: string,
+  symbolPhrase: string
+): string {
+  const palette = naturalList(generationBrief.art_direction.palette.map(titleCase), "antique gold and ivory");
+  const composition = generationBrief.art_direction.composition[0] ?? "The composition should feel stable and archival.";
+  return `${composition} The design direction uses ${symbolPhrase.toLowerCase()} to express ${themePhrase.toLowerCase()}, with a palette of ${palette.toLowerCase()} so the collection feels private, ceremonial, and suitable for long-term keeping. Text is treated as part of the finished collection layout rather than placed inside generated artwork.`;
+}
+
 function customerPalette(input: MeaningCustomerInputs): string[] {
   if (input.colors.length > 0) return input.colors;
   if (input.preferred_tone.some((tone) => /warm|gratitude|honor/i.test(tone))) {
@@ -431,6 +502,33 @@ function isPurelyGeneric(profile: Omit<MeaningProfile, "validation"> | MeaningPr
     Boolean(profile.customer_inputs.occasion) ||
     Boolean(profile.customer_inputs.surname);
   return !hasSpecificInput && profile.meaning_themes.every((theme) => theme.confidence === "low");
+}
+
+function displayFamilyName(input: MeaningCustomerInputs): string {
+  if (input.house_name) return input.house_name;
+  if (input.surname) return `The ${input.surname} family`;
+  return "This family";
+}
+
+function naturalList(values: string[], fallback: string): string {
+  const clean = values.map((value) => value.trim()).filter(Boolean);
+  if (clean.length === 0) return fallback;
+  if (clean.length === 1) return clean[0] ?? fallback;
+  if (clean.length === 2) return `${clean[0]} and ${clean[1]}`;
+  return `${clean.slice(0, -1).join(", ")}, and ${clean[clean.length - 1]}`;
+}
+
+function titleCase(value: string): string {
+  return value
+    .split(/\s+/)
+    .map((part) => (part ? `${part[0]?.toUpperCase()}${part.slice(1).toLowerCase()}` : part))
+    .join(" ");
+}
+
+function sentenceCase(value: string): string {
+  const trimmed = value.trim();
+  if (!trimmed) return trimmed;
+  return `${trimmed[0]?.toUpperCase()}${trimmed.slice(1)}`;
 }
 
 function cleanOptional(value: string | null | undefined): string | null {

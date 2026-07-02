@@ -74,6 +74,27 @@ export interface GenerationBrief {
   };
 }
 
+export interface CollectionSymbolGuideItem {
+  symbol: string;
+  meaning: string;
+  why_chosen: string;
+  emotional_relevance: string;
+}
+
+export interface CollectionContent {
+  contract_version: "1.0";
+  schema_version: "collection_content.v1";
+  created_at: string;
+  source: "rule_based_meaning_engine";
+  house_meaning_summary: string;
+  symbol_guide: CollectionSymbolGuideItem[];
+  family_story: string;
+  certificate_text: string;
+  collection_letter: string;
+  design_basis: string;
+  boundary_statement: string;
+}
+
 export interface MeaningEngineInput {
   recipient?: string | null;
   occasion?: string | null;
@@ -93,4 +114,5 @@ export interface MeaningManifestAttachment {
   version: "1.0";
   meaning_profile: MeaningProfile;
   generation_brief: GenerationBrief;
+  collection_content: CollectionContent;
 }

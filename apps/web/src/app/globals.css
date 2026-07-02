@@ -2862,6 +2862,62 @@ textarea {
   margin-bottom: 6px;
 }
 
+.premium-page .collection-documents {
+  gap: 14px;
+  border-color: rgba(201, 162, 74, 0.38);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(201, 162, 74, 0.11), transparent 14rem),
+    rgba(10, 9, 8, 0.38);
+}
+
+.premium-page .collection-document-list {
+  display: grid;
+  gap: 10px;
+}
+
+.premium-page .collection-document-list details,
+.premium-page .collection-symbol-guide-item {
+  border: 1px solid rgba(201, 162, 74, 0.16);
+  border-radius: 12px;
+  padding: 13px;
+  background: rgba(246, 235, 212, 0.04);
+}
+
+.premium-page .collection-document-list summary {
+  font-size: 14px;
+}
+
+.premium-page .collection-document-list p {
+  margin: 0;
+  white-space: pre-line;
+}
+
+.premium-page .collection-symbol-guide {
+  display: grid;
+  gap: 10px;
+}
+
+.premium-page .collection-symbol-guide h4 {
+  margin: 0;
+  color: var(--premium-ivory);
+  font-family: var(--font-heading), "Cormorant Garamond", Georgia, serif;
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.premium-page .collection-symbol-guide-item {
+  display: grid;
+  gap: 6px;
+}
+
+.premium-page .collection-symbol-guide-item strong {
+  color: var(--premium-ivory);
+}
+
+.premium-page .collection-symbol-guide-item small {
+  display: block;
+}
+
 .premium-page .meaning-chip-list,
 .premium-page .symbol-rationale-list,
 .premium-page .included-items-grid {
