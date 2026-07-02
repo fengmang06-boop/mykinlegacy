@@ -174,6 +174,11 @@ describe("worker app foundation", () => {
       raw_token_for_internal_delivery_only: "raw-token-once",
       recipient_email: "founder-test@example.com"
     });
+    expect(databaseModule.state.orderUpdates.at(-1)).toMatchObject({
+      order_id: "order_1",
+      order_status: "completed",
+      fulfillment_status: "completed"
+    });
     expect(JSON.stringify(databaseModule.state.emailLogs)).not.toContain("raw-token-once");
     await app.shutdown();
     delete process.env.EMAIL_DELIVERY_TEST_MODE;
@@ -212,7 +217,12 @@ describe("worker app foundation", () => {
     const result = await recoverStuckPaidOrders({
       queueModule,
       databaseModule: databaseModule as never,
-      orchestrationRepository: {},
+      orchestrationRepository: {
+        async updateOrderStatus(input: unknown) {
+          databaseModule.state.orderUpdates.push(input);
+          return input;
+        }
+      },
       emailModule: createMockEmailModule()
     });
 
@@ -223,6 +233,84 @@ describe("worker app foundation", () => {
       raw_token_for_internal_delivery_only: "raw-token-once",
       recipient_email: "founder-test@example.com"
     });
+    expect(databaseModule.state.orderUpdates.at(-1)).toMatchObject({
+      order_id: "order_1",
+      order_status: "completed",
+      fulfillment_status: "completed"
+    });
+    delete process.env.EMAIL_DELIVERY_TEST_MODE;
+    delete process.env.EMAIL_TEST_RECIPIENT;
+  });
+
+  it("does not silently complete paid order fulfillment when delivery email fails", async () => {
+    process.env.EMAIL_DELIVERY_TEST_MODE = "true";
+    process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule();
+    const app = createWorkerApp({
+      config: {
+        redisUrl: "redis://localhost:6379",
+        concurrency: 1,
+        pollIntervalMs: 60_000,
+        enableOutboxDispatcher: false,
+        environment: "test",
+        recoveryScanEnabled: false,
+        recoveryScanIntervalMs: 300_000,
+        cleanupDestructiveEnabled: false,
+        stuckOrderThresholdMinutes: 30
+      },
+      queueModule,
+      databaseModule,
+      aiModule: createMockAiModule(),
+      storageModule: createMockStorageModule(),
+      pdfModule: createMockPdfModule(),
+      emailModule: createMockEmailModule({ status: "failed" })
+    });
+
+    const worker = queueModule.createdWorkers.find(
+      (candidate) => candidate.queueName === "payment-confirmation"
+    );
+    if (!worker) throw new Error("payment_worker_missing");
+
+    await expect(
+      worker.run({
+        data: {
+          job_id: "job_1",
+          job_name: "payment_confirmed_placeholder",
+          queue_name: "payment-confirmation",
+          correlation_id: "corr_1",
+          order_id: "order_1",
+          order_number: "A100",
+          manifest_id: null,
+          identity_version_id: null,
+          attempt: 0,
+          max_attempts: 3,
+          idempotency_key: "outbox:evt_1",
+          created_at: "2026-06-29T00:00:00.000Z",
+          payload: {
+            outbox_event_id: "evt_1",
+            event_type: "order.paid",
+            aggregate_type: "order",
+            aggregate_id: "order_1",
+            event_payload: {
+              order_id: "order_1",
+              order_item_id: "item_1"
+            }
+          }
+        },
+        attemptsMade: 0
+      })
+    ).rejects.toThrow("delivery_email_failed");
+    expect(databaseModule.state.orderUpdates.at(-1)).toMatchObject({
+      order_id: "order_1",
+      order_status: "processing",
+      fulfillment_status: "failed",
+      completed_at: null
+    });
+    expect(databaseModule.state.sentDeliveryInput).toMatchObject({
+      recipient_email: "founder-test@example.com"
+    });
+    await app.shutdown();
     delete process.env.EMAIL_DELIVERY_TEST_MODE;
     delete process.env.EMAIL_TEST_RECIPIENT;
   });
@@ -292,7 +380,7 @@ function createMockStorageModule() {
   };
 }
 
-function createMockEmailModule() {
+function createMockEmailModule(options: { status?: "sent" | "failed" } = {}) {
   return {
     InMemoryEmailLogRepository: class MockEmailLogRepository {},
     MockEmailProvider: class MockEmailProvider {},
@@ -300,6 +388,7 @@ function createMockEmailModule() {
       return { provider_code: "mock" };
     },
     async sendDeliveryEmailJob(input: unknown, dependencies: { emailLogRepository: { createEmailLog(input: unknown): Promise<unknown> } }) {
+      const status = options.status ?? "sent";
       currentDatabaseModuleState.sentDeliveryInput = input;
       await dependencies.emailLogRepository.createEmailLog({
         id: "email_log_2",
@@ -308,16 +397,16 @@ function createMockEmailModule() {
         provider: "mock",
         provider_message_id: "mock_message_1",
         recipient_email_hash: "a".repeat(64),
-        status: "sent",
-        error_message: null,
+        status,
+        error_message: status === "failed" ? "email_delivery_failed" : null,
         payload_json: {
           masked_download_vault_link: "https://mykinlegacy.com/download/[redacted]",
           download_token_id: "download_token_1"
         },
         created_at: new Date("2026-06-29T00:00:00.000Z"),
-        sent_at: new Date("2026-06-29T00:00:00.000Z")
+        sent_at: status === "sent" ? new Date("2026-06-29T00:00:00.000Z") : null
       });
-      return { email_log_id: "email_log_1", status: "sent" };
+      return { email_log_id: "email_log_1", status };
     }
   };
 }
@@ -347,7 +436,14 @@ function createMockAiModule() {
 function createMockDatabaseModule(options: { stuckOrders?: unknown[] } = {}) {
   currentDatabaseModuleState = {
     sentDeliveryInput: null,
-    emailLogs: [] as unknown[]
+    emailLogs: [] as unknown[],
+    orderUpdates: [] as unknown[]
+  };
+  const repository = class MockPrismaOrchestrationRepository {
+    async updateOrderStatus(input: unknown) {
+      currentDatabaseModuleState.orderUpdates.push(input);
+      return input;
+    }
   };
   return {
     state: currentDatabaseModuleState,
@@ -373,7 +469,7 @@ function createMockDatabaseModule(options: { stuckOrders?: unknown[] } = {}) {
       },
       $disconnect: vi.fn(async () => undefined)
     },
-    PrismaOrchestrationRepository: class MockPrismaOrchestrationRepository {},
+    PrismaOrchestrationRepository: repository,
     processOrderPaidOutbox: vi.fn(async () => ({
       manifest: { id: "manifest_1" },
       generation_job_id: "generation_job_1",
@@ -389,7 +485,8 @@ function createMockDatabaseModule(options: { stuckOrders?: unknown[] } = {}) {
 let currentDatabaseModuleState: {
   sentDeliveryInput: unknown;
   emailLogs: unknown[];
-} = { sentDeliveryInput: null, emailLogs: [] };
+  orderUpdates: unknown[];
+} = { sentDeliveryInput: null, emailLogs: [], orderUpdates: [] };
 
 class MockQueue {
   public closed = false;

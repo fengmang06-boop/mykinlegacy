@@ -47,7 +47,7 @@ describe("DB-backed orchestration foundation", () => {
     });
   });
 
-  it("runs manifest-driven generation through assets, token, email, and order completion", async () => {
+  it("runs manifest-driven generation through assets and token before email-confirmed completion", async () => {
     const repository = createRepository();
     const outbox = repository.outboxEvents.get("outbox_1");
     if (!outbox) throw new Error("missing_outbox");
@@ -69,18 +69,15 @@ describe("DB-backed orchestration foundation", () => {
       failed_assets: []
     });
     expect(repository.downloadTokens.size).toBe(1);
-    expect(repository.emailLogs.size).toBe(1);
+    expect(repository.emailLogs.size).toBe(0);
     expect(result.raw_token_for_email_only).toBeTruthy();
     expect(JSON.stringify([...repository.downloadTokens.values()])).not.toContain(
       result.raw_token_for_email_only
     );
-    expect(JSON.stringify([...repository.emailLogs.values()])).not.toContain(
-      result.raw_token_for_email_only
-    );
     expect(repository.orders.get("order_1")).toMatchObject({
-      order_status: "completed",
-      fulfillment_status: "completed",
-      completed_at: now.toISOString()
+      order_status: "processing",
+      fulfillment_status: "generating",
+      completed_at: null
     });
   });
 
@@ -138,29 +135,28 @@ describe("DB-backed orchestration foundation", () => {
       status: "active",
       token_hash_present: true
     });
-    expect(summary.email_logs[0]).toMatchObject({ status: "sent" });
+    expect(summary.email_logs).toHaveLength(0);
     expect(serialized).not.toContain("raw_token");
     expect(serialized).not.toContain("signed_url");
     expect(serialized).not.toContain("rendered_prompt");
   });
 
-  it("email failure does not mark order failed after manifest completion", async () => {
+  it("does not mark order completed before the worker confirms email delivery", async () => {
     const repository = createRepository();
     const outbox = repository.outboxEvents.get("outbox_1");
     if (!outbox) throw new Error("missing_outbox");
     const { manifest } = await processOrderPaidOutbox({ outboxEvent: outbox, repository, now });
 
-    const result = await runManifestDrivenGeneration({
+    await runManifestDrivenGeneration({
       manifest_id: manifest.id,
       repository,
-      now,
-      failEmail: true
+      now
     });
 
-    expect(result.email_log.status).toBe("failed");
     expect(repository.orders.get("order_1")).toMatchObject({
-      order_status: "completed",
-      fulfillment_status: "completed"
+      order_status: "processing",
+      fulfillment_status: "generating",
+      completed_at: null
     });
   });
 });
@@ -171,6 +167,12 @@ async function completedRepository() {
   if (!outbox) throw new Error("missing_outbox");
   const { manifest } = await processOrderPaidOutbox({ outboxEvent: outbox, repository, now });
   await runManifestDrivenGeneration({ manifest_id: manifest.id, repository, now });
+  await repository.updateOrderStatus({
+    order_id: "order_1",
+    order_status: "completed",
+    fulfillment_status: "completed",
+    completed_at: now.toISOString()
+  });
   return repository;
 }
 

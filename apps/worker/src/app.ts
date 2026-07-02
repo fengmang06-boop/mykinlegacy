@@ -588,6 +588,24 @@ async function fulfillOrderPaidOutbox(input: {
     raw_token_for_email_only: generationResult.raw_token_for_email_only,
     expires_at: new Date(Date.now() + 30 * 24 * 60 * 60_000)
   });
+  if (deliveryResult.status !== "sent") {
+    await updateOrderDeliveryStatus({
+      orchestrationRepository: input.orchestrationRepository,
+      orderId: requireStringField(input.outboxEvent.payload_json, "order_id"),
+      orderStatus: "processing",
+      fulfillmentStatus: "failed",
+      completedAt: null
+    });
+    throw new Error(`delivery_email_${deliveryResult.status}`);
+  }
+
+  await updateOrderDeliveryStatus({
+    orchestrationRepository: input.orchestrationRepository,
+    orderId: requireStringField(input.outboxEvent.payload_json, "order_id"),
+    orderStatus: "completed",
+    fulfillmentStatus: "completed",
+    completedAt: new Date().toISOString()
+  });
 
   return {
     manifest_id: manifestResult.manifest.id,
@@ -597,6 +615,32 @@ async function fulfillOrderPaidOutbox(input: {
     email_delivery_status: deliveryResult.status,
     email_recipient_source: deliveryResult.recipient_source
   };
+}
+
+async function updateOrderDeliveryStatus(input: {
+  orchestrationRepository: unknown;
+  orderId: string;
+  orderStatus: string;
+  fulfillmentStatus: string;
+  completedAt: string | null;
+}) {
+  const repository = input.orchestrationRepository as {
+    updateOrderStatus?(update: {
+      order_id: string;
+      order_status: string;
+      fulfillment_status: string;
+      completed_at: string | null;
+    }): Promise<unknown>;
+  };
+  if (typeof repository.updateOrderStatus !== "function") {
+    return;
+  }
+  await repository.updateOrderStatus({
+    order_id: input.orderId,
+    order_status: input.orderStatus,
+    fulfillment_status: input.fulfillmentStatus,
+    completed_at: input.completedAt
+  });
 }
 
 function wrapPlaceholderProcessor(queueModule: QueueModule, queueName: string): Processor {

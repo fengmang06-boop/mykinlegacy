@@ -171,7 +171,14 @@ async function resolveRecipient(
   const encrypted = bufferField(row, "emailEncrypted");
   const email = encrypted ? decryptEmail(encrypted, env) : null;
   if (email && isInternalDeliveryInbox(email, testRecipient)) {
-    throw new Error("unsafe_live_email_recipient_internal_inbox");
+    return {
+      email: null,
+      email_hash: sha256(email.trim().toLowerCase()),
+      intended_email_hash: emailHash,
+      source: "customer_pii",
+      test_mode: false,
+      reason: "unsafe_live_email_recipient_internal_inbox"
+    };
   }
 
   return {

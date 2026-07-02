@@ -5,7 +5,6 @@ import { ulid } from "ulid";
 import type {
   ExpectedAssetContract,
   OrchestrationAsset,
-  OrchestrationEmailLog,
   OrchestrationManifest,
   OrchestrationOutboxEvent,
   OrchestrationOrder,
@@ -98,13 +97,11 @@ export async function runManifestDrivenGeneration(input: {
   manifest_id: string;
   repository: OrchestrationRepository;
   now?: Date;
-  failEmail?: boolean;
 }): Promise<{
   manifest: OrchestrationManifest;
   assets: OrchestrationAsset[];
   download_token_id: string;
   raw_token_for_email_only: string;
-  email_log: OrchestrationEmailLog;
 }> {
   const manifest = await findManifest(input.repository, input.manifest_id);
   const order = await input.repository.findOrder(manifest.order_id);
@@ -137,8 +134,7 @@ export async function runManifestDrivenGeneration(input: {
   const completion = await completeOrderDelivery({
     repository: input.repository,
     manifest: current,
-    now: input.now,
-    failEmail: input.failEmail
+    now: input.now
   });
   const job = await input.repository.findGenerationJobByOrderItem(current.order_id, current.order_item_id);
   if (job) {
@@ -152,8 +148,7 @@ export async function runManifestDrivenGeneration(input: {
     manifest: current,
     assets: createdAssets,
     download_token_id: completion.download_token_id,
-    raw_token_for_email_only: completion.raw_token_for_email_only,
-    email_log: completion.email_log
+    raw_token_for_email_only: completion.raw_token_for_email_only
   };
 }
 
@@ -161,8 +156,7 @@ export async function completeOrderDelivery(input: {
   repository: OrchestrationRepository;
   manifest: OrchestrationManifest;
   now?: Date;
-  failEmail?: boolean;
-}): Promise<{ download_token_id: string; raw_token_for_email_only: string; email_log: OrchestrationEmailLog }> {
+}): Promise<{ download_token_id: string; raw_token_for_email_only: string }> {
   if (input.manifest.manifest_status !== "completed") throw new Error("manifest_not_completed");
   const order = await input.repository.findOrder(input.manifest.order_id);
   if (!order) throw new Error("order_not_found");
@@ -183,28 +177,7 @@ export async function completeOrderDelivery(input: {
     asset_ids: requiredAssets.map((asset) => asset.id),
     created_at: iso(input.now)
   });
-  const emailLog = await input.repository.createEmailLog({
-    id: ulid(),
-    order_id: order.id,
-    provider: "mock",
-    recipient_email_hash: sha256(`${order.id}:customer@example.test`),
-    status: input.failEmail ? "failed" : "sent",
-    payload_json: {
-      order_number: order.order_number,
-      download_token_id: token.id,
-      masked_download_vault_link: `/download/[redacted]`,
-      vault_link_only: true
-    },
-    created_at: iso(input.now),
-    sent_at: input.failEmail ? null : iso(input.now)
-  });
-  await input.repository.updateOrderStatus({
-    order_id: order.id,
-    order_status: order.payment_status === "paid" ? "completed" : order.order_status,
-    fulfillment_status: "completed",
-    completed_at: iso(input.now)
-  });
-  return { download_token_id: token.id, raw_token_for_email_only: rawToken, email_log: emailLog };
+  return { download_token_id: token.id, raw_token_for_email_only: rawToken };
 }
 
 export async function getOrderGenerationSummary(input: {
