@@ -70,6 +70,68 @@ describe("vault delivery email", () => {
     });
   });
 
+  it("uses decrypted customer email when test recipient is configured but test mode is false", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("customer@example.com", "pii-key"),
+      emailHash: sha256("customer@example.com")
+    });
+    const emailModule = createEmailModule();
+
+    const result = await sendVaultReadyEmail({
+      db: db as never,
+      emailModule: emailModule as never,
+      order_id: "order_1",
+      order_number: "AHL-TEST",
+      download_token_id: "download_token_1",
+      raw_token_for_email_only: "raw-token-once",
+      expires_at: "2026-07-29T00:00:00.000Z",
+      env: {
+        CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+        EMAIL_DELIVERY_TEST_MODE: "false",
+        EMAIL_TEST_RECIPIENT: "service@mykinlegacy.com",
+        NEXT_PUBLIC_SITE_URL: "https://mykinlegacy.com",
+        EMAIL_PROVIDER: "log"
+      }
+    });
+
+    expect(result).toMatchObject({ status: "sent", recipient_source: "customer_pii" });
+    expect(emailModule.state.lastInput).toMatchObject({
+      recipient_email: "customer@example.com",
+      recipient_source: "customer_pii",
+      delivery_test_mode: false,
+      intended_recipient_hash: sha256("customer@example.com")
+    });
+    expect(JSON.stringify(emailModule.state.lastInput)).not.toContain("service@mykinlegacy.com");
+  });
+
+  it("rejects internal service inbox as a live customer delivery recipient", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("service@mykinlegacy.com", "pii-key"),
+      emailHash: sha256("service@mykinlegacy.com")
+    });
+    const emailModule = createEmailModule();
+
+    await expect(
+      sendVaultReadyEmail({
+        db: db as never,
+        emailModule: emailModule as never,
+        order_id: "order_1",
+        order_number: "AHL-TEST",
+        download_token_id: "download_token_1",
+        raw_token_for_email_only: "raw-token-once",
+        expires_at: "2026-07-29T00:00:00.000Z",
+        env: {
+          CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+          EMAIL_DELIVERY_TEST_MODE: "false",
+          EMAIL_TEST_RECIPIENT: "service@mykinlegacy.com",
+          NEXT_PUBLIC_SITE_URL: "https://mykinlegacy.com",
+          EMAIL_PROVIDER: "log"
+        }
+      })
+    ).rejects.toThrow("unsafe_live_email_recipient_internal_inbox");
+    expect(emailModule.state.lastInput).toBeNull();
+  });
+
   it("prefers customer-facing domain URLs over raw public IP URLs", async () => {
     const db = createDb({
       emailEncrypted: encryptEmail("customer@example.com", "pii-key"),

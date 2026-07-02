@@ -120,6 +120,30 @@ describe("mock email provider and delivery rendering", () => {
     );
   });
 
+  it("rejects service inbox recipient when delivery test mode is disabled", async () => {
+    const provider = new MockEmailProvider();
+    const emailLogRepository = new InMemoryEmailLogRepository();
+
+    await expect(
+      sendDeliveryEmailJob(
+        {
+          order_id: "order_1",
+          order_number: "AH-1001",
+          download_token_id: "download_token_1",
+          raw_token_for_internal_delivery_only: "raw_token_once",
+          recipient_email: "service@mykinlegacy.com",
+          recipient_source: "customer_pii",
+          delivery_test_mode: false,
+          expires_at: "2026-07-29T00:00:00.000Z",
+          app_web_url: "https://mykinlegacy.com"
+        },
+        { provider, emailLogRepository }
+      )
+    ).rejects.toThrow("unsafe_live_email_recipient_internal_inbox");
+    expect(provider.sentEmails).toHaveLength(0);
+    expect(emailLogRepository.logs).toHaveLength(0);
+  });
+
   it("send_delivery_email_job failure is contained to email status", async () => {
     const provider = new MockEmailProvider("provider_error");
     const emailLogRepository = new InMemoryEmailLogRepository();

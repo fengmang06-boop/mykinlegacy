@@ -153,8 +153,9 @@ async function resolveRecipient(
   test_mode: boolean;
   reason?: string;
 }> {
+  const testMode = isEmailDeliveryTestMode(env);
   const testRecipient = env.EMAIL_TEST_RECIPIENT ?? env.MYKINLEGACY_TEST_RECIPIENT_EMAIL;
-  if (env.EMAIL_DELIVERY_TEST_MODE === "true" && testRecipient) {
+  if (testMode && testRecipient) {
     const customerRow = await db.orderCustomerPii.findUnique({ where: { orderId } });
     return {
       email: testRecipient,
@@ -169,6 +170,10 @@ async function resolveRecipient(
   const emailHash = stringField(row, "emailHash");
   const encrypted = bufferField(row, "emailEncrypted");
   const email = encrypted ? decryptEmail(encrypted, env) : null;
+  if (email && isInternalDeliveryInbox(email, testRecipient)) {
+    throw new Error("unsafe_live_email_recipient_internal_inbox");
+  }
+
   return {
     email,
     email_hash: emailHash,
@@ -177,6 +182,20 @@ async function resolveRecipient(
     test_mode: false,
     reason: email ? undefined : "customer_email_not_decryptable"
   };
+}
+
+function isEmailDeliveryTestMode(env: Record<string, string | undefined>): boolean {
+  return env.EMAIL_DELIVERY_TEST_MODE?.trim().toLowerCase() === "true";
+}
+
+function isInternalDeliveryInbox(email: string, testRecipient?: string): boolean {
+  const normalized = email.trim().toLowerCase();
+  const internalRecipients = new Set(
+    ["service@mykinlegacy.com", testRecipient?.trim().toLowerCase()].filter(
+      (value): value is string => Boolean(value)
+    )
+  );
+  return internalRecipients.has(normalized);
 }
 
 async function createFailedEmailLog(input: {

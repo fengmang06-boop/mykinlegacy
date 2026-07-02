@@ -39,6 +39,10 @@ export async function sendDeliveryEmailJob(
   const createdAt = new Date();
   const template = dependencies.template ?? null;
 
+  if (isUnsafeLiveInternalRecipient(input)) {
+    throw new Error("unsafe_live_email_recipient_internal_inbox");
+  }
+
   if (!input.raw_token_for_internal_delivery_only) {
     const log = await dependencies.emailLogRepository.createEmailLog({
       id: emailLogId,
@@ -109,6 +113,13 @@ export async function sendDeliveryEmailJob(
     email_log_id: log.id,
     status: status === "bounced" ? "bounced" : status === "sent" ? "sent" : "failed"
   };
+}
+
+function isUnsafeLiveInternalRecipient(input: SendDeliveryEmailJobInput): boolean {
+  return (
+    input.delivery_test_mode !== true &&
+    input.recipient_email.trim().toLowerCase() === "service@mykinlegacy.com"
+  );
 }
 
 function mapProviderStatus(status: string): "sent" | "bounced" | "failed" {
