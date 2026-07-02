@@ -136,6 +136,21 @@ function safePayload(payload) {
   }
   const latestEmailLog = order.emailLogs[0] || null;
   const latestPayload = latestEmailLog ? safePayload(latestEmailLog.payloadJson) : null;
+  const latestManifest = order.generationManifests[0] || null;
+  const optionalAssets = Array.isArray(latestManifest?.optionalAssetsJson)
+    ? latestManifest.optionalAssetsJson
+    : [];
+  const meaningAttachment = optionalAssets.find(
+    (item) => item && typeof item === "object" && item.attachment_type === "meaning_engine"
+  );
+  const meaningProfile =
+    meaningAttachment && typeof meaningAttachment.meaning_profile === "object"
+      ? meaningAttachment.meaning_profile
+      : null;
+  const collectionContent =
+    meaningAttachment && typeof meaningAttachment.collection_content === "object"
+      ? meaningAttachment.collection_content
+      : null;
   const result = {
     found: true,
     order_number: order.orderNumber,
@@ -143,11 +158,29 @@ function safePayload(payload) {
     order_status: order.orderStatus,
     fulfillment_status: order.fulfillmentStatus,
     completed_at: order.completedAt ? order.completedAt.toISOString() : null,
-    manifest_status: order.generationManifests[0]?.status ?? null,
+    manifest_status: latestManifest?.status ?? null,
     assets_count: order.assets.length,
+    artifact_count: order.assets.length,
+    artifact_status_counts: order.assets.reduce((counts, asset) => {
+      counts[asset.status] = (counts[asset.status] || 0) + 1;
+      return counts;
+    }, {}),
     download_token_count: order.downloadTokens.length,
     download_ready: order.downloadTokens.some((token) => token.status === "active"),
     latest_download_token_asset_count: order.downloadTokens[0]?.downloadTokenAssets.length ?? 0,
+    meaning_profile_attached: Boolean(meaningProfile),
+    collection_content_attached: Boolean(collectionContent),
+    meaning_profile_summary: meaningProfile
+      ? {
+          source_level: meaningProfile.source_level ?? null,
+          themes_count: Array.isArray(meaningProfile.meaning_themes) ? meaningProfile.meaning_themes.length : 0,
+          symbols_count: Array.isArray(meaningProfile.symbol_choices) ? meaningProfile.symbol_choices.length : 0,
+          design_basis_present: Array.isArray(meaningProfile.design_rationale) && meaningProfile.design_rationale.length > 0,
+          story_direction_present: Boolean(meaningProfile.story_direction),
+          certificate_direction_present: Boolean(meaningProfile.certificate_direction),
+          boundary_statement_present: Boolean(meaningProfile.boundary_statement)
+        }
+      : null,
     email_log_count: order.emailLogs.length,
     customer_pii_exists: Boolean(order.orderCustomerPii),
     customer_pii_row_exists: Boolean(order.orderCustomerPii) ? "yes" : "no",
