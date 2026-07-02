@@ -97,7 +97,7 @@ echo
 
 echo "Public URL checks"
 public_check "public_http" "http://${PUBLIC_IP:-216.128.154.152}/health"
-public_check "public_https" "https://${DOMAIN:-216.128.154.152}/health"
+public_check "public_https" "https://${DOMAIN:-mykinlegacy.com}/health"
 echo
 
 echo "API /health result"

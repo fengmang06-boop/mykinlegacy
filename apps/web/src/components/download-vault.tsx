@@ -10,6 +10,7 @@ import {
 } from "../lib/api-client";
 import { trackEvent } from "../lib/analytics";
 import { formatBytes } from "../lib/format";
+import { PrivateVaultPreview } from "./vault-meaning";
 
 const demoArtifacts: DownloadAsset[] = [
   {
@@ -170,6 +171,8 @@ export function DownloadVault({ token }: { token: string }) {
   }
 
   const sortedAssets = [...assets].sort((a, b) => artifactOrder(a) - artifactOrder(b));
+  const hasPlaceholderAssets = sortedAssets.some(isPlaceholderAsset);
+  const hasMeaningContext = Boolean(vault?.meaning_profile || vault?.collection_content);
 
   async function downloadCompleteCollection() {
     const completeCollection =
@@ -188,15 +191,16 @@ export function DownloadVault({ token }: { token: string }) {
         <div className="section interview-hero-grid">
           <div>
             <p className="eyebrow">{isFounderDemo ? "Founder Demo Collection" : "Private Collection Vault"}</p>
-            <h1>Your Family Legacy Collection Is Ready</h1>
+            <h1>Your Private Legacy Vault Is Ready</h1>
             <p className="lead">
-              Open the artifacts below to review the Collection Letter, Crest Artwork, Heritage
-              Certificate, Family Story, and Symbol Guide prepared for family keeping.
+              Open the private artifacts prepared for this family collection. This vault is private,
+              token-protected, and designed for family keeping.
             </p>
           </div>
-          <div className="mock-certificate">
-            <span>Private Collection</span>
-            <strong>Ready to view and keep.</strong>
+          <div className="vault-display-case">
+            <span>Private Archive</span>
+            <strong>Ready for review.</strong>
+            <p>Your token is never displayed on this page.</p>
           </div>
         </div>
       </section>
@@ -222,39 +226,59 @@ export function DownloadVault({ token }: { token: string }) {
           </section>
         ) : null}
 
-        <section className="section-tight">
-          <h2>Your Collection Artifacts</h2>
+        {vault && hasMeaningContext ? (
+          <PrivateVaultPreview
+            vaultReady={vault.assets_ready}
+            meaningProfile={vault.meaning_profile}
+            collectionContent={vault.collection_content}
+          />
+        ) : vault ? (
+          <section className="private-vault-preview" aria-label="Vault meaning fallback">
+            <div className="vault-preview-header">
+              <p className="eyebrow">Meaning basis</p>
+              <h2>Collection meaning is being prepared</h2>
+              <p>
+                This vault is ready, but the Meaning Engine profile is not attached to this token
+                yet. The artifacts below remain private and available through this secure vault.
+              </p>
+            </div>
+          </section>
+        ) : null}
+
+        <section className="section-tight vault-artifact-section">
+          <div className="section-heading-row">
+            <div>
+              <p className="eyebrow">Private artifacts</p>
+              <h2>Your Collection Artifacts</h2>
+            </div>
+            {vault ? <span className="vault-status-pill">{vault.assets_ready ? "Vault ready" : "Preparing"}</span> : null}
+          </div>
           <p className="lead">
-            Review each part of the collection, then save the complete private collection for
-            family keeping.
+            Review each part of the collection, then save the complete private collection for family
+            keeping.
           </p>
-          <div className="download-list">
+          {hasPlaceholderAssets ? (
+            <p className="notice alpha-vault-notice">
+              This internal alpha order contains placeholder collection artifacts. Future real
+              customer orders should replace these with final generated collection files.
+            </p>
+          ) : null}
+          <div className="vault-artifact-grid">
             {sortedAssets.map((asset) => (
-              <article className="download-row" key={asset.asset_id}>
-                <span className={`file-thumb ${asset.file_ext}`} aria-hidden="true" />
+              <article className="vault-artifact-card" key={asset.asset_id}>
+                <span className={`vault-artifact-icon ${asset.file_ext}`} aria-hidden="true" />
                 <div>
                   <h3>{asset.friendly_name}</h3>
                   <p className="muted">
                     {artifactDescriptions[asset.deliverable_code] ?? "A private collection artifact."}
                   </p>
                 </div>
-                <div>
-                  <span className="muted">Type</span>
-                  <p>{asset.file_ext.toUpperCase()}</p>
-                </div>
-                <div>
+                <div className="artifact-meta-row">
+                  <span>{asset.file_ext.toUpperCase()}</span>
                   <span className={asset.available ? "status-ready" : "muted"}>
                     {asset.available ? "Ready" : asset.status}
                   </span>
-                  <p className="muted">
-                    {vault
-                      ? `${vault.download_count} of ${vault.max_downloads} downloads used`
-                      : ""}
-                  </p>
-                </div>
-                <div>
-                  <span className="muted">Size</span>
-                  <p>{formatBytes(asset.size_bytes)}</p>
+                  {formatArtifactSizeLabel(asset) ? <span>{formatArtifactSizeLabel(asset)}</span> : null}
                 </div>
                 <div>
                   <button
@@ -292,8 +316,8 @@ export function DownloadVault({ token }: { token: string }) {
           <div className="side-panel">
             <h2>Your Privacy. Our Promise.</h2>
             <p className="muted">
-              This private link is unique to you and should not be shared. Access expires according
-              to the vault rules above.
+              This private link is unique to you and should not be shared publicly. For your
+              privacy, the raw vault token is never shown on this page.
             </p>
             <button className="secondary-button" type="button" onClick={() => void load()}>
               Refresh status
@@ -305,6 +329,15 @@ export function DownloadVault({ token }: { token: string }) {
       </div>
     </>
   );
+}
+
+export function isPlaceholderAsset(asset: Pick<DownloadAsset, "size_bytes" | "status">): boolean {
+  return asset.size_bytes > 0 && asset.size_bytes <= 512 && asset.status === "available_for_download";
+}
+
+export function formatArtifactSizeLabel(asset: Pick<DownloadAsset, "size_bytes" | "status">): string | null {
+  if (!asset.size_bytes || isPlaceholderAsset(asset)) return null;
+  return formatBytes(asset.size_bytes);
 }
 
 function artifactOrder(asset: DownloadAsset): number {

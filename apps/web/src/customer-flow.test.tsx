@@ -12,10 +12,11 @@ import { metadata as createMetadata } from "./app/create/page";
 import { metadata as downloadMetadata } from "./app/download/[token]/page";
 import { metadata as cancelMetadata } from "./app/payment/cancel/page";
 import { metadata as successMetadata } from "./app/payment/success/page";
-import { ApiClient, ApiClientError } from "./lib/api-client";
+import { ApiClient, ApiClientError, normalizeApiBaseUrl } from "./lib/api-client";
 import { sanitizeAnalyticsPayload } from "./lib/analytics";
 import { getSafetyMessage } from "./lib/safety";
 import { areRequiredConsentsAccepted } from "./components/checkout-flow";
+import { formatArtifactSizeLabel, isPlaceholderAsset } from "./components/download-vault";
 import { PrivateVaultPreview } from "./components/vault-meaning";
 
 const testDir = dirname(fileURLToPath(import.meta.url));
@@ -92,6 +93,15 @@ describe("customer frontend flow", () => {
       throw new Error("fetch_call_missing");
     }
     expect(init.headers?.["idempotency-key"]).toBeTruthy();
+  });
+
+  it("normalizes raw IP API base URL to relative production API path in browser", () => {
+    vi.stubGlobal("window", { location: { hostname: "mykinlegacy.com" } });
+
+    expect(normalizeApiBaseUrl("https://216.128.154.152/api/v1")).toBe("/api/v1");
+    expect(normalizeApiBaseUrl("/api/v1")).toBe("/api/v1");
+
+    vi.unstubAllGlobals();
   });
 
   it("safe copy appears for official and protected emblem requests", () => {
@@ -270,6 +280,12 @@ describe("customer frontend flow", () => {
     );
 
     expect(html).toContain("Documents are being prepared");
+  });
+
+  it("download vault helpers hide alpha placeholder sizes without raw token data", () => {
+    expect(isPlaceholderAsset({ size_bytes: 100, status: "available_for_download" })).toBe(true);
+    expect(formatArtifactSizeLabel({ size_bytes: 100, status: "available_for_download" })).toBeNull();
+    expect(formatArtifactSizeLabel({ size_bytes: 2048, status: "available_for_download" })).toBe("2.0 KB");
   });
 
   it("payment cancel page renders a branded checkout recovery path", async () => {

@@ -40,6 +40,7 @@ describe("mock email provider and delivery rendering", () => {
     });
 
     expect(rendered.body_text).toContain("https://example.com/download/raw_token_once");
+    expect(rendered.body_text).not.toContain("216.128.154.152");
     expect(rendered.subject).toBe("Your MyKinLegacy Private Vault Is Ready");
     expect(rendered.body_text).toContain("crest artwork");
     expect(rendered.body_text).toContain("legal heraldic grants");
@@ -49,6 +50,38 @@ describe("mock email provider and delivery rendering", () => {
       "https://example.com/download/[redacted]"
     );
     expect(JSON.stringify(rendered.sanitized_payload)).not.toContain("raw_token_once");
+  });
+
+  it("records test mode recipient routing metadata without storing raw emails", async () => {
+    const provider = new MockEmailProvider();
+    const emailLogRepository = new InMemoryEmailLogRepository();
+    await sendDeliveryEmailJob(
+      {
+        order_id: "order_1",
+        order_number: "AH-1001",
+        download_token_id: "download_token_1",
+        raw_token_for_internal_delivery_only: "raw_token_once",
+        recipient_email: "founder@example.com",
+        recipient_source: "test_recipient",
+        delivery_test_mode: true,
+        intended_recipient_hash: "b".repeat(64),
+        actual_recipient_hash: "c".repeat(64),
+        expires_at: "2026-07-29T00:00:00.000Z",
+        app_web_url: "https://mykinlegacy.com"
+      },
+      { provider, emailLogRepository }
+    );
+
+    expect(emailLogRepository.logs[0]?.payload_json).toMatchObject({
+      delivery_test_mode: true,
+      recipient_source: "test_recipient",
+      intended_recipient_hash: "b".repeat(64),
+      actual_recipient_hash: "c".repeat(64),
+      recipient_override_active: true
+    });
+    expect(JSON.stringify(emailLogRepository.logs[0]?.payload_json)).not.toContain(
+      "founder@example.com"
+    );
   });
 
   it("records recipient hash and sanitized payload in delivery email job", async () => {

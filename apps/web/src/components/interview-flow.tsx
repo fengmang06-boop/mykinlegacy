@@ -102,6 +102,7 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
 
     setSaving(true);
     setError(null);
+    const startedAt = performance.now();
     try {
       const answer = {
         step_code: step.code,
@@ -124,9 +125,12 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
         );
       } else {
         await api.submitInterviewAnswer(interviewId, answer);
-        if (freeText.trim()) {
-          await api.normalizeInterviewInput(interviewId, freeText.trim());
-        }
+      }
+      if (process.env.NODE_ENV === "development") {
+        console.info("[interview] step saved", {
+          step_code: step.code,
+          duration_ms: Math.round(performance.now() - startedAt)
+        });
       }
       window.sessionStorage.setItem(
         `ai_heritage_interview_${interviewId}`,
@@ -212,7 +216,7 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
                 onClick={() => void submitStep()}
                 disabled={saving}
               >
-                {saving ? "Saving..." : "Continue"}
+                {saving ? "Saving answer..." : "Continue"}
               </button>
               {!step.required ? (
                 <button

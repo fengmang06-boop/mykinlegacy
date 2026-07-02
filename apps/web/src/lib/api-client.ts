@@ -98,6 +98,8 @@ export interface DownloadVault {
   max_downloads: number;
   assets_ready: boolean;
   assets_summary: Array<Record<string, unknown>>;
+  meaning_profile?: VaultMeaningProfile | null;
+  collection_content?: VaultCollectionContent | null;
   disclaimer: string;
 }
 
@@ -129,7 +131,7 @@ export class ApiClient {
   private readonly baseUrl: string;
 
   constructor(baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL ?? process.env.API_BASE_URL ?? "http://localhost:4000/api/v1") {
-    this.baseUrl = baseUrl.replace(/\/$/, "");
+    this.baseUrl = normalizeApiBaseUrl(baseUrl);
   }
 
   createInterview() {
@@ -267,6 +269,21 @@ export class ApiClient {
       );
     }
     return envelope.data as T;
+  }
+}
+
+export function normalizeApiBaseUrl(baseUrl: string): string {
+  const trimmed = baseUrl.trim().replace(/\/$/, "");
+  if (!trimmed) return "/api/v1";
+  try {
+    const parsed = new URL(trimmed);
+    const hostIsIp = /^\d{1,3}(?:\.\d{1,3}){3}$/.test(parsed.hostname);
+    if (hostIsIp && typeof window !== "undefined" && window.location.hostname === "mykinlegacy.com") {
+      return "/api/v1";
+    }
+    return parsed.toString().replace(/\/$/, "");
+  } catch {
+    return trimmed;
   }
 }
 

@@ -50,6 +50,7 @@ interface DownloadVaultRepository {
   updateToken(input: DownloadTokenRecord): Promise<DownloadTokenRecord>;
   linkTokenToAssets(input: { download_token_id: string; asset_ids: string[] }): Promise<void>;
   listAssetsForToken(downloadTokenId: string): Promise<DownloadAssetRecord[]>;
+  getMeaningContextForToken(downloadTokenId: string): Promise<DownloadMeaningContext | null>;
   findLinkedAsset(input: {
     download_token_id: string;
     asset_id: string;
@@ -71,6 +72,11 @@ type PrismaDownloadClient = {
   asset: PrismaDelegate;
   downloadEvent: PrismaDelegate;
 };
+
+interface DownloadMeaningContext {
+  meaning_profile: Record<string, unknown> | null;
+  collection_content: Record<string, unknown> | null;
+}
 
 export class PrismaDownloadVaultRepository implements DownloadVaultRepository {
   constructor(private readonly db: PrismaDownloadClient) {}
@@ -143,6 +149,35 @@ export class PrismaDownloadVaultRepository implements DownloadVaultRepository {
       include: { asset: { include: { deliverableType: true } } }
     });
     return rows.map((row) => mapAsset(recordObject(row, "asset")));
+  }
+
+  async getMeaningContextForToken(downloadTokenId: string): Promise<DownloadMeaningContext | null> {
+    const row = await this.db.downloadToken.findUnique({
+      where: { id: downloadTokenId },
+      include: {
+        order: {
+          include: {
+            generationManifests: {
+              orderBy: { createdAt: "desc" },
+              take: 1
+            }
+          }
+        }
+      }
+    });
+    if (!isRecord(row)) return null;
+    const order = recordObject(row, "order");
+    const manifests = recordArray(order, "generationManifests");
+    const manifest = isRecord(manifests[0]) ? manifests[0] : {};
+    const optionalAssets = recordArray(manifest, "optionalAssetsJson");
+    const attachment = optionalAssets.find(
+      (item) => isRecord(item) && item.attachment_type === "meaning_engine"
+    );
+    if (!isRecord(attachment)) return null;
+    return {
+      meaning_profile: meaningProfileSummary(recordObject(attachment, "meaning_profile")),
+      collection_content: collectionContentSummary(recordObject(attachment, "collection_content"))
+    };
   }
 
   async findLinkedAsset(input: {
@@ -220,6 +255,61 @@ function mapAsset(row: unknown): DownloadAssetRecord {
   };
 }
 
+function meaningProfileSummary(profile: Record<string, unknown>): Record<string, unknown> | null {
+  if (!Object.keys(profile).length) return null;
+  const validation = recordObject(profile, "validation");
+  return {
+    source_level: stringOrNull(profile.source_level),
+    themes: recordArray(profile, "meaning_themes").map((theme) => {
+      const record = isRecord(theme) ? theme : {};
+      return {
+        theme: stringOrNull(record.theme),
+        confidence: stringOrNull(record.confidence),
+        evidence: stringOrNull(record.evidence)
+      };
+    }),
+    symbols: recordArray(profile, "symbol_choices").map((symbol) => {
+      const record = isRecord(symbol) ? symbol : {};
+      return {
+        symbol: stringOrNull(record.symbol),
+        meaning: stringOrNull(record.meaning),
+        rationale: stringOrNull(record.rationale),
+        source: stringOrNull(record.source)
+      };
+    }),
+    design_rationale: stringArray(profile.design_rationale),
+    story_direction: stringOrNull(profile.story_direction),
+    certificate_direction: stringOrNull(profile.certificate_direction),
+    boundary_statement: stringOrNull(profile.boundary_statement),
+    validation: {
+      valid: validation.valid === true,
+      quality_flags: stringArray(validation.quality_flags),
+      banned_claims_found: stringArray(validation.banned_claims_found)
+    }
+  };
+}
+
+function collectionContentSummary(content: Record<string, unknown>): Record<string, unknown> | null {
+  if (!Object.keys(content).length) return null;
+  return {
+    house_meaning_summary: stringOrNull(content.house_meaning_summary),
+    symbol_guide: recordArray(content, "symbol_guide").map((symbol) => {
+      const record = isRecord(symbol) ? symbol : {};
+      return {
+        symbol: stringOrNull(record.symbol),
+        meaning: stringOrNull(record.meaning),
+        why_chosen: stringOrNull(record.why_chosen),
+        emotional_relevance: stringOrNull(record.emotional_relevance)
+      };
+    }),
+    family_story: stringOrNull(content.family_story),
+    certificate_text: stringOrNull(content.certificate_text),
+    collection_letter: stringOrNull(content.collection_letter),
+    design_basis: stringOrNull(content.design_basis),
+    boundary_statement: stringOrNull(content.boundary_statement)
+  };
+}
+
 function friendlyDeliverableName(code: string): string {
   const names: Record<string, string> = {
     crest_variant_1_png: "Crest Artwork 1",
@@ -263,6 +353,19 @@ function recordStringOrNull(row: unknown, key: string): string | null {
 function stringFromRecord(row: Record<string, unknown>, key: string): string | null {
   const value = row[key];
   return typeof value === "string" ? value : null;
+}
+
+function stringOrNull(value: unknown): string | null {
+  return typeof value === "string" ? value : null;
+}
+
+function stringArray(value: unknown): string[] {
+  return Array.isArray(value) ? value.filter((item): item is string => typeof item === "string") : [];
+}
+
+function recordArray(row: unknown, key: string): unknown[] {
+  const value = isRecord(row) ? row[key] : null;
+  return Array.isArray(value) ? value : [];
 }
 
 function recordDate(row: unknown, key: string): Date {

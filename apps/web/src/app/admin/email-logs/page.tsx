@@ -47,6 +47,7 @@ export default async function AdminEmailLogsPage({
             "Provider",
             "Status",
             "Recipient",
+            "Routing",
             "Subject",
             "Created",
             "Sent",
@@ -58,6 +59,12 @@ export default async function AdminEmailLogsPage({
             log.provider,
             <StatusPill key="status" value={log.status} />,
             log.recipient_masked,
+            [
+              `test=${log.delivery_test_mode ? "true" : "false"}`,
+              `source=${log.recipient_source}`,
+              `intended=${log.intended_recipient_masked}`,
+              `actual=${log.actual_recipient_masked}`
+            ].join("; "),
             log.subject,
             formatDate(log.created_at),
             formatDate(log.sent_at),

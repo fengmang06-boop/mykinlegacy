@@ -31,7 +31,8 @@ describe("vault delivery email", () => {
     expect(result).toMatchObject({ status: "sent", recipient_source: "customer_pii" });
     expect(emailModule.state.lastInput).toMatchObject({
       recipient_email: "customer@example.com",
-      raw_token_for_internal_delivery_only: "raw-token-once"
+      raw_token_for_internal_delivery_only: "raw-token-once",
+      app_web_url: "https://mykinlegacy.com"
     });
     expect(JSON.stringify(db.state.emailLogs)).not.toContain("raw-token-once");
     expect(JSON.stringify(db.state.emailLogs)).not.toContain("customer@example.com");
@@ -61,7 +62,42 @@ describe("vault delivery email", () => {
     });
 
     expect(result).toMatchObject({ status: "sent", recipient_source: "test_recipient" });
-    expect(emailModule.state.lastInput).toMatchObject({ recipient_email: "founder@example.com" });
+    expect(emailModule.state.lastInput).toMatchObject({
+      recipient_email: "founder@example.com",
+      recipient_source: "test_recipient",
+      delivery_test_mode: true,
+      intended_recipient_hash: sha256("customer@example.com")
+    });
+  });
+
+  it("prefers customer-facing domain URLs over raw public IP URLs", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("customer@example.com", "pii-key"),
+      emailHash: sha256("customer@example.com")
+    });
+    const emailModule = createEmailModule();
+
+    await sendVaultReadyEmail({
+      db: db as never,
+      emailModule: emailModule as never,
+      order_id: "order_1",
+      order_number: "AHL-TEST",
+      download_token_id: "download_token_1",
+      raw_token_for_email_only: "raw-token-once",
+      expires_at: "2026-07-29T00:00:00.000Z",
+      env: {
+        CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+        NEXT_PUBLIC_SITE_URL: "https://216.128.154.152",
+        APP_WEB_URL: "https://mykinlegacy.com",
+        PUBLIC_IP: "216.128.154.152",
+        EMAIL_PROVIDER: "log"
+      }
+    });
+
+    expect(emailModule.state.lastInput).toMatchObject({
+      app_web_url: "https://mykinlegacy.com"
+    });
+    expect(JSON.stringify(emailModule.state.lastInput)).not.toContain("216.128.154.152");
   });
 
   it("handles unavailable recipient gracefully", async () => {

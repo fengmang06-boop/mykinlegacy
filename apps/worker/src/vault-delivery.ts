@@ -68,6 +68,10 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         download_token_id: input.download_token_id,
         raw_token_for_internal_delivery_only: input.raw_token_for_email_only,
         recipient_email: recipient.email,
+        recipient_source: recipient.source,
+        delivery_test_mode: recipient.test_mode,
+        intended_recipient_hash: recipient.intended_email_hash,
+        actual_recipient_hash: sha256(recipient.email.trim().toLowerCase()),
         expires_at: input.expires_at,
         app_web_url: siteUrl(env),
         email_from: env.EMAIL_FROM,
@@ -144,12 +148,21 @@ async function resolveRecipient(
 ): Promise<{
   email: string | null;
   email_hash: string | null;
+  intended_email_hash: string | null;
   source: "customer_pii" | "test_recipient";
+  test_mode: boolean;
   reason?: string;
 }> {
   const testRecipient = env.EMAIL_TEST_RECIPIENT ?? env.MYKINLEGACY_TEST_RECIPIENT_EMAIL;
   if (env.EMAIL_DELIVERY_TEST_MODE === "true" && testRecipient) {
-    return { email: testRecipient, email_hash: sha256(testRecipient.trim().toLowerCase()), source: "test_recipient" };
+    const customerRow = await db.orderCustomerPii.findUnique({ where: { orderId } });
+    return {
+      email: testRecipient,
+      email_hash: sha256(testRecipient.trim().toLowerCase()),
+      intended_email_hash: stringField(customerRow, "emailHash"),
+      source: "test_recipient",
+      test_mode: true
+    };
   }
 
   const row = await db.orderCustomerPii.findUnique({ where: { orderId } });
@@ -159,7 +172,9 @@ async function resolveRecipient(
   return {
     email,
     email_hash: emailHash,
+    intended_email_hash: emailHash,
     source: "customer_pii",
+    test_mode: false,
     reason: email ? undefined : "customer_email_not_decryptable"
   };
 }
@@ -223,13 +238,38 @@ function decryptEmail(value: Buffer, env: Record<string, string | undefined>): s
 }
 
 function siteUrl(env: Record<string, string | undefined>): string {
-  return (
-    env.NEXT_PUBLIC_SITE_URL ??
-    env.APP_WEB_URL ??
-    env.SITE_URL ??
-    env.APP_BASE_URL ??
-    "http://localhost:3000"
-  ).replace(/\/$/, "");
+  const candidates = [
+    env.APP_WEB_URL,
+    env.NEXT_PUBLIC_SITE_URL,
+    env.APP_BASE_URL,
+    env.SITE_URL,
+    env.DOMAIN ? `https://${env.DOMAIN}` : undefined,
+    env.NODE_ENV === "production" ? "https://mykinlegacy.com" : "http://localhost:3000"
+  ];
+  const publicIp = env.PUBLIC_IP;
+
+  for (const candidate of candidates) {
+    const normalized = normalizeCustomerUrl(candidate, publicIp);
+    if (normalized) return normalized;
+  }
+
+  return "http://localhost:3000";
+}
+
+function normalizeCustomerUrl(value: string | undefined, publicIp?: string): string | null {
+  if (!value) return null;
+  const trimmed = value.trim().replace(/\/$/, "");
+  if (!trimmed) return null;
+  try {
+    const url = new URL(trimmed);
+    const hostIsIp = /^\d{1,3}(?:\.\d{1,3}){3}$/.test(url.hostname);
+    if (hostIsIp || (publicIp && url.hostname === publicIp)) {
+      return null;
+    }
+    return url.toString().replace(/\/$/, "");
+  } catch {
+    return null;
+  }
 }
 
 function createLocalId(): string {

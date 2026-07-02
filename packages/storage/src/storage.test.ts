@@ -316,6 +316,34 @@ describe("download vault token security", () => {
     });
   });
 
+  it("vault response can include existing meaning context without exposing token data", async () => {
+    const repository = createDownloadRepository();
+    const repositoryWithMeaning = repository as InMemoryDownloadVaultRepository & {
+      getMeaningContextForToken: () => Promise<{
+        meaning_profile: Record<string, unknown>;
+        collection_content: Record<string, unknown>;
+      }>;
+    };
+    repositoryWithMeaning.getMeaningContextForToken = async () => ({
+      meaning_profile: { source_level: "customer_informed", themes: [{ theme: "Protection" }] },
+      collection_content: { house_meaning_summary: "A private symbolic keepsake." }
+    });
+    const created = await createDownloadToken(
+      { order_id: "order_1", order_number: "AH-1001", asset_ids: ["asset_1"] },
+      repositoryWithMeaning
+    );
+    const vault = await getDownloadVault({
+      raw_token: created.raw_token_for_internal_delivery_only,
+      repository: repositoryWithMeaning
+    });
+
+    expect(vault.meaning_profile).toMatchObject({ source_level: "customer_informed" });
+    expect(vault.collection_content).toMatchObject({
+      house_meaning_summary: "A private symbolic keepsake."
+    });
+    expect(JSON.stringify(vault)).not.toContain(created.raw_token_for_internal_delivery_only);
+  });
+
   it("creates short signed URL, records event, increments count, and does not persist signed URL", async () => {
     const repository = createDownloadRepository();
     const storage = new LocalPrivateStorageAdapter();

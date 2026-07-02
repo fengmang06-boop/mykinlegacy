@@ -94,7 +94,7 @@ set -a
 . "$ENV_FILE"
 set +a
 
-DOMAIN="${DOMAIN:-216.128.154.152}"
+DOMAIN="${DOMAIN:-mykinlegacy.com}"
 PUBLIC_IP="${PUBLIC_IP:-216.128.154.152}"
 LETSENCRYPT_EMAIL="${LETSENCRYPT_EMAIL:-support@mykinlegacy.com}"
 TLS_MODE="${TLS_MODE:-self_signed}"

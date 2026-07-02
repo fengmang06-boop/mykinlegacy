@@ -63,7 +63,7 @@ check_container_running() {
 }
 
 echo "MyKinLegacy deployment health check"
-echo "Domain: ${DOMAIN:-216.128.154.152}"
+echo "Domain: ${DOMAIN:-mykinlegacy.com}"
 echo "Public IP: ${PUBLIC_IP:-216.128.154.152}"
 echo
 
@@ -87,8 +87,8 @@ check "nginx" "http://127.0.0.1/health inside nginx container" \
 check "public_http" "http://${PUBLIC_IP:-216.128.154.152}/health from host" \
   curl -fsS --max-time 10 "http://${PUBLIC_IP:-216.128.154.152}/health"
 
-check "public_https" "https://${DOMAIN:-216.128.154.152}/health from host" \
-  curl -kfsS --max-time 10 "https://${DOMAIN:-216.128.154.152}/health"
+check "public_https" "https://${DOMAIN:-mykinlegacy.com}/health from host" \
+  curl -kfsS --max-time 10 "https://${DOMAIN:-mykinlegacy.com}/health"
 
 echo
 if [ "$FAILURES" -eq 0 ]; then

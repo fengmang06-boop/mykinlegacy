@@ -49,6 +49,24 @@ describe("PrismaDownloadVaultRepository", () => {
     });
     expect(JSON.stringify(db.state.events)).not.toContain("storage_key");
   });
+
+  it("maps meaning context from the linked order manifest", async () => {
+    const db = createFakeDownloadDb();
+    const repository = new PrismaDownloadVaultRepository(db as never);
+
+    const context = await repository.getMeaningContextForToken("download_token_1");
+
+    expect(context?.meaning_profile).toMatchObject({
+      source_level: "customer_informed",
+      themes: [expect.objectContaining({ theme: "Protection" })],
+      symbols: [expect.objectContaining({ symbol: "Oak" })]
+    });
+    expect(context?.collection_content).toMatchObject({
+      house_meaning_summary: "A private symbolic keepsake.",
+      symbol_guide: [expect.objectContaining({ symbol: "Oak" })]
+    });
+    expect(JSON.stringify(context)).not.toContain("raw-token");
+  });
 });
 
 function createFakeDownloadDb() {
@@ -63,7 +81,41 @@ function createFakeDownloadDb() {
       downloadCount: 0,
       createdAt: new Date("2026-06-29T00:00:00.000Z"),
       revokedAt: null,
-      order: { orderNumber: "AHL-20260629-TEST" }
+      order: {
+        orderNumber: "AHL-20260629-TEST",
+        generationManifests: [
+          {
+            optionalAssetsJson: [
+              {
+                attachment_type: "meaning_engine",
+                meaning_profile: {
+                  source_level: "customer_informed",
+                  meaning_themes: [{ theme: "Protection", confidence: "high", evidence: "Input." }],
+                  symbol_choices: [
+                    { symbol: "Oak", meaning: "Strength", rationale: "Chosen from values.", source: "internal" }
+                  ],
+                  design_rationale: ["Grounded composition."],
+                  story_direction: "A story about care.",
+                  certificate_direction: "Warm and archival.",
+                  boundary_statement: "Not official arms.",
+                  validation: { valid: true, quality_flags: [], banned_claims_found: [] }
+                },
+                collection_content: {
+                  house_meaning_summary: "A private symbolic keepsake.",
+                  symbol_guide: [
+                    {
+                      symbol: "Oak",
+                      meaning: "Strength",
+                      why_chosen: "Protection",
+                      emotional_relevance: "Steady family anchor"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ]
+      }
     },
     asset: {
       id: "asset_1",

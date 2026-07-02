@@ -12,6 +12,10 @@ export interface SendDeliveryEmailJobInput {
   download_token_id: string;
   raw_token_for_internal_delivery_only?: string;
   recipient_email: string;
+  recipient_source?: "customer_pii" | "test_recipient";
+  delivery_test_mode?: boolean;
+  intended_recipient_hash?: string | null;
+  actual_recipient_hash?: string | null;
   expires_at: Date | string;
   app_web_url?: string;
   email_from?: string;
@@ -90,7 +94,12 @@ export async function sendDeliveryEmailJob(
     error_message: status === "failed" ? "email_delivery_failed" : null,
     payload_json: {
       ...rendered.sanitized_payload,
-      download_token_id: input.download_token_id
+      download_token_id: input.download_token_id,
+      delivery_test_mode: input.delivery_test_mode === true,
+      recipient_source: input.recipient_source ?? "customer_pii",
+      intended_recipient_hash: input.intended_recipient_hash ?? null,
+      actual_recipient_hash: input.actual_recipient_hash ?? hashEmailAddress(input.recipient_email),
+      recipient_override_active: input.delivery_test_mode === true && input.recipient_source === "test_recipient"
     },
     created_at: createdAt,
     sent_at: output.sent_at

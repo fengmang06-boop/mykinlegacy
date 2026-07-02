@@ -9,6 +9,7 @@ interface DownloadVaultRepository {
   updateToken(input: unknown): Promise<unknown>;
   linkTokenToAssets(input: unknown): Promise<void>;
   listAssetsForToken(downloadTokenId: string): Promise<unknown[]>;
+  getMeaningContextForToken?(downloadTokenId: string): Promise<unknown | null>;
   findLinkedAsset(input: unknown): Promise<unknown | null>;
   createEvent(input: unknown): Promise<unknown>;
 }
@@ -34,6 +35,8 @@ export interface DownloadVaultResponse {
   max_downloads: number;
   assets_ready: boolean;
   assets_summary: Array<Record<string, unknown>>;
+  meaning_profile?: Record<string, unknown> | null;
+  collection_content?: Record<string, unknown> | null;
   disclaimer: string;
 }
 

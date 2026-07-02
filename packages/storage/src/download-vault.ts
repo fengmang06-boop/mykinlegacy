@@ -71,6 +71,7 @@ export interface DownloadVaultRepository {
   updateToken(input: DownloadTokenRecord): Promise<DownloadTokenRecord>;
   linkTokenToAssets(input: { download_token_id: string; asset_ids: string[] }): Promise<void>;
   listAssetsForToken(downloadTokenId: string): Promise<DownloadAssetRecord[]>;
+  getMeaningContextForToken?(downloadTokenId: string): Promise<DownloadMeaningContext | null>;
   findLinkedAsset(input: {
     download_token_id: string;
     asset_id: string;
@@ -118,7 +119,14 @@ export interface DownloadVaultSummary {
     available: boolean;
     status: string;
   }>;
+  meaning_profile?: Record<string, unknown> | null;
+  collection_content?: Record<string, unknown> | null;
   disclaimer: string;
+}
+
+export interface DownloadMeaningContext {
+  meaning_profile: Record<string, unknown> | null;
+  collection_content: Record<string, unknown> | null;
 }
 
 export interface DownloadAssetListItem {
@@ -298,6 +306,9 @@ export async function getDownloadVault(input: {
 }): Promise<DownloadVaultSummary> {
   const token = await validateDownloadToken(input);
   const assets = await input.repository.listAssetsForToken(token.id);
+  const meaningContext = input.repository.getMeaningContextForToken
+    ? await input.repository.getMeaningContextForToken(token.id)
+    : null;
   await recordDownloadEvent({
     repository: input.repository,
     token,
@@ -323,6 +334,8 @@ export async function getDownloadVault(input: {
       available: isAssetAvailable(asset),
       status: asset.status
     })),
+    meaning_profile: meaningContext?.meaning_profile ?? null,
+    collection_content: meaningContext?.collection_content ?? null,
     disclaimer: DOWNLOAD_VAULT_DISCLAIMER
   };
 }

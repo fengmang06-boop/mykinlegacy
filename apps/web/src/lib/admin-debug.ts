@@ -56,6 +56,10 @@ export interface AdminEmailLogSummary {
   provider: string;
   status: string;
   recipient_masked: string;
+  recipient_source: string;
+  delivery_test_mode: boolean;
+  intended_recipient_masked: string;
+  actual_recipient_masked: string;
   subject: string;
   created_at: string;
   sent_at: string | null;
@@ -166,6 +170,12 @@ export async function getRecentEmailLogs(): Promise<AdminEmailLogSummary[]> {
       provider: log.provider,
       status: log.status,
       recipient_masked: maskHash(log.recipientEmailHash),
+      recipient_source: stringValue(payload.recipient_source) ?? "unknown",
+      delivery_test_mode: payload.delivery_test_mode === true,
+      intended_recipient_masked: maskHashOrDash(stringValue(payload.intended_recipient_hash)),
+      actual_recipient_masked: maskHashOrDash(
+        stringValue(payload.actual_recipient_hash) ?? log.recipientEmailHash
+      ),
       subject: stringValue(payload.subject) ?? "Your MyKinLegacy Private Vault Is Ready",
       created_at: log.createdAt.toISOString(),
       sent_at: log.sentAt?.toISOString() ?? null,
@@ -261,8 +271,24 @@ function maskHash(value: string): string {
   return `${value.slice(0, 6)}...${value.slice(-4)}`;
 }
 
+function maskHashOrDash(value: string | null): string {
+  return value ? maskHash(value) : "-";
+}
+
 function summarizeDeliveryPayload(payload: Record<string, unknown>): string {
   const parts: string[] = [];
+  if (payload.delivery_test_mode === true) {
+    parts.push("test_mode=true");
+  } else if (payload.delivery_test_mode === false) {
+    parts.push("test_mode=false");
+  }
+  const recipientSource = stringValue(payload.recipient_source);
+  if (recipientSource) {
+    parts.push(`recipient_source=${recipientSource}`);
+  }
+  if (payload.recipient_override_active === true) {
+    parts.push("recipient_override_active=true");
+  }
   const downloadTokenId = stringValue(payload.download_token_id);
   if (downloadTokenId) {
     parts.push(`download_token_id=${downloadTokenId.slice(0, 8)}...`);

@@ -29,7 +29,7 @@ bash deployment/deploy.sh
 ## 5. Open
 
 ```text
-https://216.128.154.152
+https://mykinlegacy.com
 ```
 
 ## 6. Health Check

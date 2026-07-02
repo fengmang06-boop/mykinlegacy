@@ -10,7 +10,7 @@ export const metadata: Metadata = {
 export default async function DownloadPage({ params }: { params: Promise<{ token: string }> }) {
   const { token } = await params;
   return (
-    <main>
+    <main className="premium-page vault-page">
       <DownloadVault token={token} />
     </main>
   );
