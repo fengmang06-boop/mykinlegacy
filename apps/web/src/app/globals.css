@@ -3152,6 +3152,63 @@ textarea {
   font-weight: 800;
 }
 
+.premium-page .artifact-visibility-panel {
+  margin-top: 18px;
+}
+
+.premium-page .artifact-visibility-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.premium-page .artifact-visibility-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 14px;
+  border: 1px solid rgba(201, 162, 74, 0.18);
+  border-radius: 12px;
+  background: rgba(246, 235, 212, 0.035);
+}
+
+.premium-page .artifact-visibility-card strong {
+  display: block;
+  color: var(--premium-ivory);
+  font-size: 0.95rem;
+}
+
+.premium-page .artifact-visibility-card small {
+  display: block;
+  margin-top: 4px;
+  color: rgba(246, 235, 212, 0.66);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.premium-page .artifact-visibility-card > span {
+  flex: 0 0 auto;
+  border: 1px solid rgba(201, 162, 74, 0.25);
+  border-radius: 999px;
+  padding: 5px 10px;
+  color: var(--premium-gold);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.premium-page .artifact-visibility-card.pending {
+  border-color: rgba(246, 235, 212, 0.12);
+  background: rgba(246, 235, 212, 0.025);
+}
+
+.premium-page .artifact-visibility-card.pending > span {
+  color: rgba(246, 235, 212, 0.68);
+  border-color: rgba(246, 235, 212, 0.14);
+}
+
 .premium-page .meaning-chip-list,
 .premium-page .symbol-rationale-list,
 .premium-page .included-items-grid {

@@ -119,6 +119,121 @@ describe("OrdersService", () => {
     });
   });
 
+  it("returns safe order artifact list when generated artifacts exist", async () => {
+    const service = new OrdersService(
+      createPrismaServiceMock(),
+      createOrchestrationRepository()
+    );
+
+    const result = await service.getArtifacts("AHL-20260629-TEST");
+
+    expect(result).toMatchObject({
+      order_number: "AHL-20260629-TEST",
+      status: "ready",
+      message: "Artifacts ready",
+      download_ready: true,
+      artifacts: [
+        {
+          asset_id: "asset_pdf_1",
+          deliverable_code: "family_story_pdf",
+          friendly_name: "Family Story",
+          asset_type: "pdf",
+          file_ext: "pdf",
+          mime_type: "application/pdf",
+          available: true,
+          access: {
+            download_method: "private_vault_link_required",
+            raw_token_exposed: false
+          }
+        }
+      ],
+      missing_artifacts: []
+    });
+    expect(JSON.stringify(result)).not.toContain("private-assets");
+    expect(JSON.stringify(result)).not.toContain("storage_key");
+    expect(JSON.stringify(result)).not.toContain("raw-token");
+  });
+
+  it("returns Generation in progress fallback when artifacts are missing", async () => {
+    const service = new OrdersService(
+      createPrismaServiceMock(),
+      createOrchestrationRepository({ assets: [] })
+    );
+
+    const result = await service.getArtifacts("AHL-20260629-TEST");
+
+    expect(result).toMatchObject({
+      status: "generation_in_progress",
+      message: "Generation in progress",
+      artifacts: [],
+      missing_artifacts: [
+        {
+          deliverable_code: "family_story_pdf",
+          friendly_name: "Family Story",
+          status: "generation_in_progress",
+          available: false,
+          message: "Generation in progress"
+        }
+      ]
+    });
+  });
+
+  it("returns only PDF artifacts through the PDF endpoint", async () => {
+    const service = new OrdersService(
+      createPrismaServiceMock(),
+      createOrchestrationRepository({
+        expectedAssets: [
+          { deliverable_code: "family_story_pdf", asset_type: "pdf", format: "pdf" },
+          { deliverable_code: "crest_variant_1_png", asset_type: "image", format: "png" }
+        ],
+        assets: [
+          sampleArtifact({
+            id: "asset_pdf_1",
+            deliverable_code: "family_story_pdf",
+            asset_type: "pdf",
+            file_ext: "pdf",
+            mime_type: "application/pdf"
+          }),
+          sampleArtifact({
+            id: "asset_png_1",
+            deliverable_code: "crest_variant_1_png",
+            asset_type: "image",
+            file_ext: "png",
+            mime_type: "image/png"
+          })
+        ]
+      })
+    );
+
+    const result = await service.getPdfArtifacts("AHL-20260629-TEST");
+
+    expect(result.artifacts).toHaveLength(1);
+    expect(result.artifacts[0]?.deliverable_code).toBe("family_story_pdf");
+    expect(result.artifacts[0]?.mime_type).toBe("application/pdf");
+  });
+
+  it("returns safe vault summary without exposing a raw token", async () => {
+    const service = new OrdersService(
+      createPrismaServiceMock(),
+      createOrchestrationRepository()
+    );
+
+    const result = await service.getVaultSummary("AHL-20260629-TEST");
+
+    expect(result).toMatchObject({
+      vault_ready: true,
+      download_ready: true,
+      download_token_status: "active",
+      artifact_count: 1,
+      access: {
+        download_method: "private_vault_link_required",
+        raw_token_exposed: false
+      }
+    });
+    expect(JSON.stringify(result)).not.toContain("download_token_1");
+    expect(JSON.stringify(result)).not.toContain("raw-token");
+  });
+
   it("rejects missing heritage disclaimer consent", async () => {
     const service = new OrdersService(createPrismaServiceMock());
 
@@ -226,7 +341,39 @@ function createPrismaServiceMock(): PrismaService {
   } as unknown as PrismaService;
 }
 
-function createOrchestrationRepository(): ConstructorParameters<typeof OrdersService>[1] {
+function createOrchestrationRepository(
+  options: {
+    expectedAssets?: unknown[];
+    generatedAssets?: unknown[];
+    assets?: Array<{
+      id: string;
+      deliverable_code: string;
+      asset_type: string;
+      asset_kind: string;
+      status: string;
+      file_name: string;
+      file_ext: string;
+      mime_type: string;
+      size_bytes: number;
+      public_url: null;
+    }>;
+  } = {}
+): ConstructorParameters<typeof OrdersService>[1] {
+  const expectedAssets = options.expectedAssets ?? [
+    { deliverable_code: "family_story_pdf", asset_type: "pdf", format: "pdf" }
+  ];
+  const generatedAssets = options.generatedAssets ?? [
+    { deliverable_code: "family_story_pdf", asset_id: "asset_pdf_1" }
+  ];
+  const assets = options.assets ?? [
+    sampleArtifact({
+      id: "asset_pdf_1",
+      deliverable_code: "family_story_pdf",
+      asset_type: "pdf",
+      file_ext: "pdf",
+      mime_type: "application/pdf"
+    })
+  ];
   return {
     findOrder: async () => ({
       id: "01H00000000000000000000020",
@@ -241,8 +388,8 @@ function createOrchestrationRepository(): ConstructorParameters<typeof OrdersSer
     findManifestByOrderItem: async () => ({
       id: "manifest_1",
       manifest_status: "completed",
-      expected_assets: [{ deliverable_code: "download_package_zip" }],
-      generated_assets: [{ deliverable_code: "download_package_zip", asset_id: "asset_1" }],
+      expected_assets: expectedAssets,
+      generated_assets: generatedAssets,
       failed_assets: [],
       optional_assets: [
         {
@@ -291,6 +438,28 @@ function createOrchestrationRepository(): ConstructorParameters<typeof OrdersSer
         }
       ]
     }),
-    findDownloadTokenByOrder: async () => ({ id: "download_token_1", status: "active" })
+    findDownloadTokenByOrder: async () => ({ id: "download_token_1", status: "active" }),
+    listAssetsByOrder: async () => assets
+  };
+}
+
+function sampleArtifact(input: {
+  id: string;
+  deliverable_code: string;
+  asset_type: string;
+  file_ext: string;
+  mime_type: string;
+}) {
+  return {
+    id: input.id,
+    deliverable_code: input.deliverable_code,
+    asset_type: input.asset_type,
+    asset_kind: "generated",
+    status: "available",
+    file_name: `${input.deliverable_code}.${input.file_ext}`,
+    file_ext: input.file_ext,
+    mime_type: input.mime_type,
+    size_bytes: 2048,
+    public_url: null
   };
 }

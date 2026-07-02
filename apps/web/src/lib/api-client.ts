@@ -55,6 +55,31 @@ export interface OrderStatus {
   download_ready?: boolean;
 }
 
+export interface OrderArtifact {
+  asset_id: string | null;
+  deliverable_code: string;
+  friendly_name: string;
+  asset_type: string;
+  asset_kind?: string | null;
+  file_name?: string | null;
+  file_ext: string;
+  mime_type: string;
+  size_bytes?: number;
+  status: string;
+  available: boolean;
+  message?: string | null;
+}
+
+export interface OrderArtifacts {
+  order_number: string;
+  status: string;
+  message: string;
+  download_ready: boolean;
+  vault_ready: boolean;
+  artifacts: OrderArtifact[];
+  missing_artifacts: OrderArtifact[];
+}
+
 export interface VaultMeaningProfile {
   source_level?: string | null;
   themes?: Array<{ theme?: string | null; confidence?: string | null; evidence?: string | null }>;
@@ -219,6 +244,10 @@ export class ApiClient {
 
   getOrderStatus(orderNumber: string) {
     return this.request<OrderStatus>(`/orders/${encodeURIComponent(orderNumber)}`);
+  }
+
+  getOrderArtifacts(orderNumber: string) {
+    return this.request<OrderArtifacts>(`/orders/${encodeURIComponent(orderNumber)}/artifacts`);
   }
 
   getDownloadVault(token: string) {

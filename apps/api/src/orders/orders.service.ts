@@ -95,6 +95,20 @@ interface OrderGenerationRepository {
     optional_assets?: unknown[];
   } | null>;
   findDownloadTokenByOrder(orderId: string): Promise<{ id: string; status: string } | null>;
+  listAssetsByOrder?(orderId: string): Promise<OrderArtifactRecord[]>;
+}
+
+interface OrderArtifactRecord {
+  id: string;
+  deliverable_code: string;
+  asset_type: string;
+  asset_kind?: string;
+  status: string;
+  file_name?: string;
+  file_ext: string;
+  mime_type: string;
+  size_bytes: number;
+  public_url?: null;
 }
 
 @Injectable()
@@ -254,6 +268,62 @@ export class OrdersService {
     };
   }
 
+  async getArtifacts(orderNumber: string) {
+    const context = await this.getOrderArtifactContext(orderNumber);
+    return buildArtifactResponse(context);
+  }
+
+  async getPdfArtifacts(orderNumber: string) {
+    const context = await this.getOrderArtifactContext(orderNumber);
+    const response = buildArtifactResponse(context);
+    const pdfArtifacts = response.artifacts.filter(
+      (artifact) => artifact.asset_type === "pdf" || artifact.file_ext === "pdf"
+    );
+    const missingPdfArtifacts = response.missing_artifacts.filter(
+      (artifact) => artifact.asset_type === "pdf" || artifact.file_ext === "pdf"
+    );
+    return {
+      ...response,
+      status:
+        pdfArtifacts.length > 0
+          ? response.status
+          : missingPdfArtifacts.length > 0
+            ? "generation_in_progress"
+            : "generation_in_progress",
+      artifacts: pdfArtifacts,
+      missing_artifacts: missingPdfArtifacts,
+      message:
+        pdfArtifacts.length > 0
+          ? response.message
+          : "Generation in progress"
+    };
+  }
+
+  async getVaultSummary(orderNumber: string) {
+    const context = await this.getOrderArtifactContext(orderNumber);
+    const response = buildArtifactResponse(context);
+    return {
+      order_number: response.order_number,
+      payment_status: context.order.payment_status,
+      order_status: context.order.order_status,
+      fulfillment_status: context.order.fulfillment_status,
+      vault_ready: response.vault_ready,
+      download_ready: response.download_ready,
+      download_token_status: context.downloadToken?.status ?? null,
+      artifact_count: response.artifacts.length,
+      available_artifact_count: response.artifacts.filter((artifact) => artifact.available).length,
+      missing_artifact_count: response.missing_artifacts.length,
+      status: response.status,
+      message: response.message,
+      access: {
+        download_method: "private_vault_link_required",
+        raw_token_exposed: false
+      },
+      disclaimer:
+        "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record."
+    };
+  }
+
   async createConsent(orderNumber: string, body: unknown) {
     const order = await this.prisma.order.findUnique({
       where: { orderNumber }
@@ -365,6 +435,214 @@ export class OrdersService {
     }
     return version;
   }
+
+  private async getOrderArtifactContext(orderNumber: string) {
+    const order = await this.prisma.order.findUnique({
+      where: { orderNumber }
+    });
+    if (!order) {
+      throw new ApiException({
+        errorCode: "order_not_found",
+        message: `Order not found: ${orderNumber}`,
+        userMessage: "The order could not be found.",
+        status: HttpStatus.NOT_FOUND,
+        affectedField: "order_number"
+      });
+    }
+
+    if (!this.orchestrationRepository) {
+      return {
+        order: {
+          id: order.id,
+          order_number: order.orderNumber,
+          order_status: order.orderStatus,
+          payment_status: order.paymentStatus,
+          fulfillment_status: order.fulfillmentStatus
+        },
+        manifest: null,
+        assets: [] as OrderArtifactRecord[],
+        downloadToken: null as { id: string; status: string } | null
+      };
+    }
+
+    const orchestrationOrder = await this.orchestrationRepository.findOrder(order.id);
+    if (!orchestrationOrder) {
+      throw new ApiException({
+        errorCode: "order_not_found",
+        message: `Order not found in orchestration repository: ${orderNumber}`,
+        userMessage: "The order could not be found.",
+        status: HttpStatus.NOT_FOUND,
+        affectedField: "order_number"
+      });
+    }
+    const orderItems = await this.orchestrationRepository.listOrderItemsByOrder(order.id);
+    const manifest = orderItems[0]
+      ? await this.orchestrationRepository.findManifestByOrderItem(order.id, orderItems[0].id)
+      : null;
+    const assets = this.orchestrationRepository.listAssetsByOrder
+      ? await this.orchestrationRepository.listAssetsByOrder(order.id)
+      : [];
+    const downloadToken = await this.orchestrationRepository.findDownloadTokenByOrder(order.id);
+
+    return {
+      order: orchestrationOrder,
+      manifest,
+      assets,
+      downloadToken
+    };
+  }
+}
+
+function buildArtifactResponse(context: {
+  order: {
+    order_number: string;
+    order_status: string;
+    payment_status: string;
+    fulfillment_status: string;
+  };
+  manifest: {
+    manifest_status: string;
+    expected_assets: unknown[];
+    generated_assets: unknown[];
+    failed_assets: unknown[];
+  } | null;
+  assets: OrderArtifactRecord[];
+  downloadToken: { id: string; status: string } | null;
+}) {
+  const expectedArtifacts = expectedArtifactEntries(context.manifest?.expected_assets ?? []);
+  const actualArtifacts = context.assets.map(mapOrderArtifact);
+  const actualCodes = new Set(actualArtifacts.map((artifact) => artifact.deliverable_code));
+  const missingArtifacts = expectedArtifacts
+    .filter((artifact) => !actualCodes.has(artifact.deliverable_code))
+    .map((artifact) => ({
+      ...artifact,
+      asset_id: null,
+      status: "generation_in_progress",
+      available: false,
+      message: "Generation in progress"
+    }));
+  const vaultReady = Boolean(context.downloadToken && context.downloadToken.status === "active");
+  const complete = actualArtifacts.length > 0 && missingArtifacts.length === 0;
+
+  return {
+    order_number: context.order.order_number,
+    order_status: context.order.order_status,
+    payment_status: context.order.payment_status,
+    fulfillment_status: context.order.fulfillment_status,
+    manifest_status: context.manifest?.manifest_status ?? null,
+    status: complete ? "ready" : "generation_in_progress",
+    message: complete ? "Artifacts ready" : "Generation in progress",
+    download_ready: vaultReady,
+    vault_ready: vaultReady,
+    artifacts: actualArtifacts,
+    missing_artifacts: missingArtifacts,
+    access: {
+      download_method: "private_vault_link_required",
+      raw_token_exposed: false
+    }
+  };
+}
+
+function expectedArtifactEntries(expectedAssets: unknown[]) {
+  return expectedAssets
+    .map((item) => {
+      if (!isRecord(item)) return null;
+      const deliverableCode = stringOrNull(item.deliverable_code);
+      if (!deliverableCode) return null;
+      const format = stringOrNull(item.format) ?? fileExtFromDeliverableCode(deliverableCode);
+      const assetType = stringOrNull(item.asset_type) ?? assetTypeFromFormat(format);
+      return {
+        deliverable_code: deliverableCode,
+        friendly_name: friendlyDeliverableName(deliverableCode),
+        asset_type: assetType,
+        file_ext: format,
+        mime_type: mimeTypeFromFormat(format)
+      };
+    })
+    .filter((item): item is {
+      deliverable_code: string;
+      friendly_name: string;
+      asset_type: string;
+      file_ext: string;
+      mime_type: string;
+    } => Boolean(item));
+}
+
+function mapOrderArtifact(asset: OrderArtifactRecord) {
+  return {
+    asset_id: asset.id,
+    deliverable_code: asset.deliverable_code,
+    friendly_name: friendlyDeliverableName(asset.deliverable_code),
+    asset_type: asset.asset_type,
+    asset_kind: asset.asset_kind ?? null,
+    file_name: asset.file_name ?? null,
+    file_ext: asset.file_ext,
+    mime_type: asset.mime_type,
+    size_bytes: asset.size_bytes,
+    status: asset.status,
+    available: isArtifactAvailable(asset),
+    access: {
+      download_method: "private_vault_link_required",
+      signed_url_endpoint: null,
+      raw_token_exposed: false
+    },
+    message: isArtifactAvailable(asset) ? null : "Generation in progress"
+  };
+}
+
+function isArtifactAvailable(asset: OrderArtifactRecord) {
+  return (
+    asset.public_url === null &&
+    (asset.status === "available" || asset.status === "available_for_download")
+  );
+}
+
+function friendlyDeliverableName(code: string): string {
+  const names: Record<string, string> = {
+    crest_variant_1_png: "Crest Artwork 1",
+    crest_variant_2_png: "Crest Artwork 2",
+    crest_variant_3_png: "Crest Artwork 3",
+    transparent_crest_png: "Transparent Crest Artwork",
+    symbol_explanation_pdf: "Symbol Guide",
+    heritage_certificate_pdf: "Heritage Certificate",
+    family_story_pdf: "Family Story",
+    download_package_zip: "Complete Collection Archive"
+  };
+  return (
+    names[code] ??
+    code
+      .split("_")
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(" ")
+  );
+}
+
+function fileExtFromDeliverableCode(code: string): string {
+  if (code.endsWith("_pdf")) return "pdf";
+  if (code.endsWith("_zip")) return "zip";
+  if (code.endsWith("_png")) return "png";
+  return "bin";
+}
+
+function assetTypeFromFormat(format: string): string {
+  if (format === "pdf") return "pdf";
+  if (format === "zip") return "archive";
+  if (format === "png" || format === "webp" || format === "jpg" || format === "jpeg") {
+    return "image";
+  }
+  return "archive";
+}
+
+function mimeTypeFromFormat(format: string): string {
+  const types: Record<string, string> = {
+    pdf: "application/pdf",
+    zip: "application/zip",
+    png: "image/png",
+    webp: "image/webp",
+    jpg: "image/jpeg",
+    jpeg: "image/jpeg"
+  };
+  return types[format] ?? "application/octet-stream";
 }
 
 async function getOrderGenerationSummary(input: {

@@ -4,7 +4,12 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 
-import { ApiClient, type OrderStatus as OrderStatusData } from "../lib/api-client";
+import {
+  ApiClient,
+  type OrderArtifact,
+  type OrderArtifacts,
+  type OrderStatus as OrderStatusData
+} from "../lib/api-client";
 import { friendlyGenerationMessage } from "../lib/state";
 import { trackEvent } from "../lib/analytics";
 import { PrivateVaultPreview } from "./vault-meaning";
@@ -13,6 +18,7 @@ const finalHomepageAsset = "/assets/final-homepage";
 
 export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
   const [order, setOrder] = useState<OrderStatusData | null>(null);
+  const [artifacts, setArtifacts] = useState<OrderArtifacts | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
   const api = useMemo(() => new ApiClient(), []);
@@ -37,6 +43,16 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
         const result = await api.getOrderStatus(orderNumber);
         if (!stopped) {
           setOrder(result);
+        }
+        try {
+          const artifactResult = await api.getOrderArtifacts(orderNumber);
+          if (!stopped) {
+            setArtifacts(artifactResult);
+          }
+        } catch {
+          if (!stopped) {
+            setArtifacts(null);
+          }
         }
       } catch {
         if (!stopped) {
@@ -123,6 +139,7 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
             collectionContent={order?.generation_manifest?.collection_content}
             vaultReady={vaultReady}
           />
+          <ArtifactVisibilityPanel artifacts={artifacts} />
           <ul>
             <li>Your payment is confirmed.</li>
             <li>Your House Identity is being prepared.</li>
@@ -156,5 +173,52 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
         </aside>
       </div>
     </section>
+  );
+}
+
+function ArtifactVisibilityPanel({ artifacts }: { artifacts: OrderArtifacts | null }) {
+  const readyArtifacts = artifacts?.artifacts ?? [];
+  const missingArtifacts = artifacts?.missing_artifacts ?? [];
+  const visibleArtifacts = [...readyArtifacts, ...missingArtifacts];
+
+  return (
+    <section className="vault-meaning-card artifact-visibility-panel" aria-label="Collection artifacts">
+      <span>Collection Artifacts</span>
+      <h3>Your visible collection items</h3>
+      <p>
+        {visibleArtifacts.length > 0
+          ? "Each artifact is linked to this order and prepared for access through the private vault."
+          : "Generation in progress"}
+      </p>
+      <div className="artifact-visibility-list">
+        {visibleArtifacts.length > 0 ? (
+          visibleArtifacts.map((artifact) => (
+            <ArtifactVisibilityCard key={`${artifact.deliverable_code}-${artifact.asset_id ?? "pending"}`} artifact={artifact} />
+          ))
+        ) : (
+          <div className="artifact-visibility-card pending">
+            <strong>Collection artifacts</strong>
+            <small>Generation in progress</small>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function ArtifactVisibilityCard({ artifact }: { artifact: OrderArtifact }) {
+  const ready = artifact.available && artifact.asset_id;
+  return (
+    <div className={`artifact-visibility-card${ready ? "" : " pending"}`}>
+      <div>
+        <strong>{artifact.friendly_name}</strong>
+        <small>
+          {ready
+            ? `${artifact.file_ext.toUpperCase()} artifact ready`
+            : artifact.message ?? "Generation in progress"}
+        </small>
+      </div>
+      <span>{ready ? "Ready" : "In progress"}</span>
+    </div>
   );
 }
