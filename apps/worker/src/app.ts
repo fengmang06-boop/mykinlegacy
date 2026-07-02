@@ -616,12 +616,31 @@ async function fulfillOrderPaidOutbox(input: {
     repository: input.orchestrationRepository,
     now
   });
+  const orderId = requireStringField(input.outboxEvent.payload_json, "order_id");
+  const orderNumber =
+    input.orderNumberFallback ?? requireStringField(input.outboxEvent.payload_json, "order_number");
+  input.queueModule.writeWorkerLog({
+    level: "info",
+    message: "EMAIL_JOB_ENQUEUED",
+    queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+    extra: {
+      outbox_event_id: input.outboxEvent.id,
+      order_id: orderId,
+      order_number: orderNumber,
+      download_token_id: generationResult.download_token_id,
+      queue_mode: "inline",
+      redis_queue: false,
+      email_queue_name: input.queueModule.QUEUE_NAMES.emailDelivery,
+      handler: "sendVaultReadyEmail",
+      raw_token_available: Boolean(generationResult.raw_token_for_email_only),
+      raw_token_omitted: true
+    }
+  });
   const deliveryResult = await sendVaultReadyEmail({
     db: input.databaseModule.prisma as never,
     emailModule: input.emailModule as never,
-    order_id: requireStringField(input.outboxEvent.payload_json, "order_id"),
-    order_number:
-      input.orderNumberFallback ?? requireStringField(input.outboxEvent.payload_json, "order_number"),
+    order_id: orderId,
+    order_number: orderNumber,
     download_token_id: generationResult.download_token_id,
     raw_token_for_email_only: generationResult.raw_token_for_email_only,
     expires_at: new Date(Date.now() + 30 * 24 * 60 * 60_000),
@@ -632,7 +651,7 @@ async function fulfillOrderPaidOutbox(input: {
   if (deliveryResult.status !== "sent") {
     await updateOrderDeliveryStatus({
       orchestrationRepository: input.orchestrationRepository,
-      orderId: requireStringField(input.outboxEvent.payload_json, "order_id"),
+      orderId,
       orderStatus: "processing",
       fulfillmentStatus: "failed",
       completedAt: null
@@ -642,7 +661,7 @@ async function fulfillOrderPaidOutbox(input: {
 
   await updateOrderDeliveryStatus({
     orchestrationRepository: input.orchestrationRepository,
-    orderId: requireStringField(input.outboxEvent.payload_json, "order_id"),
+    orderId,
     orderStatus: "completed",
     fulfillmentStatus: "completed",
     completedAt: new Date().toISOString()
@@ -743,6 +762,22 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
         db: input.databaseModule.prisma,
         orderRow,
         now
+      });
+      input.queueModule.writeWorkerLog({
+        level: "info",
+        message: "EMAIL_JOB_ENQUEUED",
+        queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+        extra: {
+          order_id: orderId,
+          order_number: orderNumber,
+          download_token_id: token.download_token_id,
+          queue_mode: "inline_recovery",
+          redis_queue: false,
+          email_queue_name: input.queueModule.QUEUE_NAMES.emailDelivery,
+          handler: "sendVaultReadyEmail",
+          raw_token_available: Boolean(token.raw_token_for_email_only),
+          raw_token_omitted: true
+        }
       });
       const deliveryResult = await sendVaultReadyEmail({
         db: input.databaseModule.prisma as never,
@@ -874,7 +909,10 @@ function inputLogDelivery(
     level: "info" | "warn" | "error";
     message:
       | "EMAIL_JOB_CREATED"
+      | "EMAIL_JOB_ENQUEUED"
+      | "EMAIL_JOB_CONSUMED"
       | "EMAIL_TRIGGERED"
+      | "EMAIL_HANDLER_EXECUTED"
       | "EMAIL_SKIPPED_REASON"
       | "delivery_attempt_start"
       | "delivery_recipient_source"
@@ -905,7 +943,10 @@ function inputLogRecoveryDelivery(
     level: "info" | "warn" | "error";
     message:
       | "EMAIL_JOB_CREATED"
+      | "EMAIL_JOB_ENQUEUED"
+      | "EMAIL_JOB_CONSUMED"
       | "EMAIL_TRIGGERED"
+      | "EMAIL_HANDLER_EXECUTED"
       | "EMAIL_SKIPPED_REASON"
       | "delivery_attempt_start"
       | "delivery_recipient_source"
@@ -1291,6 +1332,31 @@ function wrapSendDeliveryEmailProcessor(
 ): Processor {
   return async (job: RuntimeJob) => {
     const startedAt = Date.now();
+    queueModule.writeWorkerLog({
+      level: "info",
+      message: "EMAIL_JOB_CONSUMED",
+      envelope: job.data,
+      queue_name: queueModule.QUEUE_NAMES.emailDelivery,
+      extra: {
+        queue_mode: "redis",
+        redis_queue: true,
+        handler: "sendDeliveryEmailJob",
+        raw_token_omitted: true
+      }
+    });
+    queueModule.writeWorkerLog({
+      level: "info",
+      message: "EMAIL_HANDLER_EXECUTED",
+      envelope: job.data,
+      queue_name: queueModule.QUEUE_NAMES.emailDelivery,
+      extra: {
+        queue_mode: "redis",
+        redis_queue: true,
+        handler: "sendDeliveryEmailJob",
+        phase: "before_provider_call",
+        raw_token_omitted: true
+      }
+    });
     const result = await emailModule.sendDeliveryEmailJob(job.data.payload, dependencies);
     queueModule.writeWorkerLog({
       level: "info",

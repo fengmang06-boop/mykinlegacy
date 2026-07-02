@@ -185,6 +185,24 @@ describe("worker app foundation", () => {
       fulfillment_status: "completed"
     });
     expect(JSON.stringify(databaseModule.state.emailLogs)).not.toContain("raw-token-once");
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "EMAIL_JOB_ENQUEUED",
+        extra: expect.objectContaining({
+          order_id: "order_1",
+          order_number: "A100",
+          queue_mode: "inline",
+          redis_queue: false,
+          handler: "sendVaultReadyEmail"
+        })
+      })
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "EMAIL_JOB_CONSUMED" })
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "EMAIL_HANDLER_EXECUTED" })
+    );
     await app.shutdown();
     delete process.env.EMAIL_DELIVERY_TEST_MODE;
     delete process.env.EMAIL_TEST_RECIPIENT;
@@ -362,6 +380,23 @@ describe("worker app foundation", () => {
     );
     expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
       expect.objectContaining({ message: "EMAIL_JOB_CREATED" })
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "EMAIL_JOB_ENQUEUED",
+        extra: expect.objectContaining({
+          order_number: "AHL-MISSING-EMAIL",
+          queue_mode: "inline_recovery",
+          redis_queue: false,
+          handler: "sendVaultReadyEmail"
+        })
+      })
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "EMAIL_JOB_CONSUMED" })
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "EMAIL_HANDLER_EXECUTED" })
     );
     expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
       expect.objectContaining({ message: "EMAIL_TRIGGERED" })

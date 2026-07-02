@@ -35,7 +35,9 @@ export interface VaultDeliveryInput {
     level: "info" | "warn" | "error";
     message:
       | "EMAIL_JOB_CREATED"
+      | "EMAIL_JOB_CONSUMED"
       | "EMAIL_TRIGGERED"
+      | "EMAIL_HANDLER_EXECUTED"
       | "EMAIL_SKIPPED_REASON"
       | "delivery_attempt_start"
       | "delivery_recipient_source"
@@ -63,6 +65,20 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
       order_id: input.order_id,
       order_number: input.order_number,
       download_token_id: input.download_token_id,
+      raw_token_available: Boolean(input.raw_token_for_email_only),
+      raw_token_omitted: true
+    }
+  });
+  input.log?.({
+    level: "info",
+    message: "EMAIL_JOB_CONSUMED",
+    extra: {
+      order_id: input.order_id,
+      order_number: input.order_number,
+      download_token_id: input.download_token_id,
+      handler: "sendVaultReadyEmail",
+      queue_mode: "inline",
+      redis_queue: false,
       raw_token_available: Boolean(input.raw_token_for_email_only),
       raw_token_omitted: true
     }
@@ -195,6 +211,21 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         }
       });
     }
+    input.log?.({
+      level: "info",
+      message: "EMAIL_HANDLER_EXECUTED",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        provider: provider.provider_code,
+        handler: "sendDeliveryEmailJob",
+        phase: "before_provider_call",
+        recipient_source: recipient.source,
+        delivery_test_mode: recipient.test_mode,
+        download_token_id: input.download_token_id,
+        raw_token_omitted: true
+      }
+    });
     result = await input.emailModule.sendDeliveryEmailJob(
       {
         order_id: input.order_id,

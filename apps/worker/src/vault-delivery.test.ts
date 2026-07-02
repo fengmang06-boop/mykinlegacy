@@ -136,6 +136,8 @@ describe("vault delivery email", () => {
       expect.arrayContaining([
         expect.objectContaining({ message: "EMAIL_DECRYPTION_SUCCESS" }),
         expect.objectContaining({ message: "EMAIL_JOB_CREATED" }),
+        expect.objectContaining({ message: "EMAIL_JOB_CONSUMED" }),
+        expect.objectContaining({ message: "EMAIL_HANDLER_EXECUTED" }),
         expect.objectContaining({ message: "EMAIL_TRIGGERED" })
       ])
     );
