@@ -299,6 +299,29 @@ describe("download vault token security", () => {
     expect(JSON.stringify(assets)).not.toContain("signed_url");
   });
 
+  it("does not mark placeholder-sized artifacts as available", async () => {
+    const repository = createDownloadRepository();
+    const asset = repository.assets[0];
+    if (!asset) {
+      throw new Error("asset_missing");
+    }
+    repository.assets[0] = {
+      ...asset,
+      size_bytes: 100,
+      status: "available"
+    };
+    const created = await createDownloadToken(
+      { order_id: "order_1", order_number: "AH-1001", asset_ids: ["asset_1"] },
+      repository
+    );
+    const assets = await listDownloadAssets({
+      raw_token: created.raw_token_for_internal_delivery_only,
+      repository
+    });
+
+    expect(assets[0]).toMatchObject({ asset_id: "asset_1", available: false });
+  });
+
   it("vault response excludes storage key and records hashed page view event", async () => {
     const repository = createDownloadRepository();
     const created = await createDownloadToken(
@@ -467,7 +490,7 @@ function createDownloadRepository() {
         asset_type: "image",
         file_ext: "png",
         mime_type: "image/png",
-        size_bytes: 100,
+        size_bytes: 24000,
         status: "available",
         storage_provider: "local_private",
         storage_bucket: "private-assets",

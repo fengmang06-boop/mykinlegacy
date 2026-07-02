@@ -46,12 +46,32 @@ export type DownloadState =
   | "download_started"
   | "download_failed";
 
+export type CustomerDeliveryStatus =
+  | "preparing"
+  | "vault_ready"
+  | "email_delivery_attention"
+  | "artifact_generation_failed"
+  | "failed";
+
 export function friendlyGenerationMessage(input: {
   payment_status?: string;
   fulfillment_status?: string;
   download_ready?: boolean;
+  customer_delivery_status?: CustomerDeliveryStatus | string;
   elapsed_minutes?: number;
 }): string {
+  if (input.customer_delivery_status === "vault_ready") {
+    return "Your private vault is ready.";
+  }
+  if (input.customer_delivery_status === "email_delivery_attention") {
+    return "Your vault is ready. Delivery email needs attention, but your collection is not blocked.";
+  }
+  if (input.customer_delivery_status === "artifact_generation_failed") {
+    return "Collection preparation failed. Support can review the artifact delivery.";
+  }
+  if (input.customer_delivery_status === "failed") {
+    return "We need to review your order. Please contact support.";
+  }
   if (input.download_ready || input.fulfillment_status === "completed") {
     return "Your download vault is ready.";
   }

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ApiClient } from "../lib/api-client";
@@ -84,6 +84,13 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
   const founderDemoMode =
     process.env.NODE_ENV === "development" && interviewId.startsWith("founder-demo-");
 
+  useEffect(() => {
+    trackEvent("funnel_step_viewed", {
+      step_name: "guided_interview",
+      interview_id: interviewId
+    });
+  }, [interviewId]);
+
   function toggleOption(option: string) {
     setSelected((current) =>
       current.includes(option) ? current.filter((item) => item !== option) : [...current, option]
@@ -136,8 +143,18 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
         `ai_heritage_interview_${interviewId}`,
         JSON.stringify({ current_step: step.code, selected })
       );
-      trackEvent("interview_step_completed", { step_code: step.code });
+      const durationMs = Math.round(performance.now() - startedAt);
+      trackEvent("interview_step_completed", { step_code: step.code }, { durationMs });
+      trackEvent(
+        "funnel_step_completed",
+        { step_name: `interview_${step.code}`, interview_id: interviewId },
+        { stepName: `interview_${step.code}`, durationMs }
+      );
       if (stepIndex >= STEPS.length - 1) {
+        trackEvent("funnel_step_completed", {
+          step_name: "guided_interview",
+          interview_id: interviewId
+        });
         router.push(`/create/${interviewId}/confirm`);
         return;
       }

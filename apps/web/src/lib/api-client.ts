@@ -43,6 +43,8 @@ export interface OrderStatus {
   order_status: string;
   payment_status: string;
   fulfillment_status: string;
+  customer_delivery_status?: CustomerDeliveryStatus;
+  customer_delivery_message?: string;
   amount?: { total_cents: number };
   currency?: string;
   generation_manifest?: {
@@ -54,6 +56,13 @@ export interface OrderStatus {
   } | null;
   download_ready?: boolean;
 }
+
+export type CustomerDeliveryStatus =
+  | "preparing"
+  | "vault_ready"
+  | "email_delivery_attention"
+  | "artifact_generation_failed"
+  | "failed";
 
 export interface OrderArtifact {
   asset_id: string | null;
@@ -74,6 +83,7 @@ export interface OrderArtifacts {
   order_number: string;
   status: string;
   message: string;
+  customer_delivery_status?: CustomerDeliveryStatus;
   download_ready: boolean;
   vault_ready: boolean;
   artifacts: OrderArtifact[];

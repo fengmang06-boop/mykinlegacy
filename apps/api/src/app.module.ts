@@ -9,6 +9,7 @@ import { PaymentsModule } from "./payments/payments.module";
 import { ProductsModule } from "./products/products.module";
 import { DownloadsModule } from "./downloads/downloads.module";
 import { AdminModule } from "./admin/admin.module";
+import { AnalyticsModule } from "./analytics/analytics.module";
 
 @Module({
   imports: [
@@ -18,7 +19,8 @@ import { AdminModule } from "./admin/admin.module";
     OrdersModule,
     PaymentsModule,
     DownloadsModule,
-    AdminModule
+    AdminModule,
+    AnalyticsModule
   ],
   controllers: [AppController]
 })

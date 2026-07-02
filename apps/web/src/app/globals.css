@@ -2893,6 +2893,13 @@ textarea {
     rgba(246, 235, 212, 0.06);
 }
 
+.premium-page .status-card[data-state="attention"] {
+  border-color: rgba(201, 162, 74, 0.42);
+  background:
+    radial-gradient(circle at 90% 0%, rgba(201, 162, 74, 0.13), transparent 8rem),
+    rgba(201, 162, 74, 0.05);
+}
+
 .premium-page .vault-ready-panel {
   display: grid;
   gap: 7px;

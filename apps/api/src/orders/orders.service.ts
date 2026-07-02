@@ -122,6 +122,13 @@ interface OrderArtifactRecord {
   public_url?: null;
 }
 
+type CustomerDeliveryStatus =
+  | "preparing"
+  | "vault_ready"
+  | "email_delivery_attention"
+  | "artifact_generation_failed"
+  | "failed";
+
 @Injectable()
 export class OrdersService {
   private readonly logger = new Logger(OrdersService.name);
@@ -334,6 +341,7 @@ export class OrdersService {
       artifact_count: response.artifacts.length,
       available_artifact_count: response.artifacts.filter((artifact) => artifact.available).length,
       missing_artifact_count: response.missing_artifacts.length,
+      customer_delivery_status: response.customer_delivery_status,
       status: response.status,
       message: response.message,
       access: {
@@ -601,7 +609,18 @@ function buildArtifactResponse(context: {
       message: "Generation in progress"
     }));
   const vaultReady = Boolean(context.downloadToken && context.downloadToken.status === "active");
-  const complete = actualArtifacts.length > 0 && missingArtifacts.length === 0;
+  const complete =
+    actualArtifacts.length > 0 &&
+    missingArtifacts.length === 0 &&
+    actualArtifacts.every((artifact) => artifact.available);
+  const customerDeliveryStatus = customerDeliveryStatusFor({
+    payment_status: context.order.payment_status,
+    fulfillment_status: context.order.fulfillment_status,
+    manifest_status: context.manifest?.manifest_status ?? null,
+    failed_assets_count: context.manifest?.failed_assets.length ?? 0,
+    vault_ready: vaultReady,
+    artifacts_downloadable: complete
+  });
 
   return {
     order_number: context.order.order_number,
@@ -609,8 +628,9 @@ function buildArtifactResponse(context: {
     payment_status: context.order.payment_status,
     fulfillment_status: context.order.fulfillment_status,
     manifest_status: context.manifest?.manifest_status ?? null,
-    status: complete ? "ready" : "generation_in_progress",
-    message: complete ? "Artifacts ready" : "Generation in progress",
+    customer_delivery_status: customerDeliveryStatus,
+    status: complete ? "ready" : customerDeliveryStatus,
+    message: customerDeliveryMessage(customerDeliveryStatus),
     download_ready: vaultReady,
     vault_ready: vaultReady,
     artifacts: actualArtifacts,
@@ -648,6 +668,7 @@ function expectedArtifactEntries(expectedAssets: unknown[]) {
 }
 
 function mapOrderArtifact(asset: OrderArtifactRecord) {
+  const available = isArtifactAvailable(asset);
   return {
     asset_id: asset.id,
     deliverable_code: asset.deliverable_code,
@@ -659,21 +680,29 @@ function mapOrderArtifact(asset: OrderArtifactRecord) {
     mime_type: asset.mime_type,
     size_bytes: asset.size_bytes,
     status: asset.status,
-    available: isArtifactAvailable(asset),
+    available,
     access: {
       download_method: "private_vault_link_required",
       signed_url_endpoint: null,
       raw_token_exposed: false
     },
-    message: isArtifactAvailable(asset) ? null : "Generation in progress"
+    message: available ? null : artifactUnavailableMessage(asset)
   };
 }
 
 function isArtifactAvailable(asset: OrderArtifactRecord) {
   return (
     asset.public_url === null &&
-    (asset.status === "available" || asset.status === "available_for_download")
+    (asset.status === "available" || asset.status === "available_for_download") &&
+    asset.size_bytes >= minimumArtifactBytes(asset.file_ext)
   );
+}
+
+function artifactUnavailableMessage(asset: OrderArtifactRecord): string {
+  if (asset.size_bytes > 0 && asset.size_bytes < minimumArtifactBytes(asset.file_ext)) {
+    return "Artifact file is not ready";
+  }
+  return "Generation in progress";
 }
 
 function friendlyDeliverableName(code: string): string {
@@ -724,6 +753,12 @@ function mimeTypeFromFormat(format: string): string {
   return types[format] ?? "application/octet-stream";
 }
 
+function minimumArtifactBytes(fileExt: string): number {
+  if (fileExt === "zip") return 20 * 1024;
+  if (fileExt === "png" || fileExt === "pdf") return 10 * 1024;
+  return 1024;
+}
+
 async function getOrderGenerationSummary(input: {
   order_id: string;
   repository: OrderGenerationRepository;
@@ -735,11 +770,31 @@ async function getOrderGenerationSummary(input: {
     ? await input.repository.findManifestByOrderItem(order.id, orderItems[0].id)
     : null;
   const token = await input.repository.findDownloadTokenByOrder(order.id);
+  const assets = input.repository.listAssetsByOrder ? await input.repository.listAssetsByOrder(order.id) : [];
+  const expectedArtifacts = expectedArtifactEntries(manifest?.expected_assets ?? []);
+  const actualArtifacts = assets.map(mapOrderArtifact);
+  const actualCodes = new Set(actualArtifacts.map((artifact) => artifact.deliverable_code));
+  const missingArtifacts = expectedArtifacts.filter((artifact) => !actualCodes.has(artifact.deliverable_code));
+  const vaultReady = Boolean(token && manifest?.manifest_status === "completed");
+  const artifactsDownloadable =
+    actualArtifacts.length > 0 &&
+    missingArtifacts.length === 0 &&
+    actualArtifacts.every((artifact) => artifact.available);
+  const customerDeliveryStatus = customerDeliveryStatusFor({
+    payment_status: order.payment_status,
+    fulfillment_status: order.fulfillment_status,
+    manifest_status: manifest?.manifest_status ?? null,
+    failed_assets_count: manifest?.failed_assets.length ?? 0,
+    vault_ready: vaultReady,
+    artifacts_downloadable: artifactsDownloadable
+  });
   return {
     order_number: order.order_number,
     order_status: order.order_status,
     payment_status: order.payment_status,
     fulfillment_status: order.fulfillment_status,
+    customer_delivery_status: customerDeliveryStatus,
+    customer_delivery_message: customerDeliveryMessage(customerDeliveryStatus),
     generation_manifest: manifest
       ? {
           manifest_id: manifest.id,
@@ -751,17 +806,44 @@ async function getOrderGenerationSummary(input: {
           collection_content: collectionContentSummary(manifest.optional_assets)
         }
       : null,
-    download_ready: Boolean(token && manifest?.manifest_status === "completed"),
+    download_ready: vaultReady,
     download_vault_available: Boolean(token),
-    friendly_progress_status: friendlyProgress(order.fulfillment_status)
+    friendly_progress_status: customerDeliveryStatus
   };
 }
 
-function friendlyProgress(fulfillmentStatus: string): string {
-  if (fulfillmentStatus === "completed") return "download_ready";
-  if (fulfillmentStatus === "generating") return "generating_assets";
-  if (fulfillmentStatus === "queued") return "generation_queued";
-  return "waiting_for_generation";
+function customerDeliveryStatusFor(input: {
+  payment_status: string;
+  fulfillment_status: string;
+  manifest_status: string | null;
+  failed_assets_count: number;
+  vault_ready: boolean;
+  artifacts_downloadable: boolean;
+}): CustomerDeliveryStatus {
+  if (input.payment_status !== "paid") return "preparing";
+  if (input.vault_ready && input.artifacts_downloadable) {
+    return input.fulfillment_status === "failed" ? "email_delivery_attention" : "vault_ready";
+  }
+  if (
+    input.manifest_status === "failed" ||
+    input.failed_assets_count > 0 ||
+    (input.fulfillment_status === "failed" && !input.artifacts_downloadable)
+  ) {
+    return "artifact_generation_failed";
+  }
+  if (input.fulfillment_status === "failed") return "failed";
+  return "preparing";
+}
+
+function customerDeliveryMessage(status: CustomerDeliveryStatus): string {
+  const messages: Record<CustomerDeliveryStatus, string> = {
+    preparing: "Preparing your collection.",
+    vault_ready: "Your private vault is ready.",
+    email_delivery_attention: "Vault ready. Delivery email needs attention.",
+    artifact_generation_failed: "Collection preparation failed.",
+    failed: "We need to review your order."
+  };
+  return messages[status];
 }
 
 function meaningProfileSummary(optionalAssets: unknown[] | undefined) {

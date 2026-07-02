@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
@@ -23,6 +23,7 @@ export function PaymentSuccess() {
   );
   const [confirmed, setConfirmed] = useState(isFounderDemo);
   const [attempts, setAttempts] = useState(0);
+  const paymentSuccessTracked = useRef(false);
   const api = useMemo(() => new ApiClient(), []);
 
   useEffect(() => {
@@ -33,6 +34,11 @@ export function PaymentSuccess() {
     if (isFounderDemo) {
       setConfirmed(true);
       trackEvent("founder_demo_collection_ready", { order_number: orderNumber });
+      if (!paymentSuccessTracked.current) {
+        paymentSuccessTracked.current = true;
+        trackEvent("payment_success", { order_number: orderNumber, mode: "founder_demo" }, { stepName: "payment" });
+        trackEvent("checkout_completed", { order_number: orderNumber, mode: "founder_demo" }, { stepName: "stripe_checkout" });
+      }
       return;
     }
     if (!orderNumber || confirmed || attempts >= 24) {
@@ -47,6 +53,11 @@ export function PaymentSuccess() {
               setMessage("Your Family Legacy Collection Is Ready");
               setConfirmed(true);
               trackEvent("payment_verified", { order_number: orderNumber });
+              if (!paymentSuccessTracked.current) {
+                paymentSuccessTracked.current = true;
+                trackEvent("payment_success", { order_number: orderNumber }, { stepName: "payment" });
+                trackEvent("checkout_completed", { order_number: orderNumber }, { stepName: "stripe_checkout" });
+              }
             } else {
               setAttempts((current) => current + 1);
             }

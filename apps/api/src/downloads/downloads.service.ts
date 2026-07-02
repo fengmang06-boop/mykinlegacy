@@ -151,7 +151,9 @@ export class DownloadsService {
         storage_bucket: stringField(asset, "storage_bucket"),
         storage_key: stringField(asset, "storage_key")
       });
-      if (body.byteLength <= 512) throw downloadVaultError("asset_not_available");
+      if (body.byteLength < minimumDownloadableBytes(stringField(asset, "file_ext"))) {
+        throw downloadVaultError("asset_not_available");
+      }
 
       return {
         asset_id: assetId,
@@ -253,6 +255,12 @@ function safeFileName(name: string, ext: string): string {
     .replace(/^-+|-+$/g, "")
     .slice(0, 80);
   return `${cleaned || "mykinlegacy-artifact"}.${ext.replace(/[^a-z0-9]/g, "") || "bin"}`;
+}
+
+function minimumDownloadableBytes(fileExt: string): number {
+  if (fileExt === "zip") return 20 * 1024;
+  if (fileExt === "png" || fileExt === "pdf") return 10 * 1024;
+  return 1024;
 }
 
 function downloadVaultError(code: ApiErrorCode): Error & { code: ApiErrorCode } {

@@ -318,6 +318,18 @@ describe("customer frontend flow", () => {
     expect(globalStyles).toContain("overflow-wrap: normal");
   });
 
+  it("order status uses customer-facing delivery status instead of internal fulfillment failure", async () => {
+    const componentSource = await readFile(join(testDir, "components/order-status.tsx"), "utf8");
+    const stateSource = await readFile(join(testDir, "lib/state.ts"), "utf8");
+
+    expect(componentSource).toContain("customer_delivery_status");
+    expect(componentSource).toContain("Collection</h2>");
+    expect(componentSource).toContain("The delivery email needs attention");
+    expect(componentSource).not.toContain("<h2>Fulfillment</h2>");
+    expect(stateSource).toContain("email_delivery_attention");
+    expect(stateSource).toContain("your collection is not blocked");
+  });
+
   it("payment cancel page renders a branded checkout recovery path", async () => {
     const source = await readFile(join(testDir, "app/payment/cancel/page.tsx"), "utf8");
 

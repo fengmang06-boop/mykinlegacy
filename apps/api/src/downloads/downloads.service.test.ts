@@ -54,7 +54,7 @@ describe("downloads public API service", () => {
       file_name: "crest-variant-1.png",
       mime_type: "image/png"
     });
-    expect(file.body.byteLength).toBeGreaterThan(512);
+    expect(file.body.byteLength).toBeGreaterThan(10 * 1024);
     expect(JSON.stringify(file)).not.toContain("storage_key");
   });
 
@@ -91,7 +91,7 @@ async function createServiceFixture() {
         asset_type: "image",
         file_ext: "png",
         mime_type: "image/png",
-        size_bytes: 2048,
+        size_bytes: 24000,
         status: "available",
         storage_provider: "local_private",
         storage_bucket: "private-assets",
@@ -236,7 +236,7 @@ class FakeStorageAdapter {
   }
 
   async getObject() {
-    return Buffer.from("PNG".repeat(1024));
+    return Buffer.from("PNG".repeat(4096));
   }
 }
 

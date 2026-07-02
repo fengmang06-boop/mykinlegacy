@@ -166,7 +166,8 @@ describe("OrdersService", () => {
     expect(result).toMatchObject({
       order_number: "AHL-20260629-TEST",
       status: "ready",
-      message: "Artifacts ready",
+      message: "Your private vault is ready.",
+      customer_delivery_status: "vault_ready",
       download_ready: true,
       artifacts: [
         {
@@ -199,8 +200,9 @@ describe("OrdersService", () => {
     const result = await service.getArtifacts("AHL-20260629-TEST");
 
     expect(result).toMatchObject({
-      status: "generation_in_progress",
-      message: "Generation in progress",
+      status: "preparing",
+      message: "Preparing your collection.",
+      customer_delivery_status: "preparing",
       artifacts: [],
       missing_artifacts: [
         {
@@ -268,6 +270,59 @@ describe("OrdersService", () => {
     });
     expect(JSON.stringify(result)).not.toContain("download_token_1");
     expect(JSON.stringify(result)).not.toContain("raw-token");
+  });
+
+  it("reports email delivery attention instead of customer-facing failure when vault and artifacts are ready", async () => {
+    const service = new OrdersService(
+      createPrismaServiceMock(),
+      createOrchestrationRepository({ fulfillmentStatus: "failed" })
+    );
+
+    const status = await service.getOrder("AHL-20260629-TEST");
+    const artifacts = await service.getArtifacts("AHL-20260629-TEST");
+
+    expect(status).toMatchObject({
+      fulfillment_status: "failed",
+      customer_delivery_status: "email_delivery_attention",
+      download_ready: true
+    });
+    expect(artifacts).toMatchObject({
+      customer_delivery_status: "email_delivery_attention",
+      download_ready: true,
+      status: "ready"
+    });
+  });
+
+  it("reports artifact generation failure when failed order has placeholder-sized assets", async () => {
+    const service = new OrdersService(
+      createPrismaServiceMock(),
+      createOrchestrationRepository({
+        fulfillmentStatus: "failed",
+        assets: [
+          sampleArtifact({
+            id: "asset_pdf_1",
+            deliverable_code: "family_story_pdf",
+            asset_type: "pdf",
+            file_ext: "pdf",
+            mime_type: "application/pdf",
+            size_bytes: 100
+          })
+        ]
+      })
+    );
+
+    const result = await service.getArtifacts("AHL-20260629-TEST");
+
+    expect(result).toMatchObject({
+      customer_delivery_status: "artifact_generation_failed",
+      artifacts: [
+        {
+          deliverable_code: "family_story_pdf",
+          available: false,
+          message: "Artifact file is not ready"
+        }
+      ]
+    });
   });
 
   it("rejects missing heritage disclaimer consent", async () => {
@@ -396,6 +451,9 @@ function createPrismaServiceMock(options: { piiReadBackMissing?: boolean } = {})
 
 function createOrchestrationRepository(
   options: {
+    fulfillmentStatus?: string;
+    manifestStatus?: string;
+    failedAssets?: unknown[];
     expectedAssets?: unknown[];
     generatedAssets?: unknown[];
     assets?: Array<{
@@ -433,17 +491,17 @@ function createOrchestrationRepository(
       order_number: "AHL-20260629-TEST",
       order_status: "completed",
       payment_status: "paid",
-      fulfillment_status: "completed"
+      fulfillment_status: options.fulfillmentStatus ?? "completed"
     }),
     listOrderItemsByOrder: async () => [
       { id: "01H00000000000000000000021", order_id: "01H00000000000000000000020" }
     ],
     findManifestByOrderItem: async () => ({
       id: "manifest_1",
-      manifest_status: "completed",
+      manifest_status: options.manifestStatus ?? "completed",
       expected_assets: expectedAssets,
       generated_assets: generatedAssets,
-      failed_assets: [],
+      failed_assets: options.failedAssets ?? [],
       optional_assets: [
         {
           attachment_type: "meaning_engine",
@@ -502,6 +560,7 @@ function sampleArtifact(input: {
   asset_type: string;
   file_ext: string;
   mime_type: string;
+  size_bytes?: number;
 }) {
   return {
     id: input.id,
@@ -512,7 +571,7 @@ function sampleArtifact(input: {
     file_name: `${input.deliverable_code}.${input.file_ext}`,
     file_ext: input.file_ext,
     mime_type: input.mime_type,
-    size_bytes: 2048,
+    size_bytes: input.size_bytes ?? 24000,
     public_url: null
   };
 }

@@ -131,6 +131,7 @@ export function DownloadVault({ token }: { token: string }) {
       setVault(vaultResult);
       setAssets(assetResult);
       trackEvent("download_vault_opened", { order_number: vaultResult.order_number });
+      trackEvent("vault_opened", { order_number: vaultResult.order_number, source: "download_vault" }, { stepName: "vault" });
     } catch (loadError) {
       const message =
         loadError instanceof Error ? loadError.message : "Download vault could not be loaded.";
@@ -161,6 +162,15 @@ export function DownloadVault({ token }: { token: string }) {
           asset_id: asset.asset_id,
           deliverable_code: asset.deliverable_code
         }
+      );
+      trackEvent(
+        "artifact_downloaded",
+        {
+          asset_id: asset.asset_id,
+          deliverable_code: asset.deliverable_code,
+          file_ext: asset.file_ext
+        },
+        { stepName: "artifact_download" }
       );
       window.location.assign(signed.signed_url);
     } catch {

@@ -1,11 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import { ApiClient } from "../lib/api-client";
-import { trackEvent } from "../lib/analytics";
+import { trackEvent, trackFunnelStepViewed } from "../lib/analytics";
 
 const finalHomepageAsset = "/assets/final-homepage";
 
@@ -16,6 +16,8 @@ export function CreateStart() {
   const api = useMemo(() => new ApiClient(), []);
   const founderDemoMode = process.env.NODE_ENV === "development";
 
+  useEffect(() => trackFunnelStepViewed("create_page", { page: "/create" }), []);
+
   function beginFounderDemo() {
     const interview = api.createFounderDemoInterview();
     window.sessionStorage.setItem("ai_heritage_interview_id", interview.interview_id);
@@ -24,6 +26,11 @@ export function CreateStart() {
       JSON.stringify({ interview_id: interview.interview_id, answers: [] })
     );
     trackEvent("interview_started", {
+      interview_id: interview.interview_id,
+      mode: "founder_demo"
+    });
+    trackEvent("funnel_step_completed", {
+      step_name: "create_page",
       interview_id: interview.interview_id,
       mode: "founder_demo"
     });
@@ -37,6 +44,10 @@ export function CreateStart() {
       const interview = await api.createInterview();
       window.sessionStorage.setItem("ai_heritage_interview_id", interview.interview_id);
       trackEvent("interview_started", { interview_id: interview.interview_id });
+      trackEvent("funnel_step_completed", {
+        step_name: "create_page",
+        interview_id: interview.interview_id
+      });
       router.push(`/create/${interview.interview_id}`);
     } catch {
       setError(

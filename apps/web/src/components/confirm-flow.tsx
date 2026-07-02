@@ -1,10 +1,10 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ApiClient } from "../lib/api-client";
-import { trackEvent } from "../lib/analytics";
+import { trackEvent, trackFunnelStepViewed } from "../lib/analytics";
 
 export function ConfirmFlow({ interviewId }: { interviewId: string }) {
   const [email, setEmail] = useState("");
@@ -14,6 +14,8 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
   const api = useMemo(() => new ApiClient(), []);
   const founderDemoMode =
     process.env.NODE_ENV === "development" && interviewId.startsWith("founder-demo-");
+
+  useEffect(() => trackFunnelStepViewed("confirm_identity", { interview_id: interviewId }), [interviewId]);
 
   async function confirm() {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -42,6 +44,11 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
           product_code: "family_legacy_collection",
           mode: "founder_demo"
         });
+        trackEvent("funnel_step_completed", {
+          step_name: "confirm_identity",
+          order_number: orderNumber,
+          mode: "founder_demo"
+        });
         router.push(`/checkout/${orderNumber}`);
         return;
       }
@@ -61,6 +68,11 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
       });
       trackEvent("house_dna_confirmed", { interview_id: interviewId });
       trackEvent("order_created", {
+        order_number: order.order_number,
+        product_code: product.product_code
+      });
+      trackEvent("funnel_step_completed", {
+        step_name: "confirm_identity",
         order_number: order.order_number,
         product_code: product.product_code
       });

@@ -3,6 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+import { FunnelStepTracker } from "../components/funnel-tracker";
 import { publicMetadata } from "../lib/seo";
 
 const finalHomepageAsset = "/assets/final-homepage";
@@ -188,6 +189,7 @@ function HomeAsset({
 export default function HomePage() {
   return (
     <main className="home-premium">
+      <FunnelStepTracker stepName="landing_page" metadata={{ page: "/" }} />
       <section className="home-hero">
         <div className="home-shell home-hero-grid">
           <div className="home-hero-copy">

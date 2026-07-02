@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApiClient, type OrderStatus, type ProductDetail } from "../lib/api-client";
-import { trackEvent } from "../lib/analytics";
+import { trackEvent, trackFunnelStepViewed } from "../lib/analytics";
 import { formatMoneyFromCents } from "../lib/format";
 
 const finalHomepageAsset = "/assets/final-homepage";
@@ -120,6 +120,8 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
   const [error, setError] = useState<string | null>(null);
   const api = useMemo(() => new ApiClient(), []);
 
+  useEffect(() => trackFunnelStepViewed("checkout", { order_number: orderNumber }), [orderNumber]);
+
   useEffect(() => {
     if (founderDemoOrder) {
       setOrder(createFounderDemoOrderStatus(orderNumber));
@@ -147,6 +149,7 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
     }
     setState("checkout_creating");
     setError(null);
+    const startedAt = performance.now();
     try {
       await api.createConsent(orderNumber, {
         ...consents,
@@ -159,7 +162,9 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
         cancel_url: `${window.location.origin}/payment/cancel?order_number=${encodeURIComponent(orderNumber)}`
       });
       setState("redirecting_to_stripe");
-      trackEvent("checkout_started", { order_number: orderNumber });
+      const durationMs = Math.round(performance.now() - startedAt);
+      trackEvent("checkout_started", { order_number: orderNumber }, { durationMs, stepName: "checkout" });
+      trackEvent("funnel_step_completed", { step_name: "checkout", order_number: orderNumber }, { durationMs, stepName: "checkout" });
       window.location.assign(session.checkout_url);
     } catch {
       setError("Stripe checkout could not be created. Please retry.");

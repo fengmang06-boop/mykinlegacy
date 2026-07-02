@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 
 import {
@@ -21,6 +21,7 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
   const [artifacts, setArtifacts] = useState<OrderArtifacts | null>(null);
   const [elapsed, setElapsed] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const vaultReadyTracked = useRef(false);
   const api = useMemo(() => new ApiClient(), []);
 
   useEffect(() => {
@@ -76,12 +77,35 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
   const generated = order?.generation_manifest?.generated_assets_count ?? 0;
   const vaultReady = Boolean(order?.download_ready);
 
+  useEffect(() => {
+    if (!vaultReady || vaultReadyTracked.current) {
+      return;
+    }
+    vaultReadyTracked.current = true;
+    trackEvent("vault_opened", { order_number: orderNumber, source: "order_status" }, { stepName: "vault" });
+    trackEvent("email_sent_confirmed", { order_number: orderNumber, source: "order_status" }, { stepName: "email_delivery" });
+  }, [orderNumber, vaultReady]);
+  const customerDeliveryStatus =
+    order?.customer_delivery_status ?? artifacts?.customer_delivery_status ?? fallbackCustomerDeliveryStatus({
+      paymentStatus: order?.payment_status,
+      fulfillmentStatus: order?.fulfillment_status,
+      vaultReady,
+      expected,
+      generated
+    });
+  const deliveryCopy = deliveryStatusCopy(customerDeliveryStatus);
+  const showSupport =
+    elapsed > 30 ||
+    customerDeliveryStatus === "failed" ||
+    customerDeliveryStatus === "artifact_generation_failed" ||
+    customerDeliveryStatus === "email_delivery_attention";
+
   return (
     <section className="journey-shell">
       <div className="section transaction-layout">
         <div className="journey-card">
           <p className="eyebrow">Private vault progress</p>
-          <h1>{vaultReady ? "Your vault is ready" : "Your collection is being prepared"}</h1>
+          <h1>{deliveryCopy.heading}</h1>
           <p className="lead">Order {orderNumber}</p>
           {error ? <p className="error">{error}</p> : null}
           <div className="status-grid">
@@ -91,10 +115,16 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
             </div>
             <div
               className="card status-card"
-              data-state={order?.fulfillment_status === "completed" ? "complete" : "pending"}
+              data-state={
+                customerDeliveryStatus === "vault_ready" || customerDeliveryStatus === "email_delivery_attention"
+                  ? "complete"
+                  : customerDeliveryStatus === "artifact_generation_failed" || customerDeliveryStatus === "failed"
+                    ? "attention"
+                    : "pending"
+              }
             >
-              <h2>Fulfillment</h2>
-              <p>{order?.fulfillment_status ?? "Loading"}</p>
+              <h2>Collection</h2>
+              <p>{deliveryCopy.shortStatus}</p>
             </div>
             <div className="card status-card" data-state={expected > 0 && generated >= expected ? "complete" : "pending"}>
               <h2>Assets</h2>
@@ -109,17 +139,15 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
           </div>
           {vaultReady ? (
             <div className="vault-ready-panel">
-              <strong>Vault Ready</strong>
-              <span>
-                Your private vault link has been created and sent through the configured delivery
-                channel.
-              </span>
+              <strong>{deliveryCopy.panelTitle}</strong>
+              <span>{deliveryCopy.panelBody}</span>
             </div>
           ) : null}
           <p className="notice">
             {friendlyGenerationMessage({
               payment_status: order?.payment_status,
               fulfillment_status: order?.fulfillment_status,
+              customer_delivery_status: customerDeliveryStatus,
               download_ready: order?.download_ready,
               elapsed_minutes: elapsed
             })}
@@ -147,7 +175,7 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
             <li>We are preparing your story and certificate.</li>
             <li>We are packaging your private vault files.</li>
           </ul>
-          {elapsed > 30 || order?.fulfillment_status === "failed" ? (
+          {showSupport ? (
             <Link className="secondary-button" href="/support">
               Contact Support
             </Link>
@@ -174,6 +202,63 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
       </div>
     </section>
   );
+}
+
+function fallbackCustomerDeliveryStatus(input: {
+  paymentStatus?: string;
+  fulfillmentStatus?: string;
+  vaultReady: boolean;
+  expected: number;
+  generated: number;
+}) {
+  if (input.paymentStatus !== "paid") return "preparing";
+  if (input.vaultReady && input.expected > 0 && input.generated >= input.expected) {
+    return input.fulfillmentStatus === "failed" ? "email_delivery_attention" : "vault_ready";
+  }
+  if (input.fulfillmentStatus === "failed") return "artifact_generation_failed";
+  return "preparing";
+}
+
+type DeliveryCopy = { heading: string; shortStatus: string; panelTitle: string; panelBody: string };
+
+function deliveryStatusCopy(status: string): DeliveryCopy {
+  const fallback: DeliveryCopy = {
+    heading: "Your collection is being prepared",
+    shortStatus: "Preparing",
+    panelTitle: "Preparing",
+    panelBody: "Your private vault is being prepared."
+  };
+  const copy: Record<string, DeliveryCopy> = {
+    vault_ready: {
+      heading: "Your vault is ready",
+      shortStatus: "Ready",
+      panelTitle: "Vault Ready",
+      panelBody: "Your private vault link has been created and sent through the configured delivery channel."
+    },
+    email_delivery_attention: {
+      heading: "Your vault is ready",
+      shortStatus: "Email needs attention",
+      panelTitle: "Vault Ready",
+      panelBody:
+        "Your collection files are ready. The delivery email needs attention, but vault access is not blocked."
+    },
+    artifact_generation_failed: {
+      heading: "Collection preparation needs review",
+      shortStatus: "Needs review",
+      panelTitle: "Collection preparation failed",
+      panelBody: "The private vault is not ready because one or more collection artifacts need support review."
+    },
+    failed: {
+      heading: "Your order needs review",
+      shortStatus: "Needs review",
+      panelTitle: "Support review needed",
+      panelBody: "We need to review this order before delivery can continue."
+    },
+    preparing: fallback
+  };
+  const selected = copy[status];
+  if (selected) return selected;
+  return fallback;
 }
 
 function ArtifactVisibilityPanel({ artifacts }: { artifacts: OrderArtifacts | null }) {

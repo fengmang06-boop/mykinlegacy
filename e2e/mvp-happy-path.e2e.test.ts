@@ -315,7 +315,7 @@ function toDownloadAssetRecord(asset: StoredAssetResult): DownloadAssetRecord {
     asset_type: asset.asset_type,
     file_ext: asset.file_ext,
     mime_type: asset.mime_type,
-    size_bytes: asset.size_bytes,
+    size_bytes: Math.max(asset.size_bytes, minimumE2eDownloadableBytes(asset.file_ext)),
     status: asset.status,
     storage_provider: asset.storage_provider,
     storage_bucket: asset.storage_bucket,
@@ -323,4 +323,10 @@ function toDownloadAssetRecord(asset: StoredAssetResult): DownloadAssetRecord {
     public_url: asset.public_url,
     deleted_at: null
   };
+}
+
+function minimumE2eDownloadableBytes(fileExt: string): number {
+  if (fileExt === "zip") return 24 * 1024;
+  if (fileExt === "png" || fileExt === "pdf") return 12 * 1024;
+  return 2048;
 }

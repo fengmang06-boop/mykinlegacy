@@ -481,8 +481,15 @@ export function isAssetAvailable(asset: DownloadAssetRecord): boolean {
   return (
     asset.public_url === null &&
     !asset.deleted_at &&
-    (asset.status === "available" || asset.status === "available_for_download")
+    (asset.status === "available" || asset.status === "available_for_download") &&
+    asset.size_bytes >= minimumDownloadableBytes(asset.file_ext)
   );
+}
+
+function minimumDownloadableBytes(fileExt: string): number {
+  if (fileExt === "zip") return 20 * 1024;
+  if (fileExt === "png" || fileExt === "pdf") return 10 * 1024;
+  return 1024;
 }
 
 export function hashSensitiveValue(value: string): string {

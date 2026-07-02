@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 
+import { FunnelStepTracker } from "../../components/funnel-tracker";
 import { ProductDetails } from "../../components/product-details";
 import { publicMetadata } from "../../lib/seo";
 
@@ -16,6 +17,10 @@ export const metadata: Metadata = publicMetadata({
 export default function FamilyLegacyCollectionPage() {
   return (
     <main className="premium-page collection-page">
+      <FunnelStepTracker
+        stepName="collection_page"
+        metadata={{ page: "/family-legacy-collection", product_code: "family_legacy_collection" }}
+      />
       <section className="premium-hero product-hero">
         <div className="section product-layout">
           <div
