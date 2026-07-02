@@ -1,7 +1,7 @@
 {
-  "baseUrl": "http://localhost:3000",
-  "commit": "62d0ff72f445ea771e5165e15021d036c38551c4",
-  "capturedAt": "2026-07-02T04:51:15.861Z",
+  "baseUrl": "https://mykinlegacy.com",
+  "commit": "2fcc9b7cf9073e2f18a2957791cd8c790effe55e",
+  "capturedAt": "2026-07-02T04:53:50.441Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
     "Admin pages were captured with a redacted token in the URL."
@@ -748,12 +748,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1625
+            "height": 3802
           },
-          "scrollHeight": 1625,
+          "scrollHeight": 3802,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 404873,
+          "fileSize": 818509,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -774,12 +774,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 3410
+            "height": 8357
           },
-          "scrollHeight": 3410,
+          "scrollHeight": 8357,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 547176,
+          "fileSize": 1229730,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -802,12 +802,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 7102
+            "height": 19050
           },
-          "scrollHeight": 3551,
+          "scrollHeight": 9525,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1341800,
+          "fileSize": 3668334,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -836,12 +836,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1683
+            "height": 2609
           },
-          "scrollHeight": 1683,
+          "scrollHeight": 2609,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 419132,
+          "fileSize": 705406,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -862,12 +862,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 2818
+            "height": 7111
           },
-          "scrollHeight": 2818,
+          "scrollHeight": 7111,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 486367,
+          "fileSize": 1528772,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -890,12 +890,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 6438
+            "height": 15440
           },
-          "scrollHeight": 3219,
+          "scrollHeight": 7720,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 1212715,
+          "fileSize": 3684195,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -924,12 +924,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-desktop.png",
           "dimensions": {
             "width": 1440,
-            "height": 1521
+            "height": 1604
           },
-          "scrollHeight": 1521,
+          "scrollHeight": 1604,
           "scrollWidth": 1440,
           "clientWidth": 1440,
-          "fileSize": 402221,
+          "fileSize": 384523,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -950,12 +950,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-tablet.png",
           "dimensions": {
             "width": 768,
-            "height": 1725
+            "height": 3340
           },
-          "scrollHeight": 1725,
+          "scrollHeight": 3340,
           "scrollWidth": 768,
           "clientWidth": 768,
-          "fileSize": 318729,
+          "fileSize": 562115,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -978,12 +978,12 @@
           "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-mobile.png",
           "dimensions": {
             "width": 780,
-            "height": 3764
+            "height": 7178
           },
-          "scrollHeight": 1882,
+          "scrollHeight": 3589,
           "scrollWidth": 390,
           "clientWidth": 390,
-          "fileSize": 781096,
+          "fileSize": 1405328,
           "warnings": [],
           "failedImages": [],
           "failedRequests": [],
@@ -1665,12 +1665,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1625
+        "height": 3802
       },
-      "scrollHeight": 1625,
+      "scrollHeight": 3802,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 404873,
+      "fileSize": 818509,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1691,12 +1691,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 3410
+        "height": 8357
       },
-      "scrollHeight": 3410,
+      "scrollHeight": 8357,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 547176,
+      "fileSize": 1229730,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1719,12 +1719,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-orders-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 7102
+        "height": 19050
       },
-      "scrollHeight": 3551,
+      "scrollHeight": 9525,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1341800,
+      "fileSize": 3668334,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1745,12 +1745,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1683
+        "height": 2609
       },
-      "scrollHeight": 1683,
+      "scrollHeight": 2609,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 419132,
+      "fileSize": 705406,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1771,12 +1771,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 2818
+        "height": 7111
       },
-      "scrollHeight": 2818,
+      "scrollHeight": 7111,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 486367,
+      "fileSize": 1528772,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1799,12 +1799,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-email-logs-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 6438
+        "height": 15440
       },
-      "scrollHeight": 3219,
+      "scrollHeight": 7720,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 1212715,
+      "fileSize": 3684195,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1825,12 +1825,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-desktop.png",
       "dimensions": {
         "width": 1440,
-        "height": 1521
+        "height": 1604
       },
-      "scrollHeight": 1521,
+      "scrollHeight": 1604,
       "scrollWidth": 1440,
       "clientWidth": 1440,
-      "fileSize": 402221,
+      "fileSize": 384523,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1851,12 +1851,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-tablet.png",
       "dimensions": {
         "width": 768,
-        "height": 1725
+        "height": 3340
       },
-      "scrollHeight": 1725,
+      "scrollHeight": 3340,
       "scrollWidth": 768,
       "clientWidth": 768,
-      "fileSize": 318729,
+      "fileSize": 562115,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
@@ -1879,12 +1879,12 @@
       "screenshotPath": "/home/runner/work/mykinlegacy/mykinlegacy/apps/web/public/review/full-site/admin-download-tokens-mobile.png",
       "dimensions": {
         "width": 780,
-        "height": 3764
+        "height": 7178
       },
-      "scrollHeight": 1882,
+      "scrollHeight": 3589,
       "scrollWidth": 390,
       "clientWidth": 390,
-      "fileSize": 781096,
+      "fileSize": 1405328,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],
