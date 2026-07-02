@@ -97,6 +97,14 @@ function decryptableEmail(value) {
   }
 }
 
+function piiPayloadFormat(value) {
+  if (!value) return "missing";
+  const serialized = Buffer.from(value).toString("utf8");
+  if (serialized.startsWith("enc:v1:")) return "encrypted";
+  if (serialized.startsWith("placeholder:v1:")) return "placeholder";
+  return "malformed";
+}
+
 function safePayload(payload) {
   const safe = payload && typeof payload === "object" ? { ...payload } : {};
   for (const key of Object.keys(safe)) {
@@ -143,6 +151,7 @@ function safePayload(payload) {
     email_log_count: order.emailLogs.length,
     customer_pii_exists: Boolean(order.orderCustomerPii),
     customer_email_pii_exists: Boolean(order.orderCustomerPii?.emailEncrypted),
+    customer_email_pii_format: piiPayloadFormat(order.orderCustomerPii?.emailEncrypted),
     customer_email_decryptable: decryptableEmail(order.orderCustomerPii?.emailEncrypted),
     latest_email_log: latestEmailLog
       ? {

@@ -22,6 +22,7 @@ export type ApiErrorCode =
   | "email_template_missing"
   | "email_provider_not_configured"
   | "email_delivery_failed"
+  | "customer_pii_encryption_not_configured"
   | "admin_unauthorized"
   | "admin_forbidden"
   | "admin_reason_required"

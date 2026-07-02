@@ -261,11 +261,61 @@ describe("vault delivery email", () => {
     });
 
     expect(result).toMatchObject({ status: "failed", recipient_source: "unavailable" });
+    expect(result.email_log_id).toBeTruthy();
     expect(emailModule.state.lastInput).toBeNull();
     expect(db.state.emailLogs[0]).toMatchObject({
       status: "failed",
-      errorMessage: "customer_email_not_decryptable"
+      errorMessage: "customer_email_not_decryptable",
+      payloadJson: expect.objectContaining({
+        email_delivery_status: "failed_decryption",
+        recipient_source: "unavailable"
+      })
     });
+  });
+
+  it("logs failed decryption when customer email was encrypted with a different key", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("customer@example.com", "api-key"),
+      emailHash: sha256("customer@example.com")
+    });
+    const emailModule = createEmailModule({ providerCode: "resend" });
+    const logs: unknown[] = [];
+
+    const result = await sendVaultReadyEmail({
+      db: db as never,
+      emailModule: emailModule as never,
+      order_id: "order_1",
+      order_number: "AHL-TEST",
+      download_token_id: "download_token_1",
+      raw_token_for_email_only: "raw-token-once",
+      expires_at: "2026-07-29T00:00:00.000Z",
+      env: {
+        CUSTOMER_PII_ENCRYPTION_KEY: "worker-key",
+        EMAIL_PROVIDER: "resend",
+        EMAIL_DELIVERY_TEST_MODE: "false"
+      },
+      log: (entry) => logs.push(entry)
+    });
+
+    expect(result).toMatchObject({ status: "failed", recipient_source: "unavailable" });
+    expect(result.email_log_id).toBeTruthy();
+    expect(emailModule.state.lastInput).toBeNull();
+    expect(db.state.emailLogs[0]).toMatchObject({
+      provider: "resend",
+      status: "failed",
+      errorMessage: "customer_email_not_decryptable",
+      payloadJson: expect.objectContaining({
+        email_delivery_status: "failed_decryption"
+      })
+    });
+    expect(logs).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          message: "delivery_failure_reason",
+          extra: expect.objectContaining({ reason: "customer_email_not_decryptable" })
+        })
+      ])
+    );
   });
 
   it("rejects placeholder pii keys during delivery lookup", async () => {

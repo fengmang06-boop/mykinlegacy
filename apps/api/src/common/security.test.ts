@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { encryptEmailForStorage, placeholderEncryptEmail } from "./security";
+import { encryptEmailForStorage, isCustomerPiiEncryptionConfigured, placeholderEncryptEmail } from "./security";
 
 describe("PII security helpers", () => {
   it("falls back to non-reversible placeholder email storage without key", () => {
@@ -15,6 +15,7 @@ describe("PII security helpers", () => {
     process.env.CUSTOMER_PII_ENCRYPTION_KEY = "replace_with_customer_pii_encryption_key_from_secret_manager";
     const encrypted = encryptEmailForStorage("customer@example.com").toString("utf8");
 
+    expect(isCustomerPiiEncryptionConfigured()).toBe(false);
     expect(encrypted).toContain("placeholder:v1:");
     expect(encrypted).not.toContain("customer@example.com");
     delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
@@ -24,6 +25,7 @@ describe("PII security helpers", () => {
     process.env.CUSTOMER_PII_ENCRYPTION_KEY = "test-customer-pii-key";
     const encrypted = encryptEmailForStorage("customer@example.com").toString("utf8");
 
+    expect(isCustomerPiiEncryptionConfigured()).toBe(true);
     expect(encrypted).toContain("enc:v1:");
     expect(encrypted).not.toContain("customer@example.com");
     delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;

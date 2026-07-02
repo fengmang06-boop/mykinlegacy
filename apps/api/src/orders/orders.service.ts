@@ -4,7 +4,8 @@ import { ulid } from "ulid";
 import { ApiException } from "../common/api-error";
 import {
   hashEmail,
-  encryptEmailForStorage
+  encryptEmailForStorage,
+  isCustomerPiiEncryptionConfigured
 } from "../common/security";
 import {
   optionalBoolean,
@@ -121,6 +122,7 @@ export class OrdersService {
       "identity_version_id"
     );
     const customerEmail = validateEmail(requireString(data, "customer_email"), "customer_email");
+    assertCustomerEmailCanBeEncrypted();
     const product = await this.findProductWithPackage(productCode, packageCode);
     const identityVersion = await this.findIdentityVersion(identityVersionId, houseId);
     const productPackage = product.packages[0];
@@ -504,6 +506,20 @@ function serializeOrder(order: OrderRecord) {
     },
     currency: order.currency
   };
+}
+
+function assertCustomerEmailCanBeEncrypted(): void {
+  if (isCustomerPiiEncryptionConfigured()) {
+    return;
+  }
+
+  throw new ApiException({
+    errorCode: "customer_pii_encryption_not_configured",
+    message: "CUSTOMER_PII_ENCRYPTION_KEY must be configured before creating paid orders.",
+    userMessage: "We could not securely prepare delivery for this order. Please contact support.",
+    status: HttpStatus.INTERNAL_SERVER_ERROR,
+    affectedField: "customer_email"
+  });
 }
 
 function createOrderNumber(): string {

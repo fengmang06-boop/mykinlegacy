@@ -88,25 +88,30 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         raw_token_omitted: true
       }
     });
-    await createFailedEmailLog({
+    const emailLogId = await createFailedEmailLog({
       db: input.db,
       order_id: input.order_id,
       order_number: input.order_number,
       download_token_id: input.download_token_id,
+      provider: providerCodeForFailure(env),
       recipient_email_hash: recipient.email_hash ?? sha256(`${input.order_id}:recipient_unavailable`),
-      error_message: recipient.reason ?? "delivery_recipient_unavailable"
+      error_message: recipient.reason ?? "delivery_recipient_unavailable",
+      recipient_source: "unavailable",
+      delivery_test_mode: isEmailDeliveryTestMode(env)
     });
     return {
       status: "failed",
-      email_log_id: null,
+      email_log_id: emailLogId,
       recipient_source: "unavailable",
       raw_token_omitted: true
     };
   }
 
   let result: Awaited<ReturnType<EmailModule["sendDeliveryEmailJob"]>>;
+  let selectedProviderCode = providerCodeForFailure(env);
   try {
     const provider = input.emailModule.createEmailProviderFromEnv(env);
+    selectedProviderCode = provider.provider_code;
     input.log?.({
       level: "info",
       message: "delivery_recipient_source",
@@ -248,17 +253,20 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         raw_token_omitted: true
       }
     });
-    await createFailedEmailLog({
+    const emailLogId = await createFailedEmailLog({
       db: input.db,
       order_id: input.order_id,
       order_number: input.order_number,
       download_token_id: input.download_token_id,
+      provider: selectedProviderCode,
       recipient_email_hash: recipient.email_hash ?? sha256(recipient.email.trim().toLowerCase()),
-      error_message: error instanceof Error ? `email_delivery_exception:${error.message}` : "email_delivery_exception"
+      error_message: error instanceof Error ? `email_delivery_exception:${error.message}` : "email_delivery_exception",
+      recipient_source: recipient.source,
+      delivery_test_mode: recipient.test_mode
     });
     return {
       status: "failed",
-      email_log_id: null,
+      email_log_id: emailLogId,
       recipient_source: recipient.source,
       raw_token_omitted: true
     };
@@ -375,15 +383,19 @@ async function createFailedEmailLog(input: {
   order_id: string;
   order_number: string;
   download_token_id: string;
+  provider: "mock" | "resend" | "sendgrid" | "ses";
   recipient_email_hash: string;
   error_message: string;
-}) {
+  recipient_source: "customer_pii" | "test_recipient" | "unavailable";
+  delivery_test_mode: boolean;
+}): Promise<string> {
+  const id = createLocalId();
   await input.db.emailLog.create({
     data: {
-      id: createLocalId(),
+      id,
       orderId: input.order_id,
       emailTemplateId: null,
-      provider: "mock",
+      provider: input.provider,
       providerMessageId: null,
       recipientEmailHash: input.recipient_email_hash,
       status: "failed",
@@ -391,6 +403,12 @@ async function createFailedEmailLog(input: {
       payloadJson: {
         order_number: input.order_number,
         download_token_id: input.download_token_id,
+        email_delivery_status:
+          input.error_message === "customer_email_not_decryptable"
+            ? "failed_decryption"
+            : "failed",
+        recipient_source: input.recipient_source,
+        delivery_test_mode: input.delivery_test_mode,
         raw_token_present: false,
         masked_download_vault_link: "/download/[redacted]"
       },
@@ -398,6 +416,15 @@ async function createFailedEmailLog(input: {
       sentAt: null
     }
   });
+  return id;
+}
+
+function providerCodeForFailure(env: Record<string, string | undefined>): "mock" | "resend" | "sendgrid" | "ses" {
+  const provider = (env.EMAIL_PROVIDER ?? "mock").trim().replace(/^['"]|['"]$/g, "").toLowerCase();
+  if (provider === "resend" || provider === "sendgrid" || provider === "ses") {
+    return provider;
+  }
+  return "mock";
 }
 
 function decryptEmail(value: Buffer, env: Record<string, string | undefined>): string | null {

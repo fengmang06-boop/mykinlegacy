@@ -24,6 +24,7 @@ describe("OrdersService", () => {
   });
 
   it("creates pending order using database package price", async () => {
+    process.env.CUSTOMER_PII_ENCRYPTION_KEY = "test-customer-pii-key";
     const service = new OrdersService(createPrismaServiceMock());
     const result = await service.createOrder(validOrderBody());
 
@@ -34,6 +35,17 @@ describe("OrdersService", () => {
     expect(JSON.stringify(result)).not.toContain("customer@example.com");
     expect(JSON.stringify(result)).not.toContain("storage_key");
     expect(JSON.stringify(result)).not.toContain("prompt");
+    delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
+  });
+
+  it("rejects order creation when customer email cannot be encrypted", async () => {
+    delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
+    delete process.env.PII_ENCRYPTION_KEY;
+    const service = new OrdersService(createPrismaServiceMock());
+
+    await expect(service.createOrder(validOrderBody())).rejects.toMatchObject({
+      errorCode: "customer_pii_encryption_not_configured"
+    });
   });
 
   it("gets order status without download or manifest", async () => {

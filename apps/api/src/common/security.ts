@@ -36,6 +36,13 @@ export function encryptEmailForStorage(email: string): Buffer {
   );
 }
 
+export function isCustomerPiiEncryptionConfigured(
+  env: Record<string, string | undefined> = process.env
+): boolean {
+  const raw = env.CUSTOMER_PII_ENCRYPTION_KEY ?? env.PII_ENCRYPTION_KEY;
+  return Boolean(raw && !isPlaceholderSecret(raw));
+}
+
 export function maskEmail(email: string): string {
   const normalized = normalizeEmail(email);
   const [localPart, domain] = normalized.split("@");
@@ -65,7 +72,7 @@ function sortValue(value: unknown): unknown {
 
 function customerPiiEncryptionKey(): Buffer | null {
   const raw = process.env.CUSTOMER_PII_ENCRYPTION_KEY ?? process.env.PII_ENCRYPTION_KEY;
-  if (!raw || isPlaceholderSecret(raw)) {
+  if (!raw || !isCustomerPiiEncryptionConfigured(process.env)) {
     return null;
   }
   return createHash("sha256").update(raw).digest();
