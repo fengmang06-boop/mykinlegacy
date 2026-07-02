@@ -1,7 +1,7 @@
 {
-  "baseUrl": "https://mykinlegacy.com",
-  "commit": "f7da8212e997567bb5052aeee874c516efbc5976",
-  "capturedAt": "2026-07-02T02:09:56.009Z",
+  "baseUrl": "http://localhost:3000",
+  "commit": "62d0ff72f445ea771e5165e15021d036c38551c4",
+  "capturedAt": "2026-07-02T04:51:15.861Z",
   "notes": [
     "Internal visual review only. Do not link from public navigation.",
     "Admin pages were captured with a redacted token in the URL."
@@ -1885,6 +1885,86 @@
       "scrollWidth": 390,
       "clientWidth": 390,
       "fileSize": 781096,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "download-vault",
+      "pageLabel": "Download Vault",
+      "pagePath": "/download/[redacted]",
+      "pageUrl": "http://localhost:3000/download/[redacted]",
+      "viewport": {
+        "key": "desktop",
+        "width": 1440,
+        "height": 1200
+      },
+      "screenshot": "download-vault-desktop.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\download-vault-desktop.png",
+      "dimensions": {
+        "width": 1440,
+        "height": 2829
+      },
+      "scrollHeight": 2829,
+      "scrollWidth": 1440,
+      "clientWidth": 1440,
+      "fileSize": 1456887,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "download-vault",
+      "pageLabel": "Download Vault",
+      "pagePath": "/download/[redacted]",
+      "pageUrl": "http://localhost:3000/download/[redacted]",
+      "viewport": {
+        "key": "tablet",
+        "width": 768,
+        "height": 1200
+      },
+      "screenshot": "download-vault-tablet.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\download-vault-tablet.png",
+      "dimensions": {
+        "width": 768,
+        "height": 4000
+      },
+      "scrollHeight": 4000,
+      "scrollWidth": 768,
+      "clientWidth": 768,
+      "fileSize": 1164420,
+      "warnings": [],
+      "failedImages": [],
+      "failedRequests": [],
+      "consoleErrors": [],
+      "pageErrors": []
+    },
+    {
+      "pageKey": "download-vault",
+      "pageLabel": "Download Vault",
+      "pagePath": "/download/[redacted]",
+      "pageUrl": "http://localhost:3000/download/[redacted]",
+      "viewport": {
+        "key": "mobile",
+        "width": 390,
+        "height": 1200,
+        "isMobile": true,
+        "deviceScaleFactor": 2
+      },
+      "screenshot": "download-vault-mobile.png",
+      "screenshotPath": "C:\\Users\\Administrator\\Documents\\Codex\\2026-06-29\\ai-family-crest-generator-png-png\\apps\\web\\public\\review\\full-site\\download-vault-mobile.png",
+      "dimensions": {
+        "width": 780,
+        "height": 8792
+      },
+      "scrollHeight": 4396,
+      "scrollWidth": 390,
+      "clientWidth": 390,
+      "fileSize": 2482572,
       "warnings": [],
       "failedImages": [],
       "failedRequests": [],

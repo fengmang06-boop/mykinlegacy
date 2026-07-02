@@ -47,6 +47,7 @@ function parseArgs() {
     adminToken: process.env.ADMIN_ACCESS_TOKEN ?? "",
     baseUrl: DEFAULT_BASE_URL,
     founderOrder: DEFAULT_FOUNDER_ORDER,
+    downloadToken: process.env.DOWNLOAD_VAULT_REVIEW_TOKEN ?? "",
     fullSite: false,
     latestOrder: DEFAULT_LATEST_ORDER,
     mergeExistingReport: false,
@@ -69,6 +70,9 @@ function parseArgs() {
     }
     if (arg.startsWith("--founder-order=")) {
       options.founderOrder = arg.slice("--founder-order=".length);
+    }
+    if (arg.startsWith("--download-token=")) {
+      options.downloadToken = arg.slice("--download-token=".length);
     }
     if (arg.startsWith("--output-dir=")) {
       options.outputDir = arg.slice("--output-dir=".length);
@@ -93,6 +97,7 @@ function parseArgs() {
   return {
     adminToken: options.adminToken.trim(),
     baseUrl: options.baseUrl.replace(/\/+$/, ""),
+    downloadToken: options.downloadToken.trim(),
     founderOrder: options.founderOrder.trim(),
     fullSite: options.fullSite,
     latestOrder: options.latestOrder.trim(),
@@ -136,7 +141,9 @@ function capturePath(pageDefinition) {
 }
 
 function sanitizeUrl(value) {
-  return String(value).replace(/([?&]token=)[^&#]*/gi, "$1[redacted]");
+  return String(value)
+    .replace(/([?&]token=)[^&#]*/gi, "$1[redacted]")
+    .replace(/\/download\/[^/?#\s"']+/gi, "/download/[redacted]");
 }
 
 function sanitizeConsoleErrors(consoleErrors) {
@@ -620,6 +627,7 @@ function selectScopePages(scope, pages) {
   const scopes = {
     transaction: ["create", "checkout", "payment-success", "order-status-latest"],
     admin: ["admin-orders", "admin-email-logs", "admin-download-tokens"],
+    vault: ["download-vault"],
     "full-site": pages.map((page) => page.key)
   };
   const selected = scopes[scope];
@@ -961,6 +969,7 @@ async function main() {
   const {
     adminToken,
     baseUrl,
+    downloadToken,
     founderOrder,
     fullSite,
     latestOrder,
@@ -975,7 +984,7 @@ async function main() {
   const commit = getGitCommit();
   activeOutputDir = outputDir;
   activePages = fullSite || scope
-    ? createFullSitePages({ adminToken, founderOrder, latestOrder })
+    ? createFullSitePages({ adminToken, downloadToken, founderOrder, latestOrder, baseUrl })
     : orderNumber
     ? [
         ...basePages,
@@ -1057,11 +1066,21 @@ async function main() {
   console.log(`Warnings/errors recorded: ${warningCount}`);
 }
 
-function createFullSitePages({ adminToken, founderOrder, latestOrder }) {
+function createFullSitePages({ adminToken, downloadToken, founderOrder, latestOrder, baseUrl }) {
   const adminSuffix = adminToken ? `?token=${encodeURIComponent(adminToken)}` : "";
   const adminWarning = adminToken
     ? []
     : ["ADMIN_ACCESS_TOKEN was not available to the capture process; captured locked admin state."];
+  const vaultCapturePath = downloadToken
+    ? `/download/${encodeURIComponent(downloadToken)}`
+    : "/download/dev-demo-vault-review";
+  const vaultWarnings = downloadToken
+    ? []
+    : [
+        baseUrl.includes("localhost")
+          ? "No DOWNLOAD_VAULT_REVIEW_TOKEN was provided; captured development founder demo vault."
+          : "No DOWNLOAD_VAULT_REVIEW_TOKEN was provided; production vault capture may show invalid-link state."
+      ];
 
   return [
     { key: "home", label: "Homepage", path: "/" },
@@ -1095,6 +1114,14 @@ function createFullSitePages({ adminToken, founderOrder, latestOrder }) {
       key: "order-status-founder",
       label: "Order Status Founder",
       path: `/order-status/${encodeURIComponent(founderOrder)}`
+    },
+    {
+      key: "download-vault",
+      label: "Download Vault",
+      capturePath: vaultCapturePath,
+      path: "/download/[redacted]",
+      reportPath: "/download/[redacted]",
+      warnings: vaultWarnings
     },
     {
       key: "admin-orders",

@@ -41,11 +41,18 @@ describe("mock email provider and delivery rendering", () => {
 
     expect(rendered.body_text).toContain("https://example.com/download/raw_token_once");
     expect(rendered.body_text).not.toContain("216.128.154.152");
+    expect(rendered.body_html).toContain("MyKinLegacy");
+    expect(rendered.body_html).toContain("Open Your Private Vault");
+    expect(rendered.body_html).toContain("https://example.com/download/raw_token_once");
+    expect(rendered.body_html).toContain("background:#11100d");
     expect(rendered.subject).toBe("Your MyKinLegacy Private Vault Is Ready");
     expect(rendered.body_text).toContain("crest artwork");
     expect(rendered.body_text).toContain("legal heraldic grants");
+    expect(rendered.body_html).toContain("legal heraldic grants");
     expect(rendered.body_text).not.toContain("signed-url");
     expect(rendered.body_text).not.toContain("storage_key");
+    expect(rendered.body_html).not.toContain("signed-url");
+    expect(rendered.body_html).not.toContain("storage_key");
     expect(rendered.sanitized_payload.masked_download_vault_link).toBe(
       "https://example.com/download/[redacted]"
     );

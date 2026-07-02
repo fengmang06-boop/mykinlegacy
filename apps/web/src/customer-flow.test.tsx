@@ -16,7 +16,7 @@ import { ApiClient, ApiClientError, normalizeApiBaseUrl } from "./lib/api-client
 import { sanitizeAnalyticsPayload } from "./lib/analytics";
 import { getSafetyMessage } from "./lib/safety";
 import { areRequiredConsentsAccepted } from "./components/checkout-flow";
-import { formatArtifactSizeLabel, isPlaceholderAsset } from "./components/download-vault";
+import { DownloadVault, formatArtifactSizeLabel, isPlaceholderAsset } from "./components/download-vault";
 import { PrivateVaultPreview } from "./components/vault-meaning";
 
 const testDir = dirname(fileURLToPath(import.meta.url));
@@ -286,6 +286,16 @@ describe("customer frontend flow", () => {
     expect(isPlaceholderAsset({ size_bytes: 100, status: "available_for_download" })).toBe(true);
     expect(formatArtifactSizeLabel({ size_bytes: 100, status: "available_for_download" })).toBeNull();
     expect(formatArtifactSizeLabel({ size_bytes: 2048, status: "available_for_download" })).toBe("2.0 KB");
+  });
+
+  it("download vault shell does not expose the raw token in rendered markup", () => {
+    const rawToken = "raw-live-token-should-not-render";
+    const html = renderToStaticMarkup(<DownloadVault token={rawToken} />);
+
+    expect(html).toContain("Your Private Legacy Vault Is Ready");
+    expect(html).toContain("Your token is never displayed on this page.");
+    expect(html).not.toContain(rawToken);
+    expect(html).not.toContain("216.128.154.152");
   });
 
   it("payment cancel page renders a branded checkout recovery path", async () => {
