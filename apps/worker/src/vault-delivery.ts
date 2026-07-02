@@ -33,7 +33,16 @@ export interface VaultDeliveryInput {
   env?: Record<string, string | undefined>;
   log?: (input: {
     level: "info" | "warn" | "error";
-    message: "EMAIL_JOB_CREATED" | "EMAIL_TRIGGERED" | "EMAIL_SKIPPED_REASON";
+    message:
+      | "EMAIL_JOB_CREATED"
+      | "EMAIL_TRIGGERED"
+      | "EMAIL_SKIPPED_REASON"
+      | "delivery_attempt_start"
+      | "delivery_recipient_source"
+      | "resend_provider_selected"
+      | "resend_send_start"
+      | "resend_send_success"
+      | "delivery_failure_reason";
     extra?: Record<string, unknown>;
   }) => void;
 }
@@ -45,6 +54,17 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
   raw_token_omitted: true;
 }> {
   const env = input.env ?? process.env;
+  input.log?.({
+    level: "info",
+    message: "delivery_attempt_start",
+    extra: {
+      order_id: input.order_id,
+      order_number: input.order_number,
+      download_token_id: input.download_token_id,
+      raw_token_available: Boolean(input.raw_token_for_email_only),
+      raw_token_omitted: true
+    }
+  });
   const recipient = await resolveRecipient(input.db, input.order_id, env);
   if (!recipient.email) {
     input.log?.({
@@ -55,6 +75,16 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         order_number: input.order_number,
         reason: recipient.reason ?? "delivery_recipient_unavailable",
         recipient_source: "unavailable",
+        raw_token_omitted: true
+      }
+    });
+    input.log?.({
+      level: "error",
+      message: "delivery_failure_reason",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        reason: recipient.reason ?? "delivery_recipient_unavailable",
         raw_token_omitted: true
       }
     });
@@ -77,6 +107,30 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
   let result: Awaited<ReturnType<EmailModule["sendDeliveryEmailJob"]>>;
   try {
     const provider = input.emailModule.createEmailProviderFromEnv(env);
+    input.log?.({
+      level: "info",
+      message: "delivery_recipient_source",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        recipient_source: recipient.source,
+        delivery_test_mode: recipient.test_mode,
+        intended_recipient_hash: recipient.intended_email_hash,
+        actual_recipient_hash: sha256(recipient.email.trim().toLowerCase()),
+        raw_token_omitted: true
+      }
+    });
+    input.log?.({
+      level: "info",
+      message: "resend_provider_selected",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        provider: provider.provider_code,
+        expected_resend: !recipient.test_mode,
+        raw_token_omitted: true
+      }
+    });
     if (!recipient.test_mode && env.NODE_ENV === "production" && provider.provider_code === "mock") {
       throw new Error("live_email_provider_mock_not_allowed");
     }
@@ -95,6 +149,20 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         raw_token_omitted: true
       }
     });
+    if (provider.provider_code === "resend") {
+      input.log?.({
+        level: "info",
+        message: "resend_send_start",
+        extra: {
+          order_id: input.order_id,
+          order_number: input.order_number,
+          recipient_source: recipient.source,
+          delivery_test_mode: recipient.test_mode,
+          download_token_id: input.download_token_id,
+          raw_token_omitted: true
+        }
+      });
+    }
     result = await input.emailModule.sendDeliveryEmailJob(
       {
         order_id: input.order_id,
@@ -130,6 +198,31 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         raw_token_omitted: true
       }
     });
+    if (provider.provider_code === "resend" && result.status === "sent") {
+      input.log?.({
+        level: "info",
+        message: "resend_send_success",
+        extra: {
+          order_id: input.order_id,
+          order_number: input.order_number,
+          download_token_id: input.download_token_id,
+          raw_token_omitted: true
+        }
+      });
+    }
+    if (result.status !== "sent") {
+      input.log?.({
+        level: "error",
+        message: "delivery_failure_reason",
+        extra: {
+          order_id: input.order_id,
+          order_number: input.order_number,
+          reason: `provider_status_${result.status}`,
+          download_token_id: input.download_token_id,
+          raw_token_omitted: true
+        }
+      });
+    }
   } catch (error) {
     input.log?.({
       level: "error",
@@ -140,6 +233,17 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         reason: error instanceof Error ? error.message : "email_delivery_exception",
         recipient_source: recipient.source,
         delivery_test_mode: recipient.test_mode,
+        download_token_id: input.download_token_id,
+        raw_token_omitted: true
+      }
+    });
+    input.log?.({
+      level: "error",
+      message: "delivery_failure_reason",
+      extra: {
+        order_id: input.order_id,
+        order_number: input.order_number,
+        reason: error instanceof Error ? error.message : "email_delivery_exception",
         download_token_id: input.download_token_id,
         raw_token_omitted: true
       }

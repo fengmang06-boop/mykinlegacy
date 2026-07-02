@@ -386,6 +386,15 @@ export function createWorkerApp(options: WorkerAppOptions = {}): WorkerApp {
           }
           outboxMaintenanceRunning = true;
           try {
+            queueModule.writeWorkerLog({
+              level: "info",
+              message: "scanner_started",
+              queue_name: queueModule.QUEUE_NAMES.paymentConfirmation,
+              extra: {
+                outbox_dispatcher_enabled: config.enableOutboxDispatcher,
+                poll_interval_ms: config.pollIntervalMs
+              }
+            });
             await outboxDispatcher.dispatchOnce();
             await recoverStuckPaidOrders({
               queueModule,
@@ -393,11 +402,21 @@ export function createWorkerApp(options: WorkerAppOptions = {}): WorkerApp {
               orchestrationRepository,
               emailModule
             });
-            await recoverCompletedOrdersMissingDeliveryEmail({
+            const completedRecovery = await recoverCompletedOrdersMissingDeliveryEmail({
               queueModule,
               databaseModule,
               orchestrationRepository,
               emailModule
+            });
+            queueModule.writeWorkerLog({
+              level: "info",
+              message: "scanner_found_candidates",
+              queue_name: queueModule.QUEUE_NAMES.paymentConfirmation,
+              extra: {
+                completed_missing_email_scanned: completedRecovery.scanned,
+                completed_missing_email_recovered: completedRecovery.recovered,
+                completed_missing_email_failed: completedRecovery.failed
+              }
             });
           } catch (error) {
             queueModule.writeWorkerLog({
@@ -674,6 +693,20 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
   for (const orderRow of orders) {
     const orderId = recordString(orderRow, "id");
     const orderNumber = recordString(orderRow, "orderNumber");
+    input.queueModule.writeWorkerLog({
+      level: "info",
+      message: "recovery_candidate_order",
+      queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+      extra: {
+        order_id: orderId,
+        order_number: orderNumber,
+        payment_status: recordValue(orderRow, "paymentStatus"),
+        fulfillment_status: recordValue(orderRow, "fulfillmentStatus"),
+        active_download_token_count: recordArray(orderRow, "downloadTokens").length,
+        email_log_count: recordArray(orderRow, "emailLogs").length,
+        raw_token_omitted: true
+      }
+    });
     try {
       const token = await createFreshVaultTokenFromExistingVault({
         db: input.databaseModule.prisma,
@@ -791,7 +824,16 @@ async function createFreshVaultTokenFromExistingVault(input: {
 function inputLogDelivery(
   entry: {
     level: "info" | "warn" | "error";
-    message: "EMAIL_JOB_CREATED" | "EMAIL_TRIGGERED" | "EMAIL_SKIPPED_REASON";
+    message:
+      | "EMAIL_JOB_CREATED"
+      | "EMAIL_TRIGGERED"
+      | "EMAIL_SKIPPED_REASON"
+      | "delivery_attempt_start"
+      | "delivery_recipient_source"
+      | "resend_provider_selected"
+      | "resend_send_start"
+      | "resend_send_success"
+      | "delivery_failure_reason";
     extra?: Record<string, unknown>;
   },
   queueModule: QueueModule,
@@ -811,7 +853,16 @@ function inputLogDelivery(
 function inputLogRecoveryDelivery(
   entry: {
     level: "info" | "warn" | "error";
-    message: "EMAIL_JOB_CREATED" | "EMAIL_TRIGGERED" | "EMAIL_SKIPPED_REASON";
+    message:
+      | "EMAIL_JOB_CREATED"
+      | "EMAIL_TRIGGERED"
+      | "EMAIL_SKIPPED_REASON"
+      | "delivery_attempt_start"
+      | "delivery_recipient_source"
+      | "resend_provider_selected"
+      | "resend_send_start"
+      | "resend_send_success"
+      | "delivery_failure_reason";
     extra?: Record<string, unknown>;
   },
   queueModule: QueueModule
