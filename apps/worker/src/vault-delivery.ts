@@ -22,6 +22,24 @@ export type VaultDeliveryDb = {
   emailLog: PrismaDelegate;
 };
 
+export type DeliveryRecipientResolution =
+  | {
+      ok: true;
+      recipientEmail: string;
+      recipientEmailHash: string;
+      intendedRecipientHash: string | null;
+      recipientSource: "customer_pii" | "test_recipient";
+      deliveryTestMode: boolean;
+    }
+  | {
+      ok: false;
+      reason: "missing_pii" | "decrypt_failed" | "invalid_email" | "internal_recipient_blocked";
+      recipientEmailHash: string | null;
+      intendedRecipientHash: string | null;
+      recipientSource: "customer_pii";
+      deliveryTestMode: false;
+    };
+
 export interface VaultDeliveryInput {
   db: VaultDeliveryDb;
   emailModule: EmailModule;
@@ -83,40 +101,39 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
       raw_token_omitted: true
     }
   });
-  const recipient = await resolveRecipient(input.db, input.order_id, env);
-  if (recipient.source === "customer_pii" && recipient.email) {
+  const recipient = await resolveDeliveryRecipient(input.db, input.order_id, env);
+  if (recipient.ok && recipient.recipientSource === "customer_pii") {
     input.log?.({
       level: "info",
       message: "EMAIL_DECRYPTION_SUCCESS",
       extra: {
         order_id: input.order_id,
         order_number: input.order_number,
-        intended_email_hash: recipient.intended_email_hash,
+        intended_email_hash: recipient.intendedRecipientHash,
         raw_token_omitted: true
       }
     });
   }
-  if (recipient.source === "customer_pii" && !recipient.email) {
+  if (!recipient.ok) {
+    const failureReason = deliveryResolutionReasonToLogReason(recipient.reason);
     input.log?.({
       level: "error",
       message: "EMAIL_DECRYPTION_FAILED",
       extra: {
         order_id: input.order_id,
         order_number: input.order_number,
-        reason: recipient.reason ?? "customer_email_not_decryptable",
-        intended_email_hash: recipient.intended_email_hash,
+        reason: failureReason,
+        intended_email_hash: recipient.intendedRecipientHash,
         raw_token_omitted: true
       }
     });
-  }
-  if (!recipient.email) {
     input.log?.({
       level: "warn",
       message: "EMAIL_SKIPPED_REASON",
       extra: {
         order_id: input.order_id,
         order_number: input.order_number,
-        reason: recipient.reason ?? "delivery_recipient_unavailable",
+        reason: failureReason,
         recipient_source: "unavailable",
         raw_token_omitted: true
       }
@@ -127,7 +144,7 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
       extra: {
         order_id: input.order_id,
         order_number: input.order_number,
-        reason: recipient.reason ?? "delivery_recipient_unavailable",
+        reason: failureReason,
         raw_token_omitted: true
       }
     });
@@ -137,10 +154,10 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
       order_number: input.order_number,
       download_token_id: input.download_token_id,
       provider: providerCodeForFailure(env),
-      recipient_email_hash: recipient.email_hash ?? sha256(`${input.order_id}:recipient_unavailable`),
-      error_message: recipient.reason ?? "delivery_recipient_unavailable",
+      recipient_email_hash: recipient.recipientEmailHash ?? sha256(`${input.order_id}:recipient_unavailable`),
+      error_message: failureReason,
       recipient_source: "unavailable",
-      delivery_test_mode: isEmailDeliveryTestMode(env)
+      delivery_test_mode: false
     });
     return {
       status: "failed",
@@ -161,10 +178,10 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
       extra: {
         order_id: input.order_id,
         order_number: input.order_number,
-        recipient_source: recipient.source,
-        delivery_test_mode: recipient.test_mode,
-        intended_recipient_hash: recipient.intended_email_hash,
-        actual_recipient_hash: sha256(recipient.email.trim().toLowerCase()),
+        recipient_source: recipient.recipientSource,
+        delivery_test_mode: recipient.deliveryTestMode,
+        intended_recipient_hash: recipient.intendedRecipientHash,
+        actual_recipient_hash: recipient.recipientEmailHash,
         raw_token_omitted: true
       }
     });
@@ -175,11 +192,11 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         order_id: input.order_id,
         order_number: input.order_number,
         provider: provider.provider_code,
-        expected_resend: !recipient.test_mode,
+        expected_resend: !recipient.deliveryTestMode,
         raw_token_omitted: true
       }
     });
-    if (!recipient.test_mode && env.NODE_ENV === "production" && provider.provider_code === "mock") {
+    if (!recipient.deliveryTestMode && env.NODE_ENV === "production" && provider.provider_code === "mock") {
       throw new Error("live_email_provider_mock_not_allowed");
     }
     input.log?.({
@@ -189,10 +206,10 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         order_id: input.order_id,
         order_number: input.order_number,
         provider: provider.provider_code,
-        recipient_source: recipient.source,
-        delivery_test_mode: recipient.test_mode,
-        intended_recipient_hash: recipient.intended_email_hash,
-        actual_recipient_hash: sha256(recipient.email.trim().toLowerCase()),
+        recipient_source: recipient.recipientSource,
+        delivery_test_mode: recipient.deliveryTestMode,
+        intended_recipient_hash: recipient.intendedRecipientHash,
+        actual_recipient_hash: recipient.recipientEmailHash,
         download_token_id: input.download_token_id,
         raw_token_omitted: true
       }
@@ -204,8 +221,8 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         extra: {
           order_id: input.order_id,
           order_number: input.order_number,
-          recipient_source: recipient.source,
-          delivery_test_mode: recipient.test_mode,
+          recipient_source: recipient.recipientSource,
+          delivery_test_mode: recipient.deliveryTestMode,
           download_token_id: input.download_token_id,
           raw_token_omitted: true
         }
@@ -220,8 +237,8 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         provider: provider.provider_code,
         handler: "sendDeliveryEmailJob",
         phase: "before_provider_call",
-        recipient_source: recipient.source,
-        delivery_test_mode: recipient.test_mode,
+        recipient_source: recipient.recipientSource,
+        delivery_test_mode: recipient.deliveryTestMode,
         download_token_id: input.download_token_id,
         raw_token_omitted: true
       }
@@ -232,11 +249,11 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         order_number: input.order_number,
         download_token_id: input.download_token_id,
         raw_token_for_internal_delivery_only: input.raw_token_for_email_only,
-        recipient_email: recipient.email,
-        recipient_source: recipient.source,
-        delivery_test_mode: recipient.test_mode,
-        intended_recipient_hash: recipient.intended_email_hash,
-        actual_recipient_hash: sha256(recipient.email.trim().toLowerCase()),
+        recipient_email: recipient.recipientEmail,
+        recipient_source: recipient.recipientSource,
+        delivery_test_mode: recipient.deliveryTestMode,
+        intended_recipient_hash: recipient.intendedRecipientHash,
+        actual_recipient_hash: recipient.recipientEmailHash,
         expires_at: input.expires_at,
         app_web_url: siteUrl(env),
         email_from: env.EMAIL_FROM,
@@ -255,8 +272,8 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         order_number: input.order_number,
         provider: provider.provider_code,
         delivery_status: result.status,
-        recipient_source: recipient.source,
-        delivery_test_mode: recipient.test_mode,
+        recipient_source: recipient.recipientSource,
+        delivery_test_mode: recipient.deliveryTestMode,
         download_token_id: input.download_token_id,
         raw_token_omitted: true
       }
@@ -294,8 +311,8 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
         order_id: input.order_id,
         order_number: input.order_number,
         reason: error instanceof Error ? error.message : "email_delivery_exception",
-        recipient_source: recipient.source,
-        delivery_test_mode: recipient.test_mode,
+        recipient_source: recipient.recipientSource,
+        delivery_test_mode: recipient.deliveryTestMode,
         download_token_id: input.download_token_id,
         raw_token_omitted: true
       }
@@ -317,15 +334,15 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
       order_number: input.order_number,
       download_token_id: input.download_token_id,
       provider: selectedProviderCode,
-      recipient_email_hash: recipient.email_hash ?? sha256(recipient.email.trim().toLowerCase()),
+      recipient_email_hash: recipient.recipientEmailHash,
       error_message: error instanceof Error ? `email_delivery_exception:${error.message}` : "email_delivery_exception",
-      recipient_source: recipient.source,
-      delivery_test_mode: recipient.test_mode
+      recipient_source: recipient.recipientSource,
+      delivery_test_mode: recipient.deliveryTestMode
     });
     return {
       status: "failed",
       email_log_id: emailLogId,
-      recipient_source: recipient.source,
+      recipient_source: recipient.recipientSource,
       raw_token_omitted: true
     };
   }
@@ -333,7 +350,7 @@ export async function sendVaultReadyEmail(input: VaultDeliveryInput): Promise<{
   return {
     status: result.status,
     email_log_id: result.email_log_id,
-    recipient_source: recipient.source,
+    recipient_source: recipient.recipientSource,
     raw_token_omitted: true
   };
 }
@@ -372,74 +389,100 @@ class PrismaEmailLogRepository {
   }
 }
 
-async function resolveRecipient(
+export async function resolveDeliveryRecipient(
   db: VaultDeliveryDb,
   orderId: string,
   env: Record<string, string | undefined>
-): Promise<{
-  email: string | null;
-  email_hash: string | null;
-  intended_email_hash: string | null;
-  source: "customer_pii" | "test_recipient";
-  test_mode: boolean;
-  reason?: string;
-}> {
+): Promise<DeliveryRecipientResolution> {
   const testMode = isEmailDeliveryTestMode(env);
   const testRecipient = env.EMAIL_TEST_RECIPIENT ?? env.MYKINLEGACY_TEST_RECIPIENT_EMAIL;
   if (testMode && testRecipient) {
     const customerRow = await db.orderCustomerPii.findUnique({ where: { orderId } });
+    const normalizedTestRecipient = normalizeEmail(testRecipient);
+    if (!normalizedTestRecipient) {
+      return {
+        ok: false,
+        reason: "invalid_email",
+        recipientEmailHash: null,
+        intendedRecipientHash: stringField(customerRow, "emailHash"),
+        recipientSource: "customer_pii",
+        deliveryTestMode: false
+      };
+    }
     return {
-      email: testRecipient,
-      email_hash: sha256(testRecipient.trim().toLowerCase()),
-      intended_email_hash: stringField(customerRow, "emailHash"),
-      source: "test_recipient",
-      test_mode: true
+      ok: true,
+      recipientEmail: normalizedTestRecipient,
+      recipientEmailHash: sha256(normalizedTestRecipient),
+      intendedRecipientHash: stringField(customerRow, "emailHash"),
+      recipientSource: "test_recipient",
+      deliveryTestMode: true
     };
   }
 
   const row = await db.orderCustomerPii.findUnique({ where: { orderId } });
   if (!row) {
     return {
-      email: null,
-      email_hash: null,
-      intended_email_hash: null,
-      source: "customer_pii",
-      test_mode: false,
-      reason: "customer_email_missing"
+      ok: false,
+      reason: "missing_pii",
+      recipientEmailHash: null,
+      intendedRecipientHash: null,
+      recipientSource: "customer_pii",
+      deliveryTestMode: false
     };
   }
   const emailHash = stringField(row, "emailHash");
   const encrypted = bufferField(row, "emailEncrypted");
   if (!emailHash || !encrypted) {
     return {
-      email: null,
-      email_hash: emailHash,
-      intended_email_hash: emailHash,
-      source: "customer_pii",
-      test_mode: false,
-      reason: "customer_email_missing"
+      ok: false,
+      reason: "missing_pii",
+      recipientEmailHash: emailHash,
+      intendedRecipientHash: emailHash,
+      recipientSource: "customer_pii",
+      deliveryTestMode: false
     };
   }
-  const email = encrypted ? decryptEmail(encrypted, env) : null;
+  const decryptedEmail = decryptEmail(encrypted, env);
+  const email = normalizeEmail(decryptedEmail);
+  if (!email) {
+    return {
+      ok: false,
+      reason: decryptedEmail ? "invalid_email" : "decrypt_failed",
+      recipientEmailHash: emailHash,
+      intendedRecipientHash: emailHash,
+      recipientSource: "customer_pii",
+      deliveryTestMode: false
+    };
+  }
   if (email && isInternalDeliveryInbox(email, testRecipient)) {
     return {
-      email: null,
-      email_hash: sha256(email.trim().toLowerCase()),
-      intended_email_hash: emailHash,
-      source: "customer_pii",
-      test_mode: false,
-      reason: "unsafe_live_email_recipient_internal_inbox"
+      ok: false,
+      reason: "internal_recipient_blocked",
+      recipientEmailHash: sha256(email),
+      intendedRecipientHash: emailHash,
+      recipientSource: "customer_pii",
+      deliveryTestMode: false
     };
   }
 
   return {
-    email,
-    email_hash: emailHash,
-    intended_email_hash: emailHash,
-    source: "customer_pii",
-    test_mode: false,
-    reason: email ? undefined : "customer_email_not_decryptable"
+    ok: true,
+    recipientEmail: email,
+    recipientEmailHash: sha256(email),
+    intendedRecipientHash: emailHash,
+    recipientSource: "customer_pii",
+    deliveryTestMode: false
   };
+}
+
+type DeliveryRecipientFailureReason = Extract<DeliveryRecipientResolution, { ok: false }>["reason"];
+
+function deliveryResolutionReasonToLogReason(reason: DeliveryRecipientFailureReason): string {
+  if (reason === "missing_pii") return "customer_email_missing";
+  if (reason === "decrypt_failed") return "customer_email_not_decryptable";
+  if (reason === "invalid_email") return "customer_email_invalid";
+  if (reason === "internal_recipient_blocked") return "unsafe_live_email_recipient_internal_inbox";
+  return "delivery_recipient_unavailable";
 }
 
 function isEmailDeliveryTestMode(env: Record<string, string | undefined>): boolean {
@@ -513,7 +556,7 @@ function providerCodeForFailure(env: Record<string, string | undefined>): "mock"
 }
 
 function decryptEmail(value: Buffer, env: Record<string, string | undefined>): string | null {
-  const serialized = value.toString("utf8");
+  const serialized = Buffer.from(value).toString("utf8");
   if (serialized.startsWith("placeholder:v1:")) {
     return null;
   }
@@ -588,6 +631,12 @@ function sha256(value: string): string {
   return createHash("sha256").update(value).digest("hex");
 }
 
+function normalizeEmail(value: string | null | undefined): string | null {
+  if (!value) return null;
+  const normalized = value.trim().toLowerCase();
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized) ? normalized : null;
+}
+
 function isPlaceholderSecret(value: string): boolean {
   return value === "disabled" || value === "replace_me" || value.startsWith("replace_with_");
 }
@@ -601,5 +650,7 @@ function stringField(row: unknown, key: string): string | null {
 function bufferField(row: unknown, key: string): Buffer | null {
   if (!row || typeof row !== "object" || Array.isArray(row)) return null;
   const value = (row as Record<string, unknown>)[key];
-  return Buffer.isBuffer(value) ? value : null;
+  if (Buffer.isBuffer(value)) return value;
+  if (value instanceof Uint8Array) return Buffer.from(value);
+  return null;
 }

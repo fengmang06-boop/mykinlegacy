@@ -2,9 +2,65 @@ import { createCipheriv, createHash, randomBytes } from "node:crypto";
 
 import { describe, expect, it, vi } from "vitest";
 
-import { sendVaultReadyEmail } from "./vault-delivery";
+import { resolveDeliveryRecipient, sendVaultReadyEmail } from "./vault-delivery";
 
 describe("vault delivery email", () => {
+  it("resolves the live delivery recipient from encrypted customer pii", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("customer@example.com", "pii-key"),
+      emailHash: sha256("customer@example.com")
+    });
+
+    await expect(
+      resolveDeliveryRecipient(db as never, "order_1", {
+        CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+        EMAIL_DELIVERY_TEST_MODE: "false"
+      })
+    ).resolves.toMatchObject({
+      ok: true,
+      recipientEmail: "customer@example.com",
+      recipientSource: "customer_pii",
+      deliveryTestMode: false
+    });
+  });
+
+  it("uses the test recipient only when delivery test mode is enabled", async () => {
+    const db = createDb({
+      emailEncrypted: encryptEmail("customer@example.com", "pii-key"),
+      emailHash: sha256("customer@example.com")
+    });
+
+    await expect(
+      resolveDeliveryRecipient(db as never, "order_1", {
+        CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+        EMAIL_DELIVERY_TEST_MODE: "true",
+        EMAIL_TEST_RECIPIENT: "founder@example.com"
+      })
+    ).resolves.toMatchObject({
+      ok: true,
+      recipientEmail: "founder@example.com",
+      recipientSource: "test_recipient",
+      deliveryTestMode: true,
+      intendedRecipientHash: sha256("customer@example.com")
+    });
+  });
+
+  it("returns a visible missing pii failure when no customer pii row exists", async () => {
+    const db = createDb(null);
+
+    await expect(
+      resolveDeliveryRecipient(db as never, "order_1", {
+        CUSTOMER_PII_ENCRYPTION_KEY: "pii-key",
+        EMAIL_DELIVERY_TEST_MODE: "false"
+      })
+    ).resolves.toMatchObject({
+      ok: false,
+      reason: "missing_pii",
+      recipientSource: "customer_pii",
+      deliveryTestMode: false
+    });
+  });
+
   it("passes raw token to delivery service and stores only sanitized email log payload", async () => {
     const db = createDb({
       emailEncrypted: encryptEmail("customer@example.com", "pii-key"),
@@ -395,15 +451,19 @@ describe("vault delivery email", () => {
   });
 });
 
-function createDb(input: { emailEncrypted: Buffer | null; emailHash: string | null }) {
+function createDb(input: { emailEncrypted: Buffer | null; emailHash: string | null } | null) {
   const state = { emailLogs: [] as unknown[] };
   return {
     state,
     orderCustomerPii: {
-      findUnique: vi.fn(async () => ({
-        emailEncrypted: input.emailEncrypted,
-        emailHash: input.emailHash
-      }))
+      findUnique: vi.fn(async () =>
+        input
+          ? {
+              emailEncrypted: input.emailEncrypted,
+              emailHash: input.emailHash
+            }
+          : null
+      )
     },
     emailLog: {
       create: vi.fn(async (args: { data: unknown }) => {
