@@ -445,6 +445,20 @@ describe("worker app foundation", () => {
       (databaseModule.state.sentDeliveryInput as { raw_token_for_internal_delivery_only?: string })
         .raw_token_for_internal_delivery_only
     );
+    expect(databaseModule.state.sentDeliveryInput).toMatchObject({
+      recipient_email: "founder-test@example.com"
+    });
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "EMAIL_TRIGGER_CONDITION_MET",
+        extra: expect.objectContaining({
+          order_number: "AHL-FAILED-EMAIL",
+          fulfillment_status: "failed",
+          vault_ready: true,
+          fulfillment_status_required: false
+        })
+      })
+    );
     expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
       expect.objectContaining({
         message: "recovery_candidate_order",
@@ -458,22 +472,16 @@ describe("worker app foundation", () => {
     delete process.env.EMAIL_TEST_RECIPIENT;
   });
 
-  it("does not treat mock email logs as successful resend delivery", async () => {
+  it("sends delivery email for paid vault-ready orders regardless of fulfillment status", async () => {
     process.env.EMAIL_DELIVERY_TEST_MODE = "true";
     process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";
     const queueModule = createMockQueueModule();
     const databaseModule = createMockDatabaseModule({
       completedMissingEmailOrders: [
         buildVaultReadyOrder({
-          id: "order_mock_sent",
-          orderNumber: "AHL-MOCK-SENT",
-          emailLogs: [
-            {
-              provider: "mock",
-              status: "sent",
-              createdAt: new Date("2026-07-02T00:00:00.000Z")
-            }
-          ]
+          id: "order_generating_vault_ready",
+          orderNumber: "AHL-VAULT-READY",
+          fulfillmentStatus: "generating"
         })
       ]
     });
@@ -481,15 +489,115 @@ describe("worker app foundation", () => {
     const result = await recoverCompletedOrdersMissingDeliveryEmail({
       queueModule,
       databaseModule: databaseModule as never,
-      orchestrationRepository: {},
+      orchestrationRepository: {
+        async updateOrderStatus(input: unknown) {
+          databaseModule.state.orderUpdates.push(input);
+          return input;
+        }
+      },
       emailModule: createMockEmailModule(),
-      now: new Date("2026-07-02T00:05:00.000Z")
+      now: new Date("2026-07-02T00:00:00.000Z")
     });
 
     expect(result).toEqual({ scanned: 1, recovered: 1, failed: 0 });
     expect(databaseModule.state.sentDeliveryInput).toMatchObject({
       recipient_email: "founder-test@example.com"
     });
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "EMAIL_TRIGGER_CONDITION_MET",
+        extra: expect.objectContaining({
+          order_number: "AHL-VAULT-READY",
+          fulfillment_status: "generating",
+          vault_ready: true,
+          fulfillment_status_required: false
+        })
+      })
+    );
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "EMAIL_JOB_ENQUEUED",
+        extra: expect.objectContaining({
+          order_number: "AHL-VAULT-READY",
+          queue_mode: "inline_recovery"
+        })
+      })
+    );
+    delete process.env.EMAIL_DELIVERY_TEST_MODE;
+    delete process.env.EMAIL_TEST_RECIPIENT;
+  });
+
+  it("logs payment success email trigger without relying on fulfillment status", async () => {
+    process.env.EMAIL_DELIVERY_TEST_MODE = "true";
+    process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule();
+    const app = createWorkerApp({
+      config: {
+        redisUrl: "redis://localhost:6379",
+        concurrency: 1,
+        pollIntervalMs: 60_000,
+        enableOutboxDispatcher: false,
+        environment: "test",
+        recoveryScanEnabled: false,
+        recoveryScanIntervalMs: 300_000,
+        cleanupDestructiveEnabled: false,
+        stuckOrderThresholdMinutes: 30
+      },
+      queueModule,
+      databaseModule,
+      aiModule: createMockAiModule(),
+      storageModule: createMockStorageModule(),
+      pdfModule: createMockPdfModule(),
+      emailModule: createMockEmailModule()
+    });
+
+    const worker = queueModule.createdWorkers.find(
+      (candidate) => candidate.queueName === "payment-confirmation"
+    );
+    if (!worker) throw new Error("payment_worker_missing");
+
+    await worker.run({
+      data: {
+        job_id: "job_1",
+        job_name: "payment_confirmed_placeholder",
+        queue_name: "payment-confirmation",
+        correlation_id: "corr_1",
+        order_id: "order_1",
+        order_number: "A100",
+        manifest_id: null,
+        identity_version_id: null,
+        attempt: 0,
+        max_attempts: 3,
+        idempotency_key: "outbox:evt_1",
+        created_at: "2026-06-29T00:00:00.000Z",
+        payload: {
+          outbox_event_id: "evt_1",
+          event_type: "order.paid",
+          aggregate_type: "order",
+          aggregate_id: "order_1",
+          event_payload: {
+            order_id: "order_1",
+            order_number: "A100",
+            order_item_id: "item_1"
+          }
+        }
+      },
+      attemptsMade: 0
+    });
+
+    expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+      expect.objectContaining({
+        message: "EMAIL_TRIGGER_CONDITION_MET",
+        extra: expect.objectContaining({
+          trigger_source: "payment_success_event",
+          payment_status: "paid",
+          vault_ready: true,
+          fulfillment_status_required: false
+        })
+      })
+    );
+    await app.shutdown();
     delete process.env.EMAIL_DELIVERY_TEST_MODE;
     delete process.env.EMAIL_TEST_RECIPIENT;
   });
@@ -525,7 +633,7 @@ describe("worker app foundation", () => {
     expect(databaseModule.state.downloadTokens).toHaveLength(0);
     expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
       expect.objectContaining({
-        message: "scanner_candidate_excluded_reason",
+        message: "EMAIL_TRIGGER_SKIPPED_REASON",
         extra: expect.objectContaining({
           order_number: "AHL-RESEND-SENT",
           reason: "resend_already_sent"

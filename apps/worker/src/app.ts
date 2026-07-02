@@ -621,6 +621,22 @@ async function fulfillOrderPaidOutbox(input: {
     input.orderNumberFallback ?? requireStringField(input.outboxEvent.payload_json, "order_number");
   input.queueModule.writeWorkerLog({
     level: "info",
+    message: "EMAIL_TRIGGER_CONDITION_MET",
+    queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+    extra: {
+      outbox_event_id: input.outboxEvent.id,
+      order_id: orderId,
+      order_number: orderNumber,
+      trigger_source: "payment_success_event",
+      payment_status: "paid",
+      vault_ready: true,
+      fulfillment_status_required: false,
+      download_token_id: generationResult.download_token_id,
+      raw_token_omitted: true
+    }
+  });
+  input.queueModule.writeWorkerLog({
+    level: "info",
     message: "EMAIL_JOB_ENQUEUED",
     queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
     extra: {
@@ -710,12 +726,13 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
       excludedReasons[exclusionReason] = (excludedReasons[exclusionReason] ?? 0) + 1;
       input.queueModule.writeWorkerLog({
         level: "info",
-        message: "scanner_candidate_excluded_reason",
+        message: "EMAIL_TRIGGER_SKIPPED_REASON",
         queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
         extra: {
           order_id: recordString(orderRow, "id"),
           order_number: recordString(orderRow, "orderNumber"),
           reason: exclusionReason,
+          trigger_source: "vault_ready_recovery_scan",
           fulfillment_status: recordValue(orderRow, "fulfillmentStatus"),
           raw_token_omitted: true
         }
@@ -754,6 +771,22 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
         fulfillment_status: recordValue(orderRow, "fulfillmentStatus"),
         active_download_token_count: recordArray(orderRow, "downloadTokens").length,
         email_log_count: recordArray(orderRow, "emailLogs").length,
+        raw_token_omitted: true
+      }
+    });
+    input.queueModule.writeWorkerLog({
+      level: "info",
+      message: "EMAIL_TRIGGER_CONDITION_MET",
+      queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+      extra: {
+        order_id: orderId,
+        order_number: orderNumber,
+        trigger_source: "vault_ready_recovery_scan",
+        payment_status: recordValue(orderRow, "paymentStatus"),
+        fulfillment_status: recordValue(orderRow, "fulfillmentStatus"),
+        vault_ready: true,
+        fulfillment_status_required: false,
+        active_download_token_count: recordArray(orderRow, "downloadTokens").length,
         raw_token_omitted: true
       }
     });
@@ -834,11 +867,6 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
 }
 
 function getEmailRecoveryExclusionReason(orderRow: unknown): string | null {
-  const fulfillmentStatus = recordValue(orderRow, "fulfillmentStatus");
-  if (fulfillmentStatus !== "completed" && fulfillmentStatus !== "failed") {
-    return "fulfillment_not_completed_or_failed";
-  }
-
   const emailLogs = recordArray(orderRow, "emailLogs");
   const hasSuccessfulResend = emailLogs.some(
     (log) => recordValue(log, "provider") === "resend" && recordValue(log, "status") === "sent"
