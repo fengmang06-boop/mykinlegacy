@@ -631,8 +631,8 @@ function buildArtifactResponse(context: {
     customer_delivery_status: customerDeliveryStatus,
     status: complete ? "ready" : customerDeliveryStatus,
     message: customerDeliveryMessage(customerDeliveryStatus),
-    download_ready: vaultReady,
-    vault_ready: vaultReady,
+    download_ready: vaultReady && complete,
+    vault_ready: vaultReady && complete,
     artifacts: actualArtifacts,
     missing_artifacts: missingArtifacts,
     access: {
@@ -806,7 +806,7 @@ async function getOrderGenerationSummary(input: {
           collection_content: collectionContentSummary(manifest.optional_assets)
         }
       : null,
-    download_ready: vaultReady,
+    download_ready: vaultReady && artifactsDownloadable,
     download_vault_available: Boolean(token),
     friendly_progress_status: customerDeliveryStatus
   };
