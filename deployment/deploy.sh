@@ -9,7 +9,7 @@ COMPOSE_PROJECT_NAME="mykinlegacy"
 LAST_SUCCESSFUL_FILE="$SCRIPT_DIR/.last-successful-commit"
 
 if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
-  exec bash "$SCRIPT_DIR/with-production-lock.sh" "deploy" "$0" "$@"
+  exec bash "$SCRIPT_DIR/with-production-lock.sh" "deploy" bash "$0" "$@"
 fi
 
 cd "$SCRIPT_DIR"

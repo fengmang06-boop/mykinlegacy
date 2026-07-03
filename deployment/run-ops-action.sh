@@ -14,7 +14,7 @@ if [ -z "$ACTION" ]; then
 fi
 
 if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
-  exec bash "$SCRIPT_DIR/with-production-lock.sh" "ops:${ACTION}" "$0" "$@"
+  exec bash "$SCRIPT_DIR/with-production-lock.sh" "ops:${ACTION}" bash "$0" "$@"
 fi
 
 cd "$PROJECT_ROOT"
