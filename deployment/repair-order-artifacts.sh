@@ -113,7 +113,9 @@ async function main() {
   });
   const artifacts = [];
   for (const asset of refreshed.assets) artifacts.push(await inspectAsset(asset));
-  console.log(JSON.stringify({
+  const downloadableCount = artifacts.filter((asset) => asset.downloadable).length;
+  const placeholderCount = artifacts.filter((asset) => asset.placeholder).length;
+  const output = {
     ok: true,
     order_number: refreshed.orderNumber,
     payment_status: refreshed.paymentStatus,
@@ -121,10 +123,22 @@ async function main() {
     active_download_tokens: refreshed.downloadTokens.filter((token) => token.status === "active").length,
     latest_token_linked_assets: refreshed.downloadTokens[0]?.downloadTokenAssets?.length ?? 0,
     artifacts_count: artifacts.length,
-    downloadable_count: artifacts.filter((asset) => asset.downloadable).length,
-    placeholder_count: artifacts.filter((asset) => asset.placeholder).length,
+    downloadable_count: downloadableCount,
+    placeholder_count: placeholderCount,
     artifacts
-  }, null, 2));
+  };
+  console.log(JSON.stringify(output, null, 2));
+
+  if (artifacts.length < 8 || downloadableCount < 8 || placeholderCount > 0) {
+    console.error(JSON.stringify({
+      ok: false,
+      reason: "artifact_repair_did_not_produce_downloadable_files",
+      artifacts_count: artifacts.length,
+      downloadable_count: downloadableCount,
+      placeholder_count: placeholderCount
+    }, null, 2));
+    process.exitCode = 1;
+  }
 }
 
 main()
