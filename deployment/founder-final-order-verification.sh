@@ -84,6 +84,12 @@ function contentQualityForBuffer(body, fileExt) {
   };
 }
 
+function minimumBytes(fileExt) {
+  if (fileExt === "zip") return 20 * 1024;
+  if (fileExt === "png" || fileExt === "pdf") return 10 * 1024;
+  return 1024;
+}
+
 async function inspectAsset(asset) {
   let exists = false;
   let body = Buffer.alloc(0);
@@ -101,7 +107,10 @@ async function inspectAsset(asset) {
     ? validateArtifactBuffer({ body, file_ext: asset.fileExt, mime_type: asset.mimeType })
     : { valid: false, errors: ["storage_missing"] };
   const quality = exists ? contentQualityForBuffer(body, asset.fileExt) : { status: "not_checked" };
-  const placeholder = !exists || asset.sizeBytes <= 100 || body.byteLength <= 100;
+  const requiredBytes = minimumBytes(asset.fileExt);
+  const dbSize = Number(asset.sizeBytes ?? 0);
+  const placeholder = !exists || dbSize < requiredBytes || body.byteLength < requiredBytes;
+  const statusAvailable = asset.status === "available" || asset.status === "available_for_download";
   return {
     file_ext: asset.fileExt,
     status: asset.status,
@@ -109,7 +118,7 @@ async function inspectAsset(asset) {
     placeholder,
     valid: validation.valid,
     quality_status: quality.status,
-    downloadable: asset.status === "available" && exists && !placeholder && validation.valid && quality.status !== "failed",
+    downloadable: statusAvailable && exists && !placeholder && validation.valid && quality.status !== "failed",
     pdf_valid: asset.fileExt === "pdf" ? validation.valid : null,
     zip_valid: asset.fileExt === "zip" ? validation.valid : null,
     png_valid: asset.fileExt === "png" ? validation.valid : null
