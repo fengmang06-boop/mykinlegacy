@@ -26,6 +26,11 @@ interface StorageModule {
   createSignedAssetUrl(input: unknown): Promise<SignedUrlResponse>;
   getDownloadVault(input: unknown): Promise<DownloadVaultResponse>;
   listDownloadAssets(input: unknown): Promise<DownloadAssetResponse[]>;
+  validateArtifactBuffer(input: {
+    body: Buffer;
+    file_ext: string;
+    mime_type?: string | null;
+  }): { valid: boolean };
   InMemoryDownloadVaultRepository: new () => DownloadVaultRepository;
   LocalPrivateStorageAdapter: new () => StorageProviderAdapter;
 }
@@ -152,6 +157,14 @@ export class DownloadsService {
         storage_key: stringField(asset, "storage_key")
       });
       if (body.byteLength < minimumDownloadableBytes(stringField(asset, "file_ext"))) {
+        throw downloadVaultError("asset_not_available");
+      }
+      const validation = this.storageModule.validateArtifactBuffer({
+        body,
+        file_ext: stringField(asset, "file_ext"),
+        mime_type: stringField(asset, "mime_type")
+      });
+      if (!validation.valid) {
         throw downloadVaultError("asset_not_available");
       }
 

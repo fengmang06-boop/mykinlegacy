@@ -562,7 +562,12 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
   const tools = loadArtifactTooling();
   if (artifact.file_ext === "png") {
     const metadata = tools.readPngMetadata(artifact.body);
-    if (metadata.width < 256 || metadata.height < 256 || artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES) {
+    if (
+      artifact.body.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a" ||
+      metadata.width < 256 ||
+      metadata.height < 256 ||
+      artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES
+    ) {
       throw new Error(`artifact_not_ready:${deliverableCode}`);
     }
     return;
@@ -571,8 +576,10 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
   if (artifact.file_ext === "pdf") {
     const text = artifact.body.toString("latin1");
     if (
-      artifact.body.subarray(0, 4).toString() !== "%PDF" ||
+      artifact.body.subarray(0, 5).toString() !== "%PDF-" ||
       artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES ||
+      !text.includes("%%EOF") ||
+      !pdfStartXrefValid(artifact.body) ||
       !text.includes("MyKinLegacy") ||
       !text.includes("personalized symbolic keepsake")
     ) {
@@ -589,13 +596,29 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
       "read-me/read-me.txt"
     ];
     if (
-      artifact.body.subarray(0, 2).toString("hex") !== "504b" ||
-      artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES ||
+      artifact.body.subarray(0, 4).toString("hex") !== "504b0304" ||
+      artifact.body.byteLength < 20 * 1024 ||
+      !zipEndOfCentralDirectoryValid(artifact.body) ||
       !requiredEntries.every((entry) => entries.some((actual) => actual.startsWith(entry)))
     ) {
       throw new Error(`artifact_not_ready:${deliverableCode}`);
     }
   }
+}
+
+function pdfStartXrefValid(body: Buffer): boolean {
+  const match = /startxref\s+(\d+)\s+%%EOF\s*$/s.exec(body.toString("latin1"));
+  if (!match) return false;
+  const offset = Number(match[1]);
+  return Number.isInteger(offset) && offset >= 0 && offset < body.byteLength && body.subarray(offset, offset + 4).toString("latin1") === "xref";
+}
+
+function zipEndOfCentralDirectoryValid(body: Buffer): boolean {
+  const minimumOffset = Math.max(0, body.byteLength - 65557);
+  for (let offset = body.byteLength - 22; offset >= minimumOffset; offset -= 1) {
+    if (offset >= 0 && body.readUInt32LE(offset) === 0x06054b50) return true;
+  }
+  return false;
 }
 
 function createArtifactContext(input: {

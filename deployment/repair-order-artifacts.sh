@@ -47,7 +47,7 @@ const { PrismaClient } = require("./packages/database/generated/client");
 
 const workerRequire = createRequire(path.join(process.cwd(), "apps/worker/package.json"));
 const { PrismaOrchestrationRepository, runManifestDrivenGeneration } = workerRequire("@ai-heritage/database");
-const { LocalPrivateStorageAdapter } = workerRequire("@ai-heritage/storage");
+const { LocalPrivateStorageAdapter, validateArtifactBuffer } = workerRequire("@ai-heritage/storage");
 
 const orderNumber = process.argv[2];
 const prisma = new PrismaClient();
@@ -66,6 +66,7 @@ function maskStorageKey(value) {
 async function inspectAsset(asset) {
   let actualSize = null;
   let exists = false;
+  let validation = { valid: false, signature_valid: false, format_valid: false };
   try {
     const body = await storage.getObject({
       storage_provider: asset.storageProvider,
@@ -74,6 +75,11 @@ async function inspectAsset(asset) {
     });
     actualSize = body.byteLength;
     exists = true;
+    validation = validateArtifactBuffer({
+      body,
+      file_ext: asset.fileExt,
+      mime_type: asset.mimeType
+    });
   } catch {
     // Reported as missing below without leaking filesystem paths.
   }
@@ -88,7 +94,13 @@ async function inspectAsset(asset) {
     actual_file_size: actualSize,
     mime_type: asset.mimeType,
     placeholder,
-    downloadable: asset.status === "available" && exists && !placeholder
+    signature_valid: validation.signature_valid,
+    format_valid: validation.format_valid,
+    pdf_header_valid: validation.pdf_header_valid ?? null,
+    png_header_valid: validation.png_header_valid ?? null,
+    zip_header_valid: validation.zip_header_valid ?? null,
+    zip_test_passed: validation.zip_test_passed ?? null,
+    downloadable: asset.status === "available" && exists && !placeholder && validation.valid
   };
 }
 

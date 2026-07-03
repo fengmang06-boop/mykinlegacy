@@ -45,7 +45,7 @@ const path = require("node:path");
 const { PrismaClient } = require("./packages/database/generated/client");
 
 const workerRequire = createRequire(path.join(process.cwd(), "apps/worker/package.json"));
-const { LocalPrivateStorageAdapter } = workerRequire("@ai-heritage/storage");
+const { LocalPrivateStorageAdapter, validateArtifactBuffer } = workerRequire("@ai-heritage/storage");
 
 const orderNumber = process.argv[2];
 const prisma = new PrismaClient();
@@ -65,6 +65,7 @@ async function inspectAsset(asset) {
   let actualSize = null;
   let fileExists = false;
   let storageError = null;
+  let validation = { valid: false, signature_valid: false, format_valid: false };
   try {
     const body = await storage.getObject({
       storage_provider: asset.storageProvider,
@@ -73,6 +74,11 @@ async function inspectAsset(asset) {
     });
     actualSize = body.byteLength;
     fileExists = true;
+    validation = validateArtifactBuffer({
+      body,
+      file_ext: asset.fileExt,
+      mime_type: asset.mimeType
+    });
   } catch (error) {
     storageError = error instanceof Error ? error.message : "storage_read_failed";
   }
@@ -92,7 +98,13 @@ async function inspectAsset(asset) {
     file_ext: asset.fileExt,
     placeholder,
     storage_file_exists: fileExists,
-    downloadable: asset.status === "available" && fileExists && !placeholder,
+    signature_valid: validation.signature_valid,
+    format_valid: validation.format_valid,
+    pdf_header_valid: validation.pdf_header_valid ?? null,
+    png_header_valid: validation.png_header_valid ?? null,
+    zip_header_valid: validation.zip_header_valid ?? null,
+    zip_test_passed: validation.zip_test_passed ?? null,
+    downloadable: asset.status === "available" && fileExists && !placeholder && validation.valid,
     storage_error: storageError
   };
 }

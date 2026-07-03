@@ -29,6 +29,7 @@ import {
   validateDownloadToken,
   validateImageFile,
   validateTransparentPng,
+  validateArtifactBuffer,
   validateZipFile
 } from "./index";
 
@@ -165,7 +166,20 @@ describe("zip and manifest helpers", () => {
     });
     const body = await readFile(zip.file_path);
     const entries = listZipEntries(body);
+    const validation = validateArtifactBuffer({
+      body,
+      file_ext: "zip",
+      mime_type: "application/zip",
+      required_entries: ["crest-designs/house-alder-crest-variant-1.png", "read-me/read-me.txt"]
+    });
 
+    expect(body.subarray(0, 4).toString("hex")).toBe("504b0304");
+    expect(validation).toMatchObject({
+      valid: true,
+      zip_header_valid: true,
+      zip_eocd_valid: true,
+      zip_test_passed: true
+    });
     expect(entries).toEqual(expect.arrayContaining([
       "crest-designs/house-alder-crest-variant-1.png",
       "transparent-png/house-alder-transparent-crest.png",
@@ -176,6 +190,32 @@ describe("zip and manifest helpers", () => {
       validateZipFile(zip.file_path, ["crest-designs/house-alder-crest-variant-1.png", "read-me/read-me.txt"])
     ).resolves.toMatchObject({ valid: true });
     await rm(dir, { recursive: true, force: true });
+  });
+
+  it("detects corrupt artifact binaries by format, not only size", () => {
+    expect(
+      validateArtifactBuffer({
+        body: Buffer.alloc(24 * 1024, "bad-pdf"),
+        file_ext: "pdf",
+        mime_type: "application/pdf"
+      })
+    ).toMatchObject({
+      valid: false,
+      pdf_header_valid: false,
+      format_valid: false
+    });
+
+    expect(
+      validateArtifactBuffer({
+        body: Buffer.alloc(32 * 1024, "bad-zip"),
+        file_ext: "zip",
+        mime_type: "application/zip"
+      })
+    ).toMatchObject({
+      valid: false,
+      zip_header_valid: false,
+      zip_test_passed: false
+    });
   });
 
   it("updates manifest generated and refuses completion with missing required assets", () => {

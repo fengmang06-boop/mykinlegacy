@@ -30,8 +30,17 @@ describe("PDF generation foundation", () => {
     expect(output.mime_type).toBe("application/pdf");
     expect(output.size_bytes).toBeGreaterThan(10 * 1024);
     expect(body.subarray(0, 4).toString()).toBe("%PDF");
+    expect(body.includes(Buffer.from("%%EOF"))).toBe(true);
+    expect(pdfStartXrefValid(body)).toBe(true);
     expect(body.includes(Buffer.from("official"))).toBe(true);
     expect(body.includes(Buffer.from("historically certified"))).toBe(true);
     await rm(dir, { recursive: true, force: true });
   });
 });
+
+function pdfStartXrefValid(body: Buffer): boolean {
+  const match = /startxref\s+(\d+)\s+%%EOF\s*$/s.exec(body.toString("latin1"));
+  if (!match) return false;
+  const offset = Number(match[1]);
+  return Number.isInteger(offset) && body.subarray(offset, offset + 4).toString("latin1") === "xref";
+}

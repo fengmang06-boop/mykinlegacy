@@ -58,6 +58,16 @@ describe("downloads public API service", () => {
     expect(JSON.stringify(file)).not.toContain("storage_key");
   });
 
+  it("rejects corrupt private asset bytes even when the DB size looks downloadable", async () => {
+    const { service, rawToken } = await createServiceFixture({
+      storedBody: Buffer.alloc(24 * 1024, "not-a-real-png")
+    });
+
+    await expect(service.getAssetFile(rawToken, "asset_1")).rejects.toMatchObject({
+      errorCode: "asset_not_available"
+    });
+  });
+
   it("uses ErrorContract v1.1 envelope for invalid tokens", async () => {
     const { service } = await createServiceFixture();
 
@@ -74,7 +84,7 @@ describe("downloads public API service", () => {
   });
 });
 
-async function createServiceFixture() {
+async function createServiceFixture(input: { storedBody?: Buffer<ArrayBufferLike> } = {}) {
   const storageModule = requireStorageModule();
   type ServiceRepository = NonNullable<ConstructorParameters<typeof DownloadsService>[0]> & {
     events: unknown[];
@@ -111,7 +121,7 @@ async function createServiceFixture() {
     rawToken: created.raw_token_for_internal_delivery_only,
     service: new DownloadsService(
       repository,
-      new storageModule.LocalPrivateStorageAdapter() as ServiceStorage,
+      new storageModule.LocalPrivateStorageAdapter(input.storedBody) as ServiceStorage,
       storageModule as unknown as ServiceStorageModule
     )
   };
@@ -184,6 +194,13 @@ function requireStorageModule() {
         signed_url: "local-private://private-assets/redacted?expires=600",
         expires_at: "2026-06-29T00:10:00.000Z"
       };
+    },
+    validateArtifactBuffer(input: { body: Buffer; file_ext: string }) {
+      const valid =
+        input.file_ext === "png" &&
+        input.body.byteLength > 10 * 1024 &&
+        input.body.subarray(0, 8).toString("hex") === "89504e470d0a1a0a";
+      return { valid };
     }
   };
 }
@@ -230,13 +247,19 @@ class FakeDownloadRepository {
 
 class FakeStorageAdapter {
   public readonly provider_code = "local_private";
+  constructor(
+    private readonly storedBody: Buffer<ArrayBufferLike> = Buffer.concat([
+      Buffer.from("89504e470d0a1a0a", "hex"),
+      Buffer.alloc(24 * 1024)
+    ])
+  ) {}
 
   async createSignedUrl() {
     return "local-private://private-assets/redacted?expires=600";
   }
 
   async getObject() {
-    return Buffer.from("PNG".repeat(4096));
+    return this.storedBody;
   }
 }
 
