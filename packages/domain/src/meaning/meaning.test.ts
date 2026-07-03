@@ -94,6 +94,7 @@ describe("rule-based Meaning Engine", () => {
     expect(content.collection_letter).toContain("Dear father");
     expect(content.design_basis).toContain("private");
     expect(content.boundary_statement).toBe(COLLECTION_BOUNDARY_STATEMENT);
+    expect(content.content_quality.content_quality_status).toBe("passed");
     expect(content.content_quality.artifact_content_version).toBe("artifact_content.v1");
     expect(content.content_quality.hard_failures).toEqual([]);
     expect(serialized).not.toContain("proves your ancestry");

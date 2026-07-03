@@ -781,10 +781,12 @@ function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext
     subtitle: "The meaning behind each symbol chosen for this family collection.",
     context,
     sections: [
+      ["How to Read This Guide", symbolGuideIntro(context)],
       ["The Meaning Behind This Collection", meaningSummary(context)],
       ["Symbols Chosen for Your Family", symbolGuideText(context)],
       ["Why It Was Designed This Way", context.collection_content?.design_basis ?? designFallback(context)],
-      ["How the Certificate Should Feel", context.certificate_direction ?? "Private, warm, archival, and suitable for family keeping."]
+      ["How the Certificate Should Feel", context.certificate_direction ?? "Private, warm, archival, and suitable for family keeping."],
+      ["Preservation and Sharing Note", symbolGuidePreservationNote(context)]
     ]
   });
 }
@@ -807,6 +809,9 @@ function pdfDocumentText(input: {
     input.subtitle,
     `Archive Reference: ${input.context.order_number}`,
     `Prepared for: ${input.context.house_name}`,
+    input.context.collection_content?.artifact_content_version
+      ? `Artifact Content Version: ${input.context.collection_content.artifact_content_version}`
+      : "",
     input.context.motto ? `Motto: ${input.context.motto}` : "",
     "",
     "Important Note",
@@ -831,20 +836,52 @@ function symbolGuideText(context: ArtifactContext): string {
   return context.symbols
     .map(
       (symbol) =>
-        `${titleCase(symbol.symbol)}\nMeaning: ${symbol.meaning ?? "A chosen family symbol"}.\nWhy it was chosen: ${
+        `${titleCase(symbol.symbol)}\nCore meaning: ${symbol.meaning ?? "A chosen family symbol"}.\nWhy this symbol was chosen: ${
           symbol.why_chosen ?? symbol.rationale ?? "It supports the collection's core family meaning."
-        }\nCustomer basis: ${
+        }\nCustomer input basis: ${
           symbol.customer_input_basis ?? "This is used as a symbolic interpretation from the family interview details."
-        }\nHow it appears visually: ${
+        }\nVisual role in the crest: ${
           symbol.visual_role ?? "This symbol is treated as part of the crest structure, framed in a restrained black and antique gold archive style."
-        }\nArtifact role: ${
-          symbol.artifact_role ?? "It connects the artwork, certificate, and written explanation into one private collection."
-        }\nEmotional relevance: ${
+        }\nEmotional purpose: ${
           symbol.emotional_relevance ??
-          "It gives the collection a visible reminder of the family's values, memory, and continuity."
+          "It gives the recipient a visible reminder of the family's values, memory, and continuity."
+        }\nWhat this helps the family remember: ${symbolMemoryPurpose(symbol, context)}\nHow it connects to the collection: ${
+          symbol.artifact_role ?? "It connects the artwork, certificate, and written explanation into one private collection."
         }`
     )
     .join("\n\n");
+}
+
+function symbolGuideIntro(context: ArtifactContext): string {
+  return [
+    `This guide explains the symbolic language chosen for ${context.house_name}.`,
+    "It is meant to be read beside the crest artwork, certificate, and family story so the family can see how the visual choices connect to the written meaning.",
+    "Each symbol is included once, with its meaning, customer input basis, visual role, emotional purpose, and connection to the wider collection.",
+    "The symbols are personal interpretation, not official heraldry. They do not claim legal arms, noble title, certified ancestry, or public family authority.",
+    "Read the guide slowly. The strongest use is not to memorize the symbols, but to let them open a family conversation about what should be recognized, protected, remembered, and passed down."
+  ].join(" ");
+}
+
+function symbolMemoryPurpose(
+  symbol: ArtifactContext["symbols"][number],
+  context: ArtifactContext
+): string {
+  const theme = context.themes[0]?.theme ?? "family meaning";
+  const meaning = symbol.meaning ?? theme;
+  return `It gives future readers a plain-language way to connect ${meaning.toLowerCase()} with the family's own values, memories, and reasons for preserving this collection.`;
+}
+
+function symbolGuidePreservationNote(context: ArtifactContext): string {
+  return [
+    `Keep this Symbol Guide with the full ${context.collection_content?.collection_name ?? `${context.house_name} Private Legacy Collection`}.`,
+    "The crest artwork may be the first thing a recipient notices, but this guide preserves why the artwork matters.",
+    "If the collection is given to a parent, grandparent, spouse, child, or close relative, the guide can help the giver explain the meaning without making a long speech.",
+    "If the collection is reopened years later, this guide should still make clear which values, memories, and emotional signals shaped the symbols.",
+    "Families may add their own notes beside it: a photograph, a handwritten story, a favorite saying, a remembered place, or the name of the person who best represents one of the symbols.",
+    "That added family voice is part of the archive. MyKinLegacy provides the symbolic structure; the family gives it living memory.",
+    "The guide should remain private by default and shared by choice, especially when it includes personal family meaning.",
+    "Its value is not that it proves something official. Its value is that it helps the family recognize itself with care, language, and symbols that can be preserved."
+  ].join(" ");
 }
 
 function symbolBulletText(context: ArtifactContext): string {

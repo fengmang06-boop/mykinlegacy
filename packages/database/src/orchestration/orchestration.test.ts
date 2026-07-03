@@ -88,10 +88,15 @@ describe("DB-backed orchestration foundation", () => {
     ).toEqual([]);
     expect(result.assets.every((asset) => asset.size_bytes !== 100)).toBe(true);
     const pdfAsset = result.assets.find((asset) => asset.deliverable_code === "family_story_pdf");
+    const symbolGuidePdfAsset = result.assets.find(
+      (asset) => asset.deliverable_code === "symbol_explanation_pdf"
+    );
     const pngAsset = result.assets.find((asset) => asset.deliverable_code === "crest_variant_1_png");
     const zipAsset = result.assets.find((asset) => asset.deliverable_code === "download_package_zip");
-    if (!pdfAsset || !pngAsset || !zipAsset) throw new Error("expected_artifacts_missing");
+    if (!pdfAsset || !symbolGuidePdfAsset || !pngAsset || !zipAsset) throw new Error("expected_artifacts_missing");
     const pdfBody = await readStoredAsset(pdfAsset);
+    const symbolGuidePdfBody = await readStoredAsset(symbolGuidePdfAsset);
+    const symbolGuideText = symbolGuidePdfBody.toString("latin1");
     const pngBody = await readStoredAsset(pngAsset);
     const zipBody = await readStoredAsset(zipAsset);
     expect(pdfBody.subarray(0, 4).toString()).toBe("%PDF");
@@ -105,6 +110,28 @@ describe("DB-backed orchestration foundation", () => {
     );
     expect(pdfBody.toString("latin1")).not.toMatch(
       /House of Unknown|Certificate Text|Meaning Themes|Archive Reflection|undefined|null|raw json|placeholder/i
+    );
+    expect(symbolGuidePdfBody.subarray(0, 4).toString()).toBe("%PDF");
+    expect(symbolGuidePdfBody.byteLength).toBeGreaterThan(10 * 1024);
+    expect(symbolGuideText).toContain("Artifact Content Version: artifact_content.v1");
+    expect(symbolGuideText).toContain("How to Read This Guide");
+    expect(symbolGuideText).toContain("Customer input basis:");
+    expect(symbolGuideText).toContain("Visual role in the crest:");
+    expect(symbolGuideText).toContain("Emotional purpose:");
+    expect(symbolGuideText).toContain("What this helps the family remember:");
+    expect(symbolGuideText).toContain("Preservation and Sharing Note");
+    expect(symbolGuideText).toContain("personalized symbolic keepsake");
+    expect(symbolGuideText).not.toMatch(/House of Unknown|Unknown|undefined|null|raw json|debug|placeholder/i);
+    expect(symbolGuideText.match(/Core meaning:/g) ?? []).toHaveLength(
+      new Set(
+        result.manifest.optional_assets
+          .flatMap((attachment) =>
+            typeof attachment === "object" && attachment && "collection_content" in attachment
+              ? ((attachment.collection_content as { symbol_guide?: Array<{ symbol?: string }> }).symbol_guide ?? [])
+              : []
+          )
+          .map((symbol) => symbol.symbol)
+      ).size
     );
     expect(pngBody.subarray(1, 4).toString()).toBe("PNG");
     expect(pngBody.byteLength).toBeGreaterThan(10 * 1024);

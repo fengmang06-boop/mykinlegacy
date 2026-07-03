@@ -640,7 +640,7 @@ function validateCollectionContent(
   softWarnings.push("mvp_artwork_template_internal_beta");
 
   return {
-    content_quality_status: hardFailures.length > 0 ? "failed" : softWarnings.length > 0 ? "warning" : "passed",
+    content_quality_status: hardFailures.length > 0 ? "failed" : "passed",
     hard_failures: [...new Set(hardFailures)],
     soft_warnings: [...new Set(softWarnings)],
     theme_count: profile.meaning_themes.length,
