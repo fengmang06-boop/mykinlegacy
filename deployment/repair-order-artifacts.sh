@@ -67,6 +67,7 @@ async function inspectAsset(asset) {
   let actualSize = null;
   let exists = false;
   let validation = { valid: false, signature_valid: false, format_valid: false };
+  let contentQuality = contentQualityForBuffer(Buffer.alloc(0), asset.fileExt);
   try {
     const body = await storage.getObject({
       storage_provider: asset.storageProvider,
@@ -80,6 +81,7 @@ async function inspectAsset(asset) {
       file_ext: asset.fileExt,
       mime_type: asset.mimeType
     });
+    contentQuality = contentQualityForBuffer(body, asset.fileExt);
   } catch {
     // Reported as missing below without leaking filesystem paths.
   }
@@ -100,7 +102,47 @@ async function inspectAsset(asset) {
     png_header_valid: validation.png_header_valid ?? null,
     zip_header_valid: validation.zip_header_valid ?? null,
     zip_test_passed: validation.zip_test_passed ?? null,
-    downloadable: asset.status === "available" && exists && !placeholder && validation.valid
+    has_unknown_label: contentQuality.has_unknown_label,
+    repeated_symbol_blocks: contentQuality.repeated_symbol_blocks,
+    raw_json_detected: contentQuality.raw_json_detected,
+    boundary_statement_present: contentQuality.boundary_statement_present,
+    pdf_layout_version: contentQuality.pdf_layout_version,
+    content_quality_status: contentQuality.status,
+    downloadable: asset.status === "available" && exists && !placeholder && validation.valid && contentQuality.status !== "failed"
+  };
+}
+
+function contentQualityForBuffer(body, fileExt) {
+  if (!body || body.byteLength === 0) {
+    return {
+      has_unknown_label: false,
+      repeated_symbol_blocks: false,
+      raw_json_detected: false,
+      boundary_statement_present: false,
+      pdf_layout_version: null,
+      status: "not_checked"
+    };
+  }
+  const text = body.toString("latin1");
+  const hasUnknown = /\b(House of Unknown|Unknown|null|undefined)\b/i.test(text);
+  const rawJson = /[{[]\s*"[^"]+"\s*:/s.test(text) || /request_id|correlation_id|success|data/i.test(text);
+  const boundary = /personalized symbolic keepsake/i.test(text);
+  const repeatedSymbols = (text.match(/Shield[:\n]/gi) ?? []).length > 1 ||
+    (text.match(/Tree[:\n]/gi) ?? []).length > 1 ||
+    (text.match(/Knot[:\n]/gi) ?? []).length > 1;
+  const layoutVersion = fileExt === "pdf" && /Legacy, Designed\.|Archive Reference|Prepared for:/i.test(text)
+    ? "premium_v1"
+    : fileExt === "pdf"
+      ? "legacy_or_unknown"
+      : null;
+  const failed = hasUnknown || rawJson || (fileExt === "pdf" && (!boundary || repeatedSymbols || layoutVersion !== "premium_v1"));
+  return {
+    has_unknown_label: hasUnknown,
+    repeated_symbol_blocks: repeatedSymbols,
+    raw_json_detected: rawJson,
+    boundary_statement_present: boundary,
+    pdf_layout_version: layoutVersion,
+    status: failed ? "failed" : "passed"
   };
 }
 

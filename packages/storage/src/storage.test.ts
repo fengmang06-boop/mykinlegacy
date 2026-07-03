@@ -13,6 +13,7 @@ import {
   computeMissingRequiredAssets,
   createDownloadToken,
   createDownloadTokenJob,
+  createMvpCrestPngBuffer,
   createSignedAssetUrl,
   createTransparentPng,
   generateReadme,
@@ -24,6 +25,7 @@ import {
   listZipEntries,
   markAssetGenerated,
   materializeMockImageCandidate,
+  readPngMetadata,
   revokeAsset,
   storeCandidateAsAsset,
   validateDownloadToken,
@@ -96,6 +98,29 @@ describe("private storage and assets", () => {
       size_bytes: expect.any(Number)
     });
     await rm(dir, { recursive: true, force: true });
+  });
+
+  it("creates deterministic MVP crest artwork with customer-ready dimensions and size", () => {
+    const body = createMvpCrestPngBuffer({
+      variant: "crest_variant_1_png",
+      house_name: "House of Alder",
+      symbols: ["shield", "oak branch", "star"]
+    });
+    const transparentBody = createMvpCrestPngBuffer({
+      variant: "transparent_crest_png",
+      house_name: "House of Alder",
+      symbols: ["shield", "oak branch", "star"],
+      transparent: true
+    });
+
+    expect(body.subarray(1, 4).toString()).toBe("PNG");
+    expect(body.byteLength).toBeGreaterThan(10 * 1024);
+    expect(readPngMetadata(body)).toMatchObject({ width: 640, height: 640, has_alpha: true });
+    expect(readPngMetadata(transparentBody)).toMatchObject({
+      width: 640,
+      height: 640,
+      has_alpha: true
+    });
   });
 
   it("stores asset record with checksum, size, mime and null public_url", async () => {

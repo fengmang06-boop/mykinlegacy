@@ -96,11 +96,29 @@ describe("DB-backed orchestration foundation", () => {
     const zipBody = await readStoredAsset(zipAsset);
     expect(pdfBody.subarray(0, 4).toString()).toBe("%PDF");
     expect(pdfBody.toString("latin1")).toContain("House of Alder");
+    expect(pdfBody.toString("latin1")).toContain("Legacy, Designed.");
+    expect(pdfBody.toString("latin1")).toContain("Archive Reference:");
+    expect(pdfBody.toString("latin1")).toContain("Prepared for:");
     expect(pdfBody.toString("latin1")).toContain("private symbolic keepsake");
     expect(pdfBody.toString("latin1")).not.toMatch(
       /proves your ancestry|official family crest|legally granted arms|noble bloodline/i
     );
+    expect(pdfBody.toString("latin1")).not.toMatch(
+      /House of Unknown|Certificate Text|Meaning Themes|Archive Reflection|undefined|null|raw json|placeholder/i
+    );
     expect(pngBody.subarray(1, 4).toString()).toBe("PNG");
+    expect(pngBody.byteLength).toBeGreaterThan(10 * 1024);
+    expect(pngBody.readUInt32BE(16)).toBe(640);
+    expect(pngBody.readUInt32BE(20)).toBe(640);
+    for (const asset of result.assets.filter((item) => item.file_ext === "pdf")) {
+      const body = await readStoredAsset(asset);
+      const text = body.toString("latin1");
+      expect(text).toContain("MyKinLegacy");
+      expect(text).toContain("Legacy, Designed.");
+      expect(text).toContain("Archive Reference:");
+      expect(text).toContain("personalized symbolic keepsake");
+      expect(text).not.toMatch(/House of Unknown|Unknown|undefined|null|raw json|debug|placeholder/i);
+    }
     expect(listZipEntries(zipBody)).toEqual(
       expect.arrayContaining([
         expect.stringContaining("family-story-pdf.pdf"),

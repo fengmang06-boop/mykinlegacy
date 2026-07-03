@@ -22,21 +22,36 @@ export function createMvpCrestPngBuffer(input: {
   const height = 640;
   const raw = Buffer.alloc((width * 4 + 1) * height);
   const seed = hashSeed(`${input.variant}:${input.house_name ?? "house"}:${(input.symbols ?? []).join(",")}`);
+  const centerX = width / 2;
 
   for (let y = 0; y < height; y += 1) {
     const rowOffset = y * (width * 4 + 1);
     raw[rowOffset] = 0;
     for (let x = 0; x < width; x += 1) {
       const offset = rowOffset + 1 + x * 4;
-      const dx = Math.abs(x - width / 2) / (width / 2);
-      const dy = Math.abs(y - height / 2) / (height / 2);
-      const shield = dx * 0.78 + dy * 0.62 < 0.72 && y > 64 && y < 572;
-      const border = Math.abs(dx * 0.78 + dy * 0.62 - 0.72) < 0.025 && y > 64 && y < 572;
-      const verticalStripe = Math.abs(x - width / 2) < 16;
-      const horizontalBand = y > 284 && y < 324;
-      const diagonal = Math.abs((x + (seed % 80)) - (y + 84)) < 8 || Math.abs((width - x) - y + 84) < 8;
-      const star = Math.abs(x - width / 2) + Math.abs(y - 178) < 42;
-      const ring = Math.abs(Math.hypot(x - width / 2, y - 382) - 112) < 7;
+      const half = shieldHalfWidth(y);
+      const distanceFromCenter = Math.abs(x - centerX);
+      const shield = y >= 76 && y <= 574 && distanceFromCenter <= half;
+      const border =
+        shield &&
+        (Math.abs(distanceFromCenter - half) < 8 ||
+          Math.abs(y - 82) < 7 ||
+          (y > 540 && distanceFromCenter < 44 + (574 - y) * 0.4));
+      const innerBorder =
+        shield &&
+        (Math.abs(distanceFromCenter - Math.max(0, half - 28)) < 3 ||
+          Math.abs(y - 112) < 3);
+      const medallion = Math.abs(Math.hypot(x - centerX, y - 302) - 86) < 7;
+      const star = Math.abs(x - centerX) + Math.abs(y - 256) < 38;
+      const verticalBar = Math.abs(x - centerX) < 10 && y > 216 && y < 416;
+      const horizontalBand = y > 330 && y < 354 && distanceFromCenter < 126;
+      const ribbon = y > 486 && y < 526 && distanceFromCenter < 154 - Math.abs(y - 506) * 1.8;
+      const laurelLeft = Math.abs(Math.hypot(x - (centerX - 86), y - 418) - 42) < 5 && x < centerX;
+      const laurelRight = Math.abs(Math.hypot(x - (centerX + 86), y - 418) - 42) < 5 && x > centerX;
+      const cornerPin =
+        (Math.hypot(x - 178, y - 142) < 14 ||
+          Math.hypot(x - 462, y - 142) < 14 ||
+          Math.hypot(x - centerX, y - 536) < 14);
       const texture = (x * 13 + y * 17 + seed) % 47;
 
       if (!shield && input.transparent) {
@@ -47,20 +62,25 @@ export function createMvpCrestPngBuffer(input: {
         continue;
       }
 
-      if (border || star || ring || verticalStripe || horizontalBand || diagonal) {
-        raw[offset] = 202 + (texture % 28);
-        raw[offset + 1] = 157 + (texture % 34);
-        raw[offset + 2] = 75 + (texture % 24);
+      if (border || medallion || star || verticalBar || horizontalBand || ribbon || laurelLeft || laurelRight || cornerPin) {
+        raw[offset] = 198 + (texture % 36);
+        raw[offset + 1] = 154 + (texture % 32);
+        raw[offset + 2] = 72 + (texture % 22);
+        raw[offset + 3] = 255;
+      } else if (innerBorder) {
+        raw[offset] = 126 + (texture % 22);
+        raw[offset + 1] = 94 + (texture % 18);
+        raw[offset + 2] = 46 + (texture % 12);
         raw[offset + 3] = 255;
       } else if (shield) {
-        raw[offset] = 24 + (texture % 12);
-        raw[offset + 1] = 21 + (texture % 10);
-        raw[offset + 2] = 18 + (texture % 12);
+        raw[offset] = 20 + (texture % 10);
+        raw[offset + 1] = 18 + (texture % 8);
+        raw[offset + 2] = 15 + (texture % 8);
         raw[offset + 3] = 255;
       } else {
-        raw[offset] = 10 + (texture % 10);
-        raw[offset + 1] = 9 + (texture % 9);
-        raw[offset + 2] = 8 + (texture % 8);
+        raw[offset] = 8 + (texture % 8);
+        raw[offset + 1] = 8 + (texture % 7);
+        raw[offset + 2] = 7 + (texture % 7);
         raw[offset + 3] = 255;
       }
     }
@@ -87,6 +107,12 @@ export function createMvpCrestPngBuffer(input: {
     pngChunk("IDAT", deflateSync(raw, { level: 6 })),
     pngChunk("IEND", Buffer.alloc(0))
   ]);
+}
+
+function shieldHalfWidth(y: number): number {
+  if (y < 76 || y > 574) return 0;
+  if (y < 174) return 178;
+  return Math.max(20, 178 - (y - 174) * 0.39);
 }
 
 export async function materializeMockImageCandidate(input: {

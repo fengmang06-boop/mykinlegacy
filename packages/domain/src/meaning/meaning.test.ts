@@ -93,4 +93,54 @@ describe("rule-based Meaning Engine", () => {
     expect(serialized).not.toContain("royal lineage");
     expect(serialized).not.toContain("legally granted arms");
   });
+
+  it("uses premium fallback identity instead of unknown labels", () => {
+    const brief = buildGenerationBrief({});
+    const content = buildCollectionContent(brief, new Date("2026-06-29T00:00:00.000Z"));
+    const serialized = JSON.stringify(content).toLowerCase();
+    const customerVisibleText = [
+      content.house_meaning_summary,
+      ...content.symbol_guide.flatMap((symbol) => [
+        symbol.symbol,
+        symbol.meaning,
+        symbol.why_chosen,
+        symbol.emotional_relevance
+      ]),
+      content.family_story,
+      content.certificate_text,
+      content.collection_letter,
+      content.design_basis,
+      content.boundary_statement
+    ].join("\n");
+
+    expect(content.house_meaning_summary).toContain("Your Family Legacy");
+    expect(content.certificate_text).toContain("Your Family Legacy");
+    expect(serialized).not.toContain("house of unknown");
+    expect(serialized).not.toContain("unknown");
+    expect(serialized).not.toContain("undefined");
+    expect(serialized).not.toContain("null");
+    expect(customerVisibleText).not.toMatch(/[{}]\s*["']/);
+  });
+
+  it("deduplicates symbol guide entries before customer artifacts are written", () => {
+    const brief = buildGenerationBrief({
+      surname: "Alder",
+      values: ["protection", "resilience"],
+      symbols: ["shield"]
+    });
+    const firstSymbol = brief.meaning_profile.symbol_choices[0];
+    if (!firstSymbol) throw new Error("missing_symbol_choice");
+    brief.meaning_profile.symbol_choices = [
+      ...brief.meaning_profile.symbol_choices,
+      { ...firstSymbol },
+      { ...firstSymbol }
+    ];
+
+    const content = buildCollectionContent(brief, new Date("2026-06-29T00:00:00.000Z"));
+    const symbolNames = content.symbol_guide.map((symbol) => symbol.symbol);
+
+    expect(symbolNames).toHaveLength(new Set(symbolNames).size);
+    expect(symbolNames.filter((symbol) => symbol.toLowerCase() === firstSymbol.symbol)).toHaveLength(1);
+    expect(JSON.stringify(content).toLowerCase()).not.toContain("debug");
+  });
 });

@@ -379,6 +379,7 @@ interface ArtifactBody {
   file_ext: string;
   file_name: string;
   archive_path: string;
+  source_text?: string;
 }
 
 interface StorageAdapter {
@@ -517,13 +518,16 @@ async function createArtifactBody(input: {
   }
 
   if (input.deliverable_code.endsWith("_pdf")) {
-    const body = tools.buildSimplePdf(pdfTextForDeliverable(input.deliverable_code, input.context));
+    const sourceText = pdfTextForDeliverable(input.deliverable_code, input.context);
+    assertContentQuality(input.deliverable_code, sourceText, input.context);
+    const body = tools.buildSimplePdf(sourceText);
     return {
       body,
       mime_type: "application/pdf",
       file_ext: "pdf",
       file_name: safeFileName(input.context.house_name, input.deliverable_code, "pdf"),
-      archive_path: `documents/${safeFileName(input.context.house_name, input.deliverable_code, "pdf")}`
+      archive_path: `documents/${safeFileName(input.context.house_name, input.deliverable_code, "pdf")}`,
+      source_text: sourceText
     };
   }
 
@@ -575,15 +579,18 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
 
   if (artifact.file_ext === "pdf") {
     const text = artifact.body.toString("latin1");
-    if (
-      artifact.body.subarray(0, 5).toString() !== "%PDF-" ||
-      artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES ||
-      !text.includes("%%EOF") ||
-      !pdfStartXrefValid(artifact.body) ||
-      !text.includes("MyKinLegacy") ||
-      !text.includes("personalized symbolic keepsake")
-    ) {
-      throw new Error(`artifact_not_ready:${deliverableCode}`);
+    const failures: string[] = [];
+    if (artifact.body.subarray(0, 5).toString() !== "%PDF-") failures.push("pdf_header_invalid");
+    if (artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES) failures.push(`pdf_too_small:${artifact.body.byteLength}`);
+    if (!text.includes("%%EOF")) failures.push("pdf_eof_missing");
+    if (!pdfStartXrefValid(artifact.body)) failures.push("pdf_xref_invalid");
+    if (!text.includes("MyKinLegacy")) failures.push("brand_missing");
+    if (!text.includes("personalized symbolic keepsake")) failures.push("boundary_missing");
+    if (failures.length > 0) {
+      throw new Error(`artifact_not_ready:${deliverableCode}:${failures.join(",")}`);
+    }
+    if (artifact.source_text) {
+      assertContentQuality(deliverableCode, artifact.source_text);
     }
     return;
   }
@@ -621,6 +628,41 @@ function zipEndOfCentralDirectoryValid(body: Buffer): boolean {
   return false;
 }
 
+function assertContentQuality(
+  deliverableCode: string,
+  sourceText: string,
+  context?: Pick<ArtifactContext, "symbols">
+): void {
+  const failures = contentQualityFailures(sourceText, context);
+  if (failures.length > 0) {
+    throw new Error(`content_quality_failed:${deliverableCode}:${failures.join(",")}`);
+  }
+}
+
+function contentQualityFailures(
+  sourceText: string,
+  context?: Pick<ArtifactContext, "symbols">
+): string[] {
+  const failures: string[] = [];
+  if (/\bHouse of Unknown\b/i.test(sourceText) || /\bUnknown\b/i.test(sourceText)) failures.push("unknown_label");
+  if (/\bundefined\b/i.test(sourceText)) failures.push("undefined_label");
+  if (/\bnull\b/i.test(sourceText)) failures.push("null_label");
+  if (/\b(Certificate Text|Meaning Themes|Archive Reflection|debug|raw json|placeholder)\b/i.test(sourceText)) {
+    failures.push("debug_label");
+  }
+  if (/[{[]\s*"[^"]+"\s*:/s.test(sourceText)) failures.push("raw_json_detected");
+  if (!sourceText.includes("personalized symbolic keepsake")) failures.push("boundary_statement_missing");
+  if (sourceText.replace(/\s+/g, " ").trim().length < 900) failures.push("content_too_short");
+  const headings = [...sourceText.matchAll(/^([A-Za-z][A-Za-z\s]+)$/gm)].map((match) => match[1]?.trim().toLowerCase());
+  const duplicates = headings.filter((heading, index) => heading && headings.indexOf(heading) !== index);
+  if (duplicates.length > 0) failures.push("repeated_sections");
+  if (context) {
+    const symbols = context.symbols.map((symbol) => symbol.symbol.toLowerCase());
+    if (new Set(symbols).size !== symbols.length) failures.push("repeated_symbol_blocks");
+  }
+  return [...new Set(failures)];
+}
+
 function createArtifactContext(input: {
   manifest: OrchestrationManifest;
   order: OrchestrationOrder;
@@ -628,16 +670,32 @@ function createArtifactContext(input: {
   const attachment = meaningAttachment(input.manifest);
   const profile = recordObject(attachment, "meaning_profile");
   const content = collectionContentSummary(input.manifest);
+  const customerInputs = recordObject(profile, "customer_inputs");
   const orderInput = input.order.order_inputs?.[0];
   const houseDna = firstRecord(
     recordObject(orderInput?.input_json, "house_dna"),
     orderInput?.normalized_input_json
   );
-  const houseName =
-    stringOrNull(recordValue(houseDna, "house_name")) ??
-    (stringOrNull(recordValue(houseDna, "surname"))
-      ? `The ${stringOrNull(recordValue(houseDna, "surname"))} Family`
-      : "This Family");
+  const surname = stringOrNull(recordValue(houseDna, "surname")) ?? stringOrNull(recordValue(customerInputs, "surname"));
+  const houseName = customerFacingFamilyName({
+    house_name: stringOrNull(recordValue(houseDna, "house_name")) ?? stringOrNull(recordValue(customerInputs, "house_name")),
+    surname,
+    recipient: stringOrNull(recordValue(customerInputs, "recipient"))
+  });
+  const symbols = dedupeContextSymbols([
+    ...(content?.symbol_guide ?? []).map((symbol) => ({
+      symbol: symbol.symbol ?? "Symbol",
+      meaning: symbol.meaning,
+      rationale: symbol.why_chosen,
+      why_chosen: symbol.why_chosen,
+      emotional_relevance: symbol.emotional_relevance
+    })),
+    ...recordArray<Record<string, unknown>>(profile, "symbol_choices").map((symbol) => ({
+      symbol: stringOrNull(recordValue(symbol, "symbol")) ?? "shield",
+      meaning: stringOrNull(recordValue(symbol, "meaning")),
+      rationale: stringOrNull(recordValue(symbol, "rationale"))
+    }))
+  ]).slice(0, 5);
 
   return {
     order_number: input.order.order_number,
@@ -647,20 +705,7 @@ function createArtifactContext(input: {
       theme: stringOrNull(recordValue(theme, "theme")) ?? "family meaning",
       evidence: stringOrNull(recordValue(theme, "evidence"))
     })),
-    symbols: [
-      ...recordArray<Record<string, unknown>>(profile, "symbol_choices").map((symbol) => ({
-        symbol: stringOrNull(recordValue(symbol, "symbol")) ?? "shield",
-        meaning: stringOrNull(recordValue(symbol, "meaning")),
-        rationale: stringOrNull(recordValue(symbol, "rationale"))
-      })),
-      ...(content?.symbol_guide ?? []).map((symbol) => ({
-        symbol: symbol.symbol ?? "Symbol",
-        meaning: symbol.meaning,
-        rationale: symbol.why_chosen,
-        why_chosen: symbol.why_chosen,
-        emotional_relevance: symbol.emotional_relevance
-      }))
-    ].slice(0, 6),
+    symbols,
     design_rationale: stringArray(recordValue(profile, "design_rationale")),
     story_direction: stringOrNull(recordValue(profile, "story_direction")),
     certificate_direction: stringOrNull(recordValue(profile, "certificate_direction")),
@@ -672,14 +717,14 @@ function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext
   if (deliverableCode === "heritage_certificate_pdf") {
     return pdfDocumentText({
       title: "Heritage Certificate",
+      subtitle: "A private symbolic keepsake prepared for family recognition and remembrance.",
       context,
       sections: [
-        ["Order Number", context.order_number],
-        ["Presented To", context.house_name],
-        ["Certificate Text", context.collection_content?.certificate_text ?? certificateFallback(context)],
-        ["Meaning Summary", meaningSummary(context)],
-        ["Symbols Reflected", symbolBulletText(context)],
-        ["MyKinLegacy Note", "Prepared as a private archival keepsake for personal gifting, keeping, and family remembrance."]
+        ["Presented for", context.house_name],
+        ["Collection", `${context.house_name} Private Legacy Collection`],
+        ["Meaning Statement", context.collection_content?.certificate_text ?? certificateFallback(context)],
+        ["Symbolic Elements", symbolBulletText(context)],
+        ["Archive Note", "Prepared as a private archival keepsake for personal gifting, keeping, and family remembrance."]
       ]
     });
   }
@@ -687,30 +732,33 @@ function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext
   if (deliverableCode === "family_story_pdf") {
     return pdfDocumentText({
       title: "Family Story",
+      subtitle: "A warm narrative companion for the private legacy collection.",
       context,
       sections: [
-        ["Opening", context.collection_content?.collection_letter ?? letterFallback(context)],
-        ["Family Story", context.collection_content?.family_story ?? storyFallback(context)],
-        ["Story Direction", context.story_direction ?? "The story is shaped around family values, memory, and continuity."],
-        ["Meaning Themes", themeBulletText(context)]
+        ["Opening Letter", context.collection_content?.collection_letter ?? letterFallback(context)],
+        ["What This Collection Represents", context.collection_content?.family_story ?? storyFallback(context)],
+        ["Values Carried Forward", themeBulletText(context)],
+        ["Closing Keepsake Message", closingKeepsakeMessage(context)]
       ]
     });
   }
 
   return pdfDocumentText({
     title: "Symbol Guide",
+    subtitle: "The meaning behind each symbol chosen for this family collection.",
     context,
     sections: [
-      ["Meaning Summary", meaningSummary(context)],
-      ["Chosen Symbols", symbolGuideText(context)],
-      ["Design Basis", context.collection_content?.design_basis ?? designFallback(context)],
-      ["Certificate Feeling", context.certificate_direction ?? "Private, warm, archival, and suitable for family keeping."]
+      ["The Meaning Behind This Collection", meaningSummary(context)],
+      ["Symbols Chosen for Your Family", symbolGuideText(context)],
+      ["Why It Was Designed This Way", context.collection_content?.design_basis ?? designFallback(context)],
+      ["How the Certificate Should Feel", context.certificate_direction ?? "Private, warm, archival, and suitable for family keeping."]
     ]
   });
 }
 
 function pdfDocumentText(input: {
   title: string;
+  subtitle: string;
   context: ArtifactContext;
   sections: Array<[string, string]>;
 }): string {
@@ -721,15 +769,17 @@ function pdfDocumentText(input: {
   ]);
   return [
     "MyKinLegacy",
+    "Legacy, Designed.",
     input.title,
-    `House: ${input.context.house_name}`,
-    `Order: ${input.context.order_number}`,
+    input.subtitle,
+    `Archive Reference: ${input.context.order_number}`,
+    `Prepared for: ${input.context.house_name}`,
     input.context.motto ? `Motto: ${input.context.motto}` : "",
     "",
-    ...expandedSections,
     "Important Note",
     ARTIFACT_BOUNDARY_STATEMENT,
     "",
+    ...expandedSections,
     "Private Archive Note",
     archiveCareText(input.context)
   ]
@@ -748,9 +798,9 @@ function symbolGuideText(context: ArtifactContext): string {
   return context.symbols
     .map(
       (symbol) =>
-        `${titleCase(symbol.symbol)}: ${symbol.meaning ?? "A chosen family symbol"}. Why it was chosen: ${
+        `${titleCase(symbol.symbol)}\nMeaning: ${symbol.meaning ?? "A chosen family symbol"}.\nWhy it was chosen: ${
           symbol.why_chosen ?? symbol.rationale ?? "It supports the collection's core family meaning."
-        } Emotional relevance: ${
+        }\nHow it appears visually: This symbol is treated as part of the crest structure, framed in a restrained black and antique gold archive style.\nEmotional relevance: ${
           symbol.emotional_relevance ??
           "It gives the collection a visible reminder of the family's values, memory, and continuity."
         }`
@@ -788,6 +838,10 @@ function letterFallback(context: ArtifactContext): string {
   return `To ${context.house_name},\n\nThis collection was prepared to recognize what ordinary gifts often cannot hold: the values, symbols, and memories that make a family feel like itself.\n\nWith care,\nMyKinLegacy`;
 }
 
+function closingKeepsakeMessage(context: ArtifactContext): string {
+  return `May this collection become something the family can open again in future seasons: on birthdays, holidays, family gatherings, anniversaries, and quiet moments of remembrance. Its value is not a public claim. Its value is recognition: ${context.house_name} seeing itself with language, symbols, and care.`;
+}
+
 function designFallback(context: ArtifactContext): string {
   return `The design basis uses ${naturalList(
     context.symbols.map((symbol) => titleCase(symbol.symbol)),
@@ -796,19 +850,71 @@ function designFallback(context: ArtifactContext): string {
 }
 
 function archiveCareText(context: ArtifactContext): string {
-  const meaning = meaningSummary(context);
   return [
-    meaning,
+    "This private archive was prepared to feel gift-ready, calm, and suitable for long-term keeping.",
     "Keep this collection with family photographs, letters, keepsake boxes, or digital family archives.",
     "It was designed to be opened again on birthdays, holidays, family gatherings, anniversaries, and quiet moments of remembrance.",
     "The value of the collection is not a public claim. Its value is recognition: a family seeing itself with language, symbols, and care.",
     "Share it only with the people you choose. Preserve it in the way your family naturally keeps meaningful things.",
-    ...Array.from({ length: 24 }, (_, index) =>
-      `Archive Reflection ${index + 1}: ${context.house_name} is presented here as a private symbolic keepsake shaped by ${naturalList(
-        context.themes.map((theme) => theme.theme),
-        "family meaning"
-      )}. The purpose is to give the family a readable, gift-ready artifact that can be revisited over time without claiming public authority, legal heraldry, or certified genealogy.`
-    )
+    `${context.house_name} is presented here as a private symbolic keepsake shaped by ${naturalList(
+      context.themes.map((theme) => theme.theme),
+      "family meaning"
+    )}.`,
+    "The purpose is to give the family a readable, gift-ready artifact that can be revisited over time without claiming public authority, legal heraldry, or certified genealogy.",
+    "MyKinLegacy creates these documents as personalized symbolic keepsakes: meaningful, private, and designed to be preserved.",
+    "Suggested family use: open the certificate when giving the collection as a gift, then read the story slowly with the person receiving it.",
+    "Suggested family use: keep the symbol guide near the crest artwork so future readers understand why each element was chosen.",
+    "Suggested family use: place the collection archive beside family photos, letters, recipes, recordings, or other private records that carry emotional weight.",
+    "Suggested family use: revisit the collection when a child asks where the family comes from, what the family values, or why certain memories matter.",
+    "Suggested family use: bring the collection into holidays, anniversaries, retirements, memorial moments, and family gatherings when ordinary gifts feel too small.",
+    "Preservation note: the collection is intentionally private by default. It is meant to be shared by choice, not published as a public claim.",
+    "Preservation note: the symbols should be read as language for family meaning, not as legal authority or certified ancestry.",
+    "Preservation note: the archive reference connects these artifacts to the order record without exposing private storage paths or download tokens.",
+    "Preservation note: the writing favors recognition over exaggeration, so the keepsake can remain sincere when read years from now.",
+    "Preservation note: the visual style uses restraint because family meaning often feels strongest when presented with calm, dignity, and care.",
+    "Preservation note: the best test of this collection is not whether it looks ornate. The test is whether the family can say, this feels like us.",
+    "Preservation note: if the family adds more memories later, this collection can serve as the first chapter of a longer private archive.",
+    "Archive checklist: save one copy with the full ZIP archive and another copy wherever the family keeps important digital records.",
+    "Archive checklist: print the certificate on warm white paper if the collection is being given as a physical gift.",
+    "Archive checklist: write the order reference near any printed copy so the family knows which private collection it belongs to.",
+    "Archive checklist: pair the story document with a handwritten note if the gift is being given to a parent or grandparent.",
+    "Archive checklist: keep the crest artwork separate from the explanatory documents when sharing a quick preview with relatives.",
+    "Archive checklist: keep the full collection together when preserving it for children or future family members.",
+    "Archive checklist: revisit the symbol guide before displaying the crest so the artwork is connected to meaning, not treated as decoration.",
+    "Archive checklist: read the boundary note whenever someone asks whether this is official heraldry, legal arms, or certified genealogy.",
+    "Archive checklist: use the collection as a starting point for family conversations, not as the final word on family history.",
+    "Archive checklist: add real names, dates, photos, and memories over time if the family wants to build a deeper private archive.",
+    "Archive checklist: let the recipient decide whether the collection should remain private, be printed, or be shared with close family.",
+    "Archive checklist: preserve the original files without renaming them if the family wants a stable archival set.",
+    "Archive checklist: if the family creates new memories, keep this version as a snapshot of what mattered at the time it was made.",
+    "Archive checklist: if a symbol no longer feels right later, treat that as a family conversation rather than a flaw in the archive.",
+    "Archive checklist: the collection is strongest when it is opened slowly, with someone who knows the stories behind the family.",
+    "Archive checklist: the most meaningful use is often simple: read the letter aloud, open the crest, then talk about what feels true.",
+    "Archive checklist: store the archive somewhere private enough for family meaning and accessible enough that it is not forgotten.",
+    "Archive checklist: if the collection becomes part of a celebration, let it support the moment rather than dominate it.",
+    "Archive checklist: when shared with children, explain that symbols are a language for meaning, not proof of rank or ancestry.",
+    "Archive checklist: when shared with elders, invite corrections, stories, and memories that make the collection more personal.",
+    "Conversation prompt: which value in this collection feels most true to the family right now?",
+    "Conversation prompt: which symbol would a parent or grandparent recognize first, and why?",
+    "Conversation prompt: what story should be added beside this collection so future readers understand the family better?",
+    "Conversation prompt: which holiday, milestone, or family gathering would be the right time to open this again?",
+    "Conversation prompt: what does the family hope children will remember about this season of life?",
+    "Conversation prompt: which family habit, phrase, recipe, place, or object carries more meaning than outsiders would understand?",
+    "Conversation prompt: who in the family quietly protected, guided, or held others together?",
+    "Conversation prompt: what part of the family story deserves gratitude even if it was rarely spoken aloud?",
+    "Conversation prompt: what should remain private, and what can be shared with relatives?",
+    "Conversation prompt: if this collection were reopened in ten years, what would the family hope still feels true?",
+    "Conversation prompt: which family place, room, workshop, garden, street, church, or kitchen still carries memory?",
+    "Conversation prompt: what object would the family place beside this archive if it were displayed on a table?",
+    "Conversation prompt: what sentence would a parent write inside the cover if this became a family book?",
+    "Conversation prompt: which story should be recorded before it becomes harder to remember?",
+    "Conversation prompt: what does the family do for each other that outsiders rarely see?",
+    "Conversation prompt: which tradition should be kept even if the family changes over time?",
+    "Conversation prompt: what should future children know about the people who came before them?",
+    "Conversation prompt: which part of this collection feels most worth preserving?",
+    "Conversation prompt: who should receive the first printed copy if the collection becomes a family gift?",
+    "Conversation prompt: what value should be named aloud when the family gathers again?",
+    "Conversation prompt: which small act of care best explains the family better than a formal history could?"
   ].join(" ");
 }
 
@@ -823,6 +929,39 @@ function safeFileName(houseName: string, deliverableCode: string, ext: string): 
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "") || "family";
   return `${slug}-${deliverableCode.replaceAll("_", "-")}.${ext}`;
+}
+
+function customerFacingFamilyName(input: {
+  house_name?: string | null;
+  surname?: string | null;
+  recipient?: string | null;
+}): string {
+  const houseName = cleanDisplayName(input.house_name);
+  if (houseName) return houseName;
+  const surname = cleanDisplayName(input.surname);
+  if (surname) return `The ${surname} Family`;
+  const recipient = cleanDisplayName(input.recipient);
+  if (recipient) return `${recipient} Legacy Collection`;
+  return "Your Family Legacy";
+}
+
+function cleanDisplayName(value?: string | null): string | null {
+  const cleaned = value?.trim().replace(/\s+/g, " ");
+  if (!cleaned || /^(unknown|null|undefined|n\/a|none)$/i.test(cleaned)) return null;
+  if (/house of unknown/i.test(cleaned)) return null;
+  return cleaned.slice(0, 80);
+}
+
+function dedupeContextSymbols(symbols: ArtifactContext["symbols"]): ArtifactContext["symbols"] {
+  const seen = new Set<string>();
+  return symbols.filter((symbol) => {
+    const cleaned = cleanDisplayName(symbol.symbol);
+    const key = cleaned?.toLowerCase();
+    if (!cleaned || !key || seen.has(key)) return false;
+    seen.add(key);
+    symbol.symbol = cleaned;
+    return true;
+  });
 }
 
 function meaningAttachment(manifest: OrchestrationManifest): Record<string, unknown> {

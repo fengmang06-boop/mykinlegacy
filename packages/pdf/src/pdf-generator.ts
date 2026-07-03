@@ -33,7 +33,7 @@ export async function generateHeritagePdf(input: PdfGenerationInput): Promise<Pd
 }
 
 export function buildSimplePdf(text: string): Buffer {
-  const lines = text.split(/\r?\n/).flatMap((line) => wrapLine(line, 88)).slice(0, 160);
+  const lines = text.split(/\r?\n/).flatMap((line) => wrapLine(line, 88)).slice(0, 260);
   const content = [
     "BT",
     "/F1 14 Tf",
