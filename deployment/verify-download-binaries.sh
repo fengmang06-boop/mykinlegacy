@@ -125,23 +125,53 @@ async function main() {
       mime_type: asset.mimeType
     });
     const contentType = response.headers.get("content-type") ?? "";
+    const contentDisposition = response.headers.get("content-disposition") ?? "";
+    const contentEncoding = response.headers.get("content-encoding") ?? "";
+    const textPreview = body.subarray(0, 200).toString("utf8").replace(/[^\x20-\x7E]+/g, " ").trim();
+    const trimmedPreview = textPreview.trimStart();
+    const bodyLooksJson =
+      trimmedPreview.startsWith("{") ||
+      trimmedPreview.startsWith("[") ||
+      trimmedPreview.startsWith("{\"request_id\"") ||
+      trimmedPreview.startsWith("{\"type\":\"Buffer\"");
+    const binaryTypeHasCharset =
+      /^(application\/pdf|application\/zip|image\/png)\b/i.test(contentType) &&
+      /charset=/i.test(contentType);
+    const bodyLooksText =
+      body.byteLength > 0 &&
+      body.subarray(0, Math.min(body.byteLength, 32)).every((byte) => byte === 9 || byte === 10 || byte === 13 || (byte >= 32 && byte <= 126));
+    const responseWarnings = [];
+    if (binaryTypeHasCharset) responseWarnings.push("binary_content_type_has_charset");
+    if (bodyLooksJson) responseWarnings.push("binary_route_returned_json_body");
+    if (bodyLooksText && !validation.valid) responseWarnings.push("binary_route_returned_text_body");
     results.push({
       asset_id_hash: shortHash(asset.id),
       deliverable_code: asset.deliverableType?.code ?? asset.deliverableTypeId,
       http_status: response.status,
       content_type: contentType,
+      content_disposition: contentDisposition ? "present" : "missing",
+      content_encoding: contentEncoding || null,
       content_length: response.headers.get("content-length"),
       body_size: body.byteLength,
       first_bytes_hex: body.subarray(0, 8).toString("hex"),
+      first_200_bytes_text_preview: validation.valid ? null : textPreview.slice(0, 200),
+      body_looks_json: bodyLooksJson,
+      body_looks_text: bodyLooksText,
+      binary_type_has_charset: binaryTypeHasCharset,
       expected_mime_type: asset.mimeType,
       signature_valid: validation.signature_valid,
       format_valid: validation.format_valid,
-      valid: response.ok && validation.valid && contentType.includes(asset.mimeType),
+      valid:
+        response.ok &&
+        validation.valid &&
+        contentType.toLowerCase() === String(asset.mimeType).toLowerCase() &&
+        !binaryTypeHasCharset &&
+        !bodyLooksJson,
       pdf_header_valid: validation.pdf_header_valid ?? null,
       png_header_valid: validation.png_header_valid ?? null,
       zip_header_valid: validation.zip_header_valid ?? null,
       zip_test_passed: validation.zip_test_passed ?? null,
-      errors: validation.errors
+      errors: [...validation.errors, ...responseWarnings]
     });
   }
 

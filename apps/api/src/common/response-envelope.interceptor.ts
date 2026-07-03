@@ -2,7 +2,8 @@ import {
   CallHandler,
   ExecutionContext,
   Injectable,
-  NestInterceptor
+  NestInterceptor,
+  StreamableFile
 } from "@nestjs/common";
 import { map, type Observable } from "rxjs";
 
@@ -18,11 +19,17 @@ export interface ApiEnvelope<T> {
 
 @Injectable()
 export class ApiResponseInterceptor implements NestInterceptor {
-  intercept(context: ExecutionContext, next: CallHandler): Observable<ApiEnvelope<unknown>> {
+  intercept(
+    context: ExecutionContext,
+    next: CallHandler
+  ): Observable<ApiEnvelope<unknown> | StreamableFile> {
     const request = context.switchToHttp().getRequest<RequestWithContext>();
 
     return next.handle().pipe(
       map((data: unknown) => {
+        if (data instanceof StreamableFile) {
+          return data;
+        }
         const requestContext = getRequestContext(request);
         return {
           request_id: requestContext.requestId,
