@@ -13,7 +13,7 @@ COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 COMPOSE_PROJECT_NAME="mykinlegacy"
 
 if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
-  exec "$SCRIPT_DIR/with-production-lock.sh" "repair_order_artifacts:${ORDER_NUMBER}" "$0" "$@"
+  exec bash "$SCRIPT_DIR/with-production-lock.sh" "repair_order_artifacts:${ORDER_NUMBER}" "$0" "$@"
 fi
 
 if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
