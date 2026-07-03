@@ -96,7 +96,7 @@ export function createMvpCrestPngBuffer(input: {
   ihdr.writeUInt8(0, 12);
 
   const text = Buffer.from(
-    `Description\0MyKinLegacy MVP symbolic crest artwork. Variant ${input.variant}. ` +
+    `Description\0MyKinLegacy MVP symbolic crest artwork. artwork_mode=mvp_symbolic_template; artwork_quality=internal_beta; Variant ${input.variant}. ` +
       `House ${input.house_name ?? "family"}. Symbols ${(input.symbols ?? []).join(", ") || "shield"}. `.repeat(220)
   );
 

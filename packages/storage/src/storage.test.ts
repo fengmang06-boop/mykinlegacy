@@ -114,6 +114,8 @@ describe("private storage and assets", () => {
     });
 
     expect(body.subarray(1, 4).toString()).toBe("PNG");
+    expect(body.toString("latin1")).toContain("artwork_mode=mvp_symbolic_template");
+    expect(body.toString("latin1")).toContain("artwork_quality=internal_beta");
     expect(body.byteLength).toBeGreaterThan(10 * 1024);
     expect(readPngMetadata(body)).toMatchObject({ width: 640, height: 640, has_alpha: true });
     expect(readPngMetadata(transparentBody)).toMatchObject({

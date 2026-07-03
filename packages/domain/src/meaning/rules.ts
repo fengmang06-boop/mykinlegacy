@@ -1,5 +1,6 @@
 import type {
   CollectionContent,
+  CollectionContentQualityReport,
   GenerationBrief,
   MeaningConfidence,
   MeaningCustomerInputs,
@@ -15,6 +16,8 @@ export const BOUNDARY_STATEMENT =
 
 export const COLLECTION_BOUNDARY_STATEMENT =
   "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record.";
+
+export const ARTIFACT_CONTENT_VERSION = "artifact_content.v1" as const;
 
 export const BANNED_MEANING_CLAIMS = [
   "official coat of arms",
@@ -149,6 +152,7 @@ export function buildMeaningProfile(input: MeaningEngineInput = {}, now = new Da
     updated_at: timestamp,
     source: "rule_based_meaning_engine",
     source_level: input.source_level ?? inferSourceLevel(customerInputs),
+    legacy_identity: buildLegacyIdentity(customerInputs),
     customer_inputs: customerInputs,
     meaning_themes: meaningThemes,
     symbol_choices: symbolChoices,
@@ -213,9 +217,10 @@ export function buildCollectionContent(
 ): CollectionContent {
   const profile = generationBrief.meaning_profile;
   const inputs = profile.customer_inputs;
-  const familyName = displayFamilyName(inputs);
-  const recipientPhrase = inputs.recipient ? ` for ${inputs.recipient}` : "";
-  const occasionPhrase = inputs.occasion ? ` for ${inputs.occasion}` : "";
+  const familyName = profile.legacy_identity.family_display_name;
+  const collectionName = profile.legacy_identity.collection_name;
+  const recipientLine = inputs.recipient ? inputs.recipient : familyName;
+  const occasionPhrase = profile.legacy_identity.occasion_framing;
   const themes = profile.meaning_themes.map((theme) => titleCase(theme.theme));
   const themePhrase = naturalList(themes.slice(0, 3), "family meaning");
   const uniqueSymbols = dedupeSymbols(profile.symbol_choices);
@@ -223,30 +228,43 @@ export function buildCollectionContent(
   const symbolPhrase = naturalList(symbolNames.slice(0, 3), "chosen symbols");
   const firstMemory = inputs.memories[0];
   const valuePhrase = naturalList(inputs.values.slice(0, 3).map(titleCase), themePhrase);
-
-  return {
+  const symbolGuide = uniqueSymbols.map((symbol) => ({
+    symbol: titleCase(symbol.symbol),
+    meaning: sentenceCase(symbol.meaning),
+    why_chosen: sentenceCase(symbol.rationale),
+    customer_input_basis: sentenceCase(symbol.customer_input_basis),
+    visual_role: sentenceCase(symbol.visual_role),
+    artifact_role: sentenceCase(symbol.artifact_role),
+    emotional_relevance: sentenceCase(symbol.emotional_purpose)
+  }));
+  const contentBase = {
     contract_version: "1.0",
     schema_version: "collection_content.v1",
     created_at: now.toISOString(),
     source: "rule_based_meaning_engine",
-    house_meaning_summary: `${familyName} was shaped around ${themePhrase.toLowerCase()}. This private symbolic keepsake translates those qualities into a collection${recipientPhrase}, using ${symbolPhrase.toLowerCase()} to recognize what the family wants to remember, honor, and carry forward.`,
-    symbol_guide: uniqueSymbols.map((symbol) => ({
-      symbol: titleCase(symbol.symbol),
-      meaning: sentenceCase(symbol.meaning),
-      why_chosen: sentenceCase(symbol.rationale),
-      emotional_relevance: `${titleCase(symbol.symbol)} gives the collection a visible reminder of ${symbol.meaning.toLowerCase()}, so the design feels connected to the family's lived values rather than decoration alone.`
-    })),
+    artifact_content_version: ARTIFACT_CONTENT_VERSION,
+    collection_name: collectionName,
+    family_display_name: familyName,
+    house_meaning_summary: `${collectionName} for ${familyName} was shaped around ${themePhrase.toLowerCase()}. It translates the family's values, memories, and chosen symbols into a private symbolic keepsake, using ${symbolPhrase.toLowerCase()} to recognize what should be honored now and carried forward later.`,
+    symbol_guide: symbolGuide,
     family_story: buildFamilyStory({
       familyName,
+      collectionName,
       themePhrase,
       valuePhrase,
       firstMemory,
-      occasionPhrase
+      occasionPhrase,
+      symbolPhrase
     }),
-    certificate_text: `Presented as a private symbolic keepsake for ${familyName}. This certificate honors ${themePhrase.toLowerCase()} and the story carried through ${symbolPhrase.toLowerCase()}. It is prepared for personal keeping, gifting, and remembrance.`,
-    collection_letter: `To the family,\n\nThis collection was created to recognize what ordinary gifts often cannot hold: the values, memories, and symbols that make a family feel like itself. May it serve as a private reminder of ${valuePhrase.toLowerCase()} and a keepsake you can return to, share, and pass forward.\n\nWith care,\nMyKinLegacy`,
+    certificate_text: `Presented For: ${recipientLine}\nCollection Name: ${collectionName}\n\nThis private symbolic keepsake honors ${themePhrase.toLowerCase()} as the core meaning of this private family collection. Its symbolic elements, including ${symbolPhrase.toLowerCase()}, were selected to give visible form to values the family can keep, gift, and return to over time.\n\nPreservation Note: This artifact is prepared as a personal keepsake for family recognition, not as a public claim of rank, ancestry, or heraldic authority.\n\n${COLLECTION_BOUNDARY_STATEMENT}`,
+    collection_letter: `Dear ${recipientLine},\n\nThis collection was prepared because ordinary gifts often cannot hold the quiet things that make a family meaningful: the values people live by, the memories they return to, and the symbols that help those things be seen.\n\nMay ${collectionName} become something you can open slowly, share with the people closest to you, and keep as a reminder of ${valuePhrase.toLowerCase()}.\n\nWith care,\nMyKinLegacy`,
     design_basis: buildDesignBasis(generationBrief, themePhrase, symbolPhrase),
     boundary_statement: COLLECTION_BOUNDARY_STATEMENT
+  } satisfies Omit<CollectionContent, "content_quality">;
+
+  return {
+    ...contentBase,
+    content_quality: validateCollectionContent(contentBase, profile)
   };
 }
 
@@ -269,9 +287,16 @@ export function validateMeaningProfile(
 
   for (const theme of profile.meaning_themes) {
     if (!theme.evidence.trim()) qualityFlags.push(`theme_evidence_missing:${theme.theme}`);
+    if (!theme.why_inferred.trim()) qualityFlags.push(`theme_reason_missing:${theme.theme}`);
+    if (!theme.customer_input_basis.trim()) qualityFlags.push(`theme_customer_basis_missing:${theme.theme}`);
+    if (!theme.artifact_effect.trim()) qualityFlags.push(`theme_artifact_effect_missing:${theme.theme}`);
   }
   for (const symbol of profile.symbol_choices) {
     if (!symbol.rationale.trim()) qualityFlags.push(`symbol_rationale_missing:${symbol.symbol}`);
+    if (!symbol.customer_input_basis.trim()) qualityFlags.push(`symbol_customer_basis_missing:${symbol.symbol}`);
+    if (!symbol.visual_role.trim()) qualityFlags.push(`symbol_visual_role_missing:${symbol.symbol}`);
+    if (!symbol.artifact_role.trim()) qualityFlags.push(`symbol_artifact_role_missing:${symbol.symbol}`);
+    if (!symbol.emotional_purpose.trim()) qualityFlags.push(`symbol_emotional_purpose_missing:${symbol.symbol}`);
     if (!/(customer|symbolic|selected|chosen|value|memory|theme|input)/i.test(symbol.rationale)) {
       qualityFlags.push(`symbol_rationale_source_unclear:${symbol.symbol}`);
     }
@@ -322,13 +347,7 @@ function extractMeaningThemes(input: MeaningCustomerInputs): MeaningTheme[] {
     const hasValue = directValues.has(rule.theme);
     const keyword = rule.keywords.find((item) => corpus.includes(item));
     if (!hasValue && !keyword) return [];
-    return [
-      {
-        theme: rule.theme,
-        evidence: evidenceForTheme(rule.theme, input, keyword),
-        confidence: hasValue ? "high" : confidenceFromEvidence(input)
-      }
-    ];
+    return [buildMeaningTheme(rule.theme, input, keyword, hasValue ? "high" : confidenceFromEvidence(input))];
   });
 
   if (matched.length > 0) {
@@ -336,19 +355,27 @@ function extractMeaningThemes(input: MeaningCustomerInputs): MeaningTheme[] {
   }
 
   return [
-    {
-      theme: "unity",
-      evidence:
-        "The order did not include enough specific memory detail, so the first brief starts with the safe family theme of unity.",
-      confidence: "low"
-    },
-    {
-      theme: "continuity",
-      evidence:
-        "The collection is a family legacy keepsake, so continuity is used as a low-confidence default until richer interview details are available.",
-      confidence: "low"
-    }
+    buildMeaningTheme("unity", input, "family", "low"),
+    buildMeaningTheme("continuity", input, "legacy", "low"),
+    buildMeaningTheme("gratitude", input, "keepsake", "low")
   ];
+}
+
+function buildMeaningTheme(
+  theme: string,
+  input: MeaningCustomerInputs,
+  keyword: string | undefined,
+  confidence: MeaningConfidence
+): MeaningTheme {
+  const evidence = evidenceForTheme(theme, input, keyword);
+  return {
+    theme,
+    evidence,
+    confidence,
+    why_inferred: whyThemeWasInferred(theme, input, keyword, confidence),
+    customer_input_basis: customerBasisForTheme(theme, input, keyword),
+    artifact_effect: artifactEffectForTheme(theme)
+  };
 }
 
 function selectSymbols(themes: MeaningTheme[], input: MeaningCustomerInputs): SymbolChoice[] {
@@ -365,7 +392,11 @@ function selectSymbols(themes: MeaningTheme[], input: MeaningCustomerInputs): Sy
       symbol: selected.symbol,
       meaning: selected.meaning,
       rationale: `Chosen because the ${theme.confidence === "low" ? "symbolic interpretation" : "customer input"} points toward ${theme.theme}: ${theme.evidence}`,
-      source: theme.confidence === "low" ? "symbolic_interpretation" : "customer_input"
+      source: theme.confidence === "low" ? "symbolic_interpretation" : "customer_input",
+      customer_input_basis: theme.customer_input_basis,
+      visual_role: visualRoleForSymbol(selected.symbol, theme.theme),
+      artifact_role: artifactRoleForSymbol(selected.symbol, theme.theme),
+      emotional_purpose: emotionalPurposeForSymbol(selected.symbol, theme.theme)
     });
   }
 
@@ -375,7 +406,12 @@ function selectSymbols(themes: MeaningTheme[], input: MeaningCustomerInputs): Sy
       meaning: "protection and a stable family identity frame",
       rationale:
         "Selected as a symbolic interpretation for a private family legacy collection because it gives the design a clear protective structure without claiming official status.",
-      source: "symbolic_interpretation"
+      source: "symbolic_interpretation",
+      customer_input_basis:
+        "A shield is used as the collection frame because the product is a private symbolic keepsake centered on family protection and recognition.",
+      visual_role: "Forms the outer structure of the crest artwork and gives the design a clear family identity frame.",
+      artifact_role: "Connects the artwork, certificate, and symbol guide into one recognizable legacy collection.",
+      emotional_purpose: "Helps the recipient feel that the family story is being held with care, not simply decorated."
     });
   }
 
@@ -391,34 +427,37 @@ function buildDesignRationale(
   const primarySymbols = symbols.map((symbol) => symbol.symbol).join(", ");
   const palette = customerPalette(input).join(", ");
   return [
-    `The design basis is built around ${primaryThemes}, using ${primarySymbols} as symbolic anchors.`,
-    `The palette direction is ${palette}, chosen to keep the collection dignified, gift-ready, and archival.`,
-    "Text such as the house name or motto should be rendered server-side in collection artifacts, not inside generated image artwork."
+    `The design basis is built around ${primaryThemes}, using ${primarySymbols} as symbolic anchors tied to the customer's values and memories.`,
+    `The palette direction is ${palette}, chosen to keep the collection dignified, gift-ready, and archival rather than decorative or loud.`,
+    "The crest is treated as a private symbolic emblem. It does not claim official heraldry, legal arms, noble status, or certified genealogy.",
+    "Text such as the house name or motto should be rendered server-side in the finished collection artifacts, not inside generated image artwork."
   ];
 }
 
 function buildStoryDirection(themes: MeaningTheme[], input: MeaningCustomerInputs): string {
-  const recipient = input.recipient ? ` for the ${input.recipient}` : "";
-  const occasion = input.occasion ? ` connected to ${input.occasion}` : "";
+  const recipient = input.recipient ? ` for ${input.recipient}` : "";
+  const occasion = input.occasion ? ` in the context of ${input.occasion}` : "";
   const themeList = themes.map((theme) => theme.theme).join(", ");
   const memory = input.memories[0];
   return memory
-    ? `The family story should emphasize ${themeList}${recipient}${occasion}, grounded in the memory: "${memory}".`
-    : `The family story should emphasize ${themeList}${recipient}${occasion}, while staying clear that this is a symbolic interpretation rather than a genealogical claim.`;
+    ? `The family story should honor ${themeList}${recipient}${occasion}, grounded in the customer-provided memory: "${memory}".`
+    : `The family story should honor ${themeList}${recipient}${occasion}, using careful symbolic interpretation without inventing family history or genealogical facts.`;
 }
 
 function buildFamilyStory(input: {
   familyName: string;
+  collectionName: string;
   themePhrase: string;
   valuePhrase: string;
   firstMemory?: string;
   occasionPhrase: string;
+  symbolPhrase: string;
 }): string {
   const memorySentence = input.firstMemory
-    ? `At the heart of the story is a remembered detail: ${input.firstMemory}`
-    : `At the heart of the story is the desire to name what this family has carried quietly over time.`;
+    ? `One remembered detail gives the collection its human center: ${input.firstMemory}.`
+    : `Because only a small amount of family detail was provided, the story stays honest and works from symbolic interpretation instead of inventing history.`;
 
-  return `${input.familyName} is represented here as a family shaped by ${input.themePhrase.toLowerCase()}. ${memorySentence} This collection gathers those qualities into a private keepsake${input.occasionPhrase}, so the family can see its values reflected with dignity, warmth, and continuity. It is not a claim of public status. It is a quiet recognition of the private meaning a family already holds.`;
+  return `${input.collectionName} honors ${input.familyName} as a family shaped by ${input.themePhrase.toLowerCase()}. ${memorySentence} The values carried forward here are ${input.valuePhrase.toLowerCase()}, expressed through ${input.symbolPhrase.toLowerCase()} so the collection has both language and visible memory. ${input.occasionPhrase} gives the keepsake its present-day reason: this is something to open now, share with care, and preserve for the people who may one day ask what this family stood for. It is not a claim of public status or certified ancestry. It is a quiet recognition of the private meaning this family already holds.`;
 }
 
 function buildDesignBasis(
@@ -428,7 +467,8 @@ function buildDesignBasis(
 ): string {
   const palette = naturalList(generationBrief.art_direction.palette.map(titleCase), "antique gold and ivory");
   const composition = generationBrief.art_direction.composition[0] ?? "The composition should feel stable and archival.";
-  return `${composition} The design direction uses ${symbolPhrase.toLowerCase()} to express ${themePhrase.toLowerCase()}. The palette direction is ${palette.toLowerCase()}, with a dark archive base, antique gold accents, and an ivory document tone so the collection feels private, ceremonial, gift-ready, and suitable for long-term keeping. Text is treated as part of the finished collection layout rather than placed inside generated artwork, and the design remains symbolic rather than official heraldry.`;
+  const identity = generationBrief.meaning_profile.legacy_identity;
+  return `${composition} The design direction uses ${symbolPhrase.toLowerCase()} to express ${themePhrase.toLowerCase()} for ${identity.family_display_name}. The palette direction is ${palette.toLowerCase()}, with a dark archive base, antique gold accents, and an ivory document tone so the collection feels private, ceremonial, gift-ready, and suitable for long-term keeping. The shield and emblem structure provide a recognizable family frame; the selected symbols carry the meaning; the written artifacts explain why those choices belong. Text is treated as part of the finished collection layout rather than placed inside generated artwork, and the design remains a personalized symbolic keepsake rather than official heraldry.`;
 }
 
 function customerPalette(input: MeaningCustomerInputs): string[] {
@@ -447,6 +487,169 @@ function evidenceForTheme(theme: string, input: MeaningCustomerInputs, keyword?:
   }
   if (keyword) return `The customer input included "${keyword}", which maps to ${theme}.`;
   return `The available customer input supports ${theme}.`;
+}
+
+function buildLegacyIdentity(input: MeaningCustomerInputs): MeaningProfile["legacy_identity"] {
+  const familyDisplayName = displayFamilyName(input);
+  const collectionName = input.recipient
+    ? `${input.recipient}'s Legacy Collection`
+    : input.house_name
+      ? `${input.house_name} Legacy Collection`
+      : input.surname
+        ? `The ${input.surname} Family Legacy Collection`
+        : "A Private Family Legacy Collection";
+  const values = naturalList(input.values.slice(0, 3).map(titleCase), "family meaning");
+  const occasion = input.occasion
+    ? `Prepared for ${input.occasion}, so the collection has a clear reason to be opened now.`
+    : "Prepared as a private keepsake for family recognition, gifting, and long-term keeping.";
+  const tone = input.preferred_tone.length > 0
+    ? naturalList(input.preferred_tone.slice(0, 3).map(titleCase), "warm and dignified")
+    : "Warm, dignified, private, and archival.";
+
+  return {
+    collection_name: safeVisibleText(collectionName, "A Private Family Legacy Collection"),
+    family_display_name: safeVisibleText(familyDisplayName, "Your Family Legacy"),
+    short_identity_statement: `${safeVisibleText(familyDisplayName, "Your Family Legacy")} is interpreted through ${values.toLowerCase()}, with symbols chosen to make those qualities visible without inventing history.`,
+    tone_direction: tone,
+    occasion_framing: occasion
+  };
+}
+
+function whyThemeWasInferred(
+  theme: string,
+  input: MeaningCustomerInputs,
+  keyword: string | undefined,
+  confidence: MeaningConfidence
+): string {
+  if (input.values.map((value) => value.toLowerCase()).includes(theme)) {
+    return `${titleCase(theme)} was inferred because the customer explicitly selected it as a family value.`;
+  }
+  if (keyword) {
+    return `${titleCase(theme)} was inferred because the interview included "${keyword}", which is treated as a symbolic signal for this theme.`;
+  }
+  return confidence === "low"
+    ? `${titleCase(theme)} is used as a careful symbolic fallback because the interview did not include enough specific detail yet.`
+    : `${titleCase(theme)} is supported by the combined interview details.`;
+}
+
+function customerBasisForTheme(theme: string, input: MeaningCustomerInputs, keyword?: string): string {
+  const memory = input.memories.find((item) => keyword && item.toLowerCase().includes(keyword));
+  if (memory) return `Customer memory: "${memory}".`;
+  if (input.values.map((value) => value.toLowerCase()).includes(theme)) {
+    return `Customer-selected family value: "${theme}".`;
+  }
+  if (keyword) return `Customer wording included "${keyword}".`;
+  if (input.occasion) return `Customer occasion: "${input.occasion}".`;
+  if (input.recipient) return `Customer recipient: "${input.recipient}".`;
+  return "Symbolic interpretation from limited interview detail.";
+}
+
+function artifactEffectForTheme(theme: string): string {
+  const effects: Record<string, string> = {
+    protection: "Makes the certificate and crest feel like a guarded family frame.",
+    resilience: "Gives the story a tone of steadiness, endurance, and respect.",
+    memory: "Moves the collection toward remembrance, preservation, and private archive language.",
+    guidance: "Adds a future-facing tone, especially in the family story and certificate close.",
+    continuity: "Connects the artwork and documents to generations, roots, and what can be passed down.",
+    gratitude: "Makes the collection feel gift-ready and suited to parents, grandparents, or family milestones.",
+    craftsmanship: "Adds respect for work, skill, making, and the dignity of effort.",
+    journey: "Frames the collection around movement, courage, and the road a family has traveled.",
+    unity: "Keeps the collection centered on belonging and shared family identity.",
+    growth: "Gives the collection a hopeful tone for children, new beginnings, and future memory.",
+    sacrifice: "Adds reverence for service, provision, and quiet devotion."
+  };
+  return effects[theme] ?? "Shapes the tone, symbol hierarchy, and written artifacts around family meaning.";
+}
+
+function visualRoleForSymbol(symbol: string, theme: string): string {
+  const lower = symbol.toLowerCase();
+  if (lower.includes("shield")) return "Forms the main protective family frame of the crest artwork.";
+  if (lower.includes("oak") || lower.includes("tree") || lower.includes("branch")) {
+    return "Adds rooted structure and generational weight around the central emblem.";
+  }
+  if (lower.includes("compass") || lower.includes("star") || lower.includes("lantern")) {
+    return "Provides a guiding focal point that draws the eye toward future direction.";
+  }
+  if (lower.includes("book") || lower.includes("key") || lower.includes("candle")) {
+    return "Introduces a private archive motif connected to memory and remembrance.";
+  }
+  if (lower.includes("laurel") || lower.includes("ribbon")) {
+    return "Frames the piece with honor, recognition, and a gift-ready ceremonial note.";
+  }
+  return `Acts as a visible anchor for ${theme}, placed within the crest structure rather than used as decoration alone.`;
+}
+
+function artifactRoleForSymbol(symbol: string, theme: string): string {
+  return `${titleCase(symbol)} connects the crest artwork to the written Symbol Guide, where ${theme} is explained as family meaning rather than official heraldry.`;
+}
+
+function emotionalPurposeForSymbol(symbol: string, theme: string): string {
+  return `${titleCase(symbol)} helps the recipient recognize ${theme} as something the family can see, name, and preserve.`;
+}
+
+function validateCollectionContent(
+  content: Omit<CollectionContent, "content_quality">,
+  profile: MeaningProfile
+): CollectionContentQualityReport {
+  const hardFailures: string[] = [];
+  const softWarnings: string[] = [];
+  const visibleText = [
+    content.collection_name,
+    content.family_display_name,
+    content.house_meaning_summary,
+    ...content.symbol_guide.flatMap((symbol) => [
+      symbol.symbol,
+      symbol.meaning,
+      symbol.why_chosen,
+      symbol.customer_input_basis,
+      symbol.visual_role,
+      symbol.artifact_role,
+      symbol.emotional_relevance
+    ]),
+    content.family_story,
+    content.certificate_text,
+    content.collection_letter,
+    content.design_basis,
+    content.boundary_statement
+  ].join("\n");
+  const repeatedSymbolCount =
+    content.symbol_guide.length - new Set(content.symbol_guide.map((symbol) => symbol.symbol.toLowerCase())).size;
+  const fallback = fallbackUsed(profile.customer_inputs);
+  const strongThemeCount = profile.meaning_themes.filter((theme) => theme.confidence !== "low").length;
+
+  if (/\bHouse of Unknown\b/i.test(visibleText)) hardFailures.push("house_of_unknown");
+  if (/\b(null|undefined)\b/i.test(visibleText)) hardFailures.push("null_or_undefined_visible");
+  if (/[{[]\s*"[^"]+"\s*:/s.test(visibleText)) hardFailures.push("raw_json_visible");
+  if (/\b(debug|placeholder|sample|test artifact)\b/i.test(visibleText)) hardFailures.push("debug_label_visible");
+  if (!visibleText.includes(COLLECTION_BOUNDARY_STATEMENT)) hardFailures.push("boundary_statement_missing");
+  if (content.symbol_guide.length === 0) hardFailures.push("symbol_guide_empty");
+  if (repeatedSymbolCount > 0) hardFailures.push("repeated_symbol_blocks");
+  if (content.house_meaning_summary.length < 140) hardFailures.push("summary_too_short");
+  if (content.family_story.length < 420) hardFailures.push("family_story_too_short");
+  if (content.certificate_text.length < 320) hardFailures.push("certificate_too_short");
+  if (content.collection_letter.length < 220) hardFailures.push("collection_letter_too_short");
+  if (content.design_basis.length < 320) hardFailures.push("design_basis_too_short");
+  if (!/customer|symbolic|selected|chosen|value|memory|occasion|recipient/i.test(visibleText)) {
+    hardFailures.push("customer_or_symbolic_basis_missing");
+  }
+
+  if (fallback) softWarnings.push("generic_fallback_used");
+  if (strongThemeCount < 3) softWarnings.push("fewer_than_three_strong_themes");
+  if (!profile.customer_inputs.recipient) softWarnings.push("recipient_missing");
+  if (profile.customer_inputs.memories.length === 0) softWarnings.push("personal_memory_missing");
+  softWarnings.push("mvp_artwork_template_internal_beta");
+
+  return {
+    content_quality_status: hardFailures.length > 0 ? "failed" : softWarnings.length > 0 ? "warning" : "passed",
+    hard_failures: [...new Set(hardFailures)],
+    soft_warnings: [...new Set(softWarnings)],
+    theme_count: profile.meaning_themes.length,
+    symbol_count: content.symbol_guide.length,
+    repeated_symbol_count: Math.max(0, repeatedSymbolCount),
+    fallback_used: fallback,
+    boundary_statement_present: visibleText.includes(COLLECTION_BOUNDARY_STATEMENT),
+    artifact_content_version: ARTIFACT_CONTENT_VERSION
+  };
 }
 
 function confidenceFromEvidence(input: MeaningCustomerInputs): MeaningConfidence {
@@ -486,8 +689,15 @@ function hasUnnegatedRiskPhrase(text: string, phrase: string): boolean {
   const normalizedPhrase = phrase.toLowerCase();
   let index = text.indexOf(normalizedPhrase);
   while (index >= 0) {
-    const prefix = text.slice(Math.max(0, index - 40), index);
-    if (!/(not an?|not provide|does not provide|without claiming|rather than)/i.test(prefix)) {
+    const prefix = text.slice(Math.max(0, index - 160), index);
+    const sentenceStart = Math.max(
+      prefix.lastIndexOf("."),
+      prefix.lastIndexOf("!"),
+      prefix.lastIndexOf("?"),
+      prefix.lastIndexOf("\n")
+    );
+    const localPrefix = prefix.slice(sentenceStart + 1);
+    if (!/(not an?|not provide|does not provide|does not claim|without claiming|rather than)/i.test(localPrefix)) {
       return true;
     }
     index = text.indexOf(normalizedPhrase, index + normalizedPhrase.length);
@@ -510,6 +720,19 @@ function displayFamilyName(input: MeaningCustomerInputs): string {
   if (input.surname) return `The ${input.surname} family`;
   if (input.recipient) return `${input.recipient} Legacy Collection`;
   return "Your Family Legacy";
+}
+
+function safeVisibleText(value: string, fallback: string): string {
+  const cleaned = value.trim().replace(/\s+/g, " ");
+  if (!cleaned || /^(unknown|null|undefined|n\/a|none|test|sample|placeholder)$/i.test(cleaned)) {
+    return fallback;
+  }
+  if (/house of unknown/i.test(cleaned)) return fallback;
+  return cleaned.slice(0, 120);
+}
+
+function fallbackUsed(input: MeaningCustomerInputs): boolean {
+  return !input.house_name && !input.surname && !input.recipient;
 }
 
 function naturalList(values: string[], fallback: string): string {

@@ -23,6 +23,9 @@ export interface MeaningTheme {
   theme: string;
   evidence: string;
   confidence: MeaningConfidence;
+  why_inferred: string;
+  customer_input_basis: string;
+  artifact_effect: string;
 }
 
 export interface SymbolChoice {
@@ -30,6 +33,10 @@ export interface SymbolChoice {
   meaning: string;
   rationale: string;
   source: MeaningSource;
+  customer_input_basis: string;
+  visual_role: string;
+  artifact_role: string;
+  emotional_purpose: string;
 }
 
 export interface MeaningValidationResult {
@@ -45,6 +52,13 @@ export interface MeaningProfile {
   updated_at: string;
   source: "rule_based_meaning_engine";
   source_level: MeaningSourceLevel;
+  legacy_identity: {
+    collection_name: string;
+    family_display_name: string;
+    short_identity_statement: string;
+    tone_direction: string;
+    occasion_framing: string;
+  };
   customer_inputs: MeaningCustomerInputs;
   meaning_themes: MeaningTheme[];
   symbol_choices: SymbolChoice[];
@@ -78,7 +92,22 @@ export interface CollectionSymbolGuideItem {
   symbol: string;
   meaning: string;
   why_chosen: string;
+  customer_input_basis: string;
+  visual_role: string;
+  artifact_role: string;
   emotional_relevance: string;
+}
+
+export interface CollectionContentQualityReport {
+  content_quality_status: "passed" | "failed" | "warning";
+  hard_failures: string[];
+  soft_warnings: string[];
+  theme_count: number;
+  symbol_count: number;
+  repeated_symbol_count: number;
+  fallback_used: boolean;
+  boundary_statement_present: boolean;
+  artifact_content_version: "artifact_content.v1";
 }
 
 export interface CollectionContent {
@@ -86,6 +115,9 @@ export interface CollectionContent {
   schema_version: "collection_content.v1";
   created_at: string;
   source: "rule_based_meaning_engine";
+  artifact_content_version: "artifact_content.v1";
+  collection_name: string;
+  family_display_name: string;
   house_meaning_summary: string;
   symbol_guide: CollectionSymbolGuideItem[];
   family_story: string;
@@ -93,6 +125,7 @@ export interface CollectionContent {
   collection_letter: string;
   design_basis: string;
   boundary_statement: string;
+  content_quality: CollectionContentQualityReport;
 }
 
 export interface MeaningEngineInput {

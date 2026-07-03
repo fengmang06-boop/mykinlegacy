@@ -28,6 +28,8 @@ describe("rule-based Meaning Engine", () => {
       expect.arrayContaining(["shield", "oak branch"])
     );
     expect(profile.symbol_choices.every((symbol) => symbol.rationale.length > 20)).toBe(true);
+    expect(profile.meaning_themes.every((theme) => theme.why_inferred.length > 20)).toBe(true);
+    expect(profile.symbol_choices.every((symbol) => symbol.customer_input_basis.length > 10)).toBe(true);
     expect(profile.design_rationale.length).toBeGreaterThan(0);
     expect(profile.boundary_statement).toBe(BOUNDARY_STATEMENT);
     expect(profile.validation.valid).toBe(true);
@@ -82,13 +84,18 @@ describe("rule-based Meaning Engine", () => {
       symbol: expect.any(String),
       meaning: expect.any(String),
       why_chosen: expect.any(String),
+      customer_input_basis: expect.any(String),
+      visual_role: expect.any(String),
+      artifact_role: expect.any(String),
       emotional_relevance: expect.any(String)
     });
     expect(content.family_story).toContain("He kept everyone steady");
     expect(content.certificate_text).toContain("private symbolic keepsake");
-    expect(content.collection_letter).toContain("To the family");
+    expect(content.collection_letter).toContain("Dear father");
     expect(content.design_basis).toContain("private");
     expect(content.boundary_statement).toBe(COLLECTION_BOUNDARY_STATEMENT);
+    expect(content.content_quality.artifact_content_version).toBe("artifact_content.v1");
+    expect(content.content_quality.hard_failures).toEqual([]);
     expect(serialized).not.toContain("proves your ancestry");
     expect(serialized).not.toContain("royal lineage");
     expect(serialized).not.toContain("legally granted arms");
