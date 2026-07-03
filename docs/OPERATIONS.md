@@ -186,6 +186,13 @@ Choose one action:
 
 ```text
 health_check
+restart_nginx
+restart_services
+docker_ps
+nginx_logs
+api_logs
+web_logs
+worker_logs
 inspect_order
 repair_order_artifacts
 verify_download_binaries
@@ -202,11 +209,17 @@ verify_download_binaries
 founder_final_order_verification
 ```
 
-The workflow connects to the VPS through the same production SSH secrets as deploy, pulls the latest `main` scripts, and runs:
+The workflow connects to the VPS through the same production SSH secrets as deploy.
+
+Lightweight recovery actions do not pull Git, do not run `deploy.sh`, and do not build Docker images. They are intended for routine recovery when containers need to be restarted or inspected.
+
+Order inspection, repair, and verification actions run the existing production scripts:
 
 ```bash
 bash deployment/run-ops-action.sh <action> <order_number>
 ```
+
+`safe_deploy` is the only Ops action that pulls the latest `main` branch and runs a full deployment.
 
 The workflow output is safe to share for debugging. It must not print:
 
@@ -227,6 +240,49 @@ The workflow output is safe to share for debugging. It must not print:
 - checks `/api/v1/products`
 - checks `/family-legacy-collection`
 - checks origin `/health`
+
+`restart_nginx`
+
+- lightweight recovery action
+- does not pull Git
+- does not build or export Docker images
+- restarts only the `nginx` compose service with `--no-build`
+- runs `deployment/health-check.sh`
+- expected runtime: 30-90 seconds
+
+`restart_services`
+
+- lightweight recovery action
+- does not pull Git
+- does not build or export Docker images
+- restarts the current compose services with `--no-build`
+- runs `deployment/health-check.sh`
+- expected runtime: 1-3 minutes
+
+`docker_ps`
+
+- prints current Docker Compose service status
+- does not restart, deploy, pull, or build
+
+`nginx_logs`
+
+- prints the last 120 lines from `mykinlegacy_nginx`
+- does not restart, deploy, pull, or build
+
+`api_logs`
+
+- prints the last 120 lines from `mykinlegacy_api`
+- does not restart, deploy, pull, or build
+
+`web_logs`
+
+- prints the last 120 lines from `mykinlegacy_web`
+- does not restart, deploy, pull, or build
+
+`worker_logs`
+
+- prints the last 120 lines from `mykinlegacy_worker`
+- does not restart, deploy, pull, or build
 
 `inspect_order`
 
@@ -271,6 +327,15 @@ PASS requires:
 - runs status output
 - uses the production deploy lock
 - relies on deploy health checks and rollback fallback
+- heavy action: rebuilds and exports Docker images on the VPS
+- use only for real code deploys, not simple recovery
+
+For simple recovery:
+
+- use `restart_nginx` when nginx is stopped or unhealthy
+- use `restart_services` when multiple containers need to be restarted
+- use `docker_ps` first when the failure is unclear
+- use `nginx_logs`, `api_logs`, `web_logs`, or `worker_logs` to inspect recent service output
 
 ## Production Operation Concurrency
 

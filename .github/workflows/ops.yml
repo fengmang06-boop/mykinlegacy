@@ -9,6 +9,13 @@ on:
         type: choice
         options:
           - health_check
+          - restart_nginx
+          - restart_services
+          - docker_ps
+          - nginx_logs
+          - api_logs
+          - web_logs
+          - worker_logs
           - inspect_order
           - repair_order_artifacts
           - verify_download_binaries
@@ -53,7 +60,7 @@ jobs:
           : "${OPS_ACTION:?Missing action}"
 
           case "$OPS_ACTION" in
-            health_check|safe_deploy)
+            health_check|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs)
               ;;
             inspect_order|repair_order_artifacts|verify_download_binaries|founder_final_order_verification)
               if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
@@ -131,9 +138,58 @@ jobs:
           echo "project directory exists: yes"
 
           cd "$PROJECT_DIR"
-          git fetch origin main
-          git checkout main
-          git pull --ff-only origin main
 
-          bash deployment/run-ops-action.sh "$ACTION" "$ORDER_NUMBER"
+          case "$ACTION" in
+            safe_deploy)
+              git fetch origin main
+              git checkout main
+              git pull --ff-only origin main
+              bash deployment/run-ops-action.sh "$ACTION" "$ORDER_NUMBER"
+              ;;
+            restart_nginx)
+              echo "LIGHTWEIGHT_ACTION restart_nginx no_git_pull=yes no_build=yes"
+              bash deployment/with-production-lock.sh "ops:restart_nginx" bash -lc '
+                set -euo pipefail
+                cd "$1"
+                docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml up -d --no-build nginx
+                bash deployment/health-check.sh
+              ' bash "$PROJECT_DIR"
+              ;;
+            restart_services)
+              echo "LIGHTWEIGHT_ACTION restart_services no_git_pull=yes no_build=yes"
+              bash deployment/with-production-lock.sh "ops:restart_services" bash -lc '
+                set -euo pipefail
+                cd "$1"
+                docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml up -d --no-build
+                bash deployment/health-check.sh
+              ' bash "$PROJECT_DIR"
+              ;;
+            docker_ps)
+              echo "LIGHTWEIGHT_ACTION docker_ps no_git_pull=yes no_build=yes"
+              bash deployment/with-production-lock.sh "ops:docker_ps" bash -lc '
+                set -euo pipefail
+                cd "$1"
+                docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml ps
+              ' bash "$PROJECT_DIR"
+              ;;
+            nginx_logs)
+              echo "LIGHTWEIGHT_ACTION nginx_logs no_git_pull=yes no_build=yes"
+              bash deployment/with-production-lock.sh "ops:nginx_logs" bash -lc 'docker logs mykinlegacy_nginx --tail 120'
+              ;;
+            api_logs)
+              echo "LIGHTWEIGHT_ACTION api_logs no_git_pull=yes no_build=yes"
+              bash deployment/with-production-lock.sh "ops:api_logs" bash -lc 'docker logs mykinlegacy_api --tail 120'
+              ;;
+            web_logs)
+              echo "LIGHTWEIGHT_ACTION web_logs no_git_pull=yes no_build=yes"
+              bash deployment/with-production-lock.sh "ops:web_logs" bash -lc 'docker logs mykinlegacy_web --tail 120'
+              ;;
+            worker_logs)
+              echo "LIGHTWEIGHT_ACTION worker_logs no_git_pull=yes no_build=yes"
+              bash deployment/with-production-lock.sh "ops:worker_logs" bash -lc 'docker logs mykinlegacy_worker --tail 120'
+              ;;
+            *)
+              bash deployment/run-ops-action.sh "$ACTION" "$ORDER_NUMBER"
+              ;;
+          esac
           REMOTE_SCRIPT

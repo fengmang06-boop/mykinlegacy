@@ -48,6 +48,10 @@ safe_url_check() {
   return 1
 }
 
+compose() {
+  docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$SCRIPT_DIR/docker-compose.yml" "$@"
+}
+
 print_preflight() {
   echo "MyKinLegacy Ops workflow preflight"
   echo "Generated at: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
@@ -97,6 +101,57 @@ case "$ACTION" in
       exit 1
     fi
     echo "OPS_HEALTH_CHECK_PASS"
+    ;;
+
+  restart_nginx)
+    echo "===== RESTART NGINX ====="
+    echo "mode=lightweight no_git_pull=yes no_build=yes"
+    compose up -d --no-build nginx
+    bash "$SCRIPT_DIR/health-check.sh"
+    echo "OPS_RESTART_NGINX_COMPLETE"
+    ;;
+
+  restart_services)
+    echo "===== RESTART SERVICES ====="
+    echo "mode=lightweight no_git_pull=yes no_build=yes"
+    compose up -d --no-build
+    bash "$SCRIPT_DIR/health-check.sh"
+    echo "OPS_RESTART_SERVICES_COMPLETE"
+    ;;
+
+  docker_ps)
+    echo "===== DOCKER COMPOSE PS ====="
+    echo "mode=lightweight no_git_pull=yes no_build=yes"
+    compose ps
+    echo "OPS_DOCKER_PS_COMPLETE"
+    ;;
+
+  nginx_logs)
+    echo "===== NGINX LOGS tail=120 ====="
+    echo "mode=lightweight no_git_pull=yes no_build=yes"
+    docker logs mykinlegacy_nginx --tail 120
+    echo "OPS_NGINX_LOGS_COMPLETE"
+    ;;
+
+  api_logs)
+    echo "===== API LOGS tail=120 ====="
+    echo "mode=lightweight no_git_pull=yes no_build=yes"
+    docker logs mykinlegacy_api --tail 120
+    echo "OPS_API_LOGS_COMPLETE"
+    ;;
+
+  web_logs)
+    echo "===== WEB LOGS tail=120 ====="
+    echo "mode=lightweight no_git_pull=yes no_build=yes"
+    docker logs mykinlegacy_web --tail 120
+    echo "OPS_WEB_LOGS_COMPLETE"
+    ;;
+
+  worker_logs)
+    echo "===== WORKER LOGS tail=120 ====="
+    echo "mode=lightweight no_git_pull=yes no_build=yes"
+    docker logs mykinlegacy_worker --tail 120
+    echo "OPS_WORKER_LOGS_COMPLETE"
     ;;
 
   inspect_order)
@@ -153,7 +208,7 @@ case "$ACTION" in
 
   *)
     echo "FAIL unsupported action: ${ACTION}"
-    echo "Supported actions: health_check, inspect_order, repair_order_artifacts, verify_download_binaries, founder_final_order_verification, safe_deploy"
+    echo "Supported actions: health_check, restart_nginx, restart_services, docker_ps, nginx_logs, api_logs, web_logs, worker_logs, inspect_order, repair_order_artifacts, verify_download_binaries, founder_final_order_verification, safe_deploy"
     exit 1
     ;;
 esac
