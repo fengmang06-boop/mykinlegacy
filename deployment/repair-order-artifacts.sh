@@ -41,9 +41,13 @@ echo
 
 compose exec -T worker node - "$ORDER_NUMBER" <<'NODE'
 const { createHash } = require("node:crypto");
+const { createRequire } = require("node:module");
+const path = require("node:path");
 const { PrismaClient } = require("./packages/database/generated/client");
-const { PrismaOrchestrationRepository, runManifestDrivenGeneration } = require("@ai-heritage/database");
-const { LocalPrivateStorageAdapter } = require("@ai-heritage/storage");
+
+const workerRequire = createRequire(path.join(process.cwd(), "apps/worker/package.json"));
+const { PrismaOrchestrationRepository, runManifestDrivenGeneration } = workerRequire("@ai-heritage/database");
+const { LocalPrivateStorageAdapter } = workerRequire("@ai-heritage/storage");
 
 const orderNumber = process.argv[2];
 const prisma = new PrismaClient();
