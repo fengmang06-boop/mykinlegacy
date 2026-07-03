@@ -1,0 +1,119 @@
+name: P0 Artifact Repair
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      order_number:
+        description: "Order number to repair"
+        required: true
+        default: "AHL-20260702-01KWGWF6"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mykinlegacy-production
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    name: Repair one paid order's private artifacts
+    if: github.event_name == 'workflow_dispatch' || contains(github.event.head_commit.message, '[p0-artifact-repair]')
+    runs-on: ubuntu-latest
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+      ORDER_NUMBER: ${{ github.event.inputs.order_number || 'AHL-20260702-01KWGWF6' }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate inputs and production secrets
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          : "${PROD_PROJECT_DIR:?Missing PROD_PROJECT_DIR}"
+          if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
+            echo "Invalid ORDER_NUMBER" >&2
+            exit 1
+          fi
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64
+          import os
+          import sys
+          from pathlib import Path
+
+          raw_key = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw_key.replace("\\r", "").replace("\r", "")
+          key = key.replace("\\n", "\n")
+
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw_key).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "")
+                  decoded = decoded.replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+
+          valid_headers = (
+              "-----BEGIN OPENSSH PRIVATE KEY-----",
+              "-----BEGIN RSA PRIVATE KEY-----",
+              "-----BEGIN EC PRIVATE KEY-----",
+          )
+          if not any(header in key for header in valid_headers):
+              print("PROD_SSH_PRIVATE_KEY is not a valid OpenSSH/RSA/EC private key.", file=sys.stderr)
+              sys.exit(1)
+
+          if not key.endswith("\n"):
+              key += "\n"
+
+          Path.home().joinpath(".ssh", "mykinlegacy_prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keygen -y -f ~/.ssh/mykinlegacy_prod > /dev/null
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Repair artifacts on production VPS
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'bash -s' -- "$PROD_PROJECT_DIR" "$ORDER_NUMBER" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          PROJECT_DIR="$1"
+          ORDER_NUMBER="$2"
+          cd "$PROJECT_DIR"
+          git fetch origin main
+          git checkout main
+          git pull --ff-only origin main
+          bash deployment/status.sh
+          bash deployment/health-check.sh
+          bash deployment/inspect-artifacts.sh "$ORDER_NUMBER"
+          bash deployment/inspect-delivery-state.sh "$ORDER_NUMBER"
+          bash deployment/repair-order-artifacts.sh "$ORDER_NUMBER"
+          bash deployment/inspect-artifacts.sh "$ORDER_NUMBER"
+          bash deployment/inspect-delivery-state.sh "$ORDER_NUMBER"
+          bash deployment/health-check.sh
+          REMOTE_SCRIPT
