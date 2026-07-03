@@ -166,6 +166,147 @@ It should also print the output of:
 bash deployment/status.sh
 ```
 
+## Founderless Production Ops Workflow
+
+Routine production operations should normally be run from GitHub Actions, not by opening the VPS.
+
+Workflow file:
+
+```text
+.github/workflows/ops.yml
+```
+
+How to use:
+
+```text
+GitHub repo -> Actions -> MyKinLegacy Production Ops -> Run workflow
+```
+
+Choose one action:
+
+```text
+health_check
+inspect_order
+repair_order_artifacts
+verify_download_binaries
+founder_final_order_verification
+safe_deploy
+```
+
+Actions that require an order number:
+
+```text
+inspect_order
+repair_order_artifacts
+verify_download_binaries
+founder_final_order_verification
+```
+
+The workflow connects to the VPS through the same production SSH secrets as deploy, pulls the latest `main` scripts, and runs:
+
+```bash
+bash deployment/run-ops-action.sh <action> <order_number>
+```
+
+The workflow output is safe to share for debugging. It must not print:
+
+- raw customer email
+- raw vault token
+- storage key
+- signed URL
+- API keys
+- secrets
+
+### Ops Actions
+
+`health_check`
+
+- checks Docker/container health
+- checks `/health`
+- checks `/create`
+- checks `/api/v1/products`
+- checks `/family-legacy-collection`
+- checks origin `/health`
+
+`inspect_order`
+
+- runs artifact inspection
+- runs delivery-state inspection
+- runs email-delivery inspection when available
+
+`repair_order_artifacts`
+
+- inspects the order before repair
+- regenerates private PNG/PDF/ZIP artifacts
+- inspects the order after repair
+- verifies binary downloads
+
+`verify_download_binaries`
+
+- verifies PDF/ZIP/PNG download responses return raw binary files
+- confirms signatures and archive validity
+
+`founder_final_order_verification`
+
+- runs the safe inspections
+- runs download binary verification
+- prints a final `PASS` or `FAIL`
+
+PASS requires:
+
+- `assets_count=8`
+- `downloadable_count=8`
+- `placeholder_count=0`
+- PDFs valid
+- ZIP valid
+- PNGs valid
+- `customer_delivery_status` is `vault_ready` or `email_delivery_attention`
+- `contradictory_state=no`
+- email status is sent or explicitly needs attention
+
+`safe_deploy`
+
+- pulls the latest `main`
+- runs production deploy
+- runs status output
+- uses the production deploy lock
+- relies on deploy health checks and rollback fallback
+
+## Production Operation Concurrency
+
+Production workflows use this concurrency group:
+
+```text
+production-mykinlegacy
+```
+
+Behavior:
+
+- only one deploy, rollback, artifact repair, or ops workflow can run at a time
+- new production operations wait in the GitHub Actions queue
+- in-progress production operations are not cancelled automatically
+
+The VPS also has a shell-level production lock:
+
+```text
+deployment/.production.lock
+```
+
+Scripts protected by the lock:
+
+- `deployment/deploy.sh`
+- `deployment/rollback.sh`
+- `deployment/repair-order-artifacts.sh`
+- `deployment/run-ops-action.sh`
+
+Manual VPS access should only be needed for:
+
+- SSH key failure
+- Docker daemon failure
+- disk full
+- VPS provider/network outage
+- total server outage that prevents GitHub Actions SSH
+
 ## Automatic Deploy Verification
 
 After a GitHub Actions deploy finishes:

@@ -8,6 +8,10 @@ COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 COMPOSE_PROJECT_NAME="mykinlegacy"
 LAST_SUCCESSFUL_FILE="$SCRIPT_DIR/.last-successful-commit"
 
+if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
+  exec "$SCRIPT_DIR/with-production-lock.sh" "deploy" "$0" "$@"
+fi
+
 cd "$SCRIPT_DIR"
 
 current_commit() {
@@ -33,6 +37,25 @@ deploy_failed() {
     local failed_commit
     failed_commit="$(current_commit)"
     echo "DEPLOYMENT_FAILED $(short_commit "$failed_commit")"
+    if [ "${MYKINLEGACY_ROLLBACK_IN_PROGRESS:-false}" != "true" ] &&
+      [ "${MYKINLEGACY_DISABLE_AUTO_ROLLBACK:-false}" != "true" ] &&
+      [ -f "$SCRIPT_DIR/.previous_revision" ] &&
+      [ -d "$PROJECT_ROOT/.git" ]; then
+      local rollback_commit
+      rollback_commit="$(cat "$SCRIPT_DIR/.previous_revision" | tr -d '[:space:]')"
+      if [ -n "$rollback_commit" ] && [ "$rollback_commit" != "$failed_commit" ] &&
+        git -C "$PROJECT_ROOT" cat-file -e "${rollback_commit}^{commit}" 2>/dev/null; then
+        echo "Attempting automatic rollback to $(short_commit "$rollback_commit") after failed deploy..."
+        git -C "$PROJECT_ROOT" checkout "$rollback_commit"
+        if MYKINLEGACY_ROLLBACK_IN_PROGRESS=true DEPLOY_SKIP_GIT_PULL=true bash "$SCRIPT_DIR/deploy.sh"; then
+          echo "ROLLBACK_AFTER_DEPLOY_FAILURE_SUCCESS $(short_commit "$rollback_commit")"
+        else
+          echo "ROLLBACK_AFTER_DEPLOY_FAILURE_FAILED $(short_commit "$rollback_commit")"
+        fi
+      else
+        echo "Automatic rollback skipped: previous revision unavailable or matches failed commit."
+      fi
+    fi
   fi
 }
 

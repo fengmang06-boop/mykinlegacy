@@ -12,6 +12,10 @@ ENV_FILE="$SCRIPT_DIR/.env.production"
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 COMPOSE_PROJECT_NAME="mykinlegacy"
 
+if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
+  exec "$SCRIPT_DIR/with-production-lock.sh" "repair_order_artifacts:${ORDER_NUMBER}" "$0" "$@"
+fi
+
 if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
   echo "FAIL order_number must contain only uppercase letters, numbers, and hyphens"
   exit 1

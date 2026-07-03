@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: mykinlegacy-production
+  group: production-mykinlegacy
   cancel-in-progress: false
 
 jobs:

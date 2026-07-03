@@ -1,10 +1,23 @@
-name: Deploy Production
+name: MyKinLegacy Production Ops
 
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
+    inputs:
+      action:
+        description: "Operation to run"
+        required: true
+        type: choice
+        options:
+          - health_check
+          - inspect_order
+          - repair_order_artifacts
+          - verify_download_binaries
+          - founder_final_order_verification
+          - safe_deploy
+      order_number:
+        description: "Order number for order-specific actions"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -14,9 +27,8 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
-    name: Deploy main to production
-    if: github.ref == 'refs/heads/main'
+  ops:
+    name: Run production ops action
     runs-on: ubuntu-latest
     env:
       PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
@@ -24,11 +36,13 @@ jobs:
       PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
       PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
       PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+      OPS_ACTION: ${{ inputs.action }}
+      ORDER_NUMBER: ${{ inputs.order_number }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Validate production secrets
+      - name: Validate inputs and production secrets
         shell: bash
         run: |
           : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
@@ -36,6 +50,22 @@ jobs:
           : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
           : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
           : "${PROD_PROJECT_DIR:?Missing PROD_PROJECT_DIR}"
+          : "${OPS_ACTION:?Missing action}"
+
+          case "$OPS_ACTION" in
+            health_check|safe_deploy)
+              ;;
+            inspect_order|repair_order_artifacts|verify_download_binaries|founder_final_order_verification)
+              if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
+                echo "A valid order_number is required for action ${OPS_ACTION}." >&2
+                exit 1
+              fi
+              ;;
+            *)
+              echo "Unsupported action: ${OPS_ACTION}" >&2
+              exit 1
+              ;;
+          esac
 
       - name: Configure SSH
         shell: bash
@@ -68,7 +98,7 @@ jobs:
               "-----BEGIN EC PRIVATE KEY-----",
           )
           if not any(header in key for header in valid_headers):
-              print("PROD_SSH_PRIVATE_KEY is not a valid OpenSSH/RSA/EC private key. Replace the GitHub Secret with the full private key, not the public key.", file=sys.stderr)
+              print("PROD_SSH_PRIVATE_KEY is not a valid OpenSSH/RSA/EC private key.", file=sys.stderr)
               sys.exit(1)
 
           if not key.endswith("\n"):
@@ -81,7 +111,7 @@ jobs:
           ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
           chmod 600 ~/.ssh/known_hosts
 
-      - name: Deploy on production VPS
+      - name: Run production ops action
         shell: bash
         run: |
           ssh -i ~/.ssh/mykinlegacy_prod \
@@ -90,13 +120,20 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -p "$PROD_SSH_PORT" \
             "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'bash -s' -- "$PROD_PROJECT_DIR" <<'REMOTE_SCRIPT'
+            'bash -s' -- "$PROD_PROJECT_DIR" "$OPS_ACTION" "$ORDER_NUMBER" <<'REMOTE_SCRIPT'
           set -euo pipefail
           PROJECT_DIR="$1"
+          ACTION="$2"
+          ORDER_NUMBER="${3:-}"
+
+          echo "SSH connection success: yes"
+          test -d "$PROJECT_DIR"
+          echo "project directory exists: yes"
+
           cd "$PROJECT_DIR"
           git fetch origin main
           git checkout main
           git pull --ff-only origin main
-          bash deployment/deploy.sh
-          bash deployment/status.sh
+
+          bash deployment/run-ops-action.sh "$ACTION" "$ORDER_NUMBER"
           REMOTE_SCRIPT

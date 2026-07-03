@@ -7,6 +7,10 @@ ENV_FILE="$SCRIPT_DIR/.env.production"
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 COMPOSE_PROJECT_NAME="mykinlegacy"
 
+if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
+  exec "$SCRIPT_DIR/with-production-lock.sh" "rollback" "$0" "$@"
+fi
+
 usage() {
   echo "Usage:"
   echo "  bash deployment/rollback.sh <commit_hash>"
