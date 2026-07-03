@@ -76,8 +76,10 @@ TARGET_FULL_COMMIT="$(git -C "$PROJECT_ROOT" rev-parse "$TARGET_COMMIT")"
 
 echo "Current commit: ${CURRENT_COMMIT}"
 echo "Rollback target: ${TARGET_FULL_COMMIT}"
+ROLLBACK_IMAGE="${APP_IMAGE:-ghcr.io/fengmang06-boop/mykinlegacy-app:${TARGET_FULL_COMMIT}}"
+echo "Rollback image: ${ROLLBACK_IMAGE}"
 echo
-echo "This will check out the target commit, run deployment/deploy.sh, then run deployment/health-check.sh."
+echo "This will check out the target commit, pull the matching production image, run deployment/deploy.sh, then run deployment/health-check.sh."
 echo "Database migrations are not automatically rolled back."
 echo
 read -r -p "Type ROLLBACK to continue: " CONFIRMATION
@@ -93,7 +95,7 @@ echo "Checking out rollback target..."
 git -C "$PROJECT_ROOT" checkout "$TARGET_FULL_COMMIT"
 
 echo "Running deployment for rollback target..."
-if ! DEPLOY_SKIP_GIT_PULL=true bash "$SCRIPT_DIR/deploy.sh"; then
+if ! APP_IMAGE="$ROLLBACK_IMAGE" DEPLOY_SKIP_GIT_PULL=true bash "$SCRIPT_DIR/deploy.sh"; then
   echo "Rollback deploy failed."
   print_recent_logs
   exit 1
@@ -109,5 +111,6 @@ fi
 echo "$TARGET_FULL_COMMIT" > "$SCRIPT_DIR/.current_revision"
 echo "$TARGET_FULL_COMMIT" > "$SCRIPT_DIR/.last-successful-commit"
 echo "$CURRENT_COMMIT" > "$SCRIPT_DIR/.previous_revision"
+echo "$ROLLBACK_IMAGE" > "$SCRIPT_DIR/.last-successful-image"
 
 echo "ROLLBACK_SUCCESS $(echo "$TARGET_FULL_COMMIT" | cut -c1-12)"

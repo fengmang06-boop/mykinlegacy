@@ -72,10 +72,20 @@ if [ -d "$PROJECT_ROOT/.git" ]; then
   else
     echo "last_successful: not recorded"
   fi
+  if [ -f "$SCRIPT_DIR/.last-successful-image" ]; then
+    echo "last_successful_image: $(cat "$SCRIPT_DIR/.last-successful-image")"
+  else
+    echo "last_successful_image: not recorded"
+  fi
   if [ -f "$SCRIPT_DIR/.previous_revision" ]; then
     echo "previous_revision: $(cut -c1-12 "$SCRIPT_DIR/.previous_revision")"
   else
     echo "previous_revision: not recorded"
+  fi
+  if [ -f "$SCRIPT_DIR/.previous_image" ]; then
+    echo "previous_image: $(cat "$SCRIPT_DIR/.previous_image")"
+  else
+    echo "previous_image: not recorded"
   fi
 else
   echo "git repository not found"

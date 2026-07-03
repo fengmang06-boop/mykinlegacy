@@ -6,12 +6,14 @@ This guide is for production deployment, status checks, failure reporting, and r
 
 Production deploy is normally automatic after a commit is pushed to `main`.
 
-Manual server deploy is still available. Run these commands on the production server from the project root:
+Manual server deploy is still available when you already know the image tag to run. Prefer GitHub Actions for normal deploys.
+
+Manual deploy example from the production server project root:
 
 ```bash
 git checkout main
 git pull origin main
-bash deployment/deploy.sh
+APP_IMAGE=ghcr.io/fengmang06-boop/mykinlegacy-app:<commit_sha> bash deployment/deploy.sh
 ```
 
 The deploy script will:
@@ -20,13 +22,14 @@ The deploy script will:
 - pull the latest code when it is on a normal Git branch
 - create required Docker volumes
 - initialize SSL files when needed
-- build the production application image
+- pull the production application image
 - start MySQL and Redis
 - run Prisma migrations
 - run seed data when `RUN_SEED=true`
 - recreate API, Worker, Web, and Nginx containers
 - run `deployment/health-check.sh`
 - save `deployment/.last-successful-commit` only after health checks pass
+- save `deployment/.last-successful-image` only after health checks pass
 
 Success prints:
 
@@ -53,17 +56,28 @@ It runs on:
 - every push to `main`
 - manual `workflow_dispatch`
 
-The workflow connects to the VPS over SSH, enters `PROD_PROJECT_DIR`, pulls `main`, runs deployment, and prints production status:
+The workflow builds the production Docker image in GitHub Actions, pushes it to GitHub Container Registry, then connects to the VPS over SSH.
+
+Image format:
+
+```text
+ghcr.io/fengmang06-boop/mykinlegacy-app:<commit_sha>
+```
+
+The VPS no longer builds the application image during normal deployment. It only pulls the prebuilt image, runs migrations/seed, starts containers, and checks health:
 
 ```bash
+docker login ghcr.io
 git fetch origin main
 git checkout main
 git pull --ff-only origin main
-bash deployment/deploy.sh
+APP_IMAGE=ghcr.io/fengmang06-boop/mykinlegacy-app:<commit_sha> bash deployment/deploy.sh
 bash deployment/status.sh
 ```
 
 If `deployment/deploy.sh` fails, the GitHub Actions run fails. If `deployment/health-check.sh` fails inside deploy, the GitHub Actions run fails.
+
+This avoids long VPS-local Docker build/export phases and reduces Cloudflare 521 risk during deploy.
 
 ## GitHub Secrets Required
 
@@ -327,8 +341,9 @@ PASS requires:
 - runs status output
 - uses the production deploy lock
 - relies on deploy health checks and rollback fallback
-- heavy action: rebuilds and exports Docker images on the VPS
-- use only for real code deploys, not simple recovery
+- should only be used for exceptional real code deploy recovery
+- normal deploys should use the `Deploy Production` workflow, which builds images in GitHub Actions
+- do not use `safe_deploy` for nginx recovery or simple container restarts
 
 For simple recovery:
 

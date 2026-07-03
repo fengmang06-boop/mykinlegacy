@@ -7,6 +7,8 @@ ENV_FILE="$SCRIPT_DIR/.env.production"
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 COMPOSE_PROJECT_NAME="mykinlegacy"
 LAST_SUCCESSFUL_FILE="$SCRIPT_DIR/.last-successful-commit"
+LAST_SUCCESSFUL_IMAGE_FILE="$SCRIPT_DIR/.last-successful-image"
+DEPLOY_STARTED_AT="$(date +%s)"
 
 if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
   exec bash "$SCRIPT_DIR/with-production-lock.sh" "deploy" bash "$0" "$@"
@@ -31,12 +33,40 @@ short_commit() {
   fi
 }
 
+phase() {
+  echo
+  echo "===== $(date -u '+%Y-%m-%dT%H:%M:%SZ') $* ====="
+}
+
+elapsed_seconds() {
+  local now
+  now="$(date +%s)"
+  echo $((now - DEPLOY_STARTED_AT))
+}
+
 deploy_failed() {
   local status=$?
   if [ "$status" -ne 0 ]; then
     local failed_commit
     failed_commit="$(current_commit)"
     echo "DEPLOYMENT_FAILED $(short_commit "$failed_commit")"
+    echo "DEPLOYMENT_FAILED_AFTER_SECONDS $(elapsed_seconds)"
+    if [ "${MYKINLEGACY_ROLLBACK_IN_PROGRESS:-false}" != "true" ] &&
+      [ "${MYKINLEGACY_DISABLE_AUTO_ROLLBACK:-false}" != "true" ] &&
+      [ -f "$SCRIPT_DIR/.previous_image" ]; then
+      local rollback_image
+      rollback_image="$(cat "$SCRIPT_DIR/.previous_image" | tr -d '[:space:]')"
+      if [ -n "$rollback_image" ] && [ "$rollback_image" != "${APP_IMAGE:-}" ]; then
+        echo "Attempting automatic rollback to image ${rollback_image} after failed deploy..."
+        if MYKINLEGACY_ROLLBACK_IN_PROGRESS=true DEPLOY_SKIP_GIT_PULL=true APP_IMAGE="$rollback_image" bash "$SCRIPT_DIR/deploy.sh"; then
+          echo "ROLLBACK_AFTER_DEPLOY_FAILURE_SUCCESS image=${rollback_image}"
+        else
+          echo "ROLLBACK_AFTER_DEPLOY_FAILURE_FAILED image=${rollback_image}"
+        fi
+        exit "$status"
+      fi
+      echo "Automatic image rollback skipped: previous image unavailable or matches failed image."
+    fi
     if [ "${MYKINLEGACY_ROLLBACK_IN_PROGRESS:-false}" != "true" ] &&
       [ "${MYKINLEGACY_DISABLE_AUTO_ROLLBACK:-false}" != "true" ] &&
       [ -f "$SCRIPT_DIR/.previous_revision" ] &&
@@ -76,6 +106,10 @@ if [ -d "$PROJECT_ROOT/.git" ]; then
   BEFORE_COMMIT="$(current_commit)"
   echo "Current commit before deploy: $(short_commit "$BEFORE_COMMIT")"
 
+  if [ -f "$LAST_SUCCESSFUL_IMAGE_FILE" ]; then
+    cp "$LAST_SUCCESSFUL_IMAGE_FILE" "$SCRIPT_DIR/.previous_image"
+  fi
+
   if [ -f "$LAST_SUCCESSFUL_FILE" ]; then
     cp "$LAST_SUCCESSFUL_FILE" "$SCRIPT_DIR/.previous_revision"
   elif [ -f "$SCRIPT_DIR/.current_revision" ]; then
@@ -112,6 +146,8 @@ if [ ! -f "$ENV_FILE" ]; then
   echo "Created deployment/.env.production with generated local secrets."
 fi
 
+REQUESTED_APP_IMAGE="${APP_IMAGE:-${DEPLOY_IMAGE:-}}"
+
 set -a
 # shellcheck disable=SC1090
 . "$ENV_FILE"
@@ -121,6 +157,8 @@ DOMAIN="${DOMAIN:-mykinlegacy.com}"
 PUBLIC_IP="${PUBLIC_IP:-216.128.154.152}"
 LETSENCRYPT_EMAIL="${LETSENCRYPT_EMAIL:-support@mykinlegacy.com}"
 TLS_MODE="${TLS_MODE:-self_signed}"
+APP_IMAGE="${REQUESTED_APP_IMAGE:-${APP_IMAGE:-${DEPLOY_IMAGE:-mykinlegacy_app:latest}}}"
+export APP_IMAGE
 
 if [[ "${MYSQL_PASSWORD:-}" == "auto" || "${MYSQL_ROOT_PASSWORD:-}" == "auto" || "${ADMIN_SESSION_SECRET:-}" == "auto" ]]; then
   echo "Secrets were not generated in deployment/.env.production."
@@ -131,32 +169,60 @@ compose() {
   $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "$@"
 }
 
-echo "Creating Docker volumes..."
+cert_exists() {
+  $SUDO docker run --rm \
+    -v "${COMPOSE_PROJECT_NAME}_nginx_certs":/certs \
+    alpine:3.20 test -f "/certs/live/${DOMAIN}/fullchain.pem" >/dev/null 2>&1
+}
+
+safe_image_cleanup() {
+  phase "Safe Docker cleanup"
+  echo "Disk before cleanup:"
+  df -h / || true
+  $SUDO docker image prune -f --filter "dangling=true" || true
+  echo "Disk after cleanup:"
+  df -h / || true
+}
+
+phase "Creating Docker volumes"
 $SUDO docker volume create "${COMPOSE_PROJECT_NAME}_mysql_data" >/dev/null
 $SUDO docker volume create "${COMPOSE_PROJECT_NAME}_redis_data" >/dev/null
 $SUDO docker volume create "${COMPOSE_PROJECT_NAME}_private_storage" >/dev/null
+$SUDO docker volume create "${COMPOSE_PROJECT_NAME}_nginx_certs" >/dev/null
+$SUDO docker volume create "${COMPOSE_PROJECT_NAME}_certbot_webroot" >/dev/null
 
-compose stop nginx >/dev/null 2>&1 || true
-bash "$SCRIPT_DIR/ssl-init.sh"
+phase "TLS certificate check"
+if cert_exists; then
+  echo "TLS certificate already present. ssl-init skipped."
+else
+  echo "TLS certificate missing. Running ssl-init; nginx may be briefly unavailable only during first certificate setup."
+  compose stop nginx >/dev/null 2>&1 || true
+  bash "$SCRIPT_DIR/ssl-init.sh"
+fi
 
-echo "Building production application image..."
-compose build --pull api
+phase "Pulling production application image"
+echo "APP_IMAGE=${APP_IMAGE}"
+if [[ "$APP_IMAGE" == mykinlegacy_app:* ]]; then
+  echo "Local application image tag detected. Pull skipped."
+else
+  compose pull api worker web
+fi
 
-echo "Starting MySQL and Redis..."
+phase "Starting MySQL and Redis"
 compose up -d mysql redis
 
-echo "Running database migrations..."
+phase "Running database migrations"
 compose run --rm api corepack pnpm db:migrate:deploy
 
 if [ "${RUN_SEED:-true}" = "true" ]; then
-  echo "Running seed data..."
+  phase "Running seed data"
   compose run --rm api sh -lc "corepack pnpm db:seed"
 fi
 
-echo "Building and starting application services..."
+phase "Starting application services"
 compose up -d --no-build --force-recreate api worker web nginx
 
-echo "Running health check..."
+phase "Running health check"
 bash "$SCRIPT_DIR/health-check.sh"
 
 if [ -d "$PROJECT_ROOT/.git" ]; then
@@ -166,9 +232,14 @@ if [ -d "$PROJECT_ROOT/.git" ]; then
 else
   SUCCESSFUL_COMMIT="unknown"
 fi
+echo "$APP_IMAGE" > "$LAST_SUCCESSFUL_IMAGE_FILE"
+
+safe_image_cleanup
 
 echo "PASS deployment complete"
 echo "Open: https://${DOMAIN}"
 echo "DEPLOYMENT_SUCCESS $(short_commit "$SUCCESSFUL_COMMIT")"
+echo "DEPLOYMENT_IMAGE ${APP_IMAGE}"
+echo "DEPLOYMENT_DURATION_SECONDS $(elapsed_seconds)"
 
 trap - EXIT
