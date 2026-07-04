@@ -33,27 +33,27 @@ export async function generateHeritagePdf(input: PdfGenerationInput): Promise<Pd
 }
 
 export function buildSimplePdf(text: string): Buffer {
-  const lines = text.split(/\r?\n/).flatMap((line) => wrapLine(line, 88)).slice(0, 260);
-  const content = [
-    "BT",
-    "/F1 14 Tf",
-    "50 760 Td",
-    ...lines.flatMap((line, index) => [
-      index === 0 ? "" : "0 -18 Td",
-      `(${escapePdfText(line)}) Tj`
-    ]),
-    "ET"
-  ]
-    .filter(Boolean)
-    .join("\n");
+  const lines = text.split(/\r?\n/).flatMap((line) => wrapLine(line, 82)).slice(0, 720);
+  const pageContents = buildPageContents(lines);
+  const pageCount = pageContents.length;
+  const fontObjectId = 3;
+  const pageObjectIds = pageContents.map((_, index) => 4 + index * 2);
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
-    "<< /Type /Pages /Kids [3 0 R] /Count 1 >>",
-    "<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>",
-    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
-    `<< /Length ${Buffer.byteLength(content)} >>\nstream\n${content}\nendstream`
+    `<< /Type /Pages /Kids [${pageObjectIds.map((id) => `${id} 0 R`).join(" ")}] /Count ${pageCount} >>`,
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
   ];
-  let body = "%PDF-1.4\n";
+
+  for (const [index, content] of pageContents.entries()) {
+    const pageObjectId = pageObjectIds[index];
+    if (!pageObjectId) throw new Error("pdf_page_object_missing");
+    const contentObjectId = pageObjectId + 1;
+    objects.push(
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 ${fontObjectId} 0 R >> >> /Contents ${contentObjectId} 0 R >>`,
+      `<< /Length ${Buffer.byteLength(content)} >>\nstream\n${content}\nendstream`
+    );
+  }
+  let body = "%PDF-1.4\n% pdf_layout_version=premium_v2\n";
   const offsets = [0];
 
   objects.forEach((object, index) => {
@@ -68,6 +68,73 @@ export function buildSimplePdf(text: string): Buffer {
   }
   body += `trailer\n<< /Size ${objects.length + 1} /Root 1 0 R >>\nstartxref\n${xrefOffset}\n%%EOF\n`;
   return Buffer.from(body);
+}
+
+function buildPageContents(lines: string[]): string[] {
+  const pages: string[] = [];
+  let commands = pageHeaderCommands(1);
+  let y = 732;
+  let pageNumber = 1;
+
+  for (const [index, line] of lines.entries()) {
+    const clean = line.trim();
+    if (!clean) {
+      y -= 12;
+      continue;
+    }
+    const isBrandTitle = index === 0 || clean === "Legacy, Designed.";
+    const isSection = /^[A-Z][A-Za-z /&-]{2,58}$/.test(clean) && !clean.endsWith(".");
+    const fontSize = isBrandTitle ? 18 : isSection ? 13 : 10.5;
+    const leading = isBrandTitle ? 24 : isSection ? 22 : 14;
+    if (y < 58) {
+      commands.push(...pageFooterCommands(pageNumber));
+      pages.push(commands.filter(Boolean).join("\n"));
+      pageNumber += 1;
+      commands = pageHeaderCommands(pageNumber);
+      y = 732;
+    }
+    if (isSection && !isBrandTitle) {
+      y -= 8;
+      commands.push(lineCommand(50, y + 13, 562, y + 13));
+    }
+    commands.push("BT", `/F1 ${fontSize} Tf`, `50 ${y} Td`, `(${escapePdfText(clean)}) Tj`, "ET");
+    y -= leading;
+  }
+
+  commands.push(...pageFooterCommands(pageNumber));
+  pages.push(commands.filter(Boolean).join("\n"));
+  return pages;
+}
+
+function pageHeaderCommands(pageNumber: number): string[] {
+  return [
+    "BT",
+    "/F1 10 Tf",
+    "50 776 Td",
+    "(MyKinLegacy) Tj",
+    "ET",
+    "BT",
+    "/F1 8 Tf",
+    "496 776 Td",
+    `(Private Archive ${pageNumber}) Tj`,
+    "ET",
+    lineCommand(50, 762, 562, 762)
+  ];
+}
+
+function pageFooterCommands(pageNumber: number): string[] {
+  return [
+    lineCommand(50, 36, 562, 36),
+    "BT",
+    "/F1 8 Tf",
+    "50 22 Td",
+    `(MyKinLegacy Private Legacy Collection / Page ${pageNumber}) Tj`,
+    "ET"
+  ];
+}
+
+function lineCommand(x1: number, y1: number, x2: number, y2: number): string {
+  return `${x1} ${y1} m ${x2} ${y2} l S`;
 }
 
 export function sanitizeOfficialClaims(text: string): string {

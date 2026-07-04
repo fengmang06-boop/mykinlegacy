@@ -17,15 +17,33 @@ export async function generateReadme(input: {
   disclaimer: string;
 }): Promise<string> {
   return [
-    input.package_title,
+    "MyKinLegacy",
+    "Legacy, Designed.",
     "",
-    "Included files:",
+    input.package_title,
+    "Private Legacy Collection Archive",
+    "",
+    "What is included",
     ...input.included_files.map((file) => `- ${file}`),
     "",
-    "Usage notes: Keep these files private unless you choose to share them.",
-    "Print notes: Use the PDF files for document printing and PNG files for image use.",
+    "How to use this archive",
+    "Open the Heritage Certificate first when giving the collection as a gift. It is the ceremonial entry point.",
+    "Read the Family Story slowly, preferably with the person receiving the collection or with close family nearby.",
+    "Use the Symbol Guide beside the crest artwork so the symbols feel connected to memory, values, and family meaning.",
+    "Keep the crest artwork with the documents. The image is strongest when the written meaning stays beside it.",
+    "",
+    "Printing and keeping",
+    "The PDF documents are intended for reading, printing, and private family preservation.",
+    "The PNG artwork can be used for personal keepsake printing, family sharing, or private display.",
+    "Store a copy with family photographs, letters, keepsake boxes, or a private digital archive.",
+    "",
+    "Privacy note",
+    "This archive is private by default. Share it only with the people you choose.",
+    "Do not publish private family details unless the family is comfortable doing so.",
+    "",
     `Support: ${input.support_note ?? "Contact support with your order number if you need help."}`,
     "",
+    "Boundary statement",
     input.disclaimer
   ].join("\n");
 }
@@ -43,7 +61,7 @@ export async function generateZipPackage(input: {
   const entries = [
     ...input.assets,
     {
-      archive_path: "read-me/read-me.txt",
+      archive_path: "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt",
       file_path: "",
       required: true,
       body: Buffer.from(input.readme_text)

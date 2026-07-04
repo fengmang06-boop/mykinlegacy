@@ -30,6 +30,7 @@ describe("PDF generation foundation", () => {
     expect(output.mime_type).toBe("application/pdf");
     expect(output.size_bytes).toBeGreaterThan(10 * 1024);
     expect(body.subarray(0, 4).toString()).toBe("%PDF");
+    expect(body.toString("latin1")).toContain("pdf_layout_version=premium_v2");
     expect(body.includes(Buffer.from("%%EOF"))).toBe(true);
     expect(pdfStartXrefValid(body)).toBe(true);
     expect(body.includes(Buffer.from("official"))).toBe(true);

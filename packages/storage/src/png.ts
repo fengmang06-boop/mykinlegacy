@@ -23,6 +23,8 @@ export function createMvpCrestPngBuffer(input: {
   const raw = Buffer.alloc((width * 4 + 1) * height);
   const seed = hashSeed(`${input.variant}:${input.house_name ?? "house"}:${(input.symbols ?? []).join(",")}`);
   const centerX = width / 2;
+  const symbols = (input.symbols ?? []).join(" ").toLowerCase();
+  const variantShift = (seed % 17) - 8;
 
   for (let y = 0; y < height; y += 1) {
     const rowOffset = y * (width * 4 + 1);
@@ -41,13 +43,45 @@ export function createMvpCrestPngBuffer(input: {
         shield &&
         (Math.abs(distanceFromCenter - Math.max(0, half - 28)) < 3 ||
           Math.abs(y - 112) < 3);
-      const medallion = Math.abs(Math.hypot(x - centerX, y - 302) - 86) < 7;
-      const star = Math.abs(x - centerX) + Math.abs(y - 256) < 38;
-      const verticalBar = Math.abs(x - centerX) < 10 && y > 216 && y < 416;
-      const horizontalBand = y > 330 && y < 354 && distanceFromCenter < 126;
+      const innerField = shield && y > 126 && y < 516 && distanceFromCenter < Math.max(0, half - 42);
+      const medallion = Math.abs(Math.hypot(x - centerX, y - 292) - 92) < 7;
+      const topCrown =
+        y > 126 &&
+        y < 160 &&
+        (Math.abs(x - centerX) < 24 ||
+          Math.abs(x - (centerX - 54)) < 18 ||
+          Math.abs(x - (centerX + 54)) < 18) &&
+        y < 160 - Math.abs((x - centerX) % 54) * 0.18;
+      const treeTrunk = Math.abs(x - centerX) < 10 && y > 250 && y < 392;
+      const treeCanopy =
+        Math.hypot((x - centerX) / 1.15, y - 248) < 46 ||
+        Math.hypot((x - (centerX - 36)) / 1.05, y - 286) < 34 ||
+        Math.hypot((x - (centerX + 36)) / 1.05, y - 286) < 34;
+      const treeBranches =
+        (Math.abs(y - (330 - Math.abs(x - centerX) * 0.36)) < 4 && distanceFromCenter < 78) ||
+        (Math.abs(y - (356 + Math.abs(x - centerX) * 0.2)) < 4 && distanceFromCenter < 58);
+      const centralStar =
+        Math.abs(x - centerX) + Math.abs(y - 284 + variantShift) < 44 ||
+        (Math.abs(x - centerX) < 8 && Math.abs(y - 284 + variantShift) < 62) ||
+        (Math.abs(y - 284 + variantShift) < 8 && distanceFromCenter < 62);
+      const centralShieldMark =
+        y > 238 && y < 386 && distanceFromCenter < 48 - Math.max(0, y - 300) * 0.18;
+      const centralSymbol = symbols.includes("tree") || symbols.includes("oak") || symbols.includes("branch")
+        ? treeTrunk || treeCanopy || treeBranches
+        : symbols.includes("star") || symbols.includes("compass") || symbols.includes("lantern")
+          ? centralStar
+          : centralShieldMark || centralStar;
+      const lowerDivider = y > 404 && y < 412 && distanceFromCenter < 112;
+      const valuePill = y > 436 && y < 474 && distanceFromCenter < 132 - Math.abs(y - 455) * 1.2;
       const ribbon = y > 486 && y < 526 && distanceFromCenter < 154 - Math.abs(y - 506) * 1.8;
-      const laurelLeft = Math.abs(Math.hypot(x - (centerX - 86), y - 418) - 42) < 5 && x < centerX;
-      const laurelRight = Math.abs(Math.hypot(x - (centerX + 86), y - 418) - 42) < 5 && x > centerX;
+      const laurelLeft =
+        x < centerX &&
+        Math.abs(Math.hypot((x - (centerX - 104)) / 0.8, y - 404) - 74) < 5 &&
+        y > 316 && y < 494;
+      const laurelRight =
+        x > centerX &&
+        Math.abs(Math.hypot((x - (centerX + 104)) / 0.8, y - 404) - 74) < 5 &&
+        y > 316 && y < 494;
       const cornerPin =
         (Math.hypot(x - 178, y - 142) < 14 ||
           Math.hypot(x - 462, y - 142) < 14 ||
@@ -62,7 +96,7 @@ export function createMvpCrestPngBuffer(input: {
         continue;
       }
 
-      if (border || medallion || star || verticalBar || horizontalBand || ribbon || laurelLeft || laurelRight || cornerPin) {
+      if (border || medallion || centralSymbol || lowerDivider || valuePill || ribbon || laurelLeft || laurelRight || cornerPin || topCrown) {
         raw[offset] = 198 + (texture % 36);
         raw[offset + 1] = 154 + (texture % 32);
         raw[offset + 2] = 72 + (texture % 22);
@@ -72,10 +106,15 @@ export function createMvpCrestPngBuffer(input: {
         raw[offset + 1] = 94 + (texture % 18);
         raw[offset + 2] = 46 + (texture % 12);
         raw[offset + 3] = 255;
+      } else if (innerField) {
+        raw[offset] = 18 + (texture % 8);
+        raw[offset + 1] = 16 + (texture % 6);
+        raw[offset + 2] = 14 + (texture % 6);
+        raw[offset + 3] = 255;
       } else if (shield) {
-        raw[offset] = 20 + (texture % 10);
-        raw[offset + 1] = 18 + (texture % 8);
-        raw[offset + 2] = 15 + (texture % 8);
+        raw[offset] = 27 + (texture % 9);
+        raw[offset + 1] = 23 + (texture % 8);
+        raw[offset + 2] = 18 + (texture % 7);
         raw[offset + 3] = 255;
       } else {
         raw[offset] = 8 + (texture % 8);

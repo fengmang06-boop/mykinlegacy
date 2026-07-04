@@ -197,7 +197,10 @@ describe("zip and manifest helpers", () => {
       body,
       file_ext: "zip",
       mime_type: "application/zip",
-      required_entries: ["crest-designs/house-alder-crest-variant-1.png", "read-me/read-me.txt"]
+      required_entries: [
+        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
+        "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
+      ]
     });
 
     expect(body.subarray(0, 4).toString("hex")).toBe("504b0304");
@@ -208,13 +211,16 @@ describe("zip and manifest helpers", () => {
       zip_test_passed: true
     });
     expect(entries).toEqual(expect.arrayContaining([
-      "crest-designs/house-alder-crest-variant-1.png",
-      "transparent-png/house-alder-transparent-crest.png",
-      "pdfs/house-alder-heritage-certificate.pdf",
-      "read-me/read-me.txt"
+      "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
+      "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Transparent-Crest-Artwork.png",
+      "MyKinLegacy-Private-Legacy-Collection/01-Heritage-Certificate/Heritage-Certificate.pdf",
+      "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
     ]));
     await expect(
-      validateZipFile(zip.file_path, ["crest-designs/house-alder-crest-variant-1.png", "read-me/read-me.txt"])
+      validateZipFile(zip.file_path, [
+        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
+        "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
+      ])
     ).resolves.toMatchObject({ valid: true });
     await rm(dir, { recursive: true, force: true });
   });
@@ -517,13 +523,13 @@ describe("download vault token security", () => {
 
 async function createRequiredZipFiles(dir: string) {
   const paths = [
-    "crest-designs/house-alder-crest-variant-1.png",
-    "crest-designs/house-alder-crest-variant-2.png",
-    "crest-designs/house-alder-crest-variant-3.png",
-    "transparent-png/house-alder-transparent-crest.png",
-    "pdfs/house-alder-heritage-certificate.pdf",
-    "pdfs/house-alder-family-story.pdf",
-    "pdfs/house-alder-symbol-explanation.pdf"
+    "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
+    "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-02.png",
+    "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-03.png",
+    "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Transparent-Crest-Artwork.png",
+    "MyKinLegacy-Private-Legacy-Collection/01-Heritage-Certificate/Heritage-Certificate.pdf",
+    "MyKinLegacy-Private-Legacy-Collection/02-Family-Story/Family-Story.pdf",
+    "MyKinLegacy-Private-Legacy-Collection/03-Symbol-Guide/Symbol-Guide.pdf"
   ];
   const files = [];
   for (const archivePath of paths) {

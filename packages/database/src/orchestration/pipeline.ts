@@ -26,6 +26,8 @@ export const REQUIRED_DELIVERABLES = [
 
 const MIN_CUSTOMER_ARTIFACT_BYTES = 10 * 1024;
 const ARTIFACT_BUCKET = "private-assets";
+const PDF_LAYOUT_VERSION = "premium_v2";
+const ZIP_ROOT = "MyKinLegacy-Private-Legacy-Collection";
 const ARTIFACT_BOUNDARY_STATEMENT =
   "This is a personalized symbolic keepsake. It is not a legal heraldic grant, noble title claim, or certified genealogical record.";
 
@@ -532,8 +534,8 @@ async function createArtifactBody(input: {
       body,
       mime_type: "image/png",
       file_ext: "png",
-      file_name: safeFileName(input.context.house_name, input.deliverable_code, "png"),
-      archive_path: pngArchivePath(input.context.house_name, input.deliverable_code)
+      file_name: customerFileName(input.deliverable_code),
+      archive_path: archivePathForDeliverable(input.deliverable_code)
     };
   }
 
@@ -545,8 +547,8 @@ async function createArtifactBody(input: {
       body,
       mime_type: "application/pdf",
       file_ext: "pdf",
-      file_name: safeFileName(input.context.house_name, input.deliverable_code, "pdf"),
-      archive_path: `documents/${safeFileName(input.context.house_name, input.deliverable_code, "pdf")}`,
+      file_name: customerFileName(input.deliverable_code),
+      archive_path: archivePathForDeliverable(input.deliverable_code),
       source_text: sourceText
     };
   }
@@ -566,7 +568,7 @@ async function createArtifactBody(input: {
     const body = tools.buildZipBuffer([
       ...sourceEntries,
       {
-        name: "read-me/read-me.txt",
+        name: `${ZIP_ROOT}/05-Private-Archive-Notes/Read-Me.txt`,
         body: Buffer.from(readme)
       }
     ]);
@@ -574,8 +576,8 @@ async function createArtifactBody(input: {
       body,
       mime_type: "application/zip",
       file_ext: "zip",
-      file_name: safeFileName(input.context.house_name, input.deliverable_code, "zip"),
-      archive_path: safeFileName(input.context.house_name, input.deliverable_code, "zip")
+      file_name: customerFileName(input.deliverable_code),
+      archive_path: customerFileName(input.deliverable_code)
     };
   }
 
@@ -601,6 +603,7 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
     const text = artifact.body.toString("latin1");
     const failures: string[] = [];
     if (artifact.body.subarray(0, 5).toString() !== "%PDF-") failures.push("pdf_header_invalid");
+    if (!text.includes(`pdf_layout_version=${PDF_LAYOUT_VERSION}`)) failures.push("pdf_layout_version_missing");
     if (artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES) failures.push(`pdf_too_small:${artifact.body.byteLength}`);
     if (!text.includes("%%EOF")) failures.push("pdf_eof_missing");
     if (!pdfStartXrefValid(artifact.body)) failures.push("pdf_xref_invalid");
@@ -618,15 +621,19 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
   if (artifact.file_ext === "zip") {
     const entries = tools.listZipEntries(artifact.body);
     const requiredEntries = [
-      "crest-artwork",
-      "documents",
-      "read-me/read-me.txt"
+      `${ZIP_ROOT}/01-Heritage-Certificate/Heritage-Certificate.pdf`,
+      `${ZIP_ROOT}/02-Family-Story/Family-Story.pdf`,
+      `${ZIP_ROOT}/03-Symbol-Guide/Symbol-Guide.pdf`,
+      `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-01.png`,
+      `${ZIP_ROOT}/04-Crest-Artwork/Transparent-Crest-Artwork.png`,
+      `${ZIP_ROOT}/05-Private-Archive-Notes/Read-Me.txt`
     ];
     if (
       artifact.body.subarray(0, 4).toString("hex") !== "504b0304" ||
       artifact.body.byteLength < 20 * 1024 ||
       !zipEndOfCentralDirectoryValid(artifact.body) ||
-      !requiredEntries.every((entry) => entries.some((actual) => actual.startsWith(entry)))
+      !requiredEntries.every((entry) => entries.includes(entry)) ||
+      entries.some((entry) => /(?:pdf\.pdf|png\.png|undefined|null|placeholder)/i.test(entry))
     ) {
       throw new Error(`artifact_not_ready:${deliverableCode}`);
     }
@@ -670,6 +677,8 @@ function contentQualityFailures(
   if (/\b(Certificate Text|Meaning Themes|Archive Reflection|debug|raw json|placeholder)\b/i.test(sourceText)) {
     failures.push("debug_label");
   }
+  if (/\b(Customer input basis|Artifact Content Version|artifact_content_version)\b/i.test(sourceText)) failures.push("raw_field_label");
+  if (/\b(pdf\.pdf|png\.png)\b/i.test(sourceText)) failures.push("bad_file_name");
   if (/[{[]\s*"[^"]+"\s*:/s.test(sourceText)) failures.push("raw_json_detected");
   if (!sourceText.includes("personalized symbolic keepsake")) failures.push("boundary_statement_missing");
   if (sourceText.replace(/\s+/g, " ").trim().length < 900) failures.push("content_too_short");
@@ -809,17 +818,14 @@ function pdfDocumentText(input: {
     input.subtitle,
     `Archive Reference: ${input.context.order_number}`,
     `Prepared for: ${input.context.house_name}`,
-    input.context.collection_content?.artifact_content_version
-      ? `Artifact Content Version: ${input.context.collection_content.artifact_content_version}`
-      : "",
     input.context.motto ? `Motto: ${input.context.motto}` : "",
-    "",
-    "Important Note",
-    ARTIFACT_BOUNDARY_STATEMENT,
     "",
     ...expandedSections,
     "Private Archive Note",
-    archiveCareText(input.context)
+    archiveCareText(input.context),
+    "",
+    "Boundary Statement",
+    ARTIFACT_BOUNDARY_STATEMENT
   ]
     .filter((line) => line !== "")
     .join("\n");
@@ -838,7 +844,7 @@ function symbolGuideText(context: ArtifactContext): string {
       (symbol) =>
         `${titleCase(symbol.symbol)}\nCore meaning: ${symbol.meaning ?? "A chosen family symbol"}.\nWhy this symbol was chosen: ${
           symbol.why_chosen ?? symbol.rationale ?? "It supports the collection's core family meaning."
-        }\nCustomer input basis: ${
+        }\nFamily signal behind it: ${
           symbol.customer_input_basis ?? "This is used as a symbolic interpretation from the family interview details."
         }\nVisual role in the crest: ${
           symbol.visual_role ?? "This symbol is treated as part of the crest structure, framed in a restrained black and antique gold archive style."
@@ -856,7 +862,7 @@ function symbolGuideIntro(context: ArtifactContext): string {
   return [
     `This guide explains the symbolic language chosen for ${context.house_name}.`,
     "It is meant to be read beside the crest artwork, certificate, and family story so the family can see how the visual choices connect to the written meaning.",
-    "Each symbol is included once, with its meaning, customer input basis, visual role, emotional purpose, and connection to the wider collection.",
+    "Each symbol is included once, with its meaning, family signal, visual role, emotional purpose, and connection to the wider collection.",
     "The symbols are personal interpretation, not official heraldry. They do not claim legal arms, noble title, certified ancestry, or public family authority.",
     "Read the guide slowly. The strongest use is not to memorize the symbols, but to let them open a family conversation about what should be recognized, protected, remembered, and passed down."
   ].join(" ");
@@ -1036,17 +1042,31 @@ function archiveCareText(context: ArtifactContext): string {
   ].join(" ");
 }
 
-function pngArchivePath(houseName: string, deliverableCode: string): string {
-  const folder = deliverableCode === "transparent_crest_png" ? "transparent-artwork" : "crest-artwork";
-  return `${folder}/${safeFileName(houseName, deliverableCode, "png")}`;
+function customerFileName(deliverableCode: string): string {
+  const names: Record<string, string> = {
+    heritage_certificate_pdf: "Heritage-Certificate.pdf",
+    family_story_pdf: "Family-Story.pdf",
+    symbol_explanation_pdf: "Symbol-Guide.pdf",
+    crest_variant_1_png: "Crest-Artwork-01.png",
+    crest_variant_2_png: "Crest-Artwork-02.png",
+    crest_variant_3_png: "Crest-Artwork-03.png",
+    transparent_crest_png: "Transparent-Crest-Artwork.png",
+    download_package_zip: "Complete-Collection-Archive.zip"
+  };
+  return names[deliverableCode] ?? `${deliverableCode}.${deliverableCode.endsWith("_png") ? "png" : "pdf"}`;
 }
 
-function safeFileName(houseName: string, deliverableCode: string, ext: string): string {
-  const slug = houseName
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "") || "family";
-  return `${slug}-${deliverableCode.replaceAll("_", "-")}.${ext}`;
+function archivePathForDeliverable(deliverableCode: string): string {
+  const paths: Record<string, string> = {
+    heritage_certificate_pdf: `${ZIP_ROOT}/01-Heritage-Certificate/Heritage-Certificate.pdf`,
+    family_story_pdf: `${ZIP_ROOT}/02-Family-Story/Family-Story.pdf`,
+    symbol_explanation_pdf: `${ZIP_ROOT}/03-Symbol-Guide/Symbol-Guide.pdf`,
+    crest_variant_1_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-01.png`,
+    crest_variant_2_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-02.png`,
+    crest_variant_3_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-03.png`,
+    transparent_crest_png: `${ZIP_ROOT}/04-Crest-Artwork/Transparent-Crest-Artwork.png`
+  };
+  return paths[deliverableCode] ?? `${ZIP_ROOT}/${customerFileName(deliverableCode)}`;
 }
 
 function customerFacingFamilyName(input: {

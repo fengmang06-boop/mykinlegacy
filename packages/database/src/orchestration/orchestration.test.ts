@@ -104,7 +104,7 @@ describe("DB-backed orchestration foundation", () => {
     expect(pdfBody.toString("latin1")).toContain("Legacy, Designed.");
     expect(pdfBody.toString("latin1")).toContain("Archive Reference:");
     expect(pdfBody.toString("latin1")).toContain("Prepared for:");
-    expect(pdfBody.toString("latin1")).toContain("private symbolic keepsake");
+    expect(pdfBody.toString("latin1")).toContain("personalized symbolic keepsake");
     expect(pdfBody.toString("latin1")).not.toMatch(
       /proves your ancestry|official family crest|legally granted arms|noble bloodline/i
     );
@@ -113,9 +113,9 @@ describe("DB-backed orchestration foundation", () => {
     );
     expect(symbolGuidePdfBody.subarray(0, 4).toString()).toBe("%PDF");
     expect(symbolGuidePdfBody.byteLength).toBeGreaterThan(10 * 1024);
-    expect(symbolGuideText).toContain("Artifact Content Version: artifact_content.v1");
+    expect(symbolGuideText).toContain("pdf_layout_version=premium_v2");
     expect(symbolGuideText).toContain("How to Read This Guide");
-    expect(symbolGuideText).toContain("Customer input basis:");
+    expect(symbolGuideText).toContain("Family signal behind it:");
     expect(symbolGuideText).toContain("Visual role in the crest:");
     expect(symbolGuideText).toContain("Emotional purpose:");
     expect(symbolGuideText).toContain("What this helps the family remember:");
@@ -148,11 +148,24 @@ describe("DB-backed orchestration foundation", () => {
     }
     expect(listZipEntries(zipBody)).toEqual(
       expect.arrayContaining([
-        expect.stringContaining("family-story-pdf.pdf"),
-        expect.stringContaining("crest-variant-1-png.png"),
-        "read-me/read-me.txt"
+        "MyKinLegacy-Private-Legacy-Collection/01-Heritage-Certificate/Heritage-Certificate.pdf",
+        "MyKinLegacy-Private-Legacy-Collection/02-Family-Story/Family-Story.pdf",
+        "MyKinLegacy-Private-Legacy-Collection/03-Symbol-Guide/Symbol-Guide.pdf",
+        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
+        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Transparent-Crest-Artwork.png",
+        "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
       ])
     );
+    expect(result.assets.map((asset) => asset.file_name)).toEqual(
+      expect.arrayContaining([
+        "Heritage-Certificate.pdf",
+        "Family-Story.pdf",
+        "Symbol-Guide.pdf",
+        "Crest-Artwork-01.png",
+        "Complete-Collection-Archive.zip"
+      ])
+    );
+    expect(result.assets.map((asset) => asset.file_name).join("\n")).not.toMatch(/pdf\.pdf|png\.png/i);
     expect(result.manifest).toMatchObject({
       manifest_status: "completed",
       missing_required_assets: [],
