@@ -1,0 +1,96 @@
+{
+  "title": "MyKinLegacy Crest Direction v1",
+  "status": "internal_review_only",
+  "styleFamily": "Classic Shield Tree Crest",
+  "theme": "continuity_and_unity",
+  "symbols": ["shield", "tree", "knot"],
+  "generatedAt": "2026-07-04",
+  "productionIntegration": false,
+  "concepts": [
+    {
+      "id": "01",
+      "name": "Classic Shield Tree",
+      "image": "images/concept-01-classic-shield-tree.png",
+      "tags": ["balanced", "ornate shield", "tree + knot"],
+      "seed": "built-in-imagegen-concept-01"
+    },
+    {
+      "id": "02",
+      "name": "Tall Shield Tree",
+      "image": "images/concept-02-tall-shield-tree.png",
+      "tags": ["vertical", "formal", "fine branches"],
+      "seed": "built-in-imagegen-concept-02"
+    },
+    {
+      "id": "03",
+      "name": "Rounded Shield Seal",
+      "image": "images/concept-03-rounded-shield-seal.png",
+      "tags": ["seal hybrid", "archive ring", "wreath"],
+      "seed": "built-in-imagegen-concept-03"
+    },
+    {
+      "id": "04",
+      "name": "Gothic Archive Tree",
+      "image": "images/concept-04-gothic-archive-tree.png",
+      "tags": ["gothic", "archive window", "dramatic"],
+      "seed": "built-in-imagegen-concept-04"
+    },
+    {
+      "id": "05",
+      "name": "Modern Luxury Shield",
+      "image": "images/concept-05-modern-luxury-shield.png",
+      "tags": ["clean", "commercial", "gift-ready"],
+      "seed": "built-in-imagegen-concept-05"
+    },
+    {
+      "id": "06",
+      "name": "Ceremonial Ribbon Crest",
+      "image": "images/concept-06-ceremonial-ribbon-crest.png",
+      "tags": ["ornate", "certificate", "presentation"],
+      "seed": "built-in-imagegen-concept-06"
+    },
+    {
+      "id": "07",
+      "name": "Deep Engraved Shield",
+      "image": "images/concept-07-deep-engraved-shield.png",
+      "tags": ["deep metal", "engraved", "premium"],
+      "seed": "built-in-imagegen-concept-07"
+    },
+    {
+      "id": "08",
+      "name": "Root Knot Emphasis",
+      "image": "images/concept-08-root-knot-emphasis.png",
+      "tags": ["unity", "root knot", "recognition"],
+      "seed": "built-in-imagegen-concept-08"
+    },
+    {
+      "id": "09",
+      "name": "Laurel Wreath Shield",
+      "image": "images/concept-09-laurel-wreath-shield.png",
+      "tags": ["laurel", "honor", "simple crest"],
+      "seed": "built-in-imagegen-concept-09"
+    },
+    {
+      "id": "10",
+      "name": "Navy Champagne Archive",
+      "image": "images/concept-10-navy-champagne-archive.png",
+      "tags": ["navy", "champagne gold", "alternate palette"],
+      "seed": "built-in-imagegen-concept-10"
+    },
+    {
+      "id": "11",
+      "name": "Minimal Premium Keepsake",
+      "image": "images/concept-11-minimal-premium-keepsake.png",
+      "tags": ["minimal", "strong silhouette", "adaptable"],
+      "seed": "built-in-imagegen-concept-11"
+    },
+    {
+      "id": "12",
+      "name": "Flagship Ornate Crest",
+      "image": "images/concept-12-flagship-ornate-crest.png",
+      "tags": ["flagship", "ornate", "maximum impact"],
+      "seed": "built-in-imagegen-concept-12"
+    }
+  ],
+  "initialRecommendation": ["08", "05", "07"]
+}

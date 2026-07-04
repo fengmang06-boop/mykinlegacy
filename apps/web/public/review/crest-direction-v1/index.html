@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, nofollow" />
+    <title>MyKinLegacy Crest Direction v1 Review</title>
+    <style>
+      :root {
+        --bg: #080706;
+        --panel: #12100d;
+        --panel-2: #191510;
+        --line: rgba(201, 160, 82, 0.24);
+        --line-strong: rgba(218, 178, 96, 0.48);
+        --gold: #d7ae62;
+        --gold-2: #f0d394;
+        --ivory: #f6efe0;
+        --muted: #b9ad99;
+        --shadow: rgba(0, 0, 0, 0.42);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--ivory);
+        background:
+          radial-gradient(circle at top, rgba(209, 159, 72, 0.12), transparent 34rem),
+          linear-gradient(180deg, #0c0a08 0%, #050404 100%);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .shell {
+        width: min(1440px, calc(100% - 32px));
+        margin: 0 auto;
+      }
+
+      header {
+        padding: 36px 0 28px;
+        border-bottom: 1px solid var(--line);
+      }
+
+      .eyebrow {
+        margin: 0 0 10px;
+        color: var(--gold);
+        font-size: 12px;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 0;
+        max-width: 960px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(38px, 6vw, 88px);
+        font-weight: 500;
+        line-height: 0.95;
+        letter-spacing: 0;
+      }
+
+      .intro {
+        max-width: 900px;
+        margin: 18px 0 0;
+        color: var(--muted);
+        font-size: clamp(16px, 2vw, 20px);
+        line-height: 1.6;
+      }
+
+      .notice {
+        margin: 22px 0 0;
+        padding: 14px 16px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        background: rgba(18, 16, 13, 0.72);
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .summary {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 14px;
+        padding: 24px 0 12px;
+      }
+
+      .summary-card {
+        padding: 18px;
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        background: linear-gradient(180deg, rgba(24, 20, 15, 0.94), rgba(13, 11, 9, 0.94));
+        box-shadow: 0 18px 48px var(--shadow);
+      }
+
+      .summary-card strong {
+        display: block;
+        margin-bottom: 8px;
+        color: var(--gold-2);
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 21px;
+        font-weight: 500;
+      }
+
+      .summary-card span {
+        color: var(--muted);
+        line-height: 1.5;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 22px;
+        padding: 28px 0 56px;
+      }
+
+      .concept {
+        overflow: hidden;
+        border: 1px solid var(--line);
+        border-radius: 18px;
+        background: linear-gradient(180deg, rgba(25, 21, 16, 0.98), rgba(10, 9, 7, 0.98));
+        box-shadow: 0 24px 70px rgba(0, 0, 0, 0.46);
+      }
+
+      .concept img {
+        display: block;
+        width: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+        background: #050404;
+      }
+
+      .body {
+        padding: 18px;
+      }
+
+      .concept h2 {
+        margin: 0;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: 24px;
+        font-weight: 500;
+      }
+
+      .meta {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin: 13px 0 15px;
+      }
+
+      .tag {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 5px 9px;
+        border: 1px solid rgba(215, 174, 98, 0.28);
+        border-radius: 999px;
+        color: var(--gold-2);
+        background: rgba(215, 174, 98, 0.08);
+        font-size: 12px;
+      }
+
+      .section {
+        margin-top: 14px;
+      }
+
+      .label {
+        margin: 0 0 6px;
+        color: var(--gold);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+      }
+
+      p {
+        margin: 0;
+        color: var(--muted);
+        line-height: 1.58;
+      }
+
+      details {
+        margin-top: 14px;
+        border-top: 1px solid var(--line);
+        padding-top: 12px;
+      }
+
+      summary {
+        cursor: pointer;
+        color: var(--gold-2);
+        font-weight: 700;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        margin: 12px 0 0;
+        padding: 14px;
+        border: 1px solid var(--line);
+        border-radius: 12px;
+        color: #eadbc0;
+        background: #080706;
+        font-size: 12px;
+        line-height: 1.55;
+      }
+
+      .approval {
+        display: grid;
+        gap: 8px;
+        margin-top: 14px;
+        padding: 14px;
+        border: 1px solid var(--line-strong);
+        border-radius: 14px;
+        background: rgba(215, 174, 98, 0.07);
+      }
+
+      .approval-row {
+        display: flex;
+        gap: 14px;
+        flex-wrap: wrap;
+        color: var(--ivory);
+        font-size: 14px;
+      }
+
+      footer {
+        padding: 32px 0 44px;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+      }
+
+      @media (max-width: 1040px) {
+        .grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .summary {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      @media (max-width: 680px) {
+        .shell {
+          width: min(100% - 22px, 1440px);
+        }
+
+        header {
+          padding: 28px 0 20px;
+        }
+
+        .grid {
+          grid-template-columns: 1fr;
+          gap: 18px;
+          padding-bottom: 34px;
+        }
+
+        .body {
+          padding: 15px;
+        }
+
+        .concept h2 {
+          font-size: 22px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="shell">
+        <p class="eyebrow">Internal visual review only</p>
+        <h1>Classic Shield Tree Crest Direction v1</h1>
+        <p class="intro">
+          A reset from procedural line-art variation toward high-fidelity, reference-quality black and antique gold crest concepts.
+          This gallery is for Founder and CSO review only and is not integrated into production order delivery.
+        </p>
+        <div class="notice">
+          Do not link this page from public navigation. These are concept images, not customer artifacts, official coats of arms,
+          legal heraldic grants, noble title claims, or certified genealogical records.
+        </div>
+      </div>
+    </header>
+
+    <main class="shell">
+      <section class="summary" aria-label="Review summary">
+        <article class="summary-card">
+          <strong>Theme</strong>
+          <span>Continuity and unity, expressed through a shield, tree of life, and woven root/knot structure.</span>
+        </article>
+        <article class="summary-card">
+          <strong>Visual Standard</strong>
+          <span>Embossed antique gold, dark archival ground, realistic depth, private heirloom mood.</span>
+        </article>
+        <article class="summary-card">
+          <strong>Decision Needed</strong>
+          <span>Choose one primary direction, one secondary fallback, and one rejected boundary direction.</span>
+        </article>
+      </section>
+
+      <section class="grid" aria-label="Crest concepts">
+        <article class="concept">
+          <img src="./images/concept-01-classic-shield-tree.png" alt="Concept 01 Classic Shield Tree Crest" />
+          <div class="body">
+            <h2>01 Classic Shield Tree</h2>
+            <div class="meta"><span class="tag">balanced</span><span class="tag">ornate shield</span><span class="tag">tree + knot</span></div>
+            <div class="section"><p class="label">Rationale</p><p>Baseline concept for the new direction: strong shield, tree roots, unity knot, and blank ribbon without model-generated text.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The tree carries continuity; the knot under the roots turns family connection into the visual anchor.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 01, Classic Shield Tree Crest. A luxury black and antique gold family legacy crest, ornate shield frame, central tree of life with visible roots, a subtle Celtic knot integrated near the roots, side laurel branches, bottom ribbon/plaque with NO TEXT, embossed raised metallic gold relief, dark archival leather background, dramatic soft lighting, centered symmetrical composition, high-end keepsake product.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-02-tall-shield-tree.png" alt="Concept 02 Tall Shield Tree Crest" />
+          <div class="body">
+            <h2>02 Tall Shield Tree</h2>
+            <div class="meta"><span class="tag">vertical</span><span class="tag">formal</span><span class="tag">fine branches</span></div>
+            <div class="section"><p class="label">Rationale</p><p>A taller, more formal silhouette that feels archival and ceremonial while keeping the tree as the central identity.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The narrow shield makes the trunk feel like a family spine; the knot sits as a foundation rather than ornament.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 02, Classic Shield Tree Crest, tall narrow ornate shield. A premium black and antique gold family legacy crest with a tall elegant shield frame, central tree of life with dense fine branches, visible roots forming a subtle knot at the base, restrained side laurel, small bottom plaque with NO TEXT, raised metallic gold relief, engraved bevels, dark archive leather background, high contrast, soft shadows.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-03-rounded-shield-seal.png" alt="Concept 03 Rounded Shield Seal Crest" />
+          <div class="body">
+            <h2>03 Rounded Shield Seal</h2>
+            <div class="meta"><span class="tag">seal hybrid</span><span class="tag">archive ring</span><span class="tag">wreath</span></div>
+            <div class="section"><p class="label">Rationale</p><p>Blends a family shield with a private archive seal, useful if the product should feel more like a collection mark than a coat of arms.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The circular inner seal frames the family tree as something preserved, protected, and carried forward.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 03, Classic Shield Tree Crest with rounded medallion influence. A luxury black and antique gold private family crest combining a rounded shield and circular archive seal, central tree of life, roots wrapping into a clean knot, laurel branches forming a quiet wreath, bottom plaque with NO TEXT, raised gold metal, engraved inner ring, dark navy-black archival leather texture, premium keepsake mood.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-04-gothic-archive-tree.png" alt="Concept 04 Gothic Archive Tree Crest" />
+          <div class="body">
+            <h2>04 Gothic Archive Tree</h2>
+            <div class="meta"><span class="tag">gothic</span><span class="tag">archive window</span><span class="tag">dramatic</span></div>
+            <div class="section"><p class="label">Rationale</p><p>A boundary concept with cathedral-window influence. Useful for families who want a more medieval/private-archive tone.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The pointed frame makes the tree feel protected inside a long-lived family archive.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 04, Classic Shield Tree Crest with gothic archive influence. A premium family legacy crest in black and antique gold, pointed gothic shield/window frame, central tree of life with visible roots, roots tied into a small knot at the base, restrained laurel branches inside the frame, bottom plaque with NO TEXT, raised metallic gold, engraved details, dark archival parchment-leather background, cinematic soft highlights.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-05-modern-luxury-shield.png" alt="Concept 05 Modern Luxury Shield Crest" />
+          <div class="body">
+            <h2>05 Modern Luxury Shield</h2>
+            <div class="meta"><span class="tag">clean</span><span class="tag">commercial</span><span class="tag">gift-ready</span></div>
+            <div class="section"><p class="label">Rationale</p><p>The cleanest and most production-friendly option: premium without becoming too gothic, ornate, or busy.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The tree reads instantly, while the root knot remains clear enough to carry the unity meaning.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 05, Classic Shield Tree Crest with modern luxury balance. A high-end black and antique gold symbolic family crest, clean layered shield frame, central sculpted tree of life, roots subtly looping into a knot, minimal laurel branches, sleek bottom plaque with NO TEXT, brushed antique gold metal, embossed bevels, charcoal leather archive background, refined premium product look.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-06-ceremonial-ribbon-crest.png" alt="Concept 06 Ceremonial Ribbon Crest" />
+          <div class="body">
+            <h2>06 Ceremonial Ribbon Crest</h2>
+            <div class="meta"><span class="tag">ornate</span><span class="tag">certificate</span><span class="tag">presentation</span></div>
+            <div class="section"><p class="label">Rationale</p><p>A richer ceremonial version with strong ribbon and laurel support, close to a premium certificate cover or gift reveal.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The full wreath and broad frame make the tree feel honored as a family symbol.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 06, Classic Shield Tree Crest with ceremonial certificate richness. A luxury antique gold family crest on a dark black archive background, ornate broad shield, central tree of life with many sculpted leaves, roots visibly woven into a knot, abundant laurel wreath support, curled bottom ribbon/plaque with NO TEXT, raised metallic relief, engraved bevels, warm highlights, premium framed keepsake feeling.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-07-deep-engraved-shield.png" alt="Concept 07 Deep Engraved Shield Crest" />
+          <div class="body">
+            <h2>07 Deep Engraved Shield</h2>
+            <div class="meta"><span class="tag">deep metal</span><span class="tag">engraved</span><span class="tag">premium</span></div>
+            <div class="section"><p class="label">Rationale</p><p>Best expression of heavy metal depth and engraved black-shield texture; feels the least like generated line art.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The tree emerges from an engraved field, making the family meaning feel carved into an heirloom object.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 07, Classic Shield Tree Crest with deep engraved black shield. A premium family legacy crest in antique gold and black, heavy beveled shield frame with dark engraved inner shield, central tree of life emerging in raised metallic gold, roots forming a subtle unity knot, restrained laurel branches, small bottom plaque with NO TEXT, realistic metal thickness, deep shadows, polished worn edges, archival black leather background.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-08-root-knot-emphasis.png" alt="Concept 08 Root Knot Emphasis Crest" />
+          <div class="body">
+            <h2>08 Root Knot Emphasis</h2>
+            <div class="meta"><span class="tag">unity</span><span class="tag">root knot</span><span class="tag">recognition</span></div>
+            <div class="section"><p class="label">Rationale</p><p>The strongest visual expression of unity. The knot is no longer decorative; it becomes the emotional center of the crest.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>Continuity rises through the tree; unity is literally woven into the roots.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 08, Classic Shield Tree Crest with root-knot emphasis. A luxury black and antique gold family crest, elegant shield frame, central tree of life with sculpted branches, the roots are the emotional focal point, clearly woven into a Celtic-inspired unity knot beneath the trunk, subtle laurel leaves around the lower shield, small empty bottom plaque with NO TEXT, realistic raised metal relief, warm gold highlights, dark matte leather background.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-09-laurel-wreath-shield.png" alt="Concept 09 Laurel Wreath Shield Crest" />
+          <div class="body">
+            <h2>09 Laurel Wreath Shield</h2>
+            <div class="meta"><span class="tag">laurel</span><span class="tag">honor</span><span class="tag">simple crest</span></div>
+            <div class="section"><p class="label">Rationale</p><p>A cleaner honor-wreath version that may work well for parents, anniversaries, and family celebration moments.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The laurel wreath frames the tree as something the family is proud to preserve.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 09, Classic Shield Tree Crest with laurel-wreath shield. A refined black and antique gold family legacy crest, shield frame held by a full laurel wreath, central tree of life with visible roots and a small interwoven knot, balanced negative space, no lettering, no motto, no words, raised metallic gold relief with realistic patina, dark charcoal archival background, ceremonial but personal.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-10-navy-champagne-archive.png" alt="Concept 10 Navy Champagne Archive Crest" />
+          <div class="body">
+            <h2>10 Navy Champagne Archive</h2>
+            <div class="meta"><span class="tag">navy</span><span class="tag">champagne gold</span><span class="tag">alternate palette</span></div>
+            <div class="section"><p class="label">Rationale</p><p>A palette boundary option: still premium, but softer than pure black and antique gold.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The cooler archive background makes the gold tree feel preserved and museum-like.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 10, Classic Shield Tree Crest on deep navy archive ground. A premium family legacy shield crest in champagne antique gold, dark navy-black archival leather background, central tree of life with sculpted trunk and roots, roots forming a restrained unity knot, elegant shield frame with engraved bevels, fine laurel accents, bottom plaque with NO TEXT, realistic metallic depth, heirloom presentation.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-11-minimal-premium-keepsake.png" alt="Concept 11 Minimal Premium Keepsake Crest" />
+          <div class="body">
+            <h2>11 Minimal Premium Keepsake</h2>
+            <div class="meta"><span class="tag">minimal</span><span class="tag">strong silhouette</span><span class="tag">adaptable</span></div>
+            <div class="section"><p class="label">Rationale</p><p>A restrained direction for consistent production. Fewer ornaments, clearer silhouette, stronger use as a repeatable product asset.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The tree and knot remain readable without competing decorative layers.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 11, Classic Shield Tree Crest, minimal premium keepsake. A restrained luxury family legacy crest, black shield with antique gold beveled border, central tree of life rendered as sculpted raised metal, roots forming a small elegant unity knot, very minimal laurel detail, no ribbon text, no words, clean premium hierarchy, realistic brushed gold, dark charcoal leather background.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+
+        <article class="concept">
+          <img src="./images/concept-12-flagship-ornate-crest.png" alt="Concept 12 Flagship Ornate Crest" />
+          <div class="body">
+            <h2>12 Flagship Ornate Crest</h2>
+            <div class="meta"><span class="tag">flagship</span><span class="tag">ornate</span><span class="tag">maximum impact</span></div>
+            <div class="section"><p class="label">Rationale</p><p>The most visually dramatic option. Strongest first impression, but may require tighter controls to avoid over-decoration.</p></div>
+            <div class="section"><p class="label">Continuity + Unity</p><p>The woven roots dominate the lower half, turning unity into the defining symbol of the crest.</p></div>
+            <details><summary>Prompt used</summary><pre>Concept 12, Classic Shield Tree Crest flagship ornate version. A flagship luxury black and antique gold family legacy crest, ornate layered shield frame, central tree of life with luminous raised metal branches and deep sculpted roots, roots woven into a refined unity knot, rich laurel wreath, small empty bottom plaque with NO TEXT, decorative crown-like flourish that is clearly ornamental not royal, realistic antique gold relief, engraved patina, deep black archival leather background, dramatic product photography lighting.</pre></details>
+            <div class="approval"><p class="label">Founder approval</p><div class="approval-row"><span>[ ] Approved</span><span>[ ] Reject</span><span>[ ] Revise</span></div><p>Notes:</p></div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer>
+      <div class="shell">
+        MyKinLegacy internal review. These concept images are visual direction candidates only.
+      </div>
+    </footer>
+  </body>
+</html>
+
