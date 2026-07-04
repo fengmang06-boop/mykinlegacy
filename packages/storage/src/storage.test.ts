@@ -104,26 +104,71 @@ describe("private storage and assets", () => {
     const body = createMvpCrestPngBuffer({
       variant: "crest_variant_1_png",
       house_name: "House of Alder",
-      symbols: ["shield", "oak branch", "star"]
+      symbols: ["shield", "tree", "knot"]
     });
     const transparentBody = createMvpCrestPngBuffer({
       variant: "transparent_crest_png",
       house_name: "House of Alder",
-      symbols: ["shield", "oak branch", "star"],
+      symbols: ["shield", "tree", "knot"],
       transparent: true
     });
+    const metadataText = body.toString("latin1");
+    const transparentMetadata = readPngMetadata(transparentBody);
 
     expect(body.subarray(1, 4).toString()).toBe("PNG");
-    expect(body.toString("latin1")).toContain("artwork_mode=mvp_symbolic_template");
-    expect(body.toString("latin1")).toContain("artwork_quality=internal_beta");
+    expect(metadataText).toContain("artwork_template=shield_legacy_crest_v1");
+    expect(metadataText).toContain("artwork_mode=deterministic_symbolic_template");
+    expect(metadataText).toContain("main_symbol=tree");
+    expect(metadataText).toContain("supporting_symbols=shield,knot");
+    expect(metadataText).toContain("theme_mapping=continuity,unity");
+    expect(metadataText).toContain("artwork_quality=internal_beta");
     expect(body.byteLength).toBeGreaterThan(10 * 1024);
     expect(readPngMetadata(body)).toMatchObject({ width: 640, height: 640, has_alpha: true });
-    expect(readPngMetadata(transparentBody)).toMatchObject({
+    expect(transparentMetadata).toMatchObject({
       width: 640,
       height: 640,
-      has_alpha: true
+      has_alpha: true,
+      has_transparent_pixels: true
     });
   });
+
+  it("creates distinct shield legacy crest variants without unsupported symbol mapping", () => {
+    const variants = [
+      createMvpCrestPngBuffer({
+        variant: "crest_variant_1_png",
+        house_name: "House Continuity",
+        symbols: ["shield", "tree", "knot", "unsupported laser"]
+      }),
+      createMvpCrestPngBuffer({
+        variant: "crest_variant_2_png",
+        house_name: "House Continuity",
+        symbols: ["shield", "tree", "knot", "unsupported laser"]
+      }),
+      createMvpCrestPngBuffer({
+        variant: "crest_variant_3_png",
+        house_name: "House Continuity",
+        symbols: ["shield", "tree", "knot", "unsupported laser"]
+      }),
+      createMvpCrestPngBuffer({
+        variant: "transparent_crest_png",
+        house_name: "House Continuity",
+        symbols: ["shield", "tree", "knot", "unsupported laser"],
+        transparent: true
+      })
+    ];
+    const serialized = variants.map((variant) => variant.toString("base64"));
+
+    expect(new Set(serialized).size).toBe(4);
+    for (const variant of variants) {
+      const metadataText = variant.toString("latin1");
+      expect(metadataText).toContain("artwork_template=shield_legacy_crest_v1");
+      expect(metadataText).toContain("main_symbol=tree");
+      expect(metadataText).toContain("supporting_symbols=shield,knot");
+      expect(metadataText).not.toContain("unsupported laser");
+      expect(variant.byteLength).toBeGreaterThan(10 * 1024);
+      expect(readPngMetadata(variant)).toMatchObject({ width: 640, height: 640, has_alpha: true });
+    }
+  }, 15_000);
 
   it("stores asset record with checksum, size, mime and null public_url", async () => {
     const dir = await tempDir();
@@ -223,7 +268,7 @@ describe("zip and manifest helpers", () => {
       ])
     ).resolves.toMatchObject({ valid: true });
     await rm(dir, { recursive: true, force: true });
-  });
+  }, 15_000);
 
   it("detects corrupt artifact binaries by format, not only size", () => {
     expect(

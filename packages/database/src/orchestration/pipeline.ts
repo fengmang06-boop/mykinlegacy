@@ -436,7 +436,7 @@ interface ArtifactTooling {
     disclaimer: string;
   }): Promise<string>;
   listZipEntries(buffer: Buffer): string[];
-  readPngMetadata(buffer: Buffer): { width: number; height: number; has_alpha: boolean };
+  readPngMetadata(buffer: Buffer): { width: number; height: number; has_alpha: boolean; has_transparent_pixels?: boolean };
 }
 
 interface ArtifactContext {
@@ -588,13 +588,22 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
   const tools = loadArtifactTooling();
   if (artifact.file_ext === "png") {
     const metadata = tools.readPngMetadata(artifact.body);
-    if (
-      artifact.body.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a" ||
-      metadata.width < 256 ||
-      metadata.height < 256 ||
-      artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES
-    ) {
-      throw new Error(`artifact_not_ready:${deliverableCode}`);
+    const text = artifact.body.toString("latin1");
+    const failures: string[] = [];
+    if (artifact.body.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") failures.push("png_header_invalid");
+    if (metadata.width < 640 || metadata.height < 640) failures.push("png_dimensions_too_small");
+    if (artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES) failures.push(`png_too_small:${artifact.body.byteLength}`);
+    if (!text.includes("artwork_template=shield_legacy_crest_v1")) failures.push("artwork_template_missing");
+    if (!text.includes("artwork_mode=deterministic_symbolic_template")) failures.push("artwork_mode_missing");
+    if (!text.includes("main_symbol=tree")) failures.push("main_symbol_missing");
+    if (!text.includes("supporting_symbols=shield,knot")) failures.push("supporting_symbols_missing");
+    if (!text.includes("theme_mapping=continuity,unity")) failures.push("theme_mapping_missing");
+    if (/png\.png/i.test(artifact.file_name)) failures.push("bad_png_file_name");
+    if (deliverableCode === "transparent_crest_png" && metadata.has_transparent_pixels !== true) {
+      failures.push("transparent_pixels_missing");
+    }
+    if (failures.length > 0) {
+      throw new Error(`artifact_not_ready:${deliverableCode}:${failures.join(",")}`);
     }
     return;
   }

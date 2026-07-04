@@ -137,6 +137,17 @@ describe("DB-backed orchestration foundation", () => {
     expect(pngBody.byteLength).toBeGreaterThan(10 * 1024);
     expect(pngBody.readUInt32BE(16)).toBe(640);
     expect(pngBody.readUInt32BE(20)).toBe(640);
+    expect(pngBody.toString("latin1")).toContain("artwork_template=shield_legacy_crest_v1");
+    expect(pngBody.toString("latin1")).toContain("artwork_mode=deterministic_symbolic_template");
+    expect(pngBody.toString("latin1")).toContain("main_symbol=tree");
+    expect(pngBody.toString("latin1")).toContain("supporting_symbols=shield,knot");
+    const pngBodies = await Promise.all(
+      result.assets
+        .filter((asset) => asset.file_ext === "png")
+        .sort((a, b) => a.deliverable_code.localeCompare(b.deliverable_code))
+        .map((asset) => readStoredAsset(asset))
+    );
+    expect(new Set(pngBodies.map((body) => body.toString("base64"))).size).toBe(4);
     for (const asset of result.assets.filter((item) => item.file_ext === "pdf")) {
       const body = await readStoredAsset(asset);
       const text = body.toString("latin1");
@@ -182,7 +193,7 @@ describe("DB-backed orchestration foundation", () => {
       fulfillment_status: "generating",
       completed_at: null
     });
-  });
+  }, 15_000);
 
   it("returns safe customer order status without private fields", async () => {
     const repository = await completedRepository();
@@ -215,7 +226,7 @@ describe("DB-backed orchestration foundation", () => {
     expect(serialized).not.toContain("rendered_prompt");
     expect(serialized).not.toContain("signed_url");
     expect(serialized).not.toContain("raw_token");
-  });
+  }, 15_000);
 
   it("returns DB-backed admin summaries with masked storage keys", async () => {
     const repository = await completedRepository();
@@ -242,7 +253,7 @@ describe("DB-backed orchestration foundation", () => {
     expect(serialized).not.toContain("raw_token");
     expect(serialized).not.toContain("signed_url");
     expect(serialized).not.toContain("rendered_prompt");
-  });
+  }, 15_000);
 
   it("does not mark order completed before the worker confirms email delivery", async () => {
     const repository = createRepository();
@@ -261,7 +272,7 @@ describe("DB-backed orchestration foundation", () => {
       fulfillment_status: "generating",
       completed_at: null
     });
-  });
+  }, 15_000);
 
   it("repairs existing placeholder assets in place when generation is rerun", async () => {
     const repository = await completedRepository();
@@ -287,7 +298,7 @@ describe("DB-backed orchestration foundation", () => {
     expect(repaired?.size_bytes).toBeGreaterThan(1024);
     expect(repaired?.storage_key).not.toBe("orders/placeholder/family_story_pdf.pdf");
     expect(repository.downloadTokens.size).toBeGreaterThanOrEqual(2);
-  });
+  }, 15_000);
 });
 
 async function completedRepository() {

@@ -1,6 +1,6 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { dirname } from "node:path";
-import { deflateSync } from "node:zlib";
+import { deflateSync, inflateSync } from "node:zlib";
 
 const PNG_SIGNATURE = Buffer.from("89504e470d0a1a0a", "hex");
 
@@ -23,104 +23,69 @@ export function createMvpCrestPngBuffer(input: {
   const raw = Buffer.alloc((width * 4 + 1) * height);
   const seed = hashSeed(`${input.variant}:${input.house_name ?? "house"}:${(input.symbols ?? []).join(",")}`);
   const centerX = width / 2;
-  const symbols = (input.symbols ?? []).join(" ").toLowerCase();
-  const variantShift = (seed % 17) - 8;
+  const symbolMapping = resolveSymbolMapping(input.symbols ?? []);
+  const style = resolveCrestVariant(input.variant, input.transparent === true);
 
   for (let y = 0; y < height; y += 1) {
     const rowOffset = y * (width * 4 + 1);
     raw[rowOffset] = 0;
     for (let x = 0; x < width; x += 1) {
       const offset = rowOffset + 1 + x * 4;
-      const half = shieldHalfWidth(y);
+      const localY = y - style.verticalOffset;
+      const half = shieldHalfWidth(localY, style);
       const distanceFromCenter = Math.abs(x - centerX);
-      const shield = y >= 76 && y <= 574 && distanceFromCenter <= half;
+      const shield = localY >= style.shieldTop && localY <= style.shieldBottom && distanceFromCenter <= half;
+      const innerHalf = Math.max(0, half - style.innerInset);
+      const innerField = shield && localY > style.shieldTop + 52 && localY < style.shieldBottom - 46 && distanceFromCenter < innerHalf - 14;
       const border =
         shield &&
-        (Math.abs(distanceFromCenter - half) < 8 ||
-          Math.abs(y - 82) < 7 ||
-          (y > 540 && distanceFromCenter < 44 + (574 - y) * 0.4));
+        (Math.abs(distanceFromCenter - half) < style.outerStroke ||
+          Math.abs(localY - style.shieldTop) < style.outerStroke ||
+          (localY > style.shieldBottom - 34 && distanceFromCenter < 42 + (style.shieldBottom - localY) * 0.55));
       const innerBorder =
         shield &&
-        (Math.abs(distanceFromCenter - Math.max(0, half - 28)) < 3 ||
-          Math.abs(y - 112) < 3);
-      const innerField = shield && y > 126 && y < 516 && distanceFromCenter < Math.max(0, half - 42);
-      const medallion = Math.abs(Math.hypot(x - centerX, y - 292) - 92) < 7;
-      const topCrown =
-        y > 126 &&
-        y < 160 &&
-        (Math.abs(x - centerX) < 24 ||
-          Math.abs(x - (centerX - 54)) < 18 ||
-          Math.abs(x - (centerX + 54)) < 18) &&
-        y < 160 - Math.abs((x - centerX) % 54) * 0.18;
-      const treeTrunk = Math.abs(x - centerX) < 10 && y > 250 && y < 392;
-      const treeCanopy =
-        Math.hypot((x - centerX) / 1.15, y - 248) < 46 ||
-        Math.hypot((x - (centerX - 36)) / 1.05, y - 286) < 34 ||
-        Math.hypot((x - (centerX + 36)) / 1.05, y - 286) < 34;
-      const treeBranches =
-        (Math.abs(y - (330 - Math.abs(x - centerX) * 0.36)) < 4 && distanceFromCenter < 78) ||
-        (Math.abs(y - (356 + Math.abs(x - centerX) * 0.2)) < 4 && distanceFromCenter < 58);
-      const centralStar =
-        Math.abs(x - centerX) + Math.abs(y - 284 + variantShift) < 44 ||
-        (Math.abs(x - centerX) < 8 && Math.abs(y - 284 + variantShift) < 62) ||
-        (Math.abs(y - 284 + variantShift) < 8 && distanceFromCenter < 62);
-      const centralShieldMark =
-        y > 238 && y < 386 && distanceFromCenter < 48 - Math.max(0, y - 300) * 0.18;
-      const centralSymbol = symbols.includes("tree") || symbols.includes("oak") || symbols.includes("branch")
-        ? treeTrunk || treeCanopy || treeBranches
-        : symbols.includes("star") || symbols.includes("compass") || symbols.includes("lantern")
-          ? centralStar
-          : centralShieldMark || centralStar;
-      const lowerDivider = y > 404 && y < 412 && distanceFromCenter < 112;
-      const valuePill = y > 436 && y < 474 && distanceFromCenter < 132 - Math.abs(y - 455) * 1.2;
-      const ribbon = y > 486 && y < 526 && distanceFromCenter < 154 - Math.abs(y - 506) * 1.8;
-      const laurelLeft =
-        x < centerX &&
-        Math.abs(Math.hypot((x - (centerX - 104)) / 0.8, y - 404) - 74) < 5 &&
-        y > 316 && y < 494;
-      const laurelRight =
-        x > centerX &&
-        Math.abs(Math.hypot((x - (centerX + 104)) / 0.8, y - 404) - 74) < 5 &&
-        y > 316 && y < 494;
-      const cornerPin =
-        (Math.hypot(x - 178, y - 142) < 14 ||
-          Math.hypot(x - 462, y - 142) < 14 ||
-          Math.hypot(x - centerX, y - 536) < 14);
+        (Math.abs(distanceFromCenter - innerHalf) < style.innerStroke ||
+          Math.abs(localY - (style.shieldTop + 40)) < style.innerStroke);
+      const medallion = style.showMedallion && Math.abs(Math.hypot((x - centerX) / 1.04, localY - 306) - 116) < 4;
+      const tree = treeShape(x, localY, centerX, style);
+      const roots = rootShape(x, localY, centerX, style);
+      const knot = knotShape(x, localY, centerX, style);
+      const plaque = plaqueShape(x, localY, centerX, style);
+      const plaqueBorder = plaque.border;
+      const plaqueFill = plaque.fill;
+      const laurel = style.showLaurel && laurelShape(x, localY, centerX);
+      const archivePin =
+        style.showPins &&
+        (Math.hypot(x - (centerX - 116), localY - 132) < 8 ||
+          Math.hypot(x - (centerX + 116), localY - 132) < 8 ||
+          Math.hypot(x - centerX, localY - 522) < 8);
       const texture = (x * 13 + y * 17 + seed) % 47;
+      const vignette = Math.min(34, Math.hypot(x - centerX, y - height / 2) / 13);
 
       if (!shield && input.transparent) {
-        raw[offset] = 0;
-        raw[offset + 1] = 0;
-        raw[offset + 2] = 0;
-        raw[offset + 3] = 0;
+        writeRgba(raw, offset, 0, 0, 0, 0);
         continue;
       }
 
-      if (border || medallion || centralSymbol || lowerDivider || valuePill || ribbon || laurelLeft || laurelRight || cornerPin || topCrown) {
-        raw[offset] = 198 + (texture % 36);
-        raw[offset + 1] = 154 + (texture % 32);
-        raw[offset + 2] = 72 + (texture % 22);
-        raw[offset + 3] = 255;
+      if (tree || roots || knot || plaqueBorder || medallion || laurel || border || archivePin) {
+        writeRgba(raw, offset, style.gold[0] + (texture % 18), style.gold[1] + (texture % 12), style.gold[2] + (texture % 8), 255);
       } else if (innerBorder) {
-        raw[offset] = 126 + (texture % 22);
-        raw[offset + 1] = 94 + (texture % 18);
-        raw[offset + 2] = 46 + (texture % 12);
-        raw[offset + 3] = 255;
+        writeRgba(raw, offset, style.mutedGold[0] + (texture % 12), style.mutedGold[1] + (texture % 10), style.mutedGold[2] + (texture % 8), 255);
+      } else if (plaqueFill) {
+        writeRgba(raw, offset, style.plaque[0] + (texture % 8), style.plaque[1] + (texture % 6), style.plaque[2] + (texture % 6), 255);
       } else if (innerField) {
-        raw[offset] = 18 + (texture % 8);
-        raw[offset + 1] = 16 + (texture % 6);
-        raw[offset + 2] = 14 + (texture % 6);
-        raw[offset + 3] = 255;
+        writeRgba(raw, offset, style.inner[0] + (texture % 8), style.inner[1] + (texture % 6), style.inner[2] + (texture % 6), 255);
       } else if (shield) {
-        raw[offset] = 27 + (texture % 9);
-        raw[offset + 1] = 23 + (texture % 8);
-        raw[offset + 2] = 18 + (texture % 7);
-        raw[offset + 3] = 255;
+        writeRgba(raw, offset, style.shield[0] + (texture % 8), style.shield[1] + (texture % 6), style.shield[2] + (texture % 5), 255);
       } else {
-        raw[offset] = 8 + (texture % 8);
-        raw[offset + 1] = 8 + (texture % 7);
-        raw[offset + 2] = 7 + (texture % 7);
-        raw[offset + 3] = 255;
+        writeRgba(
+          raw,
+          offset,
+          Math.max(0, style.background[0] + (texture % 7) - vignette),
+          Math.max(0, style.background[1] + (texture % 6) - vignette),
+          Math.max(0, style.background[2] + (texture % 6) - vignette),
+          255
+        );
       }
     }
   }
@@ -135,8 +100,10 @@ export function createMvpCrestPngBuffer(input: {
   ihdr.writeUInt8(0, 12);
 
   const text = Buffer.from(
-    `Description\0MyKinLegacy MVP symbolic crest artwork. artwork_mode=mvp_symbolic_template; artwork_quality=internal_beta; Variant ${input.variant}. ` +
-      `House ${input.house_name ?? "family"}. Symbols ${(input.symbols ?? []).join(", ") || "shield"}. `.repeat(220)
+      `Description\0MyKinLegacy symbolic crest artwork. artwork_template=shield_legacy_crest_v1; artwork_mode=deterministic_symbolic_template; ` +
+      `main_symbol=${symbolMapping.main_symbol}; supporting_symbols=${symbolMapping.supporting_symbols.join(",")}; ` +
+      `theme_mapping=continuity,unity; artwork_quality=internal_beta; variant=${style.name}; ` +
+      `House ${input.house_name ?? "family"}. Mapped symbols shield, tree, knot. `.repeat(220)
   );
 
   return Buffer.concat([
@@ -148,10 +115,219 @@ export function createMvpCrestPngBuffer(input: {
   ]);
 }
 
-function shieldHalfWidth(y: number): number {
-  if (y < 76 || y > 574) return 0;
-  if (y < 174) return 178;
-  return Math.max(20, 178 - (y - 174) * 0.39);
+interface CrestStyle {
+  name: "full_shield" | "emblem_close" | "print_contrast" | "transparent_emblem";
+  shieldTop: number;
+  shieldBottom: number;
+  shieldHalf: number;
+  shieldTaper: number;
+  outerStroke: number;
+  innerInset: number;
+  innerStroke: number;
+  verticalOffset: number;
+  treeScale: number;
+  showMedallion: boolean;
+  showLaurel: boolean;
+  showPins: boolean;
+  background: [number, number, number];
+  shield: [number, number, number];
+  inner: [number, number, number];
+  plaque: [number, number, number];
+  gold: [number, number, number];
+  mutedGold: [number, number, number];
+}
+
+function resolveCrestVariant(variant: string, transparent: boolean): CrestStyle {
+  if (transparent) {
+    return {
+      name: "transparent_emblem",
+      shieldTop: 58,
+      shieldBottom: 584,
+      shieldHalf: 184,
+      shieldTaper: 0.37,
+      outerStroke: 9,
+      innerInset: 32,
+      innerStroke: 3,
+      verticalOffset: 0,
+      treeScale: 1.05,
+      showMedallion: false,
+      showLaurel: true,
+      showPins: false,
+      background: [0, 0, 0],
+      shield: [25, 21, 17],
+      inner: [14, 13, 12],
+      plaque: [35, 25, 16],
+      gold: [207, 162, 76],
+      mutedGold: [136, 101, 52]
+    };
+  }
+  if (variant.includes("2")) {
+    return {
+      name: "emblem_close",
+      shieldTop: 48,
+      shieldBottom: 590,
+      shieldHalf: 198,
+      shieldTaper: 0.39,
+      outerStroke: 10,
+      innerInset: 34,
+      innerStroke: 3,
+      verticalOffset: 0,
+      treeScale: 1.11,
+      showMedallion: false,
+      showLaurel: false,
+      showPins: false,
+      background: [9, 8, 7],
+      shield: [27, 22, 17],
+      inner: [13, 12, 11],
+      plaque: [36, 26, 17],
+      gold: [214, 170, 82],
+      mutedGold: [140, 104, 54]
+    };
+  }
+  if (variant.includes("3")) {
+    return {
+      name: "print_contrast",
+      shieldTop: 72,
+      shieldBottom: 572,
+      shieldHalf: 178,
+      shieldTaper: 0.38,
+      outerStroke: 11,
+      innerInset: 30,
+      innerStroke: 4,
+      verticalOffset: 0,
+      treeScale: 0.98,
+      showMedallion: false,
+      showLaurel: true,
+      showPins: true,
+      background: [15, 13, 11],
+      shield: [20, 17, 14],
+      inner: [6, 6, 5],
+      plaque: [28, 20, 13],
+      gold: [226, 184, 92],
+      mutedGold: [154, 116, 58]
+    };
+  }
+  return {
+    name: "full_shield",
+    shieldTop: 70,
+    shieldBottom: 574,
+    shieldHalf: 182,
+    shieldTaper: 0.38,
+    outerStroke: 9,
+    innerInset: 31,
+    innerStroke: 3,
+    verticalOffset: 0,
+    treeScale: 1,
+    showMedallion: false,
+    showLaurel: true,
+    showPins: true,
+    background: [8, 8, 7],
+    shield: [26, 22, 17],
+    inner: [15, 14, 12],
+    plaque: [34, 24, 15],
+    gold: [205, 160, 75],
+    mutedGold: [132, 98, 50]
+  };
+}
+
+function resolveSymbolMapping(symbols: string[]): {
+  main_symbol: "tree";
+  supporting_symbols: ["shield", "knot"];
+} {
+  const normalized = symbols.join(" ").toLowerCase();
+  const hasTreeSignal = /\b(tree|oak|branch|root|heritage|legacy)\b/.test(normalized);
+  return {
+    main_symbol: hasTreeSignal ? "tree" : "tree",
+    supporting_symbols: ["shield", "knot"]
+  };
+}
+
+function shieldHalfWidth(y: number, style: CrestStyle): number {
+  if (y < style.shieldTop || y > style.shieldBottom) return 0;
+  if (y < style.shieldTop + 104) return style.shieldHalf;
+  return Math.max(22, style.shieldHalf - (y - (style.shieldTop + 104)) * style.shieldTaper);
+}
+
+function treeShape(x: number, y: number, centerX: number, style: CrestStyle): boolean {
+  const scale = style.treeScale;
+  const trunk = Math.abs(x - centerX) < 8 * scale && y > 230 && y < 392;
+  const branchA = distanceToSegment(x, y, centerX, 286, centerX - 78 * scale, 238) < 4.2;
+  const branchB = distanceToSegment(x, y, centerX, 286, centerX + 78 * scale, 238) < 4.2;
+  const branchC = distanceToSegment(x, y, centerX, 318, centerX - 62 * scale, 294) < 3.8;
+  const branchD = distanceToSegment(x, y, centerX, 318, centerX + 62 * scale, 294) < 3.8;
+  const branchE = distanceToSegment(x, y, centerX, 260, centerX - 32 * scale, 220) < 3.6;
+  const branchF = distanceToSegment(x, y, centerX, 260, centerX + 32 * scale, 220) < 3.6;
+  const leafClusterCenters: Array<[number, number, number, number]> = [
+    [centerX, 206, 24, 16],
+    [centerX - 44 * scale, 232, 25, 15],
+    [centerX + 44 * scale, 232, 25, 15],
+    [centerX - 72 * scale, 262, 20, 13],
+    [centerX + 72 * scale, 262, 20, 13],
+    [centerX - 35 * scale, 294, 21, 13],
+    [centerX + 35 * scale, 294, 21, 13]
+  ];
+  const leafClusters = leafClusterCenters.some(([cx, cy, rx, ry]) => Math.hypot((x - cx) / rx, (y - cy) / ry) < 1);
+  return trunk || branchA || branchB || branchC || branchD || branchE || branchF || leafClusters;
+}
+
+function rootShape(x: number, y: number, centerX: number, style: CrestStyle): boolean {
+  const scale = style.treeScale;
+  return (
+    distanceToSegment(x, y, centerX, 386, centerX - 84 * scale, 430) < 4 ||
+    distanceToSegment(x, y, centerX, 386, centerX + 84 * scale, 430) < 4 ||
+    distanceToSegment(x, y, centerX, 392, centerX - 42 * scale, 446) < 3.4 ||
+    distanceToSegment(x, y, centerX, 392, centerX + 42 * scale, 446) < 3.4
+  );
+}
+
+function knotShape(x: number, y: number, centerX: number, style: CrestStyle): boolean {
+  const scale = style.treeScale;
+  const leftRing = Math.abs(Math.hypot((x - (centerX - 14 * scale)) / 1.08, y - 430) - 16 * scale) < 3.2;
+  const rightRing = Math.abs(Math.hypot((x - (centerX + 14 * scale)) / 1.08, y - 430) - 16 * scale) < 3.2;
+  const centerJoin = Math.abs(y - 430) < 2.6 && Math.abs(x - centerX) < 22 * scale;
+  return leftRing || rightRing || centerJoin;
+}
+
+function plaqueShape(x: number, y: number, centerX: number, style: CrestStyle): { border: boolean; fill: boolean } {
+  const width = style.name === "emblem_close" ? 136 : 154;
+  const top = style.name === "emblem_close" ? 492 : 486;
+  const bottom = top + 34;
+  const fill = y > top && y < bottom && Math.abs(x - centerX) < width - Math.abs(y - (top + bottom) / 2) * 1.3;
+  const border =
+    (Math.abs(y - top) < 3 || Math.abs(y - bottom) < 3) && Math.abs(x - centerX) < width - Math.abs(y - (top + bottom) / 2) * 1.3;
+  return { fill, border };
+}
+
+function laurelShape(x: number, y: number, centerX: number): boolean {
+  const leftStem = distanceToSegment(x, y, centerX - 132, 346, centerX - 88, 484) < 2.4;
+  const rightStem = distanceToSegment(x, y, centerX + 132, 346, centerX + 88, 484) < 2.4;
+  const leafPairs = [356, 382, 408, 434, 460].some((cy, index) => {
+    const spread = 126 - index * 8;
+    const leftLeaf = Math.hypot((x - (centerX - spread)) / 13, (y - cy) / 7) < 1;
+    const rightLeaf = Math.hypot((x - (centerX + spread)) / 13, (y - cy) / 7) < 1;
+    return leftLeaf || rightLeaf;
+  });
+  return leftStem || rightStem || leafPairs;
+}
+
+function distanceToSegment(px: number, py: number, x1: number, y1: number, x2: number, y2: number): number {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const lengthSquared = dx * dx + dy * dy;
+  if (lengthSquared === 0) return Math.hypot(px - x1, py - y1);
+  const t = Math.max(0, Math.min(1, ((px - x1) * dx + (py - y1) * dy) / lengthSquared));
+  return Math.hypot(px - (x1 + t * dx), py - (y1 + t * dy));
+}
+
+function writeRgba(raw: Buffer, offset: number, r: number, g: number, b: number, a: number): void {
+  raw[offset] = clampByte(r);
+  raw[offset + 1] = clampByte(g);
+  raw[offset + 2] = clampByte(b);
+  raw[offset + 3] = clampByte(a);
+}
+
+function clampByte(value: number): number {
+  return Math.max(0, Math.min(255, Math.round(value)));
 }
 
 export async function materializeMockImageCandidate(input: {
@@ -163,11 +339,12 @@ export async function materializeMockImageCandidate(input: {
   }
 
   await mkdir(dirname(input.output_file_path), { recursive: true });
-  await writeFile(input.output_file_path, createMockPngBuffer());
+  const body = createMockPngBuffer();
+  await writeFile(input.output_file_path, body);
 
   return {
     file_path: input.output_file_path,
-    ...readPngMetadata(createMockPngBuffer())
+    ...readPngMetadata(body)
   };
 }
 
@@ -189,7 +366,7 @@ export async function createTransparentPng(input: {
   };
 }
 
-export function readPngMetadata(buffer: Buffer): { width: number; height: number; has_alpha: boolean } {
+export function readPngMetadata(buffer: Buffer): { width: number; height: number; has_alpha: boolean; has_transparent_pixels: boolean } {
   if (buffer.subarray(1, 4).toString() !== "PNG") {
     throw new Error("not_png");
   }
@@ -197,12 +374,37 @@ export function readPngMetadata(buffer: Buffer): { width: number; height: number
   const width = buffer.readUInt32BE(16);
   const height = buffer.readUInt32BE(20);
   const colorType = buffer.readUInt8(25);
+  const shouldScanTransparency = buffer.toString("latin1").includes("variant=transparent_emblem");
+  const hasTransparentPixels = colorType === 6 && shouldScanTransparency ? pngHasTransparentPixels(buffer, width, height) : false;
 
   return {
     width,
     height,
-    has_alpha: colorType === 4 || colorType === 6
+    has_alpha: colorType === 4 || colorType === 6,
+    has_transparent_pixels: hasTransparentPixels
   };
+}
+
+function pngHasTransparentPixels(buffer: Buffer, width: number, height: number): boolean {
+  const idatChunks: Buffer[] = [];
+  let offset = PNG_SIGNATURE.length;
+  while (offset < buffer.length - 12) {
+    const length = buffer.readUInt32BE(offset);
+    const type = buffer.subarray(offset + 4, offset + 8).toString("ascii");
+    if (type === "IDAT") idatChunks.push(buffer.subarray(offset + 8, offset + 8 + length));
+    offset += 12 + length;
+  }
+  if (idatChunks.length === 0) return false;
+  const raw = inflateSync(Buffer.concat(idatChunks));
+  const rowLength = width * 4 + 1;
+  for (let y = 0; y < height; y += 1) {
+    const rowOffset = y * rowLength;
+    if (raw[rowOffset] !== 0) return false;
+    for (let x = 0; x < width; x += 1) {
+      if (raw[rowOffset + 1 + x * 4 + 3] === 0) return true;
+    }
+  }
+  return false;
 }
 
 function pngChunk(type: string, data: Buffer): Buffer {
