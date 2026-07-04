@@ -1,0 +1,6552 @@
+{
+  "generated_at": "2026-07-04T04:10:01.176Z",
+  "sample_count": 250,
+  "groups": [
+    {
+      "id": "continuity-unity",
+      "title": "Continuity / Unity",
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "symbols": [
+        "tree",
+        "knot",
+        "roots",
+        "ring"
+      ],
+      "file": "crest-genome-contact-sheet-continuity-unity.png"
+    },
+    {
+      "id": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "symbols": [
+        "book",
+        "lantern",
+        "north_star",
+        "candle"
+      ],
+      "file": "crest-genome-contact-sheet-memory-wisdom.png"
+    },
+    {
+      "id": "resilience-journey",
+      "title": "Resilience / Journey",
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "symbols": [
+        "mountain",
+        "compass",
+        "north_star",
+        "bridge"
+      ],
+      "file": "crest-genome-contact-sheet-resilience-journey.png"
+    },
+    {
+      "id": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "symbols": [
+        "laurel",
+        "ring",
+        "knot",
+        "ribbon"
+      ],
+      "file": "crest-genome-contact-sheet-gratitude-love.png"
+    },
+    {
+      "id": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "symbols": [
+        "key",
+        "shield",
+        "branch",
+        "bridge"
+      ],
+      "file": "crest-genome-contact-sheet-protection-home.png"
+    }
+  ],
+  "samples": [
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-01.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-01",
+      "visual_signature": "d52c0fe5ec3b0fa4372369198901945708dcf46bfccc7fa1d219c88679b394e0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-02.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots",
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-02",
+      "visual_signature": "b0a09ef45fb2a487e5dc8379ffbc0b69dae2d779278df525245fee07a86577be",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-03.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-03",
+      "visual_signature": "c1c93f0c76bd7695670038ffa67147b99cf0990cced0b837a52dd8eaafe2fa14",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-04.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "bridge"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-04",
+      "visual_signature": "3ec1c45212cbc861ad1b65a3bde147fe36214923236f0d8b25b6b6f2284a6fc0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-05.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-05",
+      "visual_signature": "d03368a58123c63a3190f6ddb3a50459f38ea191e121cb3b3e2576823e834062",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-06.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-06",
+      "visual_signature": "8521544e3e1092cb2b57b2f62352599f1329ea8a0084606593e215037e646c9c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-07.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-07",
+      "visual_signature": "6afddf7f213258818b975aaaa5973740d1551ccd6323f181eb4d52f6f0f246d9",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-08.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-08",
+      "visual_signature": "b66216c2e686b3179329f1e319a3be36f7c7517437fa5448a15a65899b5ec4c1",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-09.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-09",
+      "visual_signature": "b848b5bc1e03482a4654abbaac34f1a7998c85e6c7cedc1dcb8b93b15f6f336e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-10.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-10",
+      "visual_signature": "6cc1654e4f438caa64a31aceb7684a07c48180230c344c857ec6706c81ea4454",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-11.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-11",
+      "visual_signature": "e5a1385d4e1ed758c000761d85c49f0a5f56141c8cc78b81b62f8603f6d8ca10",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-12.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-12",
+      "visual_signature": "2759bf9bf54115b3aa65532e297a24204c716a76b96d9c49b8b6da3fd19df1a9",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-13.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-13",
+      "visual_signature": "02e59a6031dfbf9af38f1e5f80eda3727f5df23a801683cc4e85f67783b9754a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-14.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-14",
+      "visual_signature": "090006b8129d145dfb9430b5ff5bfbf08524bf8afa98bf5e51e719041a08c970",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-15.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-15",
+      "visual_signature": "10ea951553f6b603ad6229e8c53af2ddbb5d136c906cd9bed1915b47ef512f7a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-16.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "woven_cord",
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-16",
+      "visual_signature": "0e818100e3fc1fba43f019d72830429a08db09e2cf3228e0951e8e2a74153cf3",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-17.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-17",
+      "visual_signature": "f9c023d4965aa8055a7b9af9392496aada3aad1e18f8091c68a55b8cc6ee170b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-18.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-18",
+      "visual_signature": "52a8cac76790de3f114774b98180ec167acec4167a4a529bae252f66519b2981",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-19.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-19",
+      "visual_signature": "9336663b75d557a1de336abc017d04ed362ef1c7ad97349e41dac8671a657e5b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-20.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-20",
+      "visual_signature": "c7e1cd12f2a080d3618a1da9abbc7048553ff6fbc07c87c27aa2be822e392370",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-21.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "ring",
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-21",
+      "visual_signature": "9959fa3ef0a990f5572b0252ab4ace9fc67d55088afd7097f4c099b8b7f89cdc",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-22.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-22",
+      "visual_signature": "81b3cb6f4c8694718c41877bb5826e6e67e67d82221e12f528b31f986bdd0c8a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-23.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-23",
+      "visual_signature": "1711a5876f00e32b55b08e964ff8c10f831a5146a009f8057e0aac4c6888d30c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-24.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "woven_cord"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-24",
+      "visual_signature": "290f3eb77b0930317b5cf704bd56ef42c277c52edf8bcde4ba7e092b80cc224c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-25.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-25",
+      "visual_signature": "72944224b10e653a20b1129e194667f9928ba75ed1ede944b85663c6a5793824",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-26.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-26",
+      "visual_signature": "76057387207fcb629e4c74574f42dc8f0773565dc6895f8307741a55f6440c54",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-27.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-27",
+      "visual_signature": "edda54878411bfa92f16b5d77ef7cb8057aee063b348c5ff68b8a9e054b247ec",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-28.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-28",
+      "visual_signature": "2300dce83c9a0bd43484a2bc45ef7ceac5793940e4d916913491dd799502f144",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-29.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-29",
+      "visual_signature": "18421f6698979ed526f1811d23f99ffd0e15ff2bee2998235231839c17b00cc6",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-30.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-30",
+      "visual_signature": "17beacfc93b75d08c153429ad3dd180c5eab44443d9db9812f9d5c173f5f600e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-31.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots",
+        "bridge"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-31",
+      "visual_signature": "185523faa96d4adb64c14cacd8ca50098059e8d52e2b44c539849d69b6afc3b8",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-32.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "ring",
+        "woven_cord"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-32",
+      "visual_signature": "e52c45fcf57318523b4b591d273b40acce662999132f6be3fd7ac321325a17b5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-33.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "woven_cord",
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-33",
+      "visual_signature": "497e65a7c87e34263fd03d94807fc5c25afede3b5c15eeb98c220a2ffe4e601a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-34.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-34",
+      "visual_signature": "a71f86a28b3a17d8314434ec1c42cda853814b98d523e03ef47f3c73baf40886",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-35.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-35",
+      "visual_signature": "12f3aab079923c22d544fdc6e93c85e690cb790d388c99918c726a2959838694",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-36.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-36",
+      "visual_signature": "53adebe0f27f04e621937328748d1f520eb33791b0dc70e6b87551ebdbbc429b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-37.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-37",
+      "visual_signature": "98331aa37a4a4353e9b4abaddad1e6a46b22a1f9197f2e77937ef7cefad8f6de",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-38.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-38",
+      "visual_signature": "c5220deac0273265f54185cb0828ee6a758df79ac879c3949b088d6f7dbcd06f",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-39.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-39",
+      "visual_signature": "76074ca1997dff1958b2fda2c0bb740673d4342918fb2c4e273dd3bfba65e28a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-40.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-40",
+      "visual_signature": "ef1e806a2ee3b5ad4a1f133645f4a4d889f2a4bc3c3a3a0f64906561eba1dacc",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-41.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-41",
+      "visual_signature": "5aa6ea9a19311578e90d7a04f086c04d68b54b4e7a5cea170e34f73dc288cb1a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-42.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots",
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-42",
+      "visual_signature": "2a3872d4b153db95f5af5fab479d749d42ea0f4c6e064a61ad7c76c39e7b3aa0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-43.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-43",
+      "visual_signature": "b51e23e009cb6c229effd307750e3ef803b978a8ec20c031ff7072e6855c73af",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-44.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot",
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-44",
+      "visual_signature": "650473963fc15f0df38945f7f88263c8cbe525e1be71ae968c75738d8c3029ef",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-45.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-45",
+      "visual_signature": "da487ed1aab5eea80406487a52726e09dc8a68378d88416c3dc5c16082c92a6a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-46.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-46",
+      "visual_signature": "bf460156fce856d471254072edb415328b449f82072c2e101e84d5c8398f587e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-47.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots",
+        "bridge"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-47",
+      "visual_signature": "1358f385e4f1a5b23cc5a14e8b2b15aabc2cee357e9110c7420e2c5d4d2e0f4d",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-48.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-48",
+      "visual_signature": "0e479084bd156a2d3b1864c122788e8cdea77883b5c4265cf8bcba8e77b45a85",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-49.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-49",
+      "visual_signature": "1babab66a98eb036e8169efcd567d05f5a6f634075ae567c95d70416793eb3c2",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "continuity-unity",
+      "title": "Continuity / Unity",
+      "file": "continuity-unity/continuity-unity-50.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "tree",
+      "supporting_symbols": [
+        "roots"
+      ],
+      "themes": [
+        "continuity",
+        "unity"
+      ],
+      "seed": "continuity-unity-50",
+      "visual_signature": "cd49c5ca7da3a8937af1555f5f84e564579b3a0ded2457a33ec6e729982f1518",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-01.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-01",
+      "visual_signature": "e3dc5fc8d3b019c998e5f87c48aa614fcf33896507cf7c3464c3bc55334b06b4",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-02.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-02",
+      "visual_signature": "7573eb4baf67543489436d3e1c2c4075a5fcdf9bb75ae5031a9e9b47deeadc29",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-03.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "memory_lantern_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-03",
+      "visual_signature": "8732b0fa70a591a291bfffdefde2f3981d37b98b416b73994e8becbea8cfd218",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-04.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle",
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-04",
+      "visual_signature": "3484ce1531125ae3843027e7adceb9671b53f59cad3aba0fd5ffc384ba5cbbe8",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-05.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-05",
+      "visual_signature": "f135ad26139dcd4145f758d807b3ecfc7e7e41a7090ee1452c32d6058c846a50",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-06.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-06",
+      "visual_signature": "197656f98b2ab296e2b2f9969b0a9282d041bfed80159ccdeeb9216e5b689eb8",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-07.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-07",
+      "visual_signature": "a66196e6e34d8a9421cbf4af1a57dea0de0f667ba3e12a4b619f2fbc1ef1fdc9",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-08.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-08",
+      "visual_signature": "a8a882b6697fc2ee1892ac3727a164088b734a49e06c362f92d0549a40837dbc",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-09.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-09",
+      "visual_signature": "27b2615a147bfe05f5e1fb121cf4644b9f79835646d0913581f8a8b70dffca74",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-10.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle",
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-10",
+      "visual_signature": "841c12068a61b5c6876aeb75884dfe28822b82f82e968ae8504e8b3db0a76a79",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-11.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle",
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-11",
+      "visual_signature": "84a2cf47e6858132b866496e213b81d36a249cdf093fb85f21eb4e9c9aafffb1",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-12.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "memory_lantern_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-12",
+      "visual_signature": "a5dd8fc28ac28ef98ef2eda2bd3404ca1423d6d6dfcc9acbc09577d050498f72",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-13.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-13",
+      "visual_signature": "716ca49e0f091a4dbb2c3039b19b6a987cbc077cb6eb43f070304ee318bb77f9",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-14.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-14",
+      "visual_signature": "3d52d9bd3766fa49b454b14f881c2102a236ba32595e5de8cace2a42e33b0e83",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-15.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-15",
+      "visual_signature": "02c1a0b58c8108f8ad4a04749575e4b31fe82a0b048f56ca205cec6ecfb2fadc",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-16.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-16",
+      "visual_signature": "8b48821462f1159d28bd7e93a33b6931ccb1641fce688a762582b15699b9afa5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-17.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-17",
+      "visual_signature": "82cbdb3e5da838e90aa8001b9b19193511a08bbd78267c64ea53441cc3ab8ab0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-18.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-18",
+      "visual_signature": "30f234dd7ca546a7c1ef04e0cf1958272a9e7b4b61029900b09142aa4421533e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-19.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "memory_lantern_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-19",
+      "visual_signature": "7cf08ea3964dee8b747a0b300931b0beb7ec426145fb7fed4952787d5a7fa2a1",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-20.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-20",
+      "visual_signature": "a697be59e7b902d3a9621f407a3993a58a6456de12d03de28d19995238254207",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-21.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-21",
+      "visual_signature": "202512a626032e944e2f50cadb081a3f3ebe1d652ebbde3efd4700ae2f1afd18",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-22.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-22",
+      "visual_signature": "e319dac7189725a5fb13b6657988b26fbda901b83e3bde0104efb3b34fa192d6",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-23.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-23",
+      "visual_signature": "b0ce6d4c9daaa73722e04a23c3283e11dca709fc282f368be47385088bd675b0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-24.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "memory_lantern_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-24",
+      "visual_signature": "82ca493b700f2eb309cbc9572da50c65706fb0e09e1388b6d3513cc4cc03cae5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-25.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-25",
+      "visual_signature": "9ace0d938add09a17ed77a69eaffaf67fa6f18a681d4645ec792b8bd1b1f7ebb",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-26.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-26",
+      "visual_signature": "09cc22f006c5eac7580cc1ddb76613656268414d2a148ac235f509c19f05c5e4",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-27.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-27",
+      "visual_signature": "b2bd13062096dd356078c517c6684bdd161c2410851066b23abb6011ce606492",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-28.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-28",
+      "visual_signature": "e99fa433fa663462bfa72d12519beaa9816f46e7822f82b5f4a68fae882b5786",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-29.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-29",
+      "visual_signature": "872b7b98091919bbb0cd679560b0a43c15a0dd85c4455f33e0251bcc56f832cf",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-30.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-30",
+      "visual_signature": "4e56ecde3caa450f377e9825b40651b5ce1e00fa66213222a89a610c6d563475",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-31.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-31",
+      "visual_signature": "883b67844b4aa6bb2098074a80afeb730c4cee0e408b48ca2e44d3d5352ae455",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-32.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-32",
+      "visual_signature": "c1fa16eaa2d421434253c6f30b1c95fea430fc7f9bc8bb8caaca7f06852d3a86",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-33.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-33",
+      "visual_signature": "67782200662d646a93b59b1fd59a4d1cdf76b0e650e0c7ae48885b57999223e5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-34.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-34",
+      "visual_signature": "041b4eeffecc5d7d3f27f2f0d171b1ece83a69b998b2d991f7874919e6a187cb",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-35.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-35",
+      "visual_signature": "e784421044df85118c83ec8361f6b7fa768f1423632c706cd33ce25bd81e25d0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-36.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-36",
+      "visual_signature": "e6b3ad844991bf5ced8e1cd476444b20c238e21bf89ad0fdd6514a797915d7f4",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-37.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-37",
+      "visual_signature": "6ca2a1595da88d4704597d65bf87ab4d6381e65e6a4563f4d5ded218dc5e3712",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-38.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-38",
+      "visual_signature": "02c98ac4402fe8a11256f01836a07099b53798f903d77776d045fd3f6fbfc1d3",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-39.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-39",
+      "visual_signature": "115410f9a4838e20638c3540e62400e55d9f983d45ea7fbf62b408c602713c72",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-40.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-40",
+      "visual_signature": "ce972551a88fcc81d0a5acfecb6f948c39e3e9134dfcb553619bf7635fb6944f",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-41.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-41",
+      "visual_signature": "22ac9b22c0e1065596e507247ef1308b86579a723842063115b4a6cb32cc0020",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-42.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-42",
+      "visual_signature": "647e92eb9294de939983efef10382319b478427e0175cc133699b017fcd970fe",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-43.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-43",
+      "visual_signature": "96a78bbe6159b9d5edc2a3c13a56cc80614d09ea957a36a905246e1f7bcbce95",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-44.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-44",
+      "visual_signature": "816f1b8e1078470dc92e2f2a0b7bbe2356dd5f1222407c5a191beef9fcb02b72",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-45.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle",
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-45",
+      "visual_signature": "2ea733f273e467f309e06d2e7374ab6a49622395398256108381b289e7950fee",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-46.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-46",
+      "visual_signature": "3cac01459b06941f0291ce08d5ab456887d08db719130703ba87a0e62c8f4402",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-47.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-47",
+      "visual_signature": "6b647702bb1c37a80662cf4321f22fe97c072f2f6ebbe1e9add5810057b8a7e5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-48.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "memory_lantern_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "candle",
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-48",
+      "visual_signature": "d03a13554c731465673e8ce4b23b6c7683e0d12bfc640f04933a156cbe2d4b76",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-49.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star",
+        "candle"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-49",
+      "visual_signature": "7b7435e5ffa7bdaa9ef4fa817964c039e200764a085d7eb2d6196913299890f6",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "memory-wisdom",
+      "title": "Memory / Wisdom",
+      "file": "memory-wisdom/memory-wisdom-50.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "lantern",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "memory",
+        "wisdom"
+      ],
+      "seed": "memory-wisdom-50",
+      "visual_signature": "c40614f62545403d7dc563f061f64cebbee7fae4a52fa1be0e1ee79737e83a18",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-01.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-01",
+      "visual_signature": "e3d6b57117de66ae12e05afe1148d7a1d3aa8248daa6237f6ce2a956395d99a8",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-02.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-02",
+      "visual_signature": "fb5396687db51ddd41588c62d769ec6523f2c38c418db7991ad9e0e3ac863574",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-03.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-03",
+      "visual_signature": "8a7dff9fd7f799b7c2fbdaa73823df35a86da35e6e969bd51a4b75478a501748",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-04.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-04",
+      "visual_signature": "f802637718fa5c7c9a918f8c8eba080abeaf9fa0570c50c5ae5396e0809c25b5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-05.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-05",
+      "visual_signature": "3933080873bea49c1241276063def54e914dd3de8ce0582be1d87b3388bba20b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-06.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-06",
+      "visual_signature": "7a61279061511c97666e78f62695f5ccc0e52b6bf0838a64b8f3d7fe66a4db82",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-07.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-07",
+      "visual_signature": "cdffa6bfe4eb05e6b5c64ec7a8eb5a4c4c877454b133ca6080fa65d492698844",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-08.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-08",
+      "visual_signature": "b9c8010029c7dda3c98b9639454516aed27750729b8bb15f37d21b7ec2d50eef",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-09.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge",
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-09",
+      "visual_signature": "21c2a23c5c6e44feb869125a60703d1cc8a3bfde806a7231c8ac04dcba3c0658",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-10.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge",
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-10",
+      "visual_signature": "61f01fa7a850c1ae4a57b32c0f4266f6a537ae5f201700450d34ba351ca349ed",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-11.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-11",
+      "visual_signature": "67bc04a646b6c4d0bf09675c2d1af3aeb24f61da894ee05a9940baff2ffc8a74",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-12.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-12",
+      "visual_signature": "682256bf01da4a89c39d6cb0105639cc667804c339b32baf98d3619ba9c3bb06",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-13.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-13",
+      "visual_signature": "f4e99b36557d081ae2ddf582c57bcb78679df04c503d744d43b4cc013a95cc6c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-14.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-14",
+      "visual_signature": "56c36265f6fd0e38f2318fdd98060ac89fb8e914073f4ac03f237a00e0ad8cb5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-15.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-15",
+      "visual_signature": "cc06163dba1a194eddad7502964b5bcea0ec124bdca876341a196028ff2a7202",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-16.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-16",
+      "visual_signature": "c472f6e18c5554ad4462fb86d6dfb3189dea8335c3e450b25c8a1f6d9b4a21ae",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-17.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-17",
+      "visual_signature": "7d319c61250c7c8ab3b6a3de7d1cfeef0619100511b578374e3c7fbb8756b722",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-18.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-18",
+      "visual_signature": "6d999321c2e2e2bf4631e03cafd8f0b99cf88e2c4089f5c924d2201878a3ef0f",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-19.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-19",
+      "visual_signature": "086798c63337abb30f95d93a30f5a2eaed6ddffd9f8d6589cfdb58c15bccfce6",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-20.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge",
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-20",
+      "visual_signature": "dc827820946e20877ff5a8dceabf891a6112905811bed88b8ed29528172e6d2b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-21.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-21",
+      "visual_signature": "fb94543a4ea23dbadd6380e45cba7335f7b504d4fc90f42dfd807cc31d3f2ff3",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-22.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-22",
+      "visual_signature": "4cca27bb5faf41d18603d9c84b00664a3fdae947b569a55bcd3c9319f2084757",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-23.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-23",
+      "visual_signature": "78ef95a154589bee6d7a1d675eda0f9661e5aac80c8bdab5dc92dacca5222d8e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-24.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-24",
+      "visual_signature": "b102780304c9bdac5a9a770e653982c91e534d22543d38cb8ff995792b0359bb",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-25.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-25",
+      "visual_signature": "9fda2acc92d9a0b8f4b6d654fb345edf1a78efb9cbe2ade9c984606dab1dd929",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-26.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-26",
+      "visual_signature": "41f102835e39760d59c7708b7cd658dd63827593d64ad06ede294d2ee22c33bf",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-27.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-27",
+      "visual_signature": "50b026a8d49caabb2a2abb2f71c6060a87aded36cfd902541768866ae3aa6ae1",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-28.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-28",
+      "visual_signature": "4c3c4bafd0dc6d987043fb85843dfe2cf9a83c3ef04d90e51446e9483775df60",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-29.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-29",
+      "visual_signature": "7f6684b9d68e117dc6f7441b784d9f4b493bfe29267de317746314a20fefefdc",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-30.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-30",
+      "visual_signature": "bc559a55d98b2436eeae8ddb2304d10a70006244effa364ac3e3a7615272cb64",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-31.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-31",
+      "visual_signature": "e41f378e9894b87647682ae0293fd40fd6c428a786bb0848d53486257db2707b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-32.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-32",
+      "visual_signature": "da2b21e8a59bfe613209dfffcdaa3ac686402b53ad5e1cda7979e6412da07276",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-33.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-33",
+      "visual_signature": "d8ad124bf2a1c68b6d2c1925f2fa8087671c0ab0a5e42ae1c2135c8f914cc3e2",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-34.png",
+      "template_id": "book_wisdom_archive",
+      "frame_id": "book_archive_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-34",
+      "visual_signature": "032ec484991c845801312de45f004a17cccaf293651757cd455b8b3c69f53e13",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-35.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-35",
+      "visual_signature": "353d87d5ea9afb52dd7c7d0d4b8df29fbe872bdaf854e25c56d48aa0b02ee7a0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-36.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-36",
+      "visual_signature": "8ba5e3ef66b7b7483a4f0cd2dd0277dcc9a20b3251bfd4fea41e9a4ec448f134",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-37.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-37",
+      "visual_signature": "70012b6b366ee4e0fd7fa3ac773aecc86994a90c89a11be126ca0e4e164dceca",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-38.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-38",
+      "visual_signature": "39274e77eab1ae50dfd574c8fa76194ad2d85d9cf791c7642c87739468c76008",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-39.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-39",
+      "visual_signature": "6ea64b027ecde478f085c7133402739d62762a5735800c4e7002cdc5afc6f11a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-40.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-40",
+      "visual_signature": "ad62f43fd1db93a3c3006de9c40d0c64e95ad3e3b1b3f3584043e6c4cda1c20b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-41.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-41",
+      "visual_signature": "151e627ef384d082878806302d99b9c2654fbfda392874bbe69fdef795d73205",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-42.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-42",
+      "visual_signature": "09016c7424ed55e5789541b2ffbae1fc4b0f2b6906ab23ca15aad700cb1fe795",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-43.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-43",
+      "visual_signature": "6aea365a1a71bb3e43fb2c7f84803dbe7b88d924c061bc0ee5dc37b647d7e81b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-44.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-44",
+      "visual_signature": "441729f70a104e99e76795cd1e2b9f7576422c97156d523509848175be190e13",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-45.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-45",
+      "visual_signature": "dd3436109fb1757fe890187e323f0f020e426d10b0cef72094859dc32a3ebc8f",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-46.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-46",
+      "visual_signature": "577518ac52addf669d2b3501b01a2df75ba2983f774a917a7cfd11e5fa7ee23b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-47.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge",
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-47",
+      "visual_signature": "54911f766a62921bb20a15d67eb9e2988b2b8123c3c27011f6de337f85c53145",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-48.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "bridge",
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-48",
+      "visual_signature": "c7c054637061baaa663759af6ae782583676ff22a05d4f051bd48fa492b0da57",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-49.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star",
+        "bridge"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-49",
+      "visual_signature": "66ebe17eceeea9c3e777582aceb89f21d5408cd5ca7bfb4df92c21f025c84077",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "resilience-journey",
+      "title": "Resilience / Journey",
+      "file": "resilience-journey/resilience-journey-50.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "mountain",
+      "supporting_symbols": [
+        "north_star"
+      ],
+      "themes": [
+        "resilience",
+        "journey"
+      ],
+      "seed": "resilience-journey-50",
+      "visual_signature": "146ec68841d7d8a42cea6ee91ba54c9e8c5262106d546b8c5d8278074760f8b1",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-01.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-01",
+      "visual_signature": "d5ba156682c73cbfdb762722e7ab137d6a3cf284af4d95b5576ff19f9a2f34e8",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-02.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-02",
+      "visual_signature": "93f521210a995b50a2256a565d0fdc814ff7a6cbda35ccce8c0b8b33ed86d2c1",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-03.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring",
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-03",
+      "visual_signature": "3f47ec1ed30c542fcd129afa66291e6e1a08d52b3039c5cfeb009236d5b169f6",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-04.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring",
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-04",
+      "visual_signature": "a3996d530d51aa10218f746bdfb1a2c5e8c287b61d50726bfc2ba94da67cd4bf",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-05.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-05",
+      "visual_signature": "db5614d4d8d9e95aae02ff9d374c284b082d221e949b7bd761c9e66ec4a36c45",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-06.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon",
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-06",
+      "visual_signature": "374c37cf197bf7c29ef6822bdea9fe686e20c4a0cacfe1a190f024c86bf377d8",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-07.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot",
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-07",
+      "visual_signature": "87c4509adbbd4aaa98a31431dacd2b5ca79bbc596b9e263c226d6e6c9a3789a1",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-08.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring",
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-08",
+      "visual_signature": "8e15976d806d04a267b4752f5836c4c0708eb9437923d8789cd3e7f7fd28b53e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-09.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring",
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-09",
+      "visual_signature": "0ed05748efae24fda293c4dea8658539d4e1cd5992234b96038de8ea44cc8216",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-10.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "woven_cord",
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-10",
+      "visual_signature": "e031bee54a0d24dd4de8e9420d1ae86f066a0564ab001de1b4001efa4bbb42f5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-11.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot",
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-11",
+      "visual_signature": "e43abfbf184b375925121d0b7dc721aac92ef110101c88664e95f242ff38234b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-12.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-12",
+      "visual_signature": "d463d5243c04afb7fb8c69ef5461e7546ac736c4cec1b277f7355ed7e725a930",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-13.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-13",
+      "visual_signature": "7b41183075a3b6242c63e9220f5494bd7213eee16fb5ad1de093eaf3047982cf",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-14.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon",
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-14",
+      "visual_signature": "b907ff41f0e0ff1695e33b420606a2ac4ceef9567dd5a2bcea5785f8c4469113",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-15.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot",
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-15",
+      "visual_signature": "9c5042d9da25d5d59cd246061f4bcef7b59288ba11b4c7d16fad788fae178e41",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-16.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-16",
+      "visual_signature": "027b32e4afb863d4c9d82509e4f68e0aacc6afd4c5a947980e46fb7a971ba5aa",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-17.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring",
+        "bridge"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-17",
+      "visual_signature": "0a5c68333755088a75298a93ef584abebb290c2ddecfe8ee358ae9a5679c11a9",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-18.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-18",
+      "visual_signature": "732120eaedbd7042bcc14eef8d3e0e53be4248a350d4e591f169c60b468bfe01",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-19.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "botanical_crest_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-19",
+      "visual_signature": "f3c03c4304771ced97724699b63c014e84b0b2882f82a4dae6d10cfe89ad4fcc",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-20.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring",
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-20",
+      "visual_signature": "9f4d72f9904800be61daa981ab9e57ebd23d176e72f6f9c170138efb841336c0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-21.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-21",
+      "visual_signature": "d56864176aa26908dbd430a57e8156213557a342f51ef24dc014dbecdc7bc96b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-22.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-22",
+      "visual_signature": "73bdd122d720e5052453ecf22210b24cf2d11c31a0670b1c3943acc0b799f455",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-23.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-23",
+      "visual_signature": "700d44503da8e35b47002b45b51cf395f1404d949e708763764ceaa5b95a8ce2",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-24.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-24",
+      "visual_signature": "331c44bace2a8c6512975f9a6790bad4d8f76db491a78d9a465d9a861e508d28",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-25.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring",
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-25",
+      "visual_signature": "ea755c3116ce0934e33c5f13e5a8d699a9a044643957840cf3421819f8cbf7cb",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-26.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-26",
+      "visual_signature": "4663871b1f91770da69b503d45a4f84fb1af31923648baa6b94b08695c769c16",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-27.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "woven_cord",
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-27",
+      "visual_signature": "2d4ae61ae98326002501f1dd8d1fe105e35cb8635804919567788a0836cab1ae",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-28.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-28",
+      "visual_signature": "fafc4c0aef8348ccdf76b70c610f7c6c02bb12c1fb77644713f0a76ae64a9a7c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-29.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-29",
+      "visual_signature": "ff2c86100c70cbe6bfc366abdb700b7995ba2f39eb55bc0c1bc454c7af486eb7",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-30.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "bridge",
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-30",
+      "visual_signature": "55d18405284ba2697d07c7a4f4bc4525bf3f39a30e2de06fdb56527980ede9e0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-31.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-31",
+      "visual_signature": "2d45801fffdcf4b52eb46e7500646a932248f272c9295c9766929b7a3c20e39a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-32.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-32",
+      "visual_signature": "8c62b80aeacd2c7b1e67a018e592cd681519d06931c8e141687c595e329af9cf",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-33.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring",
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-33",
+      "visual_signature": "ab0899f76acd24e5deb7046620b5e50d9220a7b128a1bf96f335d9760744d8eb",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-34.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-34",
+      "visual_signature": "f70b7bcbb99610ec0c50ac3a58680f0dc5d80fd4a8a738e9a7932c0043edca7a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-35.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-35",
+      "visual_signature": "bc38fa3f27a1ae9b06ba608124d0755d674c7b8e8b43299c7f6622206190a96e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-36.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-36",
+      "visual_signature": "9c6ebef2dfb4b0295fe7f68c030398b7e9da6e5b763689ac30635c8861adc908",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-37.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-37",
+      "visual_signature": "ba1f8088784e71caa1ce9db6056ef9fd9bed9a2a110070135dc5583784a9de2c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-38.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-38",
+      "visual_signature": "498433da8473145ebf4d9621e2a72514ae546b264292506180b9f34d9dcf97a0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-39.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-39",
+      "visual_signature": "d85036a80804d019d70923a6565249a25069a0d8a4fedf8389479057a68a7031",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-40.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-40",
+      "visual_signature": "2b6fa89794f91788661e51f219b228f51c48e8a571dd76868d1630be1b5fb511",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-41.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon",
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-41",
+      "visual_signature": "0cb7efab7bdaff885e0865f0752ff450fa75b5c716af6f6b489080e66de58d8a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-42.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot",
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-42",
+      "visual_signature": "299b5538a62de1390a53c17ead12692d6a43671cb225fb0a1dcba22da505a8fb",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-43.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-43",
+      "visual_signature": "f2949e71f3e0c9e5b3a7e23ef046671314950daf8f4ae612524a241ef386e119",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-44.png",
+      "template_id": "circular_legacy_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-44",
+      "visual_signature": "d512115fad689406ae30b605fb5a4971ba9533962f47dc9bebb8a9775ceda261",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-45.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-45",
+      "visual_signature": "c79cb0a80dbce721f14b04761b9ee56d8f8743c47668ea366ec3873601106ccc",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-46.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot",
+        "woven_cord"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-46",
+      "visual_signature": "beec9696a23efe6b6c5891c8e3d08f9a88aa1e836d9b34feff5a6877deda0a15",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-47.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-47",
+      "visual_signature": "5e7cf154c8e6b45359030a9eedef03c641ac2233326acecaf2bbab933418fa48",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-48.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ribbon"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-48",
+      "visual_signature": "9998e1249dbf1b3ec8c9b414e59d3446536d59843785f0ee9512a0192df3d121",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-49.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "ring"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-49",
+      "visual_signature": "879dfd1058b130dd4136e813a4003a2e30effe893daf9cc5a3dd9d7f7e4952ad",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "gratitude-love",
+      "title": "Gratitude / Love / Unity",
+      "file": "gratitude-love/gratitude-love-50.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "laurel",
+      "supporting_symbols": [
+        "knot"
+      ],
+      "themes": [
+        "gratitude",
+        "love",
+        "unity"
+      ],
+      "seed": "gratitude-love-50",
+      "visual_signature": "8de3dfe7cff3e54b028ea7c0292a1097a36ae79e7eec1bd46d1b858f8c515367",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-01.png",
+      "template_id": "memory_lantern_emblem",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-01",
+      "visual_signature": "c50819c9217489f18006c80fa4397293d45af396bf9ff9d7fa635a8a22efbb86",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-02.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield",
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-02",
+      "visual_signature": "f7add252af7b48b5c40b446467fc7a2967a499b3c62fd82134033bcd1008ac0a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-03.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge",
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-03",
+      "visual_signature": "ff7f6e0869d9b8b58afbbfda0ad5bd00fd0bf338fd119a1f547cf925564d05f7",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-04.png",
+      "template_id": "mountain_resilience_crest",
+      "frame_id": "mountain_resilience_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-04",
+      "visual_signature": "fa95364111b7b5412d716db4dd68b2d3ec6bb5d120ba933a38bae8dd21b74cb9",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-05.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge",
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-05",
+      "visual_signature": "bb05bceaae83ef53e49d01a1e04f96ae5553bfb63fdcbee6369b5d05f0a21da0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-06.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-06",
+      "visual_signature": "d60de7230f7ef93cbeb0cec2b0f68e8ffd6c9b7e230adb942b8c9144b572daf4",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-07.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge",
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-07",
+      "visual_signature": "b23d823cffa335ea27fd1b8b9b8b89d9b483f022c2ee196e0f5ef4940dfa164b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-08.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield",
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-08",
+      "visual_signature": "e12e575caaf3845904727be2035b16f2721ad3dd58975ebf78935c9cc3943772",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-09.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-09",
+      "visual_signature": "ed6f9c1d22c9f5efaa7795f554271f0c42e20125d817b250d31958108048fe33",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-10.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-10",
+      "visual_signature": "d28ce7e3468c98e33f5c99c4a9c5d6c634aebb7d61ae299ec115a8066825de1c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-11.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-11",
+      "visual_signature": "9cc4f76d98b0a9c55fac1fff9667254a4c36c3db5d398d02919cc9d5cee54ade",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-12.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-12",
+      "visual_signature": "d3b39092a478896bd632868b06618af6134c727a8440fd8efedcb94686793f05",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-13.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield",
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-13",
+      "visual_signature": "3cf9945211291114684a5bb57de21484c5e85ab846e7dac539b7ec877c6806f8",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-14.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch",
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-14",
+      "visual_signature": "9408d82ef89b1fd19f5c19627f09ced7dbbe453932533f8955862f19a3e96386",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-15.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-15",
+      "visual_signature": "4dc7f0353609c146f80d5e13a9add13ce3180f54673f77daaffe5053c5ac43a4",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-16.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-16",
+      "visual_signature": "6350206eb326c30dd55fc838ffd2b87cf0277b0ad5ff00f52cc408baa07501e8",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-17.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch",
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-17",
+      "visual_signature": "983aa8161d4c99fedcf75405dac7820f9e67b1ded4f9e0c1485f71ff1270af74",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-18.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-18",
+      "visual_signature": "fab25991a0f8cc546d1b2237b5b8855bd8d5504600325d9d666432933e4a78b1",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-19.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-19",
+      "visual_signature": "fd3e24fb7bcc9eb1f3a257a1d86033e52fc448ccb54db2af20853617d77462c5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-20.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-20",
+      "visual_signature": "6be028dde440ce4d8287df3c2e8990b34ad6ace74060c71161afa8c93d15e214",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-21.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-21",
+      "visual_signature": "041d5f36767a8e8941d845bcd34a6dec5479f79cbf3e23022db5e6e750b7ffa9",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-22.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-22",
+      "visual_signature": "3e4f4a2d7266ef25feddb43e617979dc676b2f0fc0a5dcdecda2321d846964f7",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-23.png",
+      "template_id": "botanical_lineage_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-23",
+      "visual_signature": "414efd0eda7526ff091b342788c1c806d190eb976baf2c5c7f5da098cf1be0e4",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-24.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-24",
+      "visual_signature": "23c60a5635c3e9b8537c400cc5c8f222287ea7cb892ce3cfcdf51d5d05cd39ea",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-25.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-25",
+      "visual_signature": "76dbd6197178585736bcec56376229bac4b21ef2664b6ea14abbfbfc16cf36e0",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-26.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch",
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-26",
+      "visual_signature": "a0a8abb546615d2d7667bee6cfc0ef8c1c5cc77b0e161082071e2562a3c7878f",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-27.png",
+      "template_id": "compass_journey_emblem",
+      "frame_id": "compass_journey_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-27",
+      "visual_signature": "98faa2ec1f81757fc9b2ed6fe1eb5c217fd250763c9826c21e06978ed5abf53c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-28.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield",
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-28",
+      "visual_signature": "92fc78bbcac0322f0b964077a7401ab5c7dabcf6cf425eb4b2e7540faa3f5322",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-29.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-29",
+      "visual_signature": "d39b702e887a3ec78ae837e4f4f8eaf7b9c230e3c5a7c40679fb8db097c1a0af",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-30.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-30",
+      "visual_signature": "48dc840972057fe784324718fe08ddcb586e5b427bd195eaa578c7bf46b7690c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-31.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge",
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-31",
+      "visual_signature": "50ce76020ab5ce28e526ac0b1d1500f5da60fe9907aa38b08eb1217be7b8e5eb",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-32.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-32",
+      "visual_signature": "e47b22370ecdf64e0ad3b4b8c25852473dbe70181274a94657ac6d6a142ba07d",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-33.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-33",
+      "visual_signature": "42dec171ff40f4cd86cd1ddcbc8c6ed6e5342d53c5fff53a948e5b13bcc9353e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-34.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-34",
+      "visual_signature": "83cdb9ba8db52104820fa0d25a48136f58f79fcbea087c9e8d0940fd0373cb56",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-35.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-35",
+      "visual_signature": "e8ad6255314836ca4ae3dc99a9ec67f9ea42e0fc28764cfeb0da5e1e352cac64",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-36.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge",
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-36",
+      "visual_signature": "6f22f52bc07e63e50648d429efa9ab09dda520aa7c49c4bff90e304f22bcbd73",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-37.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-37",
+      "visual_signature": "3858dbe20ae2546e8b51cc643308a023bac4e7bb90d940a55d0bced50db0961f",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-38.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-38",
+      "visual_signature": "c1ed5cd7be3c379ac72934bf84b2e2d6a37af9b2f0a55e56f516ebd35ccf0652",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-39.png",
+      "template_id": "laurel_recognition_seal",
+      "frame_id": "legacy_seal_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-39",
+      "visual_signature": "a905cf26cdc3fb96dc7ad0caeb761625618d6100acfb926c49d3dd9437b206bc",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-40.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "arched_shield_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-40",
+      "visual_signature": "424cc709778cd2066e4fa9f3c7be2a24722421ce9263b4e21b74dc2d8e7a47a3",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-41.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "horizon_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield",
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-41",
+      "visual_signature": "48af0e13dbb5bd94ee5b99dae614348e6c00db07bbeb63144ae23f7a1b3f61ef",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-42.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-42",
+      "visual_signature": "cded67243e8df111e95c77b73dd43befda64dff9da0a2d8991e06186689638a3",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-43.png",
+      "template_id": "minimal_luxury_monogram",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-43",
+      "visual_signature": "4db7d1f82924d5bc4fb455d2442a57fad981be45af8e172a6b9e09cb4d346d17",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-44.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "shield",
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-44",
+      "visual_signature": "29760145572b010393e706a036e000d100ed21e723b132e9e6153139e757684a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-45.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-45",
+      "visual_signature": "7fce572d6306cba9a81bbafcdb0adc7b0078da05a104edce8cd8dca856a5869a",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-46.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "rooted_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-46",
+      "visual_signature": "743e0b49623aac8a95eb163d73aba874c78bb1abea0b77c2da2d781269496b4c",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-47.png",
+      "template_id": "modern_black_gold_symbolic_crest",
+      "frame_id": "minimal_luxury_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge",
+        "shield"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-47",
+      "visual_signature": "fe148700953d4d31a434e9d3e6c89a07d7dde58c8d0917bee6f56510877f442b",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only",
+          "output_may_be_visually_dense"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-48.png",
+      "template_id": "gothic_archive_crest",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "branch"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-48",
+      "visual_signature": "74481896bfc13933db8a0f854dec14ee08b0321d87a2b767aa04d2e4e13c33d5",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-49.png",
+      "template_id": "classic_shield_archive",
+      "frame_id": "classic_shield_frame",
+      "field_layout_id": "arched_archive_panel",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-49",
+      "visual_signature": "f5e4893dbf41f575ccceea67114e6a682773a9510afaa792a2ab3167d03c4c8e",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    },
+    {
+      "group": "protection-home",
+      "title": "Protection / Home / Belonging",
+      "file": "protection-home/protection-home-50.png",
+      "template_id": "key_protection_emblem",
+      "frame_id": "key_protection_frame",
+      "field_layout_id": "single_archive_field",
+      "main_symbol": "key",
+      "supporting_symbols": [
+        "bridge"
+      ],
+      "themes": [
+        "protection",
+        "home",
+        "belonging"
+      ],
+      "seed": "protection-home-50",
+      "visual_signature": "d60563b7caea3d66be33df230c759ec7119561104c7ec4527030deb9586aa549",
+      "quality": {
+        "passed": true,
+        "hard_failures": [],
+        "warnings": [
+          "internal_review_only"
+        ]
+      }
+    }
+  ]
+}
