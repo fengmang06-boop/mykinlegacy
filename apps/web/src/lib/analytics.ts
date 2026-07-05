@@ -64,57 +64,77 @@ export function trackEvent(
   payload: Record<string, unknown> = {},
   options: { durationMs?: number; stepName?: string } = {}
 ): void {
-  const sanitized = sanitizeAnalyticsPayload(payload);
-  if (process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true" && Object.keys(sanitized).length > 0) {
-    console.debug("[analytics]", eventName, sanitized);
-  } else if (process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true") {
-    console.debug("[analytics]", eventName);
-  }
-
-  if (typeof window === "undefined") {
-    return;
-  }
-
-  const body = JSON.stringify({
-    data: {
-      event_name: eventName,
-      order_id: typeof sanitized.order_id === "string" ? sanitized.order_id : undefined,
-      order_number: typeof sanitized.order_number === "string" ? sanitized.order_number : undefined,
-      step_name: options.stepName ?? stepNameForEvent(eventName, sanitized),
-      duration_ms: options.durationMs,
-      client_timestamp: new Date().toISOString(),
-      metadata: sanitized
+  try {
+    const sanitized = sanitizeAnalyticsPayload(payload);
+    if (process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true" && Object.keys(sanitized).length > 0) {
+      console.debug("[analytics]", eventName, sanitized);
+    } else if (process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true") {
+      console.debug("[analytics]", eventName);
     }
-  });
 
-  const url = `${analyticsBaseUrl()}/analytics/events`;
-  if (navigator.sendBeacon) {
-    const sent = navigator.sendBeacon(url, new Blob([body], { type: "application/json" }));
-    if (sent) {
+    if (typeof window === "undefined") {
       return;
     }
-  }
 
-  void fetch(url, {
-    method: "POST",
-    headers: { "content-type": "application/json" },
-    body,
-    cache: "no-store",
-    keepalive: true
-  }).catch(() => {
+    const body = JSON.stringify({
+      data: {
+        event_name: eventName,
+        order_id: typeof sanitized.order_id === "string" ? sanitized.order_id : undefined,
+        order_number: typeof sanitized.order_number === "string" ? sanitized.order_number : undefined,
+        step_name: options.stepName ?? stepNameForEvent(eventName, sanitized),
+        duration_ms: options.durationMs,
+        client_timestamp: new Date().toISOString(),
+        metadata: sanitized
+      }
+    });
+
+    const url = `${analyticsBaseUrl()}/analytics/events`;
+    try {
+      if (navigator.sendBeacon) {
+        const sent = navigator.sendBeacon(url, new Blob([body], { type: "application/json" }));
+        if (sent) {
+          return;
+        }
+      }
+    } catch {
+      // Fall through to fetch. Analytics must never crash customer pages.
+    }
+
+    try {
+      void fetch(url, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body,
+        cache: "no-store",
+        keepalive: true
+      }).catch(() => {
+        // Analytics must never block checkout, payment, vault, or download flows.
+      });
+    } catch {
+      // Analytics must never block checkout, payment, vault, or download flows.
+    }
+  } catch {
     // Analytics must never block checkout, payment, vault, or download flows.
-  });
+  }
 }
 
 export function trackFunnelStepViewed(stepName: string, payload: Record<string, unknown> = {}): () => void {
-  const startedAt = now();
-  trackEvent("funnel_step_viewed", { ...payload, step_name: stepName }, { stepName });
+  const startedAt = safeNow();
+  try {
+    trackEvent("funnel_step_viewed", { ...payload, step_name: stepName }, { stepName });
+  } catch {
+    // Analytics must never crash customer pages.
+  }
   return () => {
-    trackEvent(
-      "funnel_step_completed",
-      { ...payload, step_name: stepName },
-      { stepName, durationMs: Math.round(now() - startedAt) }
-    );
+    try {
+      trackEvent(
+        "funnel_step_completed",
+        { ...payload, step_name: stepName },
+        { stepName, durationMs: Math.round(safeNow() - startedAt) }
+      );
+    } catch {
+      // Analytics must never crash customer pages.
+    }
   };
 }
 
@@ -146,6 +166,6 @@ function sanitizeValue(value: unknown): unknown {
   return undefined;
 }
 
-function now(): number {
+function safeNow(): number {
   return typeof performance !== "undefined" ? performance.now() : Date.now();
 }

@@ -327,8 +327,12 @@ export function normalizeApiBaseUrl(baseUrl: string): string {
 }
 
 export function createClientId(): string {
-  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
-    return crypto.randomUUID();
+  try {
+    if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+      return crypto.randomUUID();
+    }
+  } catch {
+    // Fall back to a non-cryptographic client id for request correlation only.
   }
   return `client_${Date.now()}_${Math.random().toString(36).slice(2)}`;
 }
@@ -338,11 +342,15 @@ function getCorrelationId(): string {
     return createClientId();
   }
   const key = "ai_heritage_correlation_id";
-  const existing = window.sessionStorage.getItem(key);
-  if (existing) {
-    return existing;
+  try {
+    const existing = window.sessionStorage.getItem(key);
+    if (existing) {
+      return existing;
+    }
+    const next = createClientId();
+    window.sessionStorage.setItem(key, next);
+    return next;
+  } catch {
+    return createClientId();
   }
-  const next = createClientId();
-  window.sessionStorage.setItem(key, next);
-  return next;
 }
