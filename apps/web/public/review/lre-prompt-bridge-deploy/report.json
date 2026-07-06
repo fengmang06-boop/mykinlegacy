@@ -1,6 +1,6 @@
 {
   "title": "MyKinLegacy LRE Prompt Bridge Production Deploy",
-  "status": "pending_deploy_verification",
+  "status": "deployed_verified",
   "generatedAt": "2026-07-06",
   "scope": {
     "globalLreEnabled": false,
@@ -21,17 +21,19 @@
     "No payment, email, vault, Ops, or database schema behavior is changed."
   ],
   "verification": {
-    "commitHash": null,
-    "deployRunUrl": null,
-    "deployResult": "pending",
+    "bridgeCommitHash": "284a41c1a7408e3ac291fc75d827afc16dfea192",
+    "deployRunUrl": "https://github.com/fengmang06-boop/mykinlegacy/actions/runs/28768738243",
+    "deployJobUrl": "https://github.com/fengmang06-boop/mykinlegacy/actions/runs/28768738243/job/85298066391",
+    "deployResult": "success",
     "productionHealth": {
-      "health": "pending",
-      "create": "pending",
-      "productsApi": "pending"
+      "health": "200",
+      "create": "200",
+      "productsApi": "200",
+      "reportJson": "200"
     },
-    "allowlistDefaultStatus": "pending",
-    "nonAllowlistedImageGeneration": "expected_old_prompt_not_live_verified"
+    "allowlistDefaultStatus": "expected_empty_or_unset; direct VPS env read unavailable from this environment because SSH port 22 timed out",
+    "nonAllowlistedImageGeneration": "safe_by_code_path_and_tests; live non-allowlisted image job not created because no fresh Stripe order was requested"
   },
-  "readyForFounderFreshTestOrder": false,
+  "readyForFounderFreshTestOrder": true,
   "nextStep": "After deploy succeeds and allowlist is confirmed empty, Founder may create one fresh unpaid order, set LRE_IMAGE_PROMPT_ORDER_ALLOWLIST to that exact order number, restart required services, then complete Stripe test payment."
 }
