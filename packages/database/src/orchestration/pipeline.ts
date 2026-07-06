@@ -882,24 +882,24 @@ async function generateOpenAiImage(input: {
     input.prompt,
     input.negative_prompt ? `Negative instructions: ${input.negative_prompt}` : null
   ].filter(Boolean).join("\n\n");
+  const requestBody = {
+    model: input.config.modelCode,
+    prompt,
+    n: 1,
+    size: input.config.size,
+    quality: input.config.quality
+  };
   const response = await fetch("https://api.openai.com/v1/images/generations", {
     method: "POST",
     headers: {
       "content-type": "application/json",
       authorization: `Bearer ${input.config.apiKey}`
     },
-    body: JSON.stringify({
-      model: input.config.modelCode,
-      prompt,
-      n: 1,
-      size: input.config.size,
-      quality: input.config.quality,
-      output_format: "png"
-    })
+    body: JSON.stringify(requestBody)
   });
   const responseJson = await safeJson(response);
   if (!response.ok) {
-    throw new Error(`openai_image_http_${response.status}`);
+    throw new Error(`openai_image_http_${response.status}_${safeProviderErrorCode(responseJson)}`);
   }
 
   const first = Array.isArray(responseJson.data) ? responseJson.data[0] : null;
@@ -932,6 +932,18 @@ function safeErrorCode(error: unknown): string {
     return error.message.replace(/[^a-z0-9_:-]+/gi, "_").slice(0, 120);
   }
   return "ai_provider_failed";
+}
+
+function safeProviderErrorCode(value: Record<string, unknown>): string {
+  const error = isRecord(value.error) ? value.error : {};
+  const parts = [
+    typeof error.code === "string" ? error.code : null,
+    typeof error.param === "string" ? error.param : null,
+    typeof error.message === "string" ? error.message : null
+  ]
+    .filter(Boolean)
+    .join("_");
+  return (parts || "unknown_provider_error").replace(/[^a-z0-9_:-]+/gi, "_").slice(0, 90);
 }
 
 async function safeJson(response: Response): Promise<Record<string, unknown>> {
