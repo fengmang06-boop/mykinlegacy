@@ -285,7 +285,7 @@ function normalizeSymbol(value: string): string {
 }
 
 function safeMetadataValue(value: string): string {
-  return value.replace(/[;\0\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 1800);
+  return value.replace(/[;\0\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 8000);
 }
 
 function shieldHalfWidth(y: number, style: CrestStyle): number {
