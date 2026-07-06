@@ -1,0 +1,48 @@
+{
+  "diagnostic_commit": "",
+  "deployed_git_commit": {
+    "ok": true,
+    "stdout": "1794835da8dc75594e84dbad7f29cf72308f9593",
+    "error": null
+  },
+  "last_successful_commit_file": "1794835da8dc75594e84dbad7f29cf72308f9593",
+  "git_status_short": {
+    "ok": true,
+    "stdout": "?? .pnpm-store/\n?? deployment/.last-successful-image\n?? deployment/.previous_image\n?? deployment/.production.lock",
+    "error": null
+  },
+  "last_successful_image": "ghcr.io/fengmang06-boop/mykinlegacy-app:1794835da8dc75594e84dbad7f29cf72308f9593",
+  "current_worker_config_image": {
+    "ok": true,
+    "stdout": "ghcr.io/fengmang06-boop/mykinlegacy-app:1794835da8dc75594e84dbad7f29cf72308f9593",
+    "error": null
+  },
+  "current_worker_image_id": {
+    "ok": true,
+    "stdout": "sha256:7cc000007a043f51d0a81e57a2c280bef7473bf0108eec648fa35606d3614737",
+    "error": null
+  },
+  "expected_image_id": {
+    "ok": true,
+    "stdout": "sha256:7cc000007a043f51d0a81e57a2c280bef7473bf0108eec648fa35606d3614737",
+    "error": null
+  },
+  "expected_repo_digests": {
+    "ok": true,
+    "stdout": "[\"ghcr.io/fengmang06-boop/mykinlegacy-app@sha256:7cc000007a043f51d0a81e57a2c280bef7473bf0108eec648fa35606d3614737\"]",
+    "error": null
+  },
+  "image_id_match": true,
+  "allowlist_present": true,
+  "allowlist_value_hash_prefix": "6f46f828b124ba79",
+  "running_worker_probe": {
+    "ok": true,
+    "stdout": "{\"dbEntry\":\"/app/packages/database/dist/index.js\",\"storageEntry\":\"/app/packages/storage/dist/index.js\",\"aiEntry\":\"/app/packages/ai/dist/index.js\",\"pipelinePath\":\"/app/packages/database/dist/orchestration/pipeline.js\",\"hasSelectPngPrompt\":true,\"hasApplyAllowlistedLrePromptReplacement\":true,\"pngProbeHasPromptSource\":true,\"pngProbeHasSelectedPrompt\":true,\"pngProbeHasPveScore\":true}",
+    "error": null
+  },
+  "one_off_worker_probe": {
+    "ok": true,
+    "stdout": "time=\"2026-07-06T09:36:57Z\" level=warning msg=\"volume \\\"mykinlegacy_private_storage\\\" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume\"\ntime=\"2026-07-06T09:36:57Z\" level=warning msg=\"volume \\\"mykinlegacy_mysql_data\\\" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume\"\ntime=\"2026-07-06T09:36:57Z\" level=warning msg=\"volume \\\"mykinlegacy_redis_data\\\" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume\"\n Container mykinlegacy_worker Running \n Container mykinlegacy_mysql Running \n Container mykinlegacy_redis Running \n Container mykinlegacy_nginx Running \n Container mykinlegacy_web Running \n Container mykinlegacy_api Running \n Container mykinlegacy-worker-run-21ed1015f180 Creating \n Container mykinlegacy-worker-run-21ed1015f180 Created \n{\"dbEntry\":\"/app/packages/database/dist/index.js\",\"storageEntry\":\"/app/packages/storage/dist/index.js\",\"aiEntry\":\"/app/packages/ai/dist/index.js\",\"pipelinePath\":\"/app/packages/database/dist/orchestration/pipeline.js\",\"hasSelectPngPrompt\":false,\"hasApplyAllowlistedLrePromptReplacement\":false,\"pngProbeHasPromptSource\":false,\"pngProbeHasSelectedPrompt\":false,\"pngProbeHasPveScore\":false}",
+    "error": null
+  }
+}
