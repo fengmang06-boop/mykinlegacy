@@ -16,7 +16,13 @@ import { ApiClient, ApiClientError, normalizeApiBaseUrl } from "./lib/api-client
 import { sanitizeAnalyticsPayload } from "./lib/analytics";
 import { getSafetyMessage } from "./lib/safety";
 import { areRequiredConsentsAccepted } from "./components/checkout-flow";
-import { DownloadVault, formatArtifactSizeLabel, isPlaceholderAsset } from "./components/download-vault";
+import {
+  DownloadVault,
+  downloadFileName,
+  downloadLabel,
+  formatArtifactSizeLabel,
+  isPlaceholderAsset
+} from "./components/download-vault";
 import { PrivateVaultPreview } from "./components/vault-meaning";
 
 const testDir = dirname(fileURLToPath(import.meta.url));
@@ -100,6 +106,30 @@ describe("customer frontend flow", () => {
       throw new Error("fetch_call_missing");
     }
     expect(init.headers?.["idempotency-key"]).toBeTruthy();
+  });
+
+  it("vault download UI uses direct binary URLs and file-type labels", async () => {
+    const source = await readFile(join(testDir, "components/download-vault.tsx"), "utf8");
+    const api = new ApiClient("/api/v1");
+
+    expect(api.createAssetDownloadUrl("raw token", "asset/id")).toBe(
+      "/api/v1/downloads/raw%20token/assets/asset%2Fid/file"
+    );
+    expect(downloadLabel({ deliverable_code: "crest_variant_1_png", file_ext: "png" })).toBe(
+      "Download PNG"
+    );
+    expect(downloadLabel({ deliverable_code: "family_story_pdf", file_ext: "pdf" })).toBe(
+      "Download PDF"
+    );
+    expect(downloadLabel({ deliverable_code: "download_package_zip", file_ext: "zip" })).toBe(
+      "Download ZIP"
+    );
+    expect(downloadFileName({ friendly_name: "Family Story", file_ext: "pdf" })).toBe(
+      "Family-Story.pdf"
+    );
+    expect(source).toContain("href={downloadUrl(asset)}");
+    expect(source).toContain("download={downloadFileName(asset)}");
+    expect(source).not.toContain("Open Artifact");
   });
 
   it("normalizes raw IP API base URL to relative production API path in browser", () => {

@@ -180,6 +180,29 @@ export function DownloadVault({ token }: { token: string }) {
     }
   }
 
+  function downloadUrl(asset: DownloadAsset): string {
+    return api.createAssetDownloadUrl(token, asset.asset_id);
+  }
+
+  function trackDownloadClick(asset: DownloadAsset) {
+    trackEvent(
+      asset.deliverable_code.includes("zip") ? "zip_download_clicked" : "asset_download_clicked",
+      {
+        asset_id: asset.asset_id,
+        deliverable_code: asset.deliverable_code
+      }
+    );
+    trackEvent(
+      "artifact_downloaded",
+      {
+        asset_id: asset.asset_id,
+        deliverable_code: asset.deliverable_code,
+        file_ext: asset.file_ext
+      },
+      { stepName: "artifact_download" }
+    );
+  }
+
   const sortedAssets = [...assets].sort((a, b) => artifactOrder(a) - artifactOrder(b));
   const hasPlaceholderAssets = sortedAssets.some(isPlaceholderAsset);
   const hasMeaningContext = Boolean(vault?.meaning_profile || vault?.collection_content);
@@ -274,26 +297,48 @@ export function DownloadVault({ token }: { token: string }) {
             keeping.
           </p>
           <div className="vault-download-actions" aria-label="Primary vault downloads">
-            <button
-              className="secondary-button"
-              type="button"
-              onClick={() => (firstPdfAsset ? void download(firstPdfAsset) : undefined)}
-              disabled={!firstPdfAsset || downloadingAsset === firstPdfAsset.asset_id}
-            >
-              {firstPdfAsset && downloadingAsset === firstPdfAsset.asset_id
-                ? "Preparing PDF..."
-                : "Download PDF"}
-            </button>
-            <button
-              className="button"
-              type="button"
-              onClick={() => void downloadCompleteCollection()}
-              disabled={!completeCollectionAsset || downloadingAsset === completeCollectionAsset.asset_id}
-            >
-              {completeCollectionAsset && downloadingAsset === completeCollectionAsset.asset_id
-                ? "Preparing ZIP..."
-                : "Download Collection ZIP"}
-            </button>
+            {isFounderDemo || !firstPdfAsset ? (
+              <button
+                className="secondary-button"
+                type="button"
+                onClick={() => (firstPdfAsset ? void download(firstPdfAsset) : undefined)}
+                disabled={!firstPdfAsset || downloadingAsset === firstPdfAsset.asset_id}
+              >
+                {firstPdfAsset && downloadingAsset === firstPdfAsset.asset_id
+                  ? "Preparing PDF..."
+                  : "Download PDF"}
+              </button>
+            ) : (
+              <a
+                className="secondary-button"
+                href={downloadUrl(firstPdfAsset)}
+                download={downloadFileName(firstPdfAsset)}
+                onClick={() => trackDownloadClick(firstPdfAsset)}
+              >
+                Download PDF
+              </a>
+            )}
+            {isFounderDemo || !completeCollectionAsset ? (
+              <button
+                className="button"
+                type="button"
+                onClick={() => void downloadCompleteCollection()}
+                disabled={!completeCollectionAsset || downloadingAsset === completeCollectionAsset.asset_id}
+              >
+                {completeCollectionAsset && downloadingAsset === completeCollectionAsset.asset_id
+                  ? "Preparing ZIP..."
+                  : "Download Collection ZIP"}
+              </button>
+            ) : (
+              <a
+                className="button"
+                href={downloadUrl(completeCollectionAsset)}
+                download={downloadFileName(completeCollectionAsset)}
+                onClick={() => trackDownloadClick(completeCollectionAsset)}
+              >
+                Download Collection ZIP
+              </a>
+            )}
           </div>
           {hasPlaceholderAssets ? (
             <p className="notice alpha-vault-notice">
@@ -319,26 +364,52 @@ export function DownloadVault({ token }: { token: string }) {
                   {formatArtifactSizeLabel(asset) ? <span>{formatArtifactSizeLabel(asset)}</span> : null}
                 </div>
                 <div>
-                  <button
-                    className="secondary-button"
-                    type="button"
-                    onClick={() => void download(asset)}
-                    disabled={!asset.available || downloadingAsset === asset.asset_id}
-                  >
-                    {downloadingAsset === asset.asset_id ? "Preparing..." : "Open Artifact"}
-                  </button>
+                  {isFounderDemo ? (
+                    <button
+                      className="secondary-button"
+                      type="button"
+                      onClick={() => void download(asset)}
+                      disabled={!asset.available || downloadingAsset === asset.asset_id}
+                    >
+                      {downloadingAsset === asset.asset_id ? "Preparing..." : downloadLabel(asset)}
+                    </button>
+                  ) : asset.available ? (
+                    <a
+                      className="secondary-button"
+                      href={downloadUrl(asset)}
+                      download={downloadFileName(asset)}
+                      onClick={() => trackDownloadClick(asset)}
+                    >
+                      {downloadLabel(asset)}
+                    </a>
+                  ) : (
+                    <button className="secondary-button" type="button" disabled>
+                      Preparing...
+                    </button>
+                  )}
                 </div>
               </article>
             ))}
           </div>
-          <button
-            className="button"
-            type="button"
-            onClick={() => void downloadCompleteCollection()}
-            disabled={!completeCollectionAsset}
-          >
-            Download Complete Collection
-          </button>
+          {isFounderDemo || !completeCollectionAsset ? (
+            <button
+              className="button"
+              type="button"
+              onClick={() => void downloadCompleteCollection()}
+              disabled={!completeCollectionAsset}
+            >
+              Download Complete Collection
+            </button>
+          ) : (
+            <a
+              className="button"
+              href={downloadUrl(completeCollectionAsset)}
+              download={downloadFileName(completeCollectionAsset)}
+              onClick={() => trackDownloadClick(completeCollectionAsset)}
+            >
+              Download Complete Collection
+            </a>
+          )}
         </section>
 
         <section className="support-layout section-tight">
@@ -380,6 +451,27 @@ export function isPlaceholderAsset(asset: Pick<DownloadAsset, "size_bytes" | "st
 export function formatArtifactSizeLabel(asset: Pick<DownloadAsset, "size_bytes" | "status">): string | null {
   if (!asset.size_bytes || isPlaceholderAsset(asset)) return null;
   return formatBytes(asset.size_bytes);
+}
+
+export function downloadLabel(asset: Pick<DownloadAsset, "file_ext" | "deliverable_code">): string {
+  if (asset.deliverable_code === "download_package_zip" || asset.file_ext === "zip") {
+    return "Download ZIP";
+  }
+  if (asset.file_ext === "pdf") {
+    return "Download PDF";
+  }
+  if (asset.file_ext === "png") {
+    return "Download PNG";
+  }
+  return "Download Artifact";
+}
+
+export function downloadFileName(asset: Pick<DownloadAsset, "friendly_name" | "file_ext">): string {
+  const safeBaseName = asset.friendly_name
+    .trim()
+    .replace(/[^a-z0-9]+/gi, "-")
+    .replace(/^-+|-+$/g, "");
+  return `${safeBaseName || "MyKinLegacy-Artifact"}.${asset.file_ext}`;
 }
 
 function artifactOrder(asset: DownloadAsset): number {

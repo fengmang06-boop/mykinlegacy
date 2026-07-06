@@ -275,6 +275,10 @@ export class ApiClient {
     );
   }
 
+  createAssetDownloadUrl(token: string, assetId: string) {
+    return `${this.baseUrl}/downloads/${encodeURIComponent(token)}/assets/${encodeURIComponent(assetId)}/file`;
+  }
+
   private async request<T>(
     path: string,
     options: { method?: string; body?: Record<string, unknown>; idempotent?: boolean } = {}
