@@ -1,0 +1,128 @@
+name: Repair Path Verify
+
+on:
+  push:
+    branches:
+      - codex/repair-path-verify
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    name: Verify production repair path
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+      ORDER_NUMBER: AHL-20260706-01KWV34E
+    steps:
+      - name: Checkout diagnostic branch
+        uses: actions/checkout@v4
+        with:
+          ref: codex/repair-path-verify
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          : "${PROD_PROJECT_DIR:?Missing PROD_PROJECT_DIR}"
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64
+          import os
+          import sys
+          from pathlib import Path
+
+          raw_key = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw_key.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw_key).decode("utf-8")
+                  key = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "mykinlegacy_prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Run production repair path
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/repair-path-verify
+          set +e
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'bash -s' -- "$PROD_PROJECT_DIR" "$ORDER_NUMBER" > artifacts/repair-path-verify/output.txt 2>&1 <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          PROJECT_DIR="$1"
+          ORDER_NUMBER="$2"
+          cd "$PROJECT_DIR"
+
+          echo "===== PRODUCTION GIT ====="
+          git rev-parse HEAD
+          git status --short
+          echo
+
+          echo "===== LAST SUCCESSFUL IMAGE ====="
+          if [ -f deployment/.last-successful-image ]; then
+            cat deployment/.last-successful-image
+            echo
+          else
+            echo "MISSING"
+          fi
+          echo
+
+          echo "===== CURRENT WORKER IMAGE ====="
+          docker inspect mykinlegacy_worker --format '{{.Config.Image}}'
+          docker inspect mykinlegacy_worker --format '{{.Image}}'
+          echo
+
+          echo "===== ACTUAL PRODUCTION SCRIPT CONTENT ====="
+          sed -n '1,280p' deployment/repair-order-artifacts.sh
+          echo
+
+          echo "===== RUN REPAIR PATH ====="
+          bash deployment/repair-order-artifacts.sh "$ORDER_NUMBER"
+          echo
+
+          echo "===== INSPECT ARTIFACTS AFTER REPAIR ====="
+          bash deployment/inspect-artifacts.sh "$ORDER_NUMBER"
+          REMOTE_SCRIPT
+          status=$?
+          set -e
+          echo "ssh_exit_status=${status}" >> artifacts/repair-path-verify/output.txt
+          exit 0
+
+      - name: Commit verification output
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add artifacts/repair-path-verify/output.txt
+          git commit -m "Capture production repair path verification" || exit 0
+          git push origin HEAD:codex/repair-path-verify
