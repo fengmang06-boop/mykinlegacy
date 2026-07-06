@@ -1,0 +1,71 @@
+{
+  "title": "AI Image Generation Bridge v1",
+  "createdAt": "2026-07-06",
+  "status": "review_only_bridge_ready",
+  "rootCause": "The verified LRE prompt and PVE metadata were active, but production PNG bytes were still drawn by packages/storage/src/png.ts createMvpCrestPngBuffer(), a deterministic pixel-buffer renderer. The prompt was stored as metadata only.",
+  "currentProviderReadiness": {
+    "deterministicRenderer": {
+      "status": "kept_as_fallback",
+      "component": "packages/storage/src/png.ts createMvpCrestPngBuffer()"
+    },
+    "openai": {
+      "status": "configurable_provider_path_added",
+      "existingSkeletonStatusBeforeThisSprint": "packages/ai/src/generation/openai-adapter.ts existed but generateImage threw ai_provider_not_configured",
+      "bridgeStatusNow": "allowlisted LRE PNG artifacts can call OpenAI Images API when LRE_IMAGE_GENERATION_PROVIDER=openai and OPENAI_API_KEY are configured"
+    }
+  },
+  "newExecutionPath": [
+    "order paid / artifact repair",
+    "runManifestDrivenGeneration",
+    "createMaterializedAsset",
+    "createArtifactBody for *_png",
+    "selectPngPrompt",
+    "LRE Prompt Builder allowlist check",
+    "Prompt Verification Engine score >= 95",
+    "tryCreateAiGeneratedPng",
+    "OpenAI Images API if configured",
+    "append PNG metadata",
+    "store production artifact",
+    "fallback to deterministic renderer if unavailable or failed"
+  ],
+  "featureFlags": {
+    "orderPromptAllowlist": "LRE_IMAGE_PROMPT_ORDER_ALLOWLIST",
+    "provider": "LRE_IMAGE_GENERATION_PROVIDER=openai"
+  },
+  "requiredEnvVars": [
+    "LRE_IMAGE_PROMPT_ORDER_ALLOWLIST=<order_number>",
+    "LRE_IMAGE_GENERATION_PROVIDER=openai",
+    "OPENAI_API_KEY=<secret>",
+    "OPENAI_IMAGE_MODEL=gpt-image-1",
+    "OPENAI_IMAGE_SIZE=1024x1024",
+    "OPENAI_IMAGE_QUALITY=high"
+  ],
+  "metadataRecordedInPng": [
+    "prompt_source",
+    "pve_score",
+    "pve_passed",
+    "old_prompt_sha256",
+    "lre_prompt_sha256",
+    "selected_prompt",
+    "negative_prompt",
+    "image_generation_bridge",
+    "image_provider",
+    "image_model",
+    "provider_request_id",
+    "fallback_used",
+    "bridge_error"
+  ],
+  "fallbackBehavior": {
+    "providerNotConfigured": "uses deterministic renderer and records provider_not_configured",
+    "providerFailure": "uses deterministic renderer and records fallback_used=true with bridge_error",
+    "transparentPng": "kept on deterministic renderer for alpha-safe delivery",
+    "oldPromptOrLowPve": "uses deterministic renderer"
+  },
+  "safety": {
+    "globalEnablement": "not added",
+    "allowlistOnly": true,
+    "paymentEmailVaultDownloadTouched": false,
+    "nonAllowlistedOrders": "old renderer unchanged"
+  },
+  "readinessConclusion": "One allowlisted order can now generate real AI PNG artifacts if OpenAI image provider env vars are configured and PVE passes >=95. Without provider configuration, delivery remains safe through deterministic fallback."
+}

@@ -10,12 +10,22 @@ export interface AiProviderRegistry {
 export class DefaultAiProviderRegistry implements AiProviderRegistry {
   private readonly providers = new Map<string, AiProviderAdapter>();
 
-  constructor(input: { mockMode?: MockAiMode; openAiEnabled?: boolean; openAiApiKey?: string } = {}) {
+  constructor(input: {
+    mockMode?: MockAiMode;
+    openAiEnabled?: boolean;
+    openAiApiKey?: string;
+    openAiModelCode?: string;
+    openAiImageSize?: string;
+    openAiImageQuality?: string;
+  } = {}) {
     this.register(new MockAiProvider(input.mockMode));
     this.register(
       new OpenAiAdapterSkeleton({
         enabled: input.openAiEnabled ?? false,
-        apiKey: input.openAiApiKey
+        apiKey: input.openAiApiKey,
+        modelCode: input.openAiModelCode,
+        size: input.openAiImageSize,
+        quality: input.openAiImageQuality
       })
     );
   }

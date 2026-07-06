@@ -12,23 +12,31 @@ export function createMockPngBuffer(): Buffer {
   });
 }
 
+export interface MvpCrestPngPromptMetadata {
+  prompt_source?: "old_prompt" | "lre_prompt";
+  pve_score?: number | null;
+  pve_passed?: boolean;
+  old_prompt_sha256?: string | null;
+  lre_prompt_sha256?: string | null;
+  selected_prompt?: string | null;
+  negative_prompt?: string | null;
+  primary_symbol?: string | null;
+  secondary_symbols?: string[];
+  selected_dna?: string[];
+  image_generation_bridge?: string | null;
+  image_provider?: string | null;
+  image_model?: string | null;
+  provider_request_id?: string | null;
+  fallback_used?: boolean;
+  bridge_error?: string | null;
+}
+
 export function createMvpCrestPngBuffer(input: {
   variant: string;
   house_name?: string;
   symbols?: string[];
   transparent?: boolean;
-  prompt_metadata?: {
-    prompt_source?: "old_prompt" | "lre_prompt";
-    pve_score?: number | null;
-    pve_passed?: boolean;
-    old_prompt_sha256?: string | null;
-    lre_prompt_sha256?: string | null;
-    selected_prompt?: string | null;
-    negative_prompt?: string | null;
-    primary_symbol?: string | null;
-    secondary_symbols?: string[];
-    selected_dna?: string[];
-  };
+  prompt_metadata?: MvpCrestPngPromptMetadata;
 }): Buffer {
   const width = 640;
   const height = 640;
@@ -263,7 +271,33 @@ function resolveSymbolMapping(symbols: string[], promptMetadata?: Parameters<typ
   };
 }
 
-function promptMetadataText(metadata?: Parameters<typeof createMvpCrestPngBuffer>[0]["prompt_metadata"]): string {
+export function appendPngTextMetadata(buffer: Buffer, metadataText: string): Buffer {
+  if (buffer.subarray(0, PNG_SIGNATURE.length).compare(PNG_SIGNATURE) !== 0) {
+    throw new Error("not_png");
+  }
+
+  let offset = PNG_SIGNATURE.length;
+  while (offset <= buffer.length - 12) {
+    const length = buffer.readUInt32BE(offset);
+    const type = buffer.subarray(offset + 4, offset + 8).toString("ascii");
+    if (type === "IEND") {
+      return Buffer.concat([
+        buffer.subarray(0, offset),
+        pngChunk("tEXt", Buffer.from(`Description\0${safeMetadataValue(metadataText)}`)),
+        buffer.subarray(offset)
+      ]);
+    }
+    offset += 12 + length;
+  }
+
+  throw new Error("png_iend_missing");
+}
+
+export function buildMvpCrestPngMetadataText(metadata?: MvpCrestPngPromptMetadata): string {
+  return promptMetadataText(metadata);
+}
+
+function promptMetadataText(metadata?: MvpCrestPngPromptMetadata): string {
   if (!metadata) return "prompt_source=old_prompt; ";
   const parts = [
     ["prompt_source", metadata.prompt_source ?? "old_prompt"],
@@ -274,6 +308,12 @@ function promptMetadataText(metadata?: Parameters<typeof createMvpCrestPngBuffer
     ["primary_symbol", normalizeSymbol(metadata.primary_symbol ?? "") || "none"],
     ["secondary_symbols", (metadata.secondary_symbols ?? []).map(normalizeSymbol).filter(Boolean).join(",") || "none"],
     ["selected_dna", (metadata.selected_dna ?? []).map(safeMetadataValue).join("|") || "none"],
+    ["image_generation_bridge", safeMetadataValue(metadata.image_generation_bridge ?? "") || "none"],
+    ["image_provider", safeMetadataValue(metadata.image_provider ?? "") || "none"],
+    ["image_model", safeMetadataValue(metadata.image_model ?? "") || "none"],
+    ["provider_request_id", safeMetadataValue(metadata.provider_request_id ?? "") || "none"],
+    ["fallback_used", metadata.fallback_used === true ? "true" : "false"],
+    ["bridge_error", safeMetadataValue(metadata.bridge_error ?? "") || "none"],
     ["selected_prompt", safeMetadataValue(metadata.selected_prompt ?? "") || "none"],
     ["negative_prompt", safeMetadataValue(metadata.negative_prompt ?? "") || "none"]
   ];

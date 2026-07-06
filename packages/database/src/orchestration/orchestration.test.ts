@@ -21,6 +21,12 @@ import type {
 const now = new Date("2026-06-29T00:00:00.000Z");
 const originalLocalStorageDir = process.env.LOCAL_STORAGE_DIR;
 const originalLrePromptAllowlist = process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST;
+const originalAiImageProvider = process.env.LRE_IMAGE_GENERATION_PROVIDER;
+const originalOpenAiApiKey = process.env.OPENAI_API_KEY;
+const originalOpenAiImageModel = process.env.OPENAI_IMAGE_MODEL;
+const originalOpenAiImageSize = process.env.OPENAI_IMAGE_SIZE;
+const originalOpenAiImageQuality = process.env.OPENAI_IMAGE_QUALITY;
+const originalFetch = globalThis.fetch;
 let localStorageDir = "";
 
 describe("DB-backed orchestration foundation", () => {
@@ -28,6 +34,12 @@ describe("DB-backed orchestration foundation", () => {
     localStorageDir = await mkdtemp(join(tmpdir(), "mykinlegacy-orchestration-"));
     process.env.LOCAL_STORAGE_DIR = localStorageDir;
     delete process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST;
+    delete process.env.LRE_IMAGE_GENERATION_PROVIDER;
+    delete process.env.OPENAI_API_KEY;
+    delete process.env.OPENAI_IMAGE_MODEL;
+    delete process.env.OPENAI_IMAGE_SIZE;
+    delete process.env.OPENAI_IMAGE_QUALITY;
+    globalThis.fetch = originalFetch;
   });
 
   afterEach(async () => {
@@ -37,6 +49,12 @@ describe("DB-backed orchestration foundation", () => {
     } else {
       process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST = originalLrePromptAllowlist;
     }
+    restoreEnv("LRE_IMAGE_GENERATION_PROVIDER", originalAiImageProvider);
+    restoreEnv("OPENAI_API_KEY", originalOpenAiApiKey);
+    restoreEnv("OPENAI_IMAGE_MODEL", originalOpenAiImageModel);
+    restoreEnv("OPENAI_IMAGE_SIZE", originalOpenAiImageSize);
+    restoreEnv("OPENAI_IMAGE_QUALITY", originalOpenAiImageQuality);
+    globalThis.fetch = originalFetch;
     await rm(localStorageDir, { recursive: true, force: true });
   });
 
@@ -225,6 +243,85 @@ describe("DB-backed orchestration foundation", () => {
     expect(pngText).toMatch(/lre_prompt_sha256=[a-f0-9]{64}/);
     expect(pngText).toContain("selected_prompt=LRE Prompt Builder:");
     expect(pngText).toContain("Primary composition:");
+  }, 15_000);
+
+  it("uses a configured AI image provider for allowlisted LRE PNG artifacts", async () => {
+    const repository = createRepository();
+    process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST = "AHL-20260629-ORCH";
+    process.env.LRE_IMAGE_GENERATION_PROVIDER = "openai";
+    process.env.OPENAI_API_KEY = "test-openai-key";
+    process.env.OPENAI_IMAGE_MODEL = "gpt-image-1";
+    process.env.OPENAI_IMAGE_SIZE = "1024x1024";
+    process.env.OPENAI_IMAGE_QUALITY = "high";
+    const providerBody = createProviderTestPngBuffer({
+      variant: "provider-ai-image",
+      house_name: "Provider House",
+      symbols: ["shield", "tree", "laurel"]
+    });
+    globalThis.fetch = async () =>
+      ({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          id: "openai_image_test_1",
+          data: [{ b64_json: providerBody.toString("base64") }]
+        })
+      }) as Response;
+
+    const outbox = repository.outboxEvents.get("outbox_1");
+    if (!outbox) throw new Error("missing_outbox");
+    const { manifest } = await processOrderPaidOutbox({ outboxEvent: outbox, repository, now });
+
+    const result = await runManifestDrivenGeneration({
+      manifest_id: manifest.id,
+      repository,
+      now
+    });
+
+    const pngAsset = result.assets.find((asset) => asset.deliverable_code === "crest_variant_1_png");
+    if (!pngAsset) throw new Error("png_asset_missing");
+    const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
+
+    expect(pngText).toContain("artwork_mode=ai_image_provider");
+    expect(pngText).toContain("prompt_source=lre_prompt");
+    expect(pngText).toContain("image_provider=openai");
+    expect(pngText).toContain("image_model=gpt-image-1");
+    expect(pngText).toContain("provider_request_id=openai_image_test_1");
+    expect(pngText).toContain("fallback_used=false");
+  }, 15_000);
+
+  it("falls back to the deterministic renderer when configured AI image generation fails", async () => {
+    const repository = createRepository();
+    process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST = "AHL-20260629-ORCH";
+    process.env.LRE_IMAGE_GENERATION_PROVIDER = "openai";
+    process.env.OPENAI_API_KEY = "test-openai-key";
+    process.env.OPENAI_IMAGE_MODEL = "gpt-image-1";
+    globalThis.fetch = async () =>
+      ({
+        ok: false,
+        status: 500,
+        json: async () => ({ error: { message: "provider unavailable" } })
+      }) as Response;
+
+    const outbox = repository.outboxEvents.get("outbox_1");
+    if (!outbox) throw new Error("missing_outbox");
+    const { manifest } = await processOrderPaidOutbox({ outboxEvent: outbox, repository, now });
+
+    const result = await runManifestDrivenGeneration({
+      manifest_id: manifest.id,
+      repository,
+      now
+    });
+
+    const pngAsset = result.assets.find((asset) => asset.deliverable_code === "crest_variant_1_png");
+    if (!pngAsset) throw new Error("png_asset_missing");
+    const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
+
+    expect(pngText).toContain("artwork_mode=deterministic_symbolic_template");
+    expect(pngText).toContain("prompt_source=lre_prompt");
+    expect(pngText).toContain("image_provider=openai");
+    expect(pngText).toContain("fallback_used=true");
+    expect(pngText).toContain("bridge_error=openai_image_http_500");
   }, 15_000);
 
   it("sanitizes unknown family labels before generating customer PDF artifacts", async () => {
@@ -528,4 +625,33 @@ function listZipEntries(buffer: Buffer): string[] {
     offset += 30 + fileNameLength + extraLength + compressedSize;
   }
   return entries;
+}
+
+function restoreEnv(key: string, value: string | undefined): void {
+  if (value === undefined) {
+    delete process.env[key];
+  } else {
+    process.env[key] = value;
+  }
+}
+
+function createProviderTestPngBuffer(input: {
+  variant: string;
+  house_name: string;
+  symbols: string[];
+}): Buffer {
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const { existsSync } = require("node:fs") as { existsSync(path: string): boolean };
+  const workspacePath = join(process.cwd(), "packages/storage/src/png.ts");
+  const packagePath = join(process.cwd(), "../storage/src/png.ts");
+  const sourcePath = existsSync(workspacePath) ? workspacePath : packagePath;
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
+  const pngModule = require(sourcePath) as {
+    createMvpCrestPngBuffer(input: {
+      variant: string;
+      house_name: string;
+      symbols: string[];
+    }): Buffer;
+  };
+  return pngModule.createMvpCrestPngBuffer(input);
 }

@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MyKinLegacy AI Image Generation Bridge v1</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #090806;
+        --panel: #14110c;
+        --line: rgba(212, 175, 95, 0.28);
+        --gold: #d7b76c;
+        --ivory: #f4ecdc;
+        --muted: #b9ad97;
+        --danger: #f0a8a8;
+        --ok: #b9e3b8;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        background: radial-gradient(circle at top, rgba(166, 124, 43, 0.16), transparent 34rem), var(--bg);
+        color: var(--ivory);
+      }
+      main { width: min(1160px, calc(100% - 32px)); margin: 0 auto; padding: 56px 0; }
+      h1 { font-size: clamp(2rem, 4vw, 4.2rem); line-height: 1; margin: 0 0 16px; letter-spacing: 0; }
+      h2 { color: var(--gold); margin: 0 0 16px; }
+      p { color: var(--muted); line-height: 1.65; }
+      .eyebrow { color: var(--gold); text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.14em; }
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; margin: 28px 0; }
+      .card {
+        border: 1px solid var(--line);
+        background: linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.015));
+        border-radius: 8px;
+        padding: 22px;
+        box-shadow: 0 18px 50px rgba(0,0,0,0.28);
+      }
+      .path { display: grid; gap: 10px; counter-reset: step; }
+      .step {
+        border: 1px solid rgba(212, 175, 95, 0.2);
+        background: rgba(20,17,12,0.72);
+        padding: 12px 14px;
+        border-radius: 7px;
+        color: var(--ivory);
+      }
+      code {
+        color: var(--ivory);
+        background: rgba(255,255,255,0.08);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 5px;
+        padding: 2px 6px;
+      }
+      .ok { color: var(--ok); }
+      .warn { color: var(--danger); }
+      ul { padding-left: 20px; color: var(--muted); line-height: 1.7; }
+      a { color: var(--gold); }
+      @media (max-width: 760px) {
+        main { width: min(100% - 24px, 1160px); padding: 36px 0; }
+        .grid { grid-template-columns: 1fr; }
+        .card { padding: 18px; }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">Internal Review Only</div>
+      <h1>AI Image Generation Bridge v1</h1>
+      <p>
+        This bridge fixes the actual PNG bottleneck: the LRE prompt and PVE can now feed a real image provider for allowlisted orders.
+        The deterministic renderer remains as the safe fallback.
+      </p>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Current Provider Readiness</h2>
+          <p><span class="ok">OpenAI path:</span> configurable for allowlisted LRE PNG artifacts.</p>
+          <p><span class="warn">Default production:</span> unchanged unless provider env and order allowlist are set.</p>
+          <p><span class="ok">Fallback:</span> deterministic renderer still produces delivery-safe PNGs.</p>
+        </article>
+        <article class="card">
+          <h2>Required Env</h2>
+          <ul>
+            <li><code>LRE_IMAGE_PROMPT_ORDER_ALLOWLIST=&lt;order_number&gt;</code></li>
+            <li><code>LRE_IMAGE_GENERATION_PROVIDER=openai</code></li>
+            <li><code>OPENAI_API_KEY=&lt;secret&gt;</code></li>
+            <li><code>OPENAI_IMAGE_MODEL=gpt-image-1</code></li>
+            <li><code>OPENAI_IMAGE_SIZE=1024x1024</code></li>
+            <li><code>OPENAI_IMAGE_QUALITY=high</code></li>
+          </ul>
+        </article>
+      </section>
+
+      <section class="card">
+        <h2>New Execution Path</h2>
+        <div class="path">
+          <div class="step">Order paid or artifact repair</div>
+          <div class="step">Manifest-driven generation</div>
+          <div class="step">PNG artifact branch</div>
+          <div class="step">LRE Prompt Builder allowlist check</div>
+          <div class="step">Prompt Verification Engine score must be 95+</div>
+          <div class="step">Configured OpenAI image provider generates PNG</div>
+          <div class="step">PNG metadata records provider, model, prompt source, PVE score, fallback flag</div>
+          <div class="step">If provider is missing or fails, deterministic renderer is used and marked</div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="card">
+          <h2>Recorded Metadata</h2>
+          <ul>
+            <li><code>image_generation_bridge</code></li>
+            <li><code>image_provider</code></li>
+            <li><code>image_model</code></li>
+            <li><code>provider_request_id</code></li>
+            <li><code>prompt_source</code></li>
+            <li><code>pve_score</code> / <code>pve_passed</code></li>
+            <li><code>fallback_used</code> / <code>bridge_error</code></li>
+          </ul>
+        </article>
+        <article class="card">
+          <h2>Conclusion</h2>
+          <p>
+            One allowlisted order can now generate real AI PNG artifacts when the OpenAI image provider is configured and PVE passes.
+            Non-allowlisted orders remain untouched.
+          </p>
+          <p><a href="./report.json">Open JSON report</a></p>
+        </article>
+      </section>
+    </main>
+  </body>
+</html>

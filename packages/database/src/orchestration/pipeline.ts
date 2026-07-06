@@ -423,23 +423,14 @@ interface ArtifactTooling {
   LocalPrivateStorageAdapter: new () => StorageAdapter;
   buildSimplePdf(text: string): Buffer;
   buildZipBuffer(entries: Array<{ name: string; body: Buffer }>): Buffer;
+  appendPngTextMetadata(buffer: Buffer, metadataText: string): Buffer;
+  buildMvpCrestPngMetadataText(metadata?: PngPromptMetadata): string;
   createMvpCrestPngBuffer(input: {
     variant: string;
     house_name?: string;
     symbols?: string[];
     transparent?: boolean;
-    prompt_metadata?: {
-      prompt_source?: "old_prompt" | "lre_prompt";
-      pve_score?: number | null;
-      pve_passed?: boolean;
-      old_prompt_sha256?: string | null;
-      lre_prompt_sha256?: string | null;
-      selected_prompt?: string | null;
-      negative_prompt?: string | null;
-      primary_symbol?: string | null;
-      secondary_symbols?: string[];
-      selected_dna?: string[];
-    };
+    prompt_metadata?: PngPromptMetadata;
   }): Buffer;
   generateReadme(input: {
     package_title: string;
@@ -449,6 +440,25 @@ interface ArtifactTooling {
   }): Promise<string>;
   listZipEntries(buffer: Buffer): string[];
   readPngMetadata(buffer: Buffer): { width: number; height: number; has_alpha: boolean; has_transparent_pixels?: boolean };
+}
+
+interface PngPromptMetadata {
+  prompt_source?: "old_prompt" | "lre_prompt";
+  pve_score?: number | null;
+  pve_passed?: boolean;
+  old_prompt_sha256?: string | null;
+  lre_prompt_sha256?: string | null;
+  selected_prompt?: string | null;
+  negative_prompt?: string | null;
+  primary_symbol?: string | null;
+  secondary_symbols?: string[];
+  selected_dna?: string[];
+  image_generation_bridge?: string | null;
+  image_provider?: string | null;
+  image_model?: string | null;
+  provider_request_id?: string | null;
+  fallback_used?: boolean;
+  bridge_error?: string | null;
 }
 
 interface ArtifactContext {
@@ -540,22 +550,36 @@ async function createArtifactBody(input: {
       deliverable_code: input.deliverable_code,
       context: input.context
     });
-    const body = tools.createMvpCrestPngBuffer({
+    const promptMetadata: PngPromptMetadata = {
+      prompt_source: promptSelection.audit.source_selected,
+      pve_score: promptSelection.audit.verification_score,
+      pve_passed: promptSelection.audit.pve_passed,
+      old_prompt_sha256: promptSelection.audit.old_sha256,
+      lre_prompt_sha256: promptSelection.audit.lre_sha256,
+      selected_prompt: promptSelection.selected_prompt,
+      negative_prompt: promptSelection.negative_prompt,
+      primary_symbol: promptSelection.audit.primary_symbol,
+      secondary_symbols: promptSelection.audit.secondary_symbols,
+      selected_dna: promptSelection.audit.selected_dna
+    };
+    const aiImage = await tryCreateAiGeneratedPng({
+      deliverable_code: input.deliverable_code,
+      promptSelection,
+      tools,
+      promptMetadata
+    });
+    const body = aiImage.body ?? tools.createMvpCrestPngBuffer({
       variant: input.deliverable_code,
       house_name: input.context.house_name,
       symbols: promptSelection.symbols,
       transparent: input.deliverable_code === "transparent_crest_png",
       prompt_metadata: {
-        prompt_source: promptSelection.audit.source_selected,
-        pve_score: promptSelection.audit.verification_score,
-        pve_passed: promptSelection.audit.pve_passed,
-        old_prompt_sha256: promptSelection.audit.old_sha256,
-        lre_prompt_sha256: promptSelection.audit.lre_sha256,
-        selected_prompt: promptSelection.selected_prompt,
-        negative_prompt: promptSelection.negative_prompt,
-        primary_symbol: promptSelection.audit.primary_symbol,
-        secondary_symbols: promptSelection.audit.secondary_symbols,
-        selected_dna: promptSelection.audit.selected_dna
+        ...promptMetadata,
+        image_generation_bridge: aiImage.bridgeStatus,
+        image_provider: aiImage.providerCode,
+        image_model: aiImage.modelCode,
+        fallback_used: aiImage.fallbackUsed,
+        bridge_error: aiImage.errorCode
       }
     });
     return {
@@ -739,6 +763,186 @@ function buildLegacyImagePrompt(input: { deliverable_code: string; context: Arti
   ].join(" ");
 }
 
+interface AiPngBridgeResult {
+  body: Buffer | null;
+  bridgeStatus: string;
+  providerCode: string;
+  modelCode: string | null;
+  fallbackUsed: boolean;
+  errorCode: string | null;
+}
+
+async function tryCreateAiGeneratedPng(input: {
+  deliverable_code: string;
+  promptSelection: PngPromptSelection;
+  tools: ArtifactTooling;
+  promptMetadata: PngPromptMetadata;
+}): Promise<AiPngBridgeResult> {
+  if (input.promptSelection.audit.source_selected !== "lre_prompt") {
+    return deterministicPngBridgeResult("old_prompt_selected", false);
+  }
+
+  if (input.promptSelection.audit.pve_passed !== true || (input.promptSelection.audit.verification_score ?? 0) < 95) {
+    return deterministicPngBridgeResult("pve_not_passed", false);
+  }
+
+  if (input.deliverable_code === "transparent_crest_png") {
+    return deterministicPngBridgeResult("transparent_png_kept_on_local_renderer", false);
+  }
+
+  const config = aiImageProviderConfigFromEnv();
+  if (!config) {
+    return deterministicPngBridgeResult("provider_not_configured", false);
+  }
+
+  if (!config.apiKey) {
+    return deterministicPngBridgeResult("openai_api_key_missing", true, config);
+  }
+
+  try {
+    const output = await generateOpenAiImage({
+      prompt: input.promptSelection.selected_prompt,
+      negative_prompt: input.promptSelection.negative_prompt,
+      config
+    });
+    const providerBody = await imageBufferFromProviderRef(output.temporary_output_ref);
+    const metadataText = [
+      "MyKinLegacy symbolic crest artwork.",
+      "artwork_template=shield_legacy_crest_v1;",
+      "artwork_mode=ai_image_provider;",
+      "theme_mapping=continuity,unity;",
+      "artwork_quality=ai_provider_beta;",
+      input.tools.buildMvpCrestPngMetadataText({
+        ...input.promptMetadata,
+        image_generation_bridge: "ai_provider",
+        image_provider: config.providerCode,
+        image_model: config.modelCode,
+        provider_request_id: output.provider_request_id,
+        fallback_used: false
+      })
+    ].join(" ");
+    const body = input.tools.appendPngTextMetadata(providerBody, metadataText);
+    input.tools.readPngMetadata(body);
+    return {
+      body,
+      bridgeStatus: "ai_provider",
+      providerCode: config.providerCode,
+      modelCode: config.modelCode,
+      fallbackUsed: false,
+      errorCode: null
+    };
+  } catch (error) {
+    return deterministicPngBridgeResult(safeErrorCode(error), true, config);
+  }
+}
+
+function deterministicPngBridgeResult(
+  bridgeStatus: string,
+  fallbackUsed: boolean,
+  config?: AiImageProviderConfig
+): AiPngBridgeResult {
+  return {
+    body: null,
+    bridgeStatus,
+    providerCode: config?.providerCode ?? "deterministic_renderer",
+    modelCode: config?.modelCode ?? "mvp_crest_renderer",
+    fallbackUsed,
+    errorCode: fallbackUsed ? bridgeStatus : null
+  };
+}
+
+interface AiImageProviderConfig {
+  providerCode: "openai";
+  apiKey: string | undefined;
+  modelCode: string;
+  size: string;
+  quality: string;
+}
+
+function aiImageProviderConfigFromEnv(): AiImageProviderConfig | null {
+  const provider = (process.env.LRE_IMAGE_GENERATION_PROVIDER ?? process.env.AI_IMAGE_GENERATION_PROVIDER ?? "")
+    .trim()
+    .toLowerCase();
+  if (provider !== "openai") return null;
+  return {
+    providerCode: "openai",
+    apiKey: process.env.OPENAI_API_KEY,
+    modelCode: process.env.OPENAI_IMAGE_MODEL ?? "gpt-image-1",
+    size: process.env.OPENAI_IMAGE_SIZE ?? "1024x1024",
+    quality: process.env.OPENAI_IMAGE_QUALITY ?? "high"
+  };
+}
+
+async function generateOpenAiImage(input: {
+  prompt: string;
+  negative_prompt: string | null;
+  config: AiImageProviderConfig;
+}): Promise<{ provider_request_id: string; temporary_output_ref: string }> {
+  const prompt = [
+    input.prompt,
+    input.negative_prompt ? `Negative instructions: ${input.negative_prompt}` : null
+  ].filter(Boolean).join("\n\n");
+  const response = await fetch("https://api.openai.com/v1/images/generations", {
+    method: "POST",
+    headers: {
+      "content-type": "application/json",
+      authorization: `Bearer ${input.config.apiKey}`
+    },
+    body: JSON.stringify({
+      model: input.config.modelCode,
+      prompt,
+      n: 1,
+      size: input.config.size,
+      quality: input.config.quality,
+      output_format: "png"
+    })
+  });
+  const responseJson = await safeJson(response);
+  if (!response.ok) {
+    throw new Error(`openai_image_http_${response.status}`);
+  }
+
+  const first = Array.isArray(responseJson.data) ? responseJson.data[0] : null;
+  const b64Json = isRecord(first) && typeof first.b64_json === "string" ? first.b64_json : null;
+  const url = isRecord(first) && typeof first.url === "string" ? first.url : null;
+  if (!b64Json && !url) throw new Error("openai_image_missing_output");
+  return {
+    provider_request_id: typeof responseJson.id === "string" ? responseJson.id : `openai-image-${Date.now()}`,
+    temporary_output_ref: b64Json ? `data:image/png;base64,${b64Json}` : url ?? ""
+  };
+}
+
+async function imageBufferFromProviderRef(ref: string): Promise<Buffer> {
+  const dataPrefix = "data:image/png;base64,";
+  if (ref.startsWith(dataPrefix)) {
+    return Buffer.from(ref.slice(dataPrefix.length), "base64");
+  }
+
+  if (/^https?:\/\//i.test(ref)) {
+    const response = await fetch(ref);
+    if (!response.ok) throw new Error(`provider_image_fetch_failed_${response.status}`);
+    return Buffer.from(await response.arrayBuffer());
+  }
+
+  throw new Error("unsupported_provider_image_ref");
+}
+
+function safeErrorCode(error: unknown): string {
+  if (error instanceof Error && error.message) {
+    return error.message.replace(/[^a-z0-9_:-]+/gi, "_").slice(0, 120);
+  }
+  return "ai_provider_failed";
+}
+
+async function safeJson(response: Response): Promise<Record<string, unknown>> {
+  try {
+    const value = await response.json();
+    return isRecord(value) ? value : {};
+  } catch {
+    return {};
+  }
+}
+
 function loadLrePromptReplacement(): null | {
   applyAllowlistedLrePromptReplacement(input: Record<string, unknown>): {
     input: {
@@ -787,13 +991,21 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
     if (artifact.body.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") failures.push("png_header_invalid");
     if (metadata.width < 640 || metadata.height < 640) failures.push("png_dimensions_too_small");
     if (artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES) failures.push(`png_too_small:${artifact.body.byteLength}`);
+    const aiProviderMode = text.includes("artwork_mode=ai_image_provider");
     if (!text.includes("artwork_template=shield_legacy_crest_v1")) failures.push("artwork_template_missing");
-    if (!text.includes("artwork_mode=deterministic_symbolic_template")) failures.push("artwork_mode_missing");
+    if (!text.includes("artwork_mode=deterministic_symbolic_template") && !aiProviderMode) {
+      failures.push("artwork_mode_missing");
+    }
     if (text.includes("prompt_source=lre_prompt")) {
       if (!/pve_score=(9[5-9]|100)\b/.test(text)) failures.push("lre_pve_score_missing_or_low");
       if (!text.includes("pve_passed=true")) failures.push("lre_pve_not_passed");
       if (!/lre_prompt_sha256=[a-f0-9]{64}/.test(text)) failures.push("lre_prompt_hash_missing");
       if (!/selected_prompt=LRE Prompt Builder:/i.test(text)) failures.push("lre_selected_prompt_missing");
+      if (aiProviderMode) {
+        if (!/image_provider=(?!none\b)[a-z0-9_-]+/i.test(text)) failures.push("ai_image_provider_missing");
+        if (!/image_model=(?!none\b)[a-z0-9_.:-]+/i.test(text)) failures.push("ai_image_model_missing");
+        if (!text.includes("fallback_used=false")) failures.push("ai_image_fallback_flag_invalid");
+      }
     } else {
       if (!text.includes("main_symbol=tree")) failures.push("main_symbol_missing");
       if (!text.includes("supporting_symbols=shield,knot")) failures.push("supporting_symbols_missing");
@@ -1456,7 +1668,7 @@ function loadArtifactTooling(): ArtifactTooling {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pngSource = require(join(sourceBase, "storage/src/png.ts")) as Pick<
       ArtifactTooling,
-      "createMvpCrestPngBuffer" | "readPngMetadata"
+      "appendPngTextMetadata" | "buildMvpCrestPngMetadataText" | "createMvpCrestPngBuffer" | "readPngMetadata"
     >;
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pdfPackage = require("@ai-heritage/pdf") as Pick<ArtifactTooling, "buildSimplePdf">;
@@ -1468,6 +1680,8 @@ function loadArtifactTooling(): ArtifactTooling {
     if (typeof pngSource.createMvpCrestPngBuffer === "function") {
       return {
         ...storagePackage,
+        appendPngTextMetadata: pngSource.appendPngTextMetadata,
+        buildMvpCrestPngMetadataText: pngSource.buildMvpCrestPngMetadataText,
         createMvpCrestPngBuffer: pngSource.createMvpCrestPngBuffer,
         readPngMetadata: pngSource.readPngMetadata,
         buildSimplePdf: pdfPackage.buildSimplePdf
