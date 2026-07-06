@@ -11,6 +11,7 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ENV_FILE="$SCRIPT_DIR/.env.production"
 COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 COMPOSE_PROJECT_NAME="mykinlegacy"
+LAST_SUCCESSFUL_IMAGE_FILE="$SCRIPT_DIR/.last-successful-image"
 
 if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
   exec bash "$SCRIPT_DIR/with-production-lock.sh" "repair_order_artifacts:${ORDER_NUMBER}" bash "$0" "$@"
@@ -32,6 +33,11 @@ else
   SUDO="sudo"
 fi
 
+if [ -z "${APP_IMAGE:-}" ] && [ -f "$LAST_SUCCESSFUL_IMAGE_FILE" ]; then
+  APP_IMAGE="$(tr -d '[:space:]' < "$LAST_SUCCESSFUL_IMAGE_FILE")"
+  export APP_IMAGE
+fi
+
 compose() {
   $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "$@"
 }
@@ -40,18 +46,20 @@ echo "MyKinLegacy artifact repair"
 echo "Generated at: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 echo "Order: $ORDER_NUMBER"
 echo "This regenerates private PNG/PDF/ZIP artifact files for the order."
+echo "Application image: ${APP_IMAGE:-docker-compose-default}"
 echo "No raw vault token, customer email, or secrets are printed."
 echo
 
-compose exec -T worker node - "$ORDER_NUMBER" <<'NODE'
+compose run --rm --no-deps worker node - "$ORDER_NUMBER" <<'NODE'
 const { createHash } = require("node:crypto");
+const { existsSync, readFileSync } = require("node:fs");
 const { createRequire } = require("node:module");
 const path = require("node:path");
 const { PrismaClient } = require("./packages/database/generated/client");
 
 const workerRequire = createRequire(path.join(process.cwd(), "apps/worker/package.json"));
 const { PrismaOrchestrationRepository, runManifestDrivenGeneration } = workerRequire("@ai-heritage/database");
-const { LocalPrivateStorageAdapter, validateArtifactBuffer } = workerRequire("@ai-heritage/storage");
+const { LocalPrivateStorageAdapter, createMvpCrestPngBuffer, validateArtifactBuffer } = workerRequire("@ai-heritage/storage");
 
 const orderNumber = process.argv[2];
 const prisma = new PrismaClient();
@@ -183,7 +191,45 @@ function parsePngPromptMetadata(text, fileExt) {
   };
 }
 
+function assertContainerSupportsLrePromptBridge() {
+  const databaseEntry = workerRequire.resolve("@ai-heritage/database");
+  const pipelineCandidates = [
+    path.join(path.dirname(databaseEntry), "orchestration/pipeline.js"),
+    path.join(process.cwd(), "packages/database/dist/orchestration/pipeline.js")
+  ];
+  const pipelinePath = pipelineCandidates.find((candidate) => existsSync(candidate));
+  const pipelineSource = pipelinePath ? readFileSync(pipelinePath, "utf8") : "";
+  if (!pipelineSource.includes("selectPngPrompt") || !pipelineSource.includes("applyAllowlistedLrePromptReplacement")) {
+    throw new Error("worker_image_missing_lre_manifest_png_path");
+  }
+  if (typeof createMvpCrestPngBuffer !== "function") {
+    throw new Error("worker_image_missing_png_generator");
+  }
+  const probe = createMvpCrestPngBuffer({
+    variant: "lre_probe_png",
+    house_name: "LRE Probe",
+    symbols: ["lantern", "book"],
+    prompt_metadata: {
+      prompt_source: "lre_prompt",
+      pve_score: 99,
+      pve_passed: true,
+      old_prompt_sha256: "0".repeat(64),
+      lre_prompt_sha256: "1".repeat(64),
+      selected_prompt: "LRE Prompt Builder: preflight prompt metadata probe. Primary composition: lantern.",
+      negative_prompt: "no readable text",
+      primary_symbol: "Lantern",
+      secondary_symbols: ["Book"],
+      selected_dna: ["embossed antique gold"]
+    }
+  }).toString("latin1");
+  if (!probe.includes("prompt_source=lre_prompt") || !probe.includes("selected_prompt=LRE Prompt Builder:")) {
+    throw new Error("worker_image_missing_lre_png_metadata_support");
+  }
+}
+
 async function main() {
+  assertContainerSupportsLrePromptBridge();
+
   const order = await prisma.order.findUnique({
     where: { orderNumber },
     include: { generationManifests: { orderBy: { createdAt: "desc" }, take: 1 } }
