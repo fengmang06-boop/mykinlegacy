@@ -1,0 +1,199 @@
+name: LRE Production Diagnostics
+
+on:
+  push:
+    branches:
+      - codex/lre-prod-diagnostics
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  diagnose:
+    name: Capture production LRE image evidence
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+    steps:
+      - name: Checkout diagnostic branch
+        uses: actions/checkout@v4
+        with:
+          ref: codex/lre-prod-diagnostics
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          : "${PROD_PROJECT_DIR:?Missing PROD_PROJECT_DIR}"
+
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64
+          import os
+          import sys
+          from pathlib import Path
+
+          raw_key = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw_key.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw_key).decode("utf-8")
+                  key = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "mykinlegacy_prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Capture production evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p artifacts/production-diagnostics
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'bash -s' -- "$PROD_PROJECT_DIR" > artifacts/production-diagnostics/lre-image-evidence.json <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          PROJECT_DIR="$1"
+          cd "$PROJECT_DIR"
+
+          python3 - <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+
+          def run(cmd):
+              try:
+                  return {
+                      "ok": True,
+                      "stdout": subprocess.check_output(cmd, shell=True, stderr=subprocess.STDOUT, text=True).strip(),
+                      "error": None,
+                  }
+              except subprocess.CalledProcessError as exc:
+                  return {"ok": False, "stdout": exc.output.strip(), "error": str(exc)}
+
+          project = Path.cwd()
+          env_file = project / "deployment" / ".env.production"
+          compose = "docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml"
+          last_image_file = project / "deployment" / ".last-successful-image"
+          last_commit_file = project / "deployment" / ".last-successful-commit"
+          expected_image = last_image_file.read_text().strip() if last_image_file.exists() else ""
+
+          worker_config_image = run("docker inspect mykinlegacy_worker --format '{{.Config.Image}}'")
+          worker_image_id = run("docker inspect mykinlegacy_worker --format '{{.Image}}'")
+          expected_image_id = run(f"docker image inspect {expected_image!r} --format '{{{{.Id}}}}'") if expected_image else {"ok": False, "stdout": "", "error": "missing_last_successful_image"}
+          expected_repo_digests = run(f"docker image inspect {expected_image!r} --format '{{{{json .RepoDigests}}}}'") if expected_image else {"ok": False, "stdout": "", "error": "missing_last_successful_image"}
+          deployed_git_commit = run("git rev-parse HEAD")
+          git_status = run("git status --short")
+
+          env_allowlist_present = False
+          env_allowlist_value_hash_prefix = None
+          if env_file.exists():
+              for line in env_file.read_text().splitlines():
+                  if line.startswith("LRE_IMAGE_PROMPT_ORDER_ALLOWLIST="):
+                      value = line.split("=", 1)[1].strip()
+                      env_allowlist_present = bool(value)
+                      if value:
+                          import hashlib
+                          env_allowlist_value_hash_prefix = hashlib.sha256(value.encode()).hexdigest()[:16]
+
+          probe_script = r'''
+          const { existsSync, readFileSync } = require("node:fs");
+          const { createRequire } = require("node:module");
+          const path = require("node:path");
+          const workerRequire = createRequire(path.join(process.cwd(), "apps/worker/package.json"));
+          const dbEntry = workerRequire.resolve("@ai-heritage/database");
+          const storageEntry = workerRequire.resolve("@ai-heritage/storage");
+          const aiEntry = workerRequire.resolve("@ai-heritage/ai");
+          const pipelineCandidates = [
+            path.join(path.dirname(dbEntry), "orchestration/pipeline.js"),
+            path.join(process.cwd(), "packages/database/dist/orchestration/pipeline.js")
+          ];
+          const pipelinePath = pipelineCandidates.find((candidate) => existsSync(candidate)) || null;
+          const pipelineSource = pipelinePath ? readFileSync(pipelinePath, "utf8") : "";
+          const { createMvpCrestPngBuffer } = workerRequire("@ai-heritage/storage");
+          const probe = createMvpCrestPngBuffer({
+            variant: "lre_probe_png",
+            house_name: "LRE Probe",
+            symbols: ["lantern", "book"],
+            prompt_metadata: {
+              prompt_source: "lre_prompt",
+              pve_score: 99,
+              pve_passed: true,
+              old_prompt_sha256: "0".repeat(64),
+              lre_prompt_sha256: "1".repeat(64),
+              selected_prompt: "LRE Prompt Builder: preflight prompt metadata probe. Primary composition: lantern.",
+              negative_prompt: "no readable text",
+              primary_symbol: "Lantern",
+              secondary_symbols: ["Book"],
+              selected_dna: ["embossed antique gold"]
+            }
+          }).toString("latin1");
+          console.log(JSON.stringify({
+            dbEntry,
+            storageEntry,
+            aiEntry,
+            pipelinePath,
+            hasSelectPngPrompt: pipelineSource.includes("selectPngPrompt"),
+            hasApplyAllowlistedLrePromptReplacement: pipelineSource.includes("applyAllowlistedLrePromptReplacement"),
+            pngProbeHasPromptSource: probe.includes("prompt_source=lre_prompt"),
+            pngProbeHasSelectedPrompt: probe.includes("selected_prompt=LRE Prompt Builder:"),
+            pngProbeHasPveScore: probe.includes("pve_score=99")
+          }));
+          '''
+          safe_probe = probe_script.replace("'", "'\"'\"'")
+          exec_probe = run(f"{compose} exec -T worker node -e '{safe_probe}'")
+          run_probe = run(f"{compose} run --rm --no-deps worker node -e '{safe_probe}'")
+
+          report = {
+              "diagnostic_commit": os.environ.get("GITHUB_SHA", ""),
+              "deployed_git_commit": deployed_git_commit,
+              "last_successful_commit_file": last_commit_file.read_text().strip() if last_commit_file.exists() else None,
+              "git_status_short": git_status,
+              "last_successful_image": expected_image,
+              "current_worker_config_image": worker_config_image,
+              "current_worker_image_id": worker_image_id,
+              "expected_image_id": expected_image_id,
+              "expected_repo_digests": expected_repo_digests,
+              "image_id_match": worker_image_id.get("stdout") == expected_image_id.get("stdout") and bool(worker_image_id.get("stdout")),
+              "allowlist_present": env_allowlist_present,
+              "allowlist_value_hash_prefix": env_allowlist_value_hash_prefix,
+              "running_worker_probe": exec_probe,
+              "one_off_worker_probe": run_probe,
+          }
+          print(json.dumps(report, indent=2))
+          PY
+          REMOTE_SCRIPT
+
+      - name: Commit diagnostic report
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add artifacts/production-diagnostics/lre-image-evidence.json
+          git commit -m "Capture LRE production image diagnostics" || exit 0
+          git push origin HEAD:codex/lre-prod-diagnostics
