@@ -1,0 +1,858 @@
+===== PRODUCTION GIT =====
+8623b48826c2b67ffbd86013e8da914dac59294c
+?? .pnpm-store/
+?? deployment/.last-successful-image
+?? deployment/.previous_image
+?? deployment/.production.lock
+
+===== LAST SUCCESSFUL IMAGE =====
+ghcr.io/fengmang06-boop/mykinlegacy-app:8623b48826c2b67ffbd86013e8da914dac59294c
+
+
+===== CURRENT WORKER IMAGE =====
+ghcr.io/fengmang06-boop/mykinlegacy-app:8623b48826c2b67ffbd86013e8da914dac59294c
+sha256:2ca3761a016edfa77023b0dca987a8453f4637085a1bb7ca25a3347352caa972
+
+===== ACTUAL PRODUCTION SCRIPT CONTENT =====
+#!/usr/bin/env bash
+set -euo pipefail
+
+ORDER_NUMBER="${1:-}"
+if [ -z "$ORDER_NUMBER" ]; then
+  echo "Usage: bash deployment/repair-order-artifacts.sh <ORDER_NUMBER>"
+  exit 1
+fi
+
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ENV_FILE="$SCRIPT_DIR/.env.production"
+COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
+COMPOSE_PROJECT_NAME="mykinlegacy"
+LAST_SUCCESSFUL_IMAGE_FILE="$SCRIPT_DIR/.last-successful-image"
+
+if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
+  exec bash "$SCRIPT_DIR/with-production-lock.sh" "repair_order_artifacts:${ORDER_NUMBER}" bash "$0" "$@"
+fi
+
+if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
+  echo "FAIL order_number must contain only uppercase letters, numbers, and hyphens"
+  exit 1
+fi
+
+if [ ! -f "$ENV_FILE" ]; then
+  echo "FAIL deployment/.env.production is missing"
+  exit 1
+fi
+
+if [ "$(id -u)" -eq 0 ]; then
+  SUDO=""
+else
+  SUDO="sudo"
+fi
+
+if [ ! -f "$LAST_SUCCESSFUL_IMAGE_FILE" ]; then
+  echo "FAIL deployment/.last-successful-image is missing"
+  exit 1
+fi
+
+APP_IMAGE="$(tr -d '[:space:]' < "$LAST_SUCCESSFUL_IMAGE_FILE")"
+if [ -z "$APP_IMAGE" ]; then
+  echo "FAIL deployment/.last-successful-image is empty"
+  exit 1
+fi
+export APP_IMAGE
+
+compose() {
+  $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "$@"
+}
+
+APP_IMAGE_DIGEST="$($SUDO docker image inspect "$APP_IMAGE" --format '{{.Id}}' 2>/dev/null || true)"
+if [ -z "$APP_IMAGE_DIGEST" ]; then
+  echo "FAIL deployed APP_IMAGE is not present locally: $APP_IMAGE"
+  exit 1
+fi
+
+echo "MyKinLegacy artifact repair"
+echo "Generated at: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+echo "Order: $ORDER_NUMBER"
+echo "This regenerates private PNG/PDF/ZIP artifact files for the order."
+echo "APP_IMAGE=$APP_IMAGE"
+echo "APP_IMAGE_DIGEST=$APP_IMAGE_DIGEST"
+echo "No raw vault token, customer email, or secrets are printed."
+echo
+
+compose run --rm --no-deps worker node - "$ORDER_NUMBER" <<'NODE'
+const { createHash } = require("node:crypto");
+const { existsSync, readFileSync } = require("node:fs");
+const { createRequire } = require("node:module");
+const path = require("node:path");
+const { PrismaClient } = require("./packages/database/generated/client");
+
+const workerRequire = createRequire(path.join(process.cwd(), "apps/worker/package.json"));
+const { PrismaOrchestrationRepository, runManifestDrivenGeneration } = workerRequire("@ai-heritage/database");
+const { LocalPrivateStorageAdapter, createMvpCrestPngBuffer, validateArtifactBuffer } = workerRequire("@ai-heritage/storage");
+
+const orderNumber = process.argv[2];
+const prisma = new PrismaClient();
+const storage = new LocalPrivateStorageAdapter();
+
+function hash(value) {
+  return createHash("sha256").update(String(value)).digest("hex").slice(0, 16);
+}
+
+function maskStorageKey(value) {
+  if (!value) return "missing";
+  const parts = String(value).split("/");
+  return parts.length > 3 ? `${parts[0]}/***/${parts.at(-1)}` : "***";
+}
+
+async function inspectAsset(asset) {
+  let actualSize = null;
+  let exists = false;
+  let validation = { valid: false, signature_valid: false, format_valid: false };
+  let contentQuality = contentQualityForBuffer(Buffer.alloc(0), asset.fileExt);
+  try {
+    const body = await storage.getObject({
+      storage_provider: asset.storageProvider,
+      storage_bucket: asset.storageBucket,
+      storage_key: asset.storageKey
+    });
+    actualSize = body.byteLength;
+    exists = true;
+    validation = validateArtifactBuffer({
+      body,
+      file_ext: asset.fileExt,
+      mime_type: asset.mimeType
+    });
+    contentQuality = contentQualityForBuffer(body, asset.fileExt);
+  } catch {
+    // Reported as missing below without leaking filesystem paths.
+  }
+  const dbSize = Number(asset.sizeBytes ?? 0);
+  const placeholder = dbSize <= 512 || (actualSize !== null && actualSize <= 512);
+  return {
+    artifact_type: asset.deliverableType?.code ?? asset.deliverableTypeId,
+    asset_id_hash: hash(asset.id),
+    db_status: asset.status,
+    storage_key_masked: maskStorageKey(asset.storageKey),
+    db_file_size: dbSize,
+    actual_file_size: actualSize,
+    mime_type: asset.mimeType,
+    placeholder,
+    signature_valid: validation.signature_valid,
+    format_valid: validation.format_valid,
+    pdf_header_valid: validation.pdf_header_valid ?? null,
+    png_header_valid: validation.png_header_valid ?? null,
+    zip_header_valid: validation.zip_header_valid ?? null,
+    zip_test_passed: validation.zip_test_passed ?? null,
+    has_unknown_label: contentQuality.has_unknown_label,
+    repeated_symbol_blocks: contentQuality.repeated_symbol_blocks,
+    raw_json_detected: contentQuality.raw_json_detected,
+    boundary_statement_present: contentQuality.boundary_statement_present,
+    pdf_layout_version: contentQuality.pdf_layout_version,
+    png_prompt_source: contentQuality.png_prompt_source,
+    png_pve_score: contentQuality.png_pve_score,
+    png_pve_passed: contentQuality.png_pve_passed,
+    png_lre_prompt_hash_present: contentQuality.png_lre_prompt_hash_present,
+    png_selected_prompt_contains_lre: contentQuality.png_selected_prompt_contains_lre,
+    content_quality_status: contentQuality.status,
+    downloadable: asset.status === "available" && exists && !placeholder && validation.valid && contentQuality.status !== "failed"
+  };
+}
+
+function contentQualityForBuffer(body, fileExt) {
+  if (!body || body.byteLength === 0) {
+    return {
+      has_unknown_label: false,
+      repeated_symbol_blocks: false,
+      raw_json_detected: false,
+      boundary_statement_present: false,
+      pdf_layout_version: null,
+      png_prompt_source: null,
+      png_pve_score: null,
+      png_pve_passed: null,
+      png_lre_prompt_hash_present: false,
+      png_selected_prompt_contains_lre: false,
+      status: "not_checked"
+    };
+  }
+  const text = body.toString("latin1");
+  const promptMetadata = parsePngPromptMetadata(text, fileExt);
+  const hasUnknown = /\b(House of Unknown|Unknown|null|undefined)\b/i.test(text);
+  const rawJson = /[{[]\s*"[^"]+"\s*:/s.test(text) || /request_id|correlation_id|success|data/i.test(text);
+  const boundary = /personalized symbolic keepsake/i.test(text);
+  const repeatedSymbols = (text.match(/Shield[:\n]/gi) ?? []).length > 1 ||
+    (text.match(/Tree[:\n]/gi) ?? []).length > 1 ||
+    (text.match(/Knot[:\n]/gi) ?? []).length > 1;
+  const layoutVersion = fileExt === "pdf" && /Legacy, Designed\.|Archive Reference|Prepared for:/i.test(text)
+    ? "premium_v1"
+    : fileExt === "pdf"
+      ? "legacy_or_unknown"
+      : null;
+  const failed = hasUnknown || rawJson || (fileExt === "pdf" && (!boundary || repeatedSymbols || layoutVersion !== "premium_v1"));
+  return {
+    has_unknown_label: hasUnknown,
+    repeated_symbol_blocks: repeatedSymbols,
+    raw_json_detected: rawJson,
+    boundary_statement_present: boundary,
+    pdf_layout_version: layoutVersion,
+    ...promptMetadata,
+    status: failed ? "failed" : "passed"
+  };
+}
+
+function parsePngPromptMetadata(text, fileExt) {
+  if (fileExt !== "png") {
+    return {
+      png_prompt_source: null,
+      png_pve_score: null,
+      png_pve_passed: null,
+      png_lre_prompt_hash_present: false,
+      png_selected_prompt_contains_lre: false
+    };
+  }
+  const promptSource = text.match(/prompt_source=([^;]+)/)?.[1] ?? null;
+  const pveScoreRaw = text.match(/pve_score=([^;]+)/)?.[1] ?? null;
+  return {
+    png_prompt_source: promptSource,
+    png_pve_score: pveScoreRaw && /^\d+$/.test(pveScoreRaw) ? Number(pveScoreRaw) : null,
+    png_pve_passed: text.includes("pve_passed=true"),
+    png_lre_prompt_hash_present: /lre_prompt_sha256=[a-f0-9]{64}/.test(text),
+    png_selected_prompt_contains_lre: /selected_prompt=LRE Prompt Builder:/i.test(text)
+  };
+}
+
+function assertContainerSupportsLrePromptBridge() {
+  const databaseEntry = workerRequire.resolve("@ai-heritage/database");
+  const pipelineCandidates = [
+    path.join(path.dirname(databaseEntry), "orchestration/pipeline.js"),
+    path.join(process.cwd(), "packages/database/dist/orchestration/pipeline.js")
+  ];
+  const pipelinePath = pipelineCandidates.find((candidate) => existsSync(candidate));
+  const pipelineSource = pipelinePath ? readFileSync(pipelinePath, "utf8") : "";
+  const report = {
+    dbEntry: databaseEntry,
+    pipelinePath,
+    hasSelectPngPrompt: pipelineSource.includes("selectPngPrompt"),
+    hasApplyAllowlistedLrePromptReplacement: pipelineSource.includes("applyAllowlistedLrePromptReplacement"),
+    pngProbeHasPromptSource: false,
+    pngProbeHasSelectedPrompt: false,
+    pngProbeHasPveScore: false
+  };
+  if (!report.hasSelectPngPrompt || !report.hasApplyAllowlistedLrePromptReplacement) {
+    console.log(JSON.stringify({ preflight: "lre_png_path", ...report }, null, 2));
+    throw new Error("worker_image_missing_lre_manifest_png_path");
+  }
+  if (typeof createMvpCrestPngBuffer !== "function") {
+    console.log(JSON.stringify({ preflight: "lre_png_path", ...report }, null, 2));
+    throw new Error("worker_image_missing_png_generator");
+  }
+  const probe = createMvpCrestPngBuffer({
+    variant: "lre_probe_png",
+    house_name: "LRE Probe",
+    symbols: ["lantern", "book"],
+    prompt_metadata: {
+      prompt_source: "lre_prompt",
+      pve_score: 99,
+      pve_passed: true,
+      old_prompt_sha256: "0".repeat(64),
+      lre_prompt_sha256: "1".repeat(64),
+      selected_prompt: "LRE Prompt Builder: preflight prompt metadata probe. Primary composition: lantern.",
+      negative_prompt: "no readable text",
+      primary_symbol: "Lantern",
+      secondary_symbols: ["Book"],
+      selected_dna: ["embossed antique gold"]
+    }
+  }).toString("latin1");
+  report.pngProbeHasPromptSource = probe.includes("prompt_source=lre_prompt");
+  report.pngProbeHasSelectedPrompt = probe.includes("selected_prompt=LRE Prompt Builder:");
+  report.pngProbeHasPveScore = probe.includes("pve_score=99");
+  console.log(JSON.stringify({ preflight: "lre_png_path", ...report }, null, 2));
+  if (!report.pngProbeHasPromptSource || !report.pngProbeHasSelectedPrompt || !report.pngProbeHasPveScore) {
+    throw new Error("worker_image_missing_lre_png_metadata_support");
+  }
+}
+
+async function main() {
+  assertContainerSupportsLrePromptBridge();
+
+  const order = await prisma.order.findUnique({
+    where: { orderNumber },
+    include: { generationManifests: { orderBy: { createdAt: "desc" }, take: 1 } }
+  });
+  if (!order) throw new Error("order_not_found");
+  const manifest = order.generationManifests[0];
+  if (!manifest) throw new Error("generation_manifest_missing");
+
+  const repository = new PrismaOrchestrationRepository(prisma);
+  await runManifestDrivenGeneration({
+    manifest_id: manifest.id,
+    repository,
+    now: new Date()
+  });
+
+  const refreshed = await prisma.order.findUnique({
+    where: { orderNumber },
+    include: {
+      assets: { include: { deliverableType: true }, orderBy: { createdAt: "asc" } },
+
+===== RUN REPAIR PATH =====
+Waiting for production lock: repair_order_artifacts:AHL-20260706-01KWV34E
+MyKinLegacy artifact repair
+Generated at: 2026-07-06T10:30:48Z
+Order: AHL-20260706-01KWV34E
+This regenerates private PNG/PDF/ZIP artifact files for the order.
+APP_IMAGE=ghcr.io/fengmang06-boop/mykinlegacy-app:8623b48826c2b67ffbd86013e8da914dac59294c
+APP_IMAGE_DIGEST=sha256:2ca3761a016edfa77023b0dca987a8453f4637085a1bb7ca25a3347352caa972
+No raw vault token, customer email, or secrets are printed.
+
+time="2026-07-06T10:30:48Z" level=warning msg="volume \"mykinlegacy_private_storage\" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume"
+time="2026-07-06T10:30:48Z" level=warning msg="volume \"mykinlegacy_mysql_data\" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume"
+time="2026-07-06T10:30:48Z" level=warning msg="volume \"mykinlegacy_redis_data\" already exists but was not created by Docker Compose. Use `external: true` to use an existing volume"
+ Container mykinlegacy_nginx Running 
+ Container mykinlegacy_web Running 
+ Container mykinlegacy_api Running 
+ Container mykinlegacy_worker Running 
+ Container mykinlegacy_mysql Running 
+ Container mykinlegacy_redis Running 
+ Container mykinlegacy-worker-run-7f8f4830aca3 Creating 
+ Container mykinlegacy-worker-run-7f8f4830aca3 Created 
+{
+  "preflight": "lre_png_path",
+  "dbEntry": "/app/packages/database/dist/index.js",
+  "pipelinePath": "/app/packages/database/dist/orchestration/pipeline.js",
+  "hasSelectPngPrompt": true,
+  "hasApplyAllowlistedLrePromptReplacement": true,
+  "pngProbeHasPromptSource": true,
+  "pngProbeHasSelectedPrompt": true,
+  "pngProbeHasPveScore": true
+}
+prisma:warn Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-1.1.x".
+Please manually install OpenSSL via `apt-get update -y && apt-get install -y openssl` and try installing Prisma again. If you're running Prisma on Docker, add this command to your Dockerfile, or switch to an image that already has OpenSSL installed.
+prisma:warn Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-1.1.x".
+Please manually install OpenSSL via `apt-get update -y && apt-get install -y openssl` and try installing Prisma again. If you're running Prisma on Docker, add this command to your Dockerfile, or switch to an image that already has OpenSSL installed.
+{
+  "ok": true,
+  "order_number": "AHL-20260706-01KWV34E",
+  "payment_status": "paid",
+  "fulfillment_status": "generating",
+  "active_download_tokens": 15,
+  "latest_token_linked_assets": 8,
+  "artifacts_count": 8,
+  "downloadable_count": 8,
+  "placeholder_count": 0,
+  "artifacts": [
+    {
+      "artifact_type": "crest_variant_png",
+      "asset_id_hash": "b75ee201333bc7b5",
+      "db_status": "available",
+      "storage_key_masked": "orders/***/01KWVFP2S50HXS7JK145ZWZXWC.png",
+      "db_file_size": 46154,
+      "actual_file_size": 46154,
+      "mime_type": "image/png",
+      "placeholder": false,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": true,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": "lre_prompt",
+      "png_pve_score": 100,
+      "png_pve_passed": true,
+      "png_lre_prompt_hash_present": true,
+      "png_selected_prompt_contains_lre": true,
+      "content_quality_status": "passed",
+      "downloadable": true
+    },
+    {
+      "artifact_type": "crest_variant_png",
+      "asset_id_hash": "fdb2e4760aa4667c",
+      "db_status": "available",
+      "storage_key_masked": "orders/***/01KWVFP3N1WJBD06QMVG6EQ0TS.png",
+      "db_file_size": 47087,
+      "actual_file_size": 47087,
+      "mime_type": "image/png",
+      "placeholder": false,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": true,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": "lre_prompt",
+      "png_pve_score": 100,
+      "png_pve_passed": true,
+      "png_lre_prompt_hash_present": true,
+      "png_selected_prompt_contains_lre": true,
+      "content_quality_status": "passed",
+      "downloadable": true
+    },
+    {
+      "artifact_type": "crest_variant_png",
+      "asset_id_hash": "39986159e93bcd46",
+      "db_status": "available",
+      "storage_key_masked": "orders/***/01KWVFP4E19TZGGGQ56RKJ0FNK.png",
+      "db_file_size": 61491,
+      "actual_file_size": 61491,
+      "mime_type": "image/png",
+      "placeholder": false,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": true,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": "lre_prompt",
+      "png_pve_score": 100,
+      "png_pve_passed": true,
+      "png_lre_prompt_hash_present": true,
+      "png_selected_prompt_contains_lre": true,
+      "content_quality_status": "passed",
+      "downloadable": true
+    },
+    {
+      "artifact_type": "transparent_crest_png",
+      "asset_id_hash": "76dde9923cdcceae",
+      "db_status": "available",
+      "storage_key_masked": "orders/***/01KWVFP58HAJ2X5FV839XQ9RVE.png",
+      "db_file_size": 40548,
+      "actual_file_size": 40548,
+      "mime_type": "image/png",
+      "placeholder": false,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": true,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": "lre_prompt",
+      "png_pve_score": 100,
+      "png_pve_passed": true,
+      "png_lre_prompt_hash_present": true,
+      "png_selected_prompt_contains_lre": true,
+      "content_quality_status": "passed",
+      "downloadable": true
+    },
+    {
+      "artifact_type": "symbol_explanation_pdf",
+      "asset_id_hash": "c2000875732add28",
+      "db_status": "available",
+      "storage_key_masked": "orders/***/01KWVFP62F3ZQMP21MKTVN3X76.pdf",
+      "db_file_size": 16094,
+      "actual_file_size": 16094,
+      "mime_type": "application/pdf",
+      "placeholder": false,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": true,
+      "png_header_valid": null,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": "premium_v1",
+      "png_prompt_source": null,
+      "png_pve_score": null,
+      "png_pve_passed": null,
+      "png_lre_prompt_hash_present": false,
+      "png_selected_prompt_contains_lre": false,
+      "content_quality_status": "passed",
+      "downloadable": true
+    },
+    {
+      "artifact_type": "heritage_certificate_pdf",
+      "asset_id_hash": "4f1c44ec495e5f02",
+      "db_status": "available",
+      "storage_key_masked": "orders/***/01KWVFP63KZ1AMHC6SEW9KM5ZM.pdf",
+      "db_file_size": 14445,
+      "actual_file_size": 14445,
+      "mime_type": "application/pdf",
+      "placeholder": false,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": true,
+      "png_header_valid": null,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": "premium_v1",
+      "png_prompt_source": null,
+      "png_pve_score": null,
+      "png_pve_passed": null,
+      "png_lre_prompt_hash_present": false,
+      "png_selected_prompt_contains_lre": false,
+      "content_quality_status": "passed",
+      "downloadable": true
+    },
+    {
+      "artifact_type": "family_story_pdf",
+      "asset_id_hash": "950d3d68a93a0b6e",
+      "db_status": "available",
+      "storage_key_masked": "orders/***/01KWVFP645XRG7Y5ZJ75FMAVVA.pdf",
+      "db_file_size": 14010,
+      "actual_file_size": 14010,
+      "mime_type": "application/pdf",
+      "placeholder": false,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": true,
+      "png_header_valid": null,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": "premium_v1",
+      "png_prompt_source": null,
+      "png_pve_score": null,
+      "png_pve_passed": null,
+      "png_lre_prompt_hash_present": false,
+      "png_selected_prompt_contains_lre": false,
+      "content_quality_status": "passed",
+      "downloadable": true
+    },
+    {
+      "artifact_type": "download_package_zip",
+      "asset_id_hash": "8cb728f77ab2bdf9",
+      "db_status": "available",
+      "storage_key_masked": "orders/***/01KWVFP64JRWWNVGTAWNAN570N.zip",
+      "db_file_size": 243530,
+      "actual_file_size": 243530,
+      "mime_type": "application/zip",
+      "placeholder": false,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": null,
+      "zip_header_valid": true,
+      "zip_test_passed": true,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": null,
+      "png_pve_score": null,
+      "png_pve_passed": null,
+      "png_lre_prompt_hash_present": false,
+      "png_selected_prompt_contains_lre": false,
+      "content_quality_status": "passed",
+      "downloadable": true
+    }
+  ]
+}
+
+===== INSPECT ARTIFACTS AFTER REPAIR =====
+MyKinLegacy artifact delivery inspection
+Generated at: 2026-07-06T10:30:53Z
+Order: AHL-20260706-01KWV34E
+No raw vault token, customer email, or secrets are printed.
+
+prisma:warn Prisma failed to detect the libssl/openssl version to use, and may not work as expected. Defaulting to "openssl-1.1.x".
+Please manually install OpenSSL via `apt-get update -y && apt-get install -y openssl` and try installing Prisma again. If you're running Prisma on Docker, add this command to your Dockerfile, or switch to an image that already has OpenSSL installed.
+{
+  "ok": true,
+  "order_number": "AHL-20260706-01KWV34E",
+  "payment_status": "paid",
+  "order_status": "processing",
+  "fulfillment_status": "generating",
+  "manifest_status": null,
+  "assets_count": 8,
+  "downloadable_count": 8,
+  "placeholder_count": 0,
+  "active_download_tokens": 15,
+  "linked_download_assets": 100,
+  "artifacts": [
+    {
+      "artifact_type": "crest_variant_png",
+      "asset_id_hash": "b75ee201333bc7b5",
+      "db_status": "available",
+      "storage_provider": "local_private",
+      "storage_bucket": "private-assets",
+      "storage_key_masked": "orders/***/01KWVFP2S50HXS7JK145ZWZXWC.png",
+      "db_file_size": 46154,
+      "actual_file_size": 46154,
+      "mime_type": "image/png",
+      "file_ext": "png",
+      "placeholder": false,
+      "storage_file_exists": true,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": true,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": "lre_prompt",
+      "png_pve_score": 100,
+      "png_pve_passed": true,
+      "png_lre_prompt_hash_present": true,
+      "png_selected_prompt_contains_lre": true,
+      "content_quality_status": "passed",
+      "downloadable": true,
+      "storage_error": null
+    },
+    {
+      "artifact_type": "crest_variant_png",
+      "asset_id_hash": "fdb2e4760aa4667c",
+      "db_status": "available",
+      "storage_provider": "local_private",
+      "storage_bucket": "private-assets",
+      "storage_key_masked": "orders/***/01KWVFP3N1WJBD06QMVG6EQ0TS.png",
+      "db_file_size": 47087,
+      "actual_file_size": 47087,
+      "mime_type": "image/png",
+      "file_ext": "png",
+      "placeholder": false,
+      "storage_file_exists": true,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": true,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": "lre_prompt",
+      "png_pve_score": 100,
+      "png_pve_passed": true,
+      "png_lre_prompt_hash_present": true,
+      "png_selected_prompt_contains_lre": true,
+      "content_quality_status": "passed",
+      "downloadable": true,
+      "storage_error": null
+    },
+    {
+      "artifact_type": "crest_variant_png",
+      "asset_id_hash": "39986159e93bcd46",
+      "db_status": "available",
+      "storage_provider": "local_private",
+      "storage_bucket": "private-assets",
+      "storage_key_masked": "orders/***/01KWVFP4E19TZGGGQ56RKJ0FNK.png",
+      "db_file_size": 61491,
+      "actual_file_size": 61491,
+      "mime_type": "image/png",
+      "file_ext": "png",
+      "placeholder": false,
+      "storage_file_exists": true,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": true,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": "lre_prompt",
+      "png_pve_score": 100,
+      "png_pve_passed": true,
+      "png_lre_prompt_hash_present": true,
+      "png_selected_prompt_contains_lre": true,
+      "content_quality_status": "passed",
+      "downloadable": true,
+      "storage_error": null
+    },
+    {
+      "artifact_type": "transparent_crest_png",
+      "asset_id_hash": "76dde9923cdcceae",
+      "db_status": "available",
+      "storage_provider": "local_private",
+      "storage_bucket": "private-assets",
+      "storage_key_masked": "orders/***/01KWVFP58HAJ2X5FV839XQ9RVE.png",
+      "db_file_size": 40548,
+      "actual_file_size": 40548,
+      "mime_type": "image/png",
+      "file_ext": "png",
+      "placeholder": false,
+      "storage_file_exists": true,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": true,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": "lre_prompt",
+      "png_pve_score": 100,
+      "png_pve_passed": true,
+      "png_lre_prompt_hash_present": true,
+      "png_selected_prompt_contains_lre": true,
+      "content_quality_status": "passed",
+      "downloadable": true,
+      "storage_error": null
+    },
+    {
+      "artifact_type": "symbol_explanation_pdf",
+      "asset_id_hash": "c2000875732add28",
+      "db_status": "available",
+      "storage_provider": "local_private",
+      "storage_bucket": "private-assets",
+      "storage_key_masked": "orders/***/01KWVFP62F3ZQMP21MKTVN3X76.pdf",
+      "db_file_size": 16094,
+      "actual_file_size": 16094,
+      "mime_type": "application/pdf",
+      "file_ext": "pdf",
+      "placeholder": false,
+      "storage_file_exists": true,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": true,
+      "png_header_valid": null,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": "premium_v1",
+      "png_prompt_source": null,
+      "png_pve_score": null,
+      "png_pve_passed": null,
+      "png_lre_prompt_hash_present": false,
+      "png_selected_prompt_contains_lre": false,
+      "content_quality_status": "passed",
+      "downloadable": true,
+      "storage_error": null
+    },
+    {
+      "artifact_type": "heritage_certificate_pdf",
+      "asset_id_hash": "4f1c44ec495e5f02",
+      "db_status": "available",
+      "storage_provider": "local_private",
+      "storage_bucket": "private-assets",
+      "storage_key_masked": "orders/***/01KWVFP63KZ1AMHC6SEW9KM5ZM.pdf",
+      "db_file_size": 14445,
+      "actual_file_size": 14445,
+      "mime_type": "application/pdf",
+      "file_ext": "pdf",
+      "placeholder": false,
+      "storage_file_exists": true,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": true,
+      "png_header_valid": null,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": "premium_v1",
+      "png_prompt_source": null,
+      "png_pve_score": null,
+      "png_pve_passed": null,
+      "png_lre_prompt_hash_present": false,
+      "png_selected_prompt_contains_lre": false,
+      "content_quality_status": "passed",
+      "downloadable": true,
+      "storage_error": null
+    },
+    {
+      "artifact_type": "family_story_pdf",
+      "asset_id_hash": "950d3d68a93a0b6e",
+      "db_status": "available",
+      "storage_provider": "local_private",
+      "storage_bucket": "private-assets",
+      "storage_key_masked": "orders/***/01KWVFP645XRG7Y5ZJ75FMAVVA.pdf",
+      "db_file_size": 14010,
+      "actual_file_size": 14010,
+      "mime_type": "application/pdf",
+      "file_ext": "pdf",
+      "placeholder": false,
+      "storage_file_exists": true,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": true,
+      "png_header_valid": null,
+      "zip_header_valid": null,
+      "zip_test_passed": null,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": "premium_v1",
+      "png_prompt_source": null,
+      "png_pve_score": null,
+      "png_pve_passed": null,
+      "png_lre_prompt_hash_present": false,
+      "png_selected_prompt_contains_lre": false,
+      "content_quality_status": "passed",
+      "downloadable": true,
+      "storage_error": null
+    },
+    {
+      "artifact_type": "download_package_zip",
+      "asset_id_hash": "8cb728f77ab2bdf9",
+      "db_status": "available",
+      "storage_provider": "local_private",
+      "storage_bucket": "private-assets",
+      "storage_key_masked": "orders/***/01KWVFP64JRWWNVGTAWNAN570N.zip",
+      "db_file_size": 243530,
+      "actual_file_size": 243530,
+      "mime_type": "application/zip",
+      "file_ext": "zip",
+      "placeholder": false,
+      "storage_file_exists": true,
+      "signature_valid": true,
+      "format_valid": true,
+      "pdf_header_valid": null,
+      "png_header_valid": null,
+      "zip_header_valid": true,
+      "zip_test_passed": true,
+      "has_unknown_label": false,
+      "repeated_symbol_blocks": false,
+      "raw_json_detected": false,
+      "boundary_statement_present": true,
+      "pdf_layout_version": null,
+      "png_prompt_source": null,
+      "png_pve_score": null,
+      "png_pve_passed": null,
+      "png_lre_prompt_hash_present": false,
+      "png_selected_prompt_contains_lre": false,
+      "content_quality_status": "passed",
+      "downloadable": true,
+      "storage_error": null
+    }
+  ]
+}
+ssh_exit_status=0
