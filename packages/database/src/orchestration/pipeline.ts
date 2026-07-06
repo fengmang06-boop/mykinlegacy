@@ -562,7 +562,12 @@ async function createArtifactBody(input: {
     const readme = await tools.generateReadme({
       package_title: `${input.context.house_name} Private Legacy Collection`,
       included_files: sourceEntries.map((entry) => entry.name),
-      support_note: "Contact support@mykinlegacy.com with your order number if you need help.",
+      support_note: [
+        input.context.collection_content?.readme_note,
+        "Contact support@mykinlegacy.com with your order number if you need help."
+      ]
+        .filter(Boolean)
+        .join(" "),
       disclaimer: ARTIFACT_BOUNDARY_STATEMENT
     });
     const body = tools.buildZipBuffer([
@@ -707,7 +712,6 @@ function createArtifactContext(input: {
 }): ArtifactContext {
   const attachment = meaningAttachment(input.manifest);
   const profile = recordObject(attachment, "meaning_profile");
-  const content = collectionContentSummary(input.manifest);
   const customerInputs = recordObject(profile, "customer_inputs");
   const orderInput = input.order.order_inputs?.[0];
   const houseDna = firstRecord(
@@ -720,8 +724,9 @@ function createArtifactContext(input: {
     surname,
     recipient: stringOrNull(recordValue(customerInputs, "recipient"))
   });
+  const safeContent = sanitizeCollectionContent(collectionContentSummary(input.manifest), houseName);
   const symbols = dedupeContextSymbols([
-    ...(content?.symbol_guide ?? []).map((symbol) => ({
+    ...(safeContent?.symbol_guide ?? []).map((symbol) => ({
       symbol: symbol.symbol ?? "Symbol",
       meaning: symbol.meaning,
       rationale: symbol.why_chosen,
@@ -754,7 +759,7 @@ function createArtifactContext(input: {
     design_rationale: stringArray(recordValue(profile, "design_rationale")),
     story_direction: stringOrNull(recordValue(profile, "story_direction")),
     certificate_direction: stringOrNull(recordValue(profile, "certificate_direction")),
-    collection_content: content
+    collection_content: safeContent
   };
 }
 
@@ -1094,9 +1099,49 @@ function customerFacingFamilyName(input: {
 
 function cleanDisplayName(value?: string | null): string | null {
   const cleaned = value?.trim().replace(/\s+/g, " ");
-  if (!cleaned || /^(unknown|null|undefined|n\/a|none)$/i.test(cleaned)) return null;
-  if (/house of unknown/i.test(cleaned)) return null;
+  if (!cleaned || isUnsafeDisplayLabel(cleaned)) return null;
   return cleaned.slice(0, 80);
+}
+
+function isUnsafeDisplayLabel(value: string): boolean {
+  return /^(unknown|null|undefined|n\/a|none)$/i.test(value) || /\bHouse of Unknown\b/i.test(value);
+}
+
+function sanitizeCollectionContent(
+  content: ReturnType<typeof serializeCollectionContent> | null,
+  safeFamilyName: string
+): ReturnType<typeof serializeCollectionContent> | null {
+  if (!content) return null;
+  return {
+    ...content,
+    collection_name: sanitizeArtifactText(content.collection_name, safeFamilyName),
+    family_display_name: sanitizeArtifactText(content.family_display_name, safeFamilyName),
+    house_meaning_summary: sanitizeArtifactText(content.house_meaning_summary, safeFamilyName),
+    symbol_guide: content.symbol_guide.map((symbol) => ({
+      ...symbol,
+      symbol: sanitizeArtifactText(symbol.symbol, safeFamilyName),
+      meaning: sanitizeArtifactText(symbol.meaning, safeFamilyName),
+      why_chosen: sanitizeArtifactText(symbol.why_chosen, safeFamilyName),
+      customer_input_basis: sanitizeArtifactText(symbol.customer_input_basis, safeFamilyName),
+      visual_role: sanitizeArtifactText(symbol.visual_role, safeFamilyName),
+      artifact_role: sanitizeArtifactText(symbol.artifact_role, safeFamilyName),
+      emotional_relevance: sanitizeArtifactText(symbol.emotional_relevance, safeFamilyName)
+    })),
+    family_story: sanitizeArtifactText(content.family_story, safeFamilyName),
+    certificate_text: sanitizeArtifactText(content.certificate_text, safeFamilyName),
+    collection_letter: sanitizeArtifactText(content.collection_letter, safeFamilyName),
+    design_basis: sanitizeArtifactText(content.design_basis, safeFamilyName),
+    share_caption: sanitizeArtifactText(content.share_caption, safeFamilyName),
+    readme_note: sanitizeArtifactText(content.readme_note, safeFamilyName),
+    boundary_statement: sanitizeArtifactText(content.boundary_statement, safeFamilyName)
+  };
+}
+
+function sanitizeArtifactText<T extends string | null>(value: T, safeFamilyName: string): T {
+  if (typeof value !== "string") return value;
+  return value
+    .replace(/\bHouse of Unknown\b/gi, safeFamilyName)
+    .replace(/\bUnknown\b/g, "the family") as T;
 }
 
 function dedupeContextSymbols(symbols: ArtifactContext["symbols"]): ArtifactContext["symbols"] {
@@ -1196,6 +1241,7 @@ function meaningInputFromOrder(input: {
     surname: stringOrNull(recordValue(houseDna, "surname")),
     house_name: stringOrNull(recordValue(houseDna, "house_name")),
     motto: stringOrNull(recordValue(houseDna, "motto")),
+    order_number: input.order.order_number,
     source_level: orderInput ? "customer_confirmed" as const : "minimal" as const
   };
 }
@@ -1233,6 +1279,16 @@ function loadMeaningEngine(): {
   createMeaningManifestAttachment(input: Record<string, unknown>, now: Date): unknown;
 } {
   try {
+    // Prefer source during package-level tests before workspace dist outputs are rebuilt.
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    return require("../../../domain/src/meaning/rules.ts") as {
+      createMeaningManifestAttachment(input: Record<string, unknown>, now: Date): unknown;
+    };
+  } catch {
+    // Fall back to built workspace packages in production.
+  }
+
+  try {
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const workspaceModule = require("@ai-heritage/domain") as {
       createMeaningManifestAttachment(input: Record<string, unknown>, now: Date): unknown;
@@ -1245,17 +1301,9 @@ function loadMeaningEngine(): {
       return workspaceModule;
     }
   } catch {
-    // Fall back to source below for package-level tests before domain dist is rebuilt.
+    // Throw below.
   }
-
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    return require("../../../domain/src/meaning/rules.ts") as {
-      createMeaningManifestAttachment(input: Record<string, unknown>, now: Date): unknown;
-    };
-  } catch {
-    throw new Error("meaning_engine_module_unavailable");
-  }
+  throw new Error("meaning_engine_module_unavailable");
 }
 
 function meaningProfileSummary(manifest: OrchestrationManifest) {
@@ -1322,6 +1370,9 @@ function serializeCollectionContent(content: Record<string, unknown>) {
     certificate_text: stringOrNull(recordValue(content, "certificate_text")),
     collection_letter: stringOrNull(recordValue(content, "collection_letter")),
     design_basis: stringOrNull(recordValue(content, "design_basis")),
+    share_caption: stringOrNull(recordValue(content, "share_caption")),
+    readme_note: stringOrNull(recordValue(content, "readme_note")),
+    lre_text_integration: recordObject(content, "lre_text_integration"),
     boundary_statement: stringOrNull(recordValue(content, "boundary_statement")),
     content_quality: recordObject(content, "content_quality")
   };

@@ -195,6 +195,101 @@ describe("DB-backed orchestration foundation", () => {
     });
   }, 15_000);
 
+  it("sanitizes unknown family labels before generating customer PDF artifacts", async () => {
+    const repository = createRepository();
+    const order = repository.orders.get("order_1");
+    if (!order) throw new Error("missing_order");
+    order.order_inputs = [
+      {
+        input_schema_version: "house_dna_snapshot.v1",
+        input_json: {
+          house_dna: {
+            house_name: "House of Unknown",
+            surname: "Unknown",
+            family_values: ["unity"],
+            symbols: ["shield", "tree", "knot"],
+            colors: { primary: ["deep_navy", "gold", "ivory"] },
+            emotional_tone: ["warm", "archival"],
+            visual_style: "classic_heritage"
+          }
+        },
+        normalized_input_json: {},
+        locale: "en-US"
+      }
+    ];
+    const outbox = repository.outboxEvents.get("outbox_1");
+    if (!outbox) throw new Error("missing_outbox");
+    const { manifest } = await processOrderPaidOutbox({ outboxEvent: outbox, repository, now });
+
+    const result = await runManifestDrivenGeneration({
+      manifest_id: manifest.id,
+      repository,
+      now
+    });
+
+    const pdfAssets = result.assets.filter((asset) => asset.file_ext === "pdf");
+    expect(pdfAssets).toHaveLength(3);
+    for (const asset of pdfAssets) {
+      const text = (await readStoredAsset(asset)).toString("latin1");
+      expect(text).toContain("Your Family Legacy");
+      expect(text).not.toMatch(/\bHouse of Unknown\b|\bUnknown\b/);
+      expect(text).toContain("personalized symbolic keepsake");
+    }
+  }, 15_000);
+
+  it("applies LRE text to one allowlisted order without changing PNG generation", async () => {
+    const originalAllowlist = process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST;
+    process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST = "AHL-20260629-ORCH";
+    try {
+      const repository = createRepository();
+      const outbox = repository.outboxEvents.get("outbox_1");
+      if (!outbox) throw new Error("missing_outbox");
+      const { manifest } = await processOrderPaidOutbox({ outboxEvent: outbox, repository, now });
+
+      const result = await runManifestDrivenGeneration({
+        manifest_id: manifest.id,
+        repository,
+        now
+      });
+
+      const summary = await getOrderGenerationSummary({ order_id: "order_1", repository });
+      expect(summary.generation_manifest?.collection_content).toMatchObject({
+        lre_text_integration: expect.objectContaining({
+          enabled: true,
+          mode: "single_order_allowlist",
+          png_generation_changed: false,
+          payment_email_vault_changed: false
+        }),
+        share_caption: expect.stringContaining("private symbolic keepsake"),
+        readme_note: expect.stringContaining("LRE text pass")
+      });
+
+      const certificateAsset = result.assets.find((asset) => asset.deliverable_code === "heritage_certificate_pdf");
+      const familyStoryAsset = result.assets.find((asset) => asset.deliverable_code === "family_story_pdf");
+      const pngAsset = result.assets.find((asset) => asset.deliverable_code === "crest_variant_1_png");
+      const zipAsset = result.assets.find((asset) => asset.deliverable_code === "download_package_zip");
+      if (!certificateAsset || !familyStoryAsset || !pngAsset || !zipAsset) throw new Error("expected_artifacts_missing");
+
+      const certificateText = (await readStoredAsset(certificateAsset)).toString("latin1");
+      const familyStoryText = (await readStoredAsset(familyStoryAsset)).toString("latin1");
+      const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
+      const zipText = (await readStoredAsset(zipAsset)).toString("latin1");
+
+      expect(certificateText).toContain("personal in authority");
+      expect(familyStoryText).toContain("Nothing here asks the family to believe invented history");
+      expect(zipText).toContain("This archive includes an LRE text pass");
+      expect(pngText).toContain("artwork_template=shield_legacy_crest_v1");
+      expect(pngText).toContain("artwork_mode=deterministic_symbolic_template");
+      expect(pngText).not.toContain("LRE text pass");
+    } finally {
+      if (originalAllowlist === undefined) {
+        delete process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST;
+      } else {
+        process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST = originalAllowlist;
+      }
+    }
+  }, 15_000);
+
   it("returns safe customer order status without private fields", async () => {
     const repository = await completedRepository();
     const summary = await getOrderGenerationSummary({ order_id: "order_1", repository });
