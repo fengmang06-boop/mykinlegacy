@@ -138,6 +138,10 @@ async function inspectAsset(asset) {
     png_pve_passed: contentQuality.png_pve_passed,
     png_lre_prompt_hash_present: contentQuality.png_lre_prompt_hash_present,
     png_selected_prompt_contains_lre: contentQuality.png_selected_prompt_contains_lre,
+    image_provider: contentQuality.image_provider,
+    image_model: contentQuality.image_model,
+    image_generation_bridge: contentQuality.image_generation_bridge,
+    fallback_used: contentQuality.fallback_used,
     content_quality_status: contentQuality.status,
     downloadable: asset.status === "available" && exists && !placeholder && validation.valid && contentQuality.status !== "failed"
   };
@@ -156,6 +160,10 @@ function contentQualityForBuffer(body, fileExt) {
       png_pve_passed: null,
       png_lre_prompt_hash_present: false,
       png_selected_prompt_contains_lre: false,
+      image_provider: null,
+      image_model: null,
+      image_generation_bridge: null,
+      fallback_used: null,
       status: "not_checked"
     };
   }
@@ -201,7 +209,11 @@ function parsePngPromptMetadata(text, fileExt) {
     png_pve_score: pveScoreRaw && /^\d+$/.test(pveScoreRaw) ? Number(pveScoreRaw) : null,
     png_pve_passed: text.includes("pve_passed=true"),
     png_lre_prompt_hash_present: /lre_prompt_sha256=[a-f0-9]{64}/.test(text),
-    png_selected_prompt_contains_lre: /selected_prompt=LRE Prompt Builder:/i.test(text)
+    png_selected_prompt_contains_lre: /selected_prompt=LRE Prompt Builder:/i.test(text),
+    image_provider: text.match(/image_provider=([^;]+)/)?.[1] ?? null,
+    image_model: text.match(/image_model=([^;]+)/)?.[1] ?? null,
+    image_generation_bridge: text.match(/image_generation_bridge=([^;]+)/)?.[1] ?? null,
+    fallback_used: text.match(/fallback_used=([^;]+)/)?.[1] ?? null
   };
 }
 

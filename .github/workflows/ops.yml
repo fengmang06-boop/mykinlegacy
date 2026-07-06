@@ -20,6 +20,7 @@ on:
           - repair_order_artifacts
           - verify_download_binaries
           - founder_final_order_verification
+          - ai_image_bridge_order_test
           - safe_deploy
       order_number:
         description: "Order number for order-specific actions"
@@ -45,6 +46,7 @@ jobs:
       PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
       OPS_ACTION: ${{ inputs.action }}
       ORDER_NUMBER: ${{ inputs.order_number }}
+      OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -62,7 +64,7 @@ jobs:
           case "$OPS_ACTION" in
             health_check|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs)
               ;;
-            inspect_order|repair_order_artifacts|verify_download_binaries|founder_final_order_verification)
+            inspect_order|repair_order_artifacts|verify_download_binaries|founder_final_order_verification|ai_image_bridge_order_test)
               if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
                 echo "A valid order_number is required for action ${OPS_ACTION}." >&2
                 exit 1
@@ -127,11 +129,12 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -p "$PROD_SSH_PORT" \
             "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'bash -s' -- "$PROD_PROJECT_DIR" "$OPS_ACTION" "$ORDER_NUMBER" <<'REMOTE_SCRIPT'
+            'bash -s' -- "$PROD_PROJECT_DIR" "$OPS_ACTION" "$ORDER_NUMBER" "$OPENAI_API_KEY" <<'REMOTE_SCRIPT'
           set -euo pipefail
           PROJECT_DIR="$1"
           ACTION="$2"
           ORDER_NUMBER="${3:-}"
+          OPENAI_API_KEY_FROM_SECRET="${4:-}"
 
           echo "SSH connection success: yes"
           test -d "$PROJECT_DIR"
@@ -189,7 +192,7 @@ jobs:
               bash deployment/with-production-lock.sh "ops:worker_logs" bash -lc 'docker logs mykinlegacy_worker --tail 120'
               ;;
             *)
-              bash deployment/run-ops-action.sh "$ACTION" "$ORDER_NUMBER"
+              MYKINLEGACY_OPENAI_API_KEY="$OPENAI_API_KEY_FROM_SECRET" bash deployment/run-ops-action.sh "$ACTION" "$ORDER_NUMBER"
               ;;
           esac
           REMOTE_SCRIPT

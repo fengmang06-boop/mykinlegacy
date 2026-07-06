@@ -52,6 +52,36 @@ compose() {
   docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$SCRIPT_DIR/docker-compose.yml" "$@"
 }
 
+set_env_var() {
+  local key="$1"
+  local value="$2"
+  local tmp
+  tmp="$(mktemp)"
+  if grep -q "^${key}=" "$ENV_FILE"; then
+    awk -v key="$key" -v value="$value" 'BEGIN { FS = OFS = "=" } $1 == key { print key "=" value; next } { print }' "$ENV_FILE" > "$tmp"
+  else
+    cat "$ENV_FILE" > "$tmp"
+    printf '%s=%s\n' "$key" "$value" >> "$tmp"
+  fi
+  cat "$tmp" > "$ENV_FILE"
+  rm -f "$tmp"
+}
+
+export_last_successful_image() {
+  local image_file="$SCRIPT_DIR/.last-successful-image"
+  if [ ! -f "$image_file" ]; then
+    echo "FAIL deployment/.last-successful-image is missing"
+    exit 1
+  fi
+  APP_IMAGE="$(tr -d '[:space:]' < "$image_file")"
+  if [ -z "$APP_IMAGE" ]; then
+    echo "FAIL deployment/.last-successful-image is empty"
+    exit 1
+  fi
+  export APP_IMAGE
+  echo "APP_IMAGE=$(echo "$APP_IMAGE" | sed -E 's#:[a-f0-9]{40}$#:***#')"
+}
+
 print_preflight() {
   echo "MyKinLegacy Ops workflow preflight"
   echo "Generated at: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
@@ -192,6 +222,41 @@ case "$ACTION" in
     bash "$SCRIPT_DIR/founder-final-order-verification.sh" "$ORDER_NUMBER"
     ;;
 
+  ai_image_bridge_order_test)
+    require_order_number
+    echo "===== AI IMAGE BRIDGE ORDER TEST ====="
+    echo "mode=allowlist_only restart_worker_only=yes no_full_deploy=yes"
+    set_env_var "LRE_IMAGE_PROMPT_ORDER_ALLOWLIST" "$ORDER_NUMBER"
+    set_env_var "LRE_IMAGE_GENERATION_PROVIDER" "openai"
+    set_env_var "OPENAI_IMAGE_MODEL" "gpt-image-1"
+    set_env_var "OPENAI_IMAGE_SIZE" "1024x1024"
+    set_env_var "OPENAI_IMAGE_QUALITY" "high"
+    if [ -n "${MYKINLEGACY_OPENAI_API_KEY:-}" ]; then
+      set_env_var "OPENAI_API_KEY" "$MYKINLEGACY_OPENAI_API_KEY"
+      echo "OPENAI_API_KEY_SOURCE=github_secret"
+    elif grep -Eq '^OPENAI_API_KEY=.+$' "$ENV_FILE"; then
+      echo "OPENAI_API_KEY_SOURCE=existing_vps_env"
+    else
+      echo "FAIL OPENAI_API_KEY is missing. Add GitHub secret OPENAI_API_KEY or set it in deployment/.env.production."
+      exit 1
+    fi
+
+    export_last_successful_image
+    compose up -d --no-build --force-recreate worker
+    echo "===== REPAIR WITH AI IMAGE BRIDGE ====="
+    bash "$SCRIPT_DIR/repair-order-artifacts.sh" "$ORDER_NUMBER"
+    echo "===== INSPECT AI IMAGE BRIDGE RESULT ====="
+    inspect_output="$(mktemp)"
+    bash "$SCRIPT_DIR/inspect-artifacts.sh" "$ORDER_NUMBER" | tee "$inspect_output"
+    grep -q '"png_prompt_source": "lre_prompt"' "$inspect_output"
+    grep -q '"png_pve_passed": true' "$inspect_output"
+    grep -Eq '"png_pve_score": (9[5-9]|100)' "$inspect_output"
+    grep -q '"image_provider": "openai"' "$inspect_output"
+    grep -q '"fallback_used": "false"' "$inspect_output"
+    rm -f "$inspect_output"
+    echo "AI_IMAGE_BRIDGE_ORDER_TEST_PASS order=${ORDER_NUMBER}"
+    ;;
+
   safe_deploy)
     echo "===== SAFE DEPLOY ====="
     if [ -d "$PROJECT_ROOT/.git" ]; then
@@ -208,7 +273,7 @@ case "$ACTION" in
 
   *)
     echo "FAIL unsupported action: ${ACTION}"
-    echo "Supported actions: health_check, restart_nginx, restart_services, docker_ps, nginx_logs, api_logs, web_logs, worker_logs, inspect_order, repair_order_artifacts, verify_download_binaries, founder_final_order_verification, safe_deploy"
+    echo "Supported actions: health_check, restart_nginx, restart_services, docker_ps, nginx_logs, api_logs, web_logs, worker_logs, inspect_order, repair_order_artifacts, verify_download_binaries, founder_final_order_verification, ai_image_bridge_order_test, safe_deploy"
     exit 1
     ;;
 esac
