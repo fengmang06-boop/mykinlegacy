@@ -168,6 +168,9 @@ importers:
 
   packages/database:
     dependencies:
+      '@ai-heritage/ai':
+        specifier: workspace:*
+        version: link:../ai
       '@ai-heritage/domain':
         specifier: workspace:*
         version: link:../domain

@@ -19,6 +19,7 @@
     "clean": "rimraf dist"
   },
   "dependencies": {
+    "@ai-heritage/ai": "workspace:*",
     "@ai-heritage/domain": "workspace:*",
     "@ai-heritage/pdf": "workspace:*",
     "@ai-heritage/storage": "workspace:*",

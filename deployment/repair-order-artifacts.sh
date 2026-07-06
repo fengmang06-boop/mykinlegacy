@@ -111,6 +111,11 @@ async function inspectAsset(asset) {
     raw_json_detected: contentQuality.raw_json_detected,
     boundary_statement_present: contentQuality.boundary_statement_present,
     pdf_layout_version: contentQuality.pdf_layout_version,
+    png_prompt_source: contentQuality.png_prompt_source,
+    png_pve_score: contentQuality.png_pve_score,
+    png_pve_passed: contentQuality.png_pve_passed,
+    png_lre_prompt_hash_present: contentQuality.png_lre_prompt_hash_present,
+    png_selected_prompt_contains_lre: contentQuality.png_selected_prompt_contains_lre,
     content_quality_status: contentQuality.status,
     downloadable: asset.status === "available" && exists && !placeholder && validation.valid && contentQuality.status !== "failed"
   };
@@ -124,10 +129,16 @@ function contentQualityForBuffer(body, fileExt) {
       raw_json_detected: false,
       boundary_statement_present: false,
       pdf_layout_version: null,
+      png_prompt_source: null,
+      png_pve_score: null,
+      png_pve_passed: null,
+      png_lre_prompt_hash_present: false,
+      png_selected_prompt_contains_lre: false,
       status: "not_checked"
     };
   }
   const text = body.toString("latin1");
+  const promptMetadata = parsePngPromptMetadata(text, fileExt);
   const hasUnknown = /\b(House of Unknown|Unknown|null|undefined)\b/i.test(text);
   const rawJson = /[{[]\s*"[^"]+"\s*:/s.test(text) || /request_id|correlation_id|success|data/i.test(text);
   const boundary = /personalized symbolic keepsake/i.test(text);
@@ -146,7 +157,29 @@ function contentQualityForBuffer(body, fileExt) {
     raw_json_detected: rawJson,
     boundary_statement_present: boundary,
     pdf_layout_version: layoutVersion,
+    ...promptMetadata,
     status: failed ? "failed" : "passed"
+  };
+}
+
+function parsePngPromptMetadata(text, fileExt) {
+  if (fileExt !== "png") {
+    return {
+      png_prompt_source: null,
+      png_pve_score: null,
+      png_pve_passed: null,
+      png_lre_prompt_hash_present: false,
+      png_selected_prompt_contains_lre: false
+    };
+  }
+  const promptSource = text.match(/prompt_source=([^;]+)/)?.[1] ?? null;
+  const pveScoreRaw = text.match(/pve_score=([^;]+)/)?.[1] ?? null;
+  return {
+    png_prompt_source: promptSource,
+    png_pve_score: pveScoreRaw && /^\d+$/.test(pveScoreRaw) ? Number(pveScoreRaw) : null,
+    png_pve_passed: text.includes("pve_passed=true"),
+    png_lre_prompt_hash_present: /lre_prompt_sha256=[a-f0-9]{64}/.test(text),
+    png_selected_prompt_contains_lre: /selected_prompt=LRE Prompt Builder:/i.test(text)
   };
 }
 

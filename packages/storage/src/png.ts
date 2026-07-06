@@ -17,13 +17,25 @@ export function createMvpCrestPngBuffer(input: {
   house_name?: string;
   symbols?: string[];
   transparent?: boolean;
+  prompt_metadata?: {
+    prompt_source?: "old_prompt" | "lre_prompt";
+    pve_score?: number | null;
+    pve_passed?: boolean;
+    old_prompt_sha256?: string | null;
+    lre_prompt_sha256?: string | null;
+    selected_prompt?: string | null;
+    negative_prompt?: string | null;
+    primary_symbol?: string | null;
+    secondary_symbols?: string[];
+    selected_dna?: string[];
+  };
 }): Buffer {
   const width = 640;
   const height = 640;
   const raw = Buffer.alloc((width * 4 + 1) * height);
   const seed = hashSeed(`${input.variant}:${input.house_name ?? "house"}:${(input.symbols ?? []).join(",")}`);
   const centerX = width / 2;
-  const symbolMapping = resolveSymbolMapping(input.symbols ?? []);
+  const symbolMapping = resolveSymbolMapping(input.symbols ?? [], input.prompt_metadata);
   const style = resolveCrestVariant(input.variant, input.transparent === true);
 
   for (let y = 0; y < height; y += 1) {
@@ -103,6 +115,7 @@ export function createMvpCrestPngBuffer(input: {
       `Description\0MyKinLegacy symbolic crest artwork. artwork_template=shield_legacy_crest_v1; artwork_mode=deterministic_symbolic_template; ` +
       `main_symbol=${symbolMapping.main_symbol}; supporting_symbols=${symbolMapping.supporting_symbols.join(",")}; ` +
       `theme_mapping=continuity,unity; artwork_quality=internal_beta; variant=${style.name}; ` +
+      promptMetadataText(input.prompt_metadata) +
       `House ${input.house_name ?? "family"}. Mapped symbols shield, tree, knot. `.repeat(220)
   );
 
@@ -230,16 +243,49 @@ function resolveCrestVariant(variant: string, transparent: boolean): CrestStyle 
   };
 }
 
-function resolveSymbolMapping(symbols: string[]): {
-  main_symbol: "tree";
-  supporting_symbols: ["shield", "knot"];
+function resolveSymbolMapping(symbols: string[], promptMetadata?: Parameters<typeof createMvpCrestPngBuffer>[0]["prompt_metadata"]): {
+  main_symbol: string;
+  supporting_symbols: string[];
 } {
+  const lrePrimary = normalizeSymbol(promptMetadata?.primary_symbol ?? "");
+  const lreSupporting = (promptMetadata?.secondary_symbols ?? []).map(normalizeSymbol).filter(Boolean);
+  if (promptMetadata?.prompt_source === "lre_prompt" && lrePrimary) {
+    return {
+      main_symbol: lrePrimary,
+      supporting_symbols: lreSupporting.length > 0 ? lreSupporting.slice(0, 3) : ["shield", "laurel"]
+    };
+  }
   const normalized = symbols.join(" ").toLowerCase();
   const hasTreeSignal = /\b(tree|oak|branch|root|heritage|legacy)\b/.test(normalized);
   return {
     main_symbol: hasTreeSignal ? "tree" : "tree",
     supporting_symbols: ["shield", "knot"]
   };
+}
+
+function promptMetadataText(metadata?: Parameters<typeof createMvpCrestPngBuffer>[0]["prompt_metadata"]): string {
+  if (!metadata) return "prompt_source=old_prompt; ";
+  const parts = [
+    ["prompt_source", metadata.prompt_source ?? "old_prompt"],
+    ["pve_score", metadata.pve_score === null || metadata.pve_score === undefined ? "none" : String(metadata.pve_score)],
+    ["pve_passed", metadata.pve_passed === true ? "true" : "false"],
+    ["old_prompt_sha256", metadata.old_prompt_sha256 ?? "none"],
+    ["lre_prompt_sha256", metadata.lre_prompt_sha256 ?? "none"],
+    ["primary_symbol", normalizeSymbol(metadata.primary_symbol ?? "") || "none"],
+    ["secondary_symbols", (metadata.secondary_symbols ?? []).map(normalizeSymbol).filter(Boolean).join(",") || "none"],
+    ["selected_dna", (metadata.selected_dna ?? []).map(safeMetadataValue).join("|") || "none"],
+    ["selected_prompt", safeMetadataValue(metadata.selected_prompt ?? "") || "none"],
+    ["negative_prompt", safeMetadataValue(metadata.negative_prompt ?? "") || "none"]
+  ];
+  return `${parts.map(([key, value]) => `${key}=${value}`).join("; ")}; `;
+}
+
+function normalizeSymbol(value: string): string {
+  return value.toLowerCase().replace(/[^a-z0-9_ -]/g, "").trim().replace(/\s+/g, "_");
+}
+
+function safeMetadataValue(value: string): string {
+  return value.replace(/[;\0\r\n]+/g, " ").replace(/\s+/g, " ").trim().slice(0, 1800);
 }
 
 function shieldHalfWidth(y: number, style: CrestStyle): number {

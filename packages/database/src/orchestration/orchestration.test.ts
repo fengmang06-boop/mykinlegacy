@@ -20,16 +20,23 @@ import type {
 
 const now = new Date("2026-06-29T00:00:00.000Z");
 const originalLocalStorageDir = process.env.LOCAL_STORAGE_DIR;
+const originalLrePromptAllowlist = process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST;
 let localStorageDir = "";
 
 describe("DB-backed orchestration foundation", () => {
   beforeEach(async () => {
     localStorageDir = await mkdtemp(join(tmpdir(), "mykinlegacy-orchestration-"));
     process.env.LOCAL_STORAGE_DIR = localStorageDir;
+    delete process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST;
   });
 
   afterEach(async () => {
     process.env.LOCAL_STORAGE_DIR = originalLocalStorageDir;
+    if (originalLrePromptAllowlist === undefined) {
+      delete process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST;
+    } else {
+      process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST = originalLrePromptAllowlist;
+    }
     await rm(localStorageDir, { recursive: true, force: true });
   });
 
@@ -193,6 +200,31 @@ describe("DB-backed orchestration foundation", () => {
       fulfillment_status: "generating",
       completed_at: null
     });
+  }, 15_000);
+
+  it("uses the LRE prompt bridge for allowlisted manifest-driven PNG repair", async () => {
+    const repository = createRepository();
+    process.env.LRE_IMAGE_PROMPT_ORDER_ALLOWLIST = "AHL-20260629-ORCH";
+    const outbox = repository.outboxEvents.get("outbox_1");
+    if (!outbox) throw new Error("missing_outbox");
+    const { manifest } = await processOrderPaidOutbox({ outboxEvent: outbox, repository, now });
+
+    const result = await runManifestDrivenGeneration({
+      manifest_id: manifest.id,
+      repository,
+      now
+    });
+
+    const pngAsset = result.assets.find((asset) => asset.deliverable_code === "crest_variant_1_png");
+    if (!pngAsset) throw new Error("png_asset_missing");
+    const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
+
+    expect(pngText).toContain("prompt_source=lre_prompt");
+    expect(pngText).toContain("pve_passed=true");
+    expect(pngText).toMatch(/pve_score=(9[5-9]|100)\b/);
+    expect(pngText).toMatch(/lre_prompt_sha256=[a-f0-9]{64}/);
+    expect(pngText).toContain("selected_prompt=LRE Prompt Builder:");
+    expect(pngText).toContain("Primary composition:");
   }, 15_000);
 
   it("sanitizes unknown family labels before generating customer PDF artifacts", async () => {

@@ -428,6 +428,18 @@ interface ArtifactTooling {
     house_name?: string;
     symbols?: string[];
     transparent?: boolean;
+    prompt_metadata?: {
+      prompt_source?: "old_prompt" | "lre_prompt";
+      pve_score?: number | null;
+      pve_passed?: boolean;
+      old_prompt_sha256?: string | null;
+      lre_prompt_sha256?: string | null;
+      selected_prompt?: string | null;
+      negative_prompt?: string | null;
+      primary_symbol?: string | null;
+      secondary_symbols?: string[];
+      selected_dna?: string[];
+    };
   }): Buffer;
   generateReadme(input: {
     package_title: string;
@@ -524,11 +536,27 @@ async function createArtifactBody(input: {
 }): Promise<ArtifactBody> {
   const tools = loadArtifactTooling();
   if (input.deliverable_code.endsWith("_png")) {
+    const promptSelection = selectPngPrompt({
+      deliverable_code: input.deliverable_code,
+      context: input.context
+    });
     const body = tools.createMvpCrestPngBuffer({
       variant: input.deliverable_code,
       house_name: input.context.house_name,
-      symbols: input.context.symbols.map((symbol) => symbol.symbol).filter(Boolean),
-      transparent: input.deliverable_code === "transparent_crest_png"
+      symbols: promptSelection.symbols,
+      transparent: input.deliverable_code === "transparent_crest_png",
+      prompt_metadata: {
+        prompt_source: promptSelection.audit.source_selected,
+        pve_score: promptSelection.audit.verification_score,
+        pve_passed: promptSelection.audit.pve_passed,
+        old_prompt_sha256: promptSelection.audit.old_sha256,
+        lre_prompt_sha256: promptSelection.audit.lre_sha256,
+        selected_prompt: promptSelection.selected_prompt,
+        negative_prompt: promptSelection.negative_prompt,
+        primary_symbol: promptSelection.audit.primary_symbol,
+        secondary_symbols: promptSelection.audit.secondary_symbols,
+        selected_dna: promptSelection.audit.selected_dna
+      }
     });
     return {
       body,
@@ -589,6 +617,167 @@ async function createArtifactBody(input: {
   throw new Error(`unsupported_deliverable:${input.deliverable_code}`);
 }
 
+interface PngPromptSelection {
+  symbols: string[];
+  selected_prompt: string;
+  negative_prompt: string | null;
+  audit: {
+    enabled: boolean;
+    order_number: string | null;
+    source_selected: "old_prompt" | "lre_prompt";
+    reason: string;
+    verification_score: number | null;
+    pve_passed: boolean;
+    old_sha256: string;
+    lre_sha256: string | null;
+    primary_symbol: string | null;
+    secondary_symbols: string[];
+    selected_dna: string[];
+  };
+}
+
+function selectPngPrompt(input: {
+  deliverable_code: string;
+  context: ArtifactContext;
+}): PngPromptSelection {
+  const symbols = input.context.symbols.map((symbol) => symbol.symbol).filter(Boolean);
+  const oldPrompt = buildLegacyImagePrompt(input);
+  const negativePrompt = [
+    "no readable text",
+    "no letters",
+    "no words",
+    "no motto",
+    "no surname",
+    "no initials",
+    "no banner text",
+    "no official seal",
+    "no royal crown",
+    "no noble title",
+    "no certified genealogy"
+  ].join(", ");
+  const bridge = loadLrePromptReplacement();
+  if (!bridge) {
+    return {
+      symbols,
+      selected_prompt: oldPrompt,
+      negative_prompt: negativePrompt,
+      audit: {
+        enabled: false,
+        order_number: input.context.order_number,
+        source_selected: "old_prompt",
+        reason: "lre_prompt_bridge_unavailable",
+        verification_score: null,
+        pve_passed: false,
+        old_sha256: sha256(oldPrompt),
+        lre_sha256: null,
+        primary_symbol: null,
+        secondary_symbols: [],
+        selected_dna: []
+      }
+    };
+  }
+
+  const result = bridge.applyAllowlistedLrePromptReplacement({
+    job_id: `manifest_png_${input.context.order_number}_${input.deliverable_code}`,
+    generation_job_id: "manifest_driven_generation",
+    generation_step_id: null,
+    rendered_prompt_id: `manifest_prompt_${input.context.order_number}_${input.deliverable_code}`,
+    rendered_prompt: oldPrompt,
+    negative_prompt: negativePrompt,
+    prompt_template_version_id: "manifest_legacy_image_prompt_v1",
+    identity_version_id: "manifest_identity_snapshot",
+    product_code: "family_legacy_collection",
+    package_code: "premium",
+    deliverable_code: input.deliverable_code,
+    provider_code: "manifest_local_renderer",
+    model_code: "mvp_crest_renderer",
+    output_requirements: {
+      order_number: input.context.order_number,
+      format: "png",
+      private_storage: true
+    },
+    safety_metadata: {
+      order_number: input.context.order_number,
+      house_name: input.context.house_name,
+      family_values: input.context.themes.map((theme) => theme.theme),
+      dominant_themes: input.context.themes.map((theme) => theme.theme),
+      symbols,
+      visual_style: "premium private archive",
+      colors: ["near-black", "antique gold", "warm ivory"],
+      include_text_in_image: false
+    },
+    ai_provider_id: "manifest_local_renderer_provider",
+    ai_model_id: "mvp_crest_renderer_model"
+  });
+
+  const selectedSymbols =
+    result.audit.source_selected === "lre_prompt"
+      ? [
+          result.audit.primary_symbol,
+          ...result.audit.secondary_symbols
+        ].filter((symbol): symbol is string => Boolean(symbol))
+      : symbols;
+
+  return {
+    symbols: selectedSymbols.length > 0 ? selectedSymbols : symbols,
+    selected_prompt: result.input.rendered_prompt,
+    negative_prompt: result.input.negative_prompt,
+    audit: result.audit
+  };
+}
+
+function buildLegacyImagePrompt(input: { deliverable_code: string; context: ArtifactContext }): string {
+  const symbolList = input.context.symbols.map((symbol) => symbol.symbol).filter(Boolean).join(", ");
+  const themes = input.context.themes.map((theme) => theme.theme).filter(Boolean).join(", ");
+  return [
+    `Create a symbolic family crest image for ${input.context.house_name}.`,
+    `Use classic heritage styling with shield, tree, knot, laurel, and antique gold on black.`,
+    `Customer symbols: ${symbolList || "shield, tree, roots"}.`,
+    `Themes: ${themes || "family continuity, unity"}.`,
+    `Deliverable: ${input.deliverable_code}.`,
+    `Do not render readable text, names, motto, letters, official heraldry, royal symbols, noble claims, or genealogy claims.`
+  ].join(" ");
+}
+
+function loadLrePromptReplacement(): null | {
+  applyAllowlistedLrePromptReplacement(input: Record<string, unknown>): {
+    input: {
+      rendered_prompt: string;
+      negative_prompt: string | null;
+    };
+    audit: PngPromptSelection["audit"];
+  };
+} {
+  try {
+    const sourceBase = process.cwd().endsWith("packages\\database") || process.cwd().endsWith("packages/database")
+      ? join(process.cwd(), "..")
+      : join(process.cwd(), "packages");
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const sourceModule = require(join(sourceBase, "ai/src/generation/lre-prompt-replacement.ts")) as {
+      applyAllowlistedLrePromptReplacement?: unknown;
+    };
+    if (typeof sourceModule.applyAllowlistedLrePromptReplacement === "function") {
+      return sourceModule as ReturnType<typeof loadLrePromptReplacement>;
+    }
+  } catch {
+    // Fall back to built workspace package in production.
+  }
+
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const packageModule = require("@ai-heritage/ai") as {
+      applyAllowlistedLrePromptReplacement?: unknown;
+    };
+    if (typeof packageModule.applyAllowlistedLrePromptReplacement === "function") {
+      return packageModule as ReturnType<typeof loadLrePromptReplacement>;
+    }
+  } catch {
+    // Caller will use old_prompt and record bridge_unavailable.
+  }
+
+  return null;
+}
+
 function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): void {
   const tools = loadArtifactTooling();
   if (artifact.file_ext === "png") {
@@ -600,8 +789,15 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
     if (artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES) failures.push(`png_too_small:${artifact.body.byteLength}`);
     if (!text.includes("artwork_template=shield_legacy_crest_v1")) failures.push("artwork_template_missing");
     if (!text.includes("artwork_mode=deterministic_symbolic_template")) failures.push("artwork_mode_missing");
-    if (!text.includes("main_symbol=tree")) failures.push("main_symbol_missing");
-    if (!text.includes("supporting_symbols=shield,knot")) failures.push("supporting_symbols_missing");
+    if (text.includes("prompt_source=lre_prompt")) {
+      if (!/pve_score=(9[5-9]|100)\b/.test(text)) failures.push("lre_pve_score_missing_or_low");
+      if (!text.includes("pve_passed=true")) failures.push("lre_pve_not_passed");
+      if (!/lre_prompt_sha256=[a-f0-9]{64}/.test(text)) failures.push("lre_prompt_hash_missing");
+      if (!/selected_prompt=LRE Prompt Builder:/i.test(text)) failures.push("lre_selected_prompt_missing");
+    } else {
+      if (!text.includes("main_symbol=tree")) failures.push("main_symbol_missing");
+      if (!text.includes("supporting_symbols=shield,knot")) failures.push("supporting_symbols_missing");
+    }
     if (!text.includes("theme_mapping=continuity,unity")) failures.push("theme_mapping_missing");
     if (/png\.png/i.test(artifact.file_name)) failures.push("bad_png_file_name");
     if (deliverableCode === "transparent_crest_png" && metadata.has_transparent_pixels !== true) {
@@ -1253,16 +1449,29 @@ function createMeaningAttachment(input: Record<string, unknown>, now: Date): Rec
 
 function loadArtifactTooling(): ArtifactTooling {
   try {
-    // Prefer source during package-level tests before workspace dist outputs are rebuilt.
+    // Prefer source PNG helpers during package-level tests before workspace dist outputs are rebuilt.
     const sourceBase = process.cwd().endsWith("packages\\database") || process.cwd().endsWith("packages/database")
       ? join(process.cwd(), "..")
       : join(process.cwd(), "packages");
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pdfSource = require(join(sourceBase, "pdf/src/index.ts")) as Pick<ArtifactTooling, "buildSimplePdf">;
+    const pngSource = require(join(sourceBase, "storage/src/png.ts")) as Pick<
+      ArtifactTooling,
+      "createMvpCrestPngBuffer" | "readPngMetadata"
+    >;
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const storageSource = require(join(sourceBase, "storage/src/index.ts")) as Omit<ArtifactTooling, "buildSimplePdf">;
-    if (typeof storageSource.createMvpCrestPngBuffer === "function") {
-      return { ...storageSource, buildSimplePdf: pdfSource.buildSimplePdf };
+    const pdfPackage = require("@ai-heritage/pdf") as Pick<ArtifactTooling, "buildSimplePdf">;
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const storagePackage = require("@ai-heritage/storage") as Omit<
+      ArtifactTooling,
+      "buildSimplePdf" | "createMvpCrestPngBuffer" | "readPngMetadata"
+    >;
+    if (typeof pngSource.createMvpCrestPngBuffer === "function") {
+      return {
+        ...storagePackage,
+        createMvpCrestPngBuffer: pngSource.createMvpCrestPngBuffer,
+        readPngMetadata: pngSource.readPngMetadata,
+        buildSimplePdf: pdfPackage.buildSimplePdf
+      };
     }
   } catch {
     // Fall back to built workspace packages in production.
