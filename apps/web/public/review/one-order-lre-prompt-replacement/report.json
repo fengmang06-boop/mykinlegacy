@@ -1,0 +1,89 @@
+{
+  "title": "MyKinLegacy One-Order LRE Prompt Replacement",
+  "status": "implementation_ready_blocked_by_production_env_access",
+  "generatedAt": "2026-07-06",
+  "productionScope": {
+    "globalLreEnabled": false,
+    "allowlistEnv": "LRE_IMAGE_PROMPT_ORDER_ALLOWLIST",
+    "allowlistBehavior": "Exactly one order number may be listed. Empty, missing, or multiple order numbers keep the old production prompt.",
+    "nonAllowlistedOrders": "unchanged",
+    "existingCompletedOrders": "unaffected",
+    "paymentEmailVaultOpsChanged": false
+  },
+  "productionPromptLocation": [
+    "packages/database/prisma/seed-data.ts -> promptTemplateSeeds.image_crest_variant_prompt",
+    "packages/ai/src/prompt-rendering/renderer.ts -> renderPrompt() creates the old rendered prompt",
+    "packages/ai/src/generation/job-handlers.ts -> handleAiImageGenerationJob() now performs allowlisted LRE prompt replacement before provider call"
+  ],
+  "runtimeDecisionFlow": [
+    "Read image generation job payload",
+    "Extract order number from safety_metadata or output_requirements",
+    "Check LRE_IMAGE_PROMPT_ORDER_ALLOWLIST contains exactly one matching order",
+    "Build old prompt audit hash",
+    "Build LRE prompt from order-safe metadata: evidence, meaning themes, symbols, hierarchy, DNA, material, lighting, negative controls",
+    "Run runtime Prompt Verification Engine with threshold 95",
+    "If PVE passes, send LRE prompt to image provider",
+    "If PVE fails or order is not allowlisted, send old prompt",
+    "Store safe audit metadata: hashes, PVE score, selected source, primary symbol, secondary symbols, DNA names"
+  ],
+  "oldPromptExample": "Create a heritage-inspired symbolic crest. Do not render text, letters, words, surname, motto, or initials.",
+  "newLrePromptExample": "LRE Prompt Builder: create a premium symbolic family keepsake artwork for The Rivera Family.\nEvidence summary: use the paid order context, values, selected symbols, and family meaning only; do not invent history.\nDominant meaning themes: family continuity, unity, future generations.\nPrimary composition: Tree must be visually dominant and clearly recognizable.\nPrimary Symbol DNA: Embossed Legacy Tree DNA: branching canopy, visible roots, warm gold relief, organic asymmetry.\nSecondary symbols: Roots, Shield; keep them subordinate and integrated into the frame.\nHierarchy rule: one primary symbol only; secondary symbols remain smaller; supporting symbols never become the focal point; ornament never becomes the meaning.\nMaterial direction: embossed antique gold metal, bevelled edges, engraved relief, tactile depth, premium keepsake finish, not flat line art.\nLighting direction: warm directional highlights, deep shadows, subtle rim light, realistic metallic reflections, cinematic but restrained.\nBoundary: personalized symbolic keepsake only; not official heraldry, not certified genealogy, not a status claim.",
+  "negativePromptExample": "no readable text, no letters, no words, no motto, no surname, no initials, no banner text, flat line art, children's outline drawing, random geometry, generic heraldic template, simple vector icon, official seal, royal crown, noble title, certified genealogy, watermark, signature",
+  "promptComparison": {
+    "oldPromptSummary": "The old prompt is safe but generic. It mainly carries broad heritage styling and no-text restrictions.",
+    "lrePromptSummary": "The LRE prompt adds evidence-led themes, one primary symbol, subordinate secondary symbols, selected Symbol DNA, material direction, lighting direction, background direction, and explicit anti-flat/vector controls.",
+    "biggestImprovement": "The selected image prompt can now be faithful to Evidence -> Meaning -> Symbol Hierarchy -> DNA -> Art Direction for one allowlisted order instead of using broad surname/country/style variables."
+  },
+  "pve": {
+    "threshold": 95,
+    "exampleScore": 100,
+    "hardFailFallback": "If primary symbol, DNA, hierarchy, material direction, negative prompt safety, or fake-history boundaries fail, the system uses the old prompt."
+  },
+  "freshTestOrder": {
+    "id": null,
+    "status": "not_run",
+    "reason": "A fresh Stripe order was not placed because the bridge code is not deployed to production yet and production SSH/env access is unavailable from this Codex environment. Production HTTP health is reachable, but VPS SSH to 216.128.154.152:22 timed out, GitHub CLI is unavailable, and the in-app browser automation connection failed before GitHub Actions could be triggered.",
+    "expectedVerification": [
+      "order paid",
+      "PNG generated from LRE prompt when PVE score is 95+",
+      "PDF downloadable",
+      "ZIP downloadable",
+      "delivery email sent",
+      "vault link works",
+      "non-allowlisted orders retain old prompt"
+    ]
+  },
+  "phase3bAttempt": {
+    "productionHttpHealth": "https://mykinlegacy.com/health returned 200",
+    "productionCreatePage": "https://mykinlegacy.com/create returned 200",
+    "productionProductsApi": "https://mykinlegacy.com/api/v1/products returned 200",
+    "sshResult": "blocked: ssh root@216.128.154.152 port 22 timed out",
+    "githubActionsCliResult": "blocked: gh command not available",
+    "browserAutomationResult": "blocked: in-app browser runtime failed to initialize",
+    "freshStripeOrderCreated": false,
+    "productionAllowlistSet": false,
+    "servicesRestarted": false,
+    "liveFulfillmentVerified": false
+  },
+  "runtimeStorage": {
+    "oldPrompt": "stored as old_sha256 audit hash, not duplicated as raw text in lre_bridge metadata",
+    "lrePrompt": "selected LRE prompt becomes ai_generation_runs.rendered_prompt only for allowlisted PVE-passing image runs",
+    "pveScore": "stored as lre_bridge.verification_score",
+    "selectedPromptSource": "stored as lre_bridge.source_selected",
+    "generatedPngPath": "provider output temporary_output_ref / later storage asset path remains downstream of existing image generation"
+  },
+  "safetyChecks": [
+    "No global LRE enablement",
+    "Multiple allowlist values disable replacement",
+    "Non-allowlisted orders keep old prompt",
+    "PVE failure falls back to old prompt",
+    "No payment, email, vault, Ops, or database schema changes",
+    "No raw token, customer email, or secret appears in report",
+    "Prompt explicitly blocks readable text and fake official/heraldic/genealogy claims"
+  ],
+  "readiness": {
+    "founderCanApproveReplacingPromptBuilderOnly": true,
+    "readyForFounderVisualApproval": false,
+    "nextStep": "Deploy the Phase 3 bridge code, create one unpaid fresh order to get the order number, set LRE_IMAGE_PROMPT_ORDER_ALLOWLIST to that exact order number on production, restart api and worker, then complete Stripe test payment and inspect the prompt audit plus artifacts."
+  }
+}

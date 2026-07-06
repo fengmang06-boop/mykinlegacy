@@ -1,5 +1,6 @@
 export * from "./errors";
 export * from "./job-handlers";
+export * from "./lre-prompt-replacement";
 export * from "./logging";
 export * from "./mock-provider";
 export * from "./openai-adapter";

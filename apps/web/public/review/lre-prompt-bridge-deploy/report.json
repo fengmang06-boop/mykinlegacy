@@ -1,0 +1,37 @@
+{
+  "title": "MyKinLegacy LRE Prompt Bridge Production Deploy",
+  "status": "pending_deploy_verification",
+  "generatedAt": "2026-07-06",
+  "scope": {
+    "globalLreEnabled": false,
+    "freshStripeOrderCreated": false,
+    "allowlistSet": false,
+    "paymentEmailVaultOpsChanged": false,
+    "productionPromptBridgeDefault": "old_prompt_for_all_orders_when_allowlist_empty"
+  },
+  "expectedProductionEnv": {
+    "LRE_IMAGE_PROMPT_ORDER_ALLOWLIST": "empty_or_unset"
+  },
+  "safetyChecks": [
+    "Bridge code is deployed but disabled by default.",
+    "Only an exact single order number in LRE_IMAGE_PROMPT_ORDER_ALLOWLIST can select the LRE prompt.",
+    "Empty allowlist keeps old prompt behavior.",
+    "Multiple allowlist values disable prompt replacement.",
+    "PVE failure falls back to old prompt.",
+    "No payment, email, vault, Ops, or database schema behavior is changed."
+  ],
+  "verification": {
+    "commitHash": null,
+    "deployRunUrl": null,
+    "deployResult": "pending",
+    "productionHealth": {
+      "health": "pending",
+      "create": "pending",
+      "productsApi": "pending"
+    },
+    "allowlistDefaultStatus": "pending",
+    "nonAllowlistedImageGeneration": "expected_old_prompt_not_live_verified"
+  },
+  "readyForFounderFreshTestOrder": false,
+  "nextStep": "After deploy succeeds and allowlist is confirmed empty, Founder may create one fresh unpaid order, set LRE_IMAGE_PROMPT_ORDER_ALLOWLIST to that exact order number, restart required services, then complete Stripe test payment."
+}

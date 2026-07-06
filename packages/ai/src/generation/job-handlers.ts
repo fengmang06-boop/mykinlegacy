@@ -3,6 +3,7 @@ import {
   normalizeAiProviderError
 } from "./errors";
 import type { AiProviderRegistry } from "./provider-registry";
+import { applyAllowlistedLrePromptReplacement } from "./lre-prompt-replacement";
 import type {
   AiGenerationRunRepository,
   AiImageGenerationJobInput,
@@ -24,9 +25,11 @@ export async function handleAiImageGenerationJob(
   dependencies: AiGenerationJobHandlerDependencies
 ): Promise<ImageOutputCandidate> {
   validateRequiredJobFields(input);
-  validateImageInputOrThrow(input);
+  const promptReplacement = applyAllowlistedLrePromptReplacement(input);
+  const effectiveInput = promptReplacement.input;
+  validateImageInputOrThrow(effectiveInput);
 
-  const provider = dependencies.providerRegistry.getProvider(input.provider_code);
+  const provider = dependencies.providerRegistry.getProvider(effectiveInput.provider_code);
   if (!provider.supports_image_generation) {
     throw createAiGenerationError({
       error_code: "ai_provider_not_configured",
@@ -37,24 +40,27 @@ export async function handleAiImageGenerationJob(
 
   try {
     const output = await provider.generateImage({
-      rendered_prompt_id: input.rendered_prompt_id,
-      rendered_prompt: input.rendered_prompt,
-      negative_prompt: input.negative_prompt,
-      prompt_template_version_id: input.prompt_template_version_id,
-      identity_version_id: input.identity_version_id,
-      product_code: input.product_code,
-      package_code: input.package_code,
-      deliverable_code: input.deliverable_code,
-      model_code: input.model_code,
-      output_requirements: input.output_requirements,
-      safety_metadata: input.safety_metadata
+      rendered_prompt_id: effectiveInput.rendered_prompt_id,
+      rendered_prompt: effectiveInput.rendered_prompt,
+      negative_prompt: effectiveInput.negative_prompt,
+      prompt_template_version_id: effectiveInput.prompt_template_version_id,
+      identity_version_id: effectiveInput.identity_version_id,
+      product_code: effectiveInput.product_code,
+      package_code: effectiveInput.package_code,
+      deliverable_code: effectiveInput.deliverable_code,
+      model_code: effectiveInput.model_code,
+      output_requirements: effectiveInput.output_requirements,
+      safety_metadata: effectiveInput.safety_metadata
     });
-    validateImageProviderOutputOrThrow({ job: input, providerOutput: output });
+    validateImageProviderOutputOrThrow({ job: effectiveInput, providerOutput: output });
 
     const run = await dependencies.runRepository.createRun({
-      ...baseRun(input),
-      negative_prompt: input.negative_prompt,
-      output_payload_json: sanitizeProviderOutput(output),
+      ...baseRun(effectiveInput, promptReplacement.audit),
+      negative_prompt: effectiveInput.negative_prompt,
+      output_payload_json: {
+        ...sanitizeProviderOutput(output),
+        lre_bridge: promptReplacement.audit
+      },
       status: "succeeded",
       provider_request_id: output.provider_request_id,
       cost_cents_estimated: output.cost_cents_estimated,
@@ -65,7 +71,7 @@ export async function handleAiImageGenerationJob(
     return {
       candidate_id: randomUlidLike(),
       candidate_type: "image",
-      deliverable_code: input.deliverable_code,
+      deliverable_code: effectiveInput.deliverable_code,
       temporary_output_ref: output.temporary_output_ref,
       validation_status: "pending_or_passed",
       ai_generation_run_id: run.id,
@@ -76,8 +82,8 @@ export async function handleAiImageGenerationJob(
   } catch (error) {
     const normalized = normalizeAiProviderError(error);
     await dependencies.runRepository.createRun({
-      ...baseRun(input),
-      negative_prompt: input.negative_prompt,
+      ...baseRun(effectiveInput, promptReplacement.audit),
+      negative_prompt: effectiveInput.negative_prompt,
       status: "failed",
       output_payload_json: null,
       error_code: normalized.details.error_code,
@@ -181,7 +187,7 @@ function validateRequiredJobFields(input: AiImageGenerationJobInput | AiTextGene
   }
 }
 
-function baseRun(input: AiImageGenerationJobInput | AiTextGenerationJobInput) {
+function baseRun(input: AiImageGenerationJobInput | AiTextGenerationJobInput, lreBridge?: unknown) {
   return {
     generation_job_id: input.generation_job_id,
     generation_step_id: input.generation_step_id,
@@ -199,7 +205,8 @@ function baseRun(input: AiImageGenerationJobInput | AiTextGenerationJobInput) {
       provider_code: input.provider_code,
       model_code: input.model_code,
       output_requirements: input.output_requirements,
-      safety_metadata: sanitizeSafetyMetadata(input.safety_metadata)
+      safety_metadata: sanitizeSafetyMetadata(input.safety_metadata),
+      ...(lreBridge ? { lre_bridge: lreBridge } : {})
     },
     created_at: new Date()
   };

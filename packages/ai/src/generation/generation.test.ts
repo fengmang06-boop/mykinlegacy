@@ -4,6 +4,7 @@ import {
   AiGenerationError,
   DefaultAiProviderRegistry,
   InMemoryAiGenerationRunRepository,
+  LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV,
   buildAiGenerationLog,
   handleAiImageGenerationJob,
   handleAiTextGenerationJob
@@ -224,6 +225,109 @@ describe("AI generation pipeline foundation", () => {
     expect(runs.runs[0]?.output_payload_json).not.toHaveProperty("payment_status");
     expect(runs.runs[0]?.output_payload_json).not.toHaveProperty("email_log_id");
   });
+
+  it("keeps the old image prompt for non-allowlisted orders", async () => {
+    const originalAllowlist = process.env[LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV];
+    process.env[LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV] = "AHL-20260706-LRE";
+    try {
+      const runs = new InMemoryAiGenerationRunRepository();
+      await handleAiImageGenerationJob(
+        imageJob({
+          safety_metadata: {
+            ...baseSafetyMetadata(),
+            order_number: "AHL-20260706-OTHER",
+            symbols: ["tree", "roots", "shield"],
+            family_values: ["family continuity", "unity", "future generations"]
+          }
+        }),
+        {
+          providerRegistry: registry(),
+          runRepository: runs
+        }
+      );
+
+      expect(runs.runs[0]?.rendered_prompt).not.toContain("LRE Prompt Builder");
+      expect(runs.runs[0]?.input_payload_json.lre_bridge).toMatchObject({
+        enabled: false,
+        source_selected: "old_prompt",
+        reason: "order_not_allowlisted"
+      });
+    } finally {
+      restoreEnv(LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV, originalAllowlist);
+    }
+  });
+
+  it("uses the LRE image prompt for the one allowlisted order when PVE passes", async () => {
+    const originalAllowlist = process.env[LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV];
+    process.env[LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV] = "AHL-20260706-LRE";
+    try {
+      const runs = new InMemoryAiGenerationRunRepository();
+      await handleAiImageGenerationJob(
+        imageJob({
+          safety_metadata: {
+            ...baseSafetyMetadata(),
+            order_number: "AHL-20260706-LRE",
+            house_name: "The Rivera Family",
+            symbols: ["tree", "roots", "shield", "laurel"],
+            family_values: ["family continuity", "unity", "future generations"],
+            colors: ["near-black", "antique gold"]
+          }
+        }),
+        {
+          providerRegistry: registry(),
+          runRepository: runs
+        }
+      );
+
+      expect(runs.runs[0]?.rendered_prompt).toContain("LRE Prompt Builder");
+      expect(runs.runs[0]?.rendered_prompt).toContain("Primary composition: Tree");
+      expect(runs.runs[0]?.negative_prompt).toContain("flat line art");
+      expect(runs.runs[0]?.input_payload_json.lre_bridge).toMatchObject({
+        enabled: true,
+        source_selected: "lre_prompt",
+        reason: "pve_passed",
+        verification_score: 100,
+        primary_symbol: "tree"
+      });
+      expect(runs.runs[0]?.output_payload_json?.lre_bridge).toMatchObject({
+        enabled: true,
+        source_selected: "lre_prompt"
+      });
+    } finally {
+      restoreEnv(LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV, originalAllowlist);
+    }
+  });
+
+  it("disables LRE image prompt replacement when more than one order is allowlisted", async () => {
+    const originalAllowlist = process.env[LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV];
+    process.env[LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV] = "AHL-20260706-LRE,AHL-20260706-OTHER";
+    try {
+      const runs = new InMemoryAiGenerationRunRepository();
+      await handleAiImageGenerationJob(
+        imageJob({
+          safety_metadata: {
+            ...baseSafetyMetadata(),
+            order_number: "AHL-20260706-LRE",
+            symbols: ["lantern", "book"],
+            family_values: ["remembrance", "grandparent guidance"]
+          }
+        }),
+        {
+          providerRegistry: registry(),
+          runRepository: runs
+        }
+      );
+
+      expect(runs.runs[0]?.rendered_prompt).not.toContain("LRE Prompt Builder");
+      expect(runs.runs[0]?.input_payload_json.lre_bridge).toMatchObject({
+        enabled: false,
+        source_selected: "old_prompt",
+        reason: "allowlist_empty_or_not_single_order"
+      });
+    } finally {
+      restoreEnv(LRE_IMAGE_PROMPT_ORDER_ALLOWLIST_ENV, originalAllowlist);
+    }
+  });
 });
 
 function registry(mode: ConstructorParameters<typeof MockAiProvider>[0] = "success") {
@@ -290,4 +394,12 @@ function baseSafetyMetadata(): Record<string, unknown> {
     include_text_in_image: false,
     forbidden_elements_injected: true
   };
+}
+
+function restoreEnv(key: string, value: string | undefined): void {
+  if (value === undefined) {
+    delete process.env[key];
+  } else {
+    process.env[key] = value;
+  }
 }

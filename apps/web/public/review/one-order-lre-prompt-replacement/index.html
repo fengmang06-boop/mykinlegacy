@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>One-Order LRE Prompt Replacement</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #090806;
+        --panel: #15110c;
+        --panel-2: #1d1710;
+        --text: #f4ead9;
+        --muted: #b9a98d;
+        --gold: #c9a45d;
+        --line: rgba(201, 164, 93, 0.28);
+        --ok: #8fd6a3;
+        --warn: #f0c36d;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background:
+          radial-gradient(circle at top left, rgba(201, 164, 93, 0.16), transparent 34rem),
+          linear-gradient(180deg, #0e0c08, var(--bg));
+        color: var(--text);
+        font-family:
+          Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        line-height: 1.55;
+      }
+
+      main {
+        width: min(1180px, calc(100% - 32px));
+        margin: 0 auto;
+        padding: 56px 0 80px;
+      }
+
+      .eyebrow {
+        color: var(--gold);
+        font-size: 0.78rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      h1,
+      h2,
+      h3 {
+        line-height: 1.12;
+        margin: 0;
+      }
+
+      h1 {
+        max-width: 880px;
+        margin-top: 12px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(2.25rem, 5vw, 5rem);
+        font-weight: 500;
+      }
+
+      h2 {
+        margin-top: 42px;
+        margin-bottom: 16px;
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(1.6rem, 3vw, 2.4rem);
+        font-weight: 500;
+      }
+
+      h3 {
+        margin-bottom: 10px;
+        color: var(--gold);
+        font-size: 1rem;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      p {
+        margin: 0;
+      }
+
+      .lede {
+        max-width: 780px;
+        margin-top: 20px;
+        color: var(--muted);
+        font-size: 1.05rem;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(12, 1fr);
+        gap: 16px;
+      }
+
+      .card {
+        grid-column: span 6;
+        border: 1px solid var(--line);
+        border-radius: 14px;
+        background: linear-gradient(180deg, rgba(29, 23, 16, 0.92), rgba(12, 10, 7, 0.92));
+        box-shadow: 0 22px 60px rgba(0, 0, 0, 0.26);
+        padding: 22px;
+      }
+
+      .card.full {
+        grid-column: 1 / -1;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        min-height: 28px;
+        padding: 4px 10px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--gold);
+        background: rgba(201, 164, 93, 0.08);
+        font-size: 0.8rem;
+      }
+
+      .status {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin: 26px 0 32px;
+      }
+
+      .mono,
+      pre {
+        font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+      }
+
+      pre {
+        overflow: auto;
+        max-height: 460px;
+        margin: 0;
+        padding: 18px;
+        border: 1px solid rgba(201, 164, 93, 0.2);
+        border-radius: 12px;
+        background: rgba(0, 0, 0, 0.32);
+        color: #f8edd9;
+        white-space: pre-wrap;
+      }
+
+      ul,
+      ol {
+        margin: 0;
+        padding-left: 1.15rem;
+      }
+
+      li + li {
+        margin-top: 8px;
+      }
+
+      .muted {
+        color: var(--muted);
+      }
+
+      .ok {
+        color: var(--ok);
+      }
+
+      .warn {
+        color: var(--warn);
+      }
+
+      .metric {
+        display: grid;
+        gap: 4px;
+      }
+
+      .metric strong {
+        font-size: 1.6rem;
+        color: var(--gold);
+      }
+
+      @media (max-width: 760px) {
+        main {
+          width: min(100% - 24px, 1180px);
+          padding: 34px 0 56px;
+        }
+
+        .card {
+          grid-column: 1 / -1;
+          padding: 16px;
+        }
+
+        .status {
+          margin-top: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">Project Bridge Phase 3</div>
+      <h1>One Allowlisted Fresh Order Prompt Builder Replacement</h1>
+      <p class="lede">
+        Runtime bridge for replacing the old production image prompt with the LRE Prompt Builder for one named
+        fresh test order only. Global production behavior remains unchanged.
+      </p>
+
+      <div class="status" id="status"></div>
+
+      <section class="grid" id="overview"></section>
+
+      <h2>Prompt Comparison</h2>
+      <section class="grid">
+        <article class="card">
+          <h3>Old Prompt</h3>
+          <pre id="old-prompt"></pre>
+        </article>
+        <article class="card">
+          <h3>New LRE Prompt</h3>
+          <pre id="new-prompt"></pre>
+        </article>
+        <article class="card full">
+          <h3>Negative Prompt</h3>
+          <pre id="negative-prompt"></pre>
+        </article>
+      </section>
+
+      <h2>Runtime Decision Flow</h2>
+      <section class="grid">
+        <article class="card full">
+          <ol id="flow"></ol>
+        </article>
+      </section>
+
+      <h2>Safety & Fresh Order Status</h2>
+      <section class="grid">
+        <article class="card">
+          <h3>Safety Checks</h3>
+          <ul id="safety"></ul>
+        </article>
+        <article class="card">
+          <h3>Fresh Test Order</h3>
+          <div id="fresh-order"></div>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      const esc = (value) =>
+        String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;");
+
+      const list = (items) => items.map((item) => `<li>${esc(item)}</li>`).join("");
+
+      fetch("./report.json")
+        .then((response) => response.json())
+        .then((report) => {
+          document.getElementById("status").innerHTML = [
+            `<span class="pill">Status: ${esc(report.status)}</span>`,
+            `<span class="pill">Allowlist: ${esc(report.productionScope.allowlistEnv)}</span>`,
+            `<span class="pill">PVE threshold: ${esc(report.pve.threshold)}</span>`,
+            `<span class="pill">Example score: ${esc(report.pve.exampleScore)}</span>`,
+          ].join("");
+
+          document.getElementById("overview").innerHTML = [
+            `<article class="card"><h3>Scope</h3><p class="muted">${esc(report.productionScope.allowlistBehavior)}</p></article>`,
+            `<article class="card"><h3>Non-Allowlisted Orders</h3><p class="ok">${esc(report.productionScope.nonAllowlistedOrders)}</p></article>`,
+            `<article class="card"><h3>Biggest Improvement</h3><p>${esc(report.promptComparison.biggestImprovement)}</p></article>`,
+            `<article class="card"><h3>Runtime Storage</h3><ul>${list(Object.entries(report.runtimeStorage).map(([key, value]) => `${key}: ${value}`))}</ul></article>`,
+          ].join("");
+
+          document.getElementById("old-prompt").textContent = report.oldPromptExample;
+          document.getElementById("new-prompt").textContent = report.newLrePromptExample;
+          document.getElementById("negative-prompt").textContent = report.negativePromptExample;
+          document.getElementById("flow").innerHTML = list(report.runtimeDecisionFlow);
+          document.getElementById("safety").innerHTML = list(report.safetyChecks);
+          document.getElementById("fresh-order").innerHTML = `
+            <p><strong>Status:</strong> <span class="warn">${esc(report.freshTestOrder.status)}</span></p>
+            <p class="muted" style="margin-top: 10px">${esc(report.freshTestOrder.reason)}</p>
+            <h3 style="margin-top: 18px">Expected Verification</h3>
+            <ul>${list(report.freshTestOrder.expectedVerification)}</ul>
+          `;
+        });
+    </script>
+  </body>
+</html>
