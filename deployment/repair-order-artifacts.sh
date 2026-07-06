@@ -33,20 +33,34 @@ else
   SUDO="sudo"
 fi
 
-if [ -z "${APP_IMAGE:-}" ] && [ -f "$LAST_SUCCESSFUL_IMAGE_FILE" ]; then
-  APP_IMAGE="$(tr -d '[:space:]' < "$LAST_SUCCESSFUL_IMAGE_FILE")"
-  export APP_IMAGE
+if [ ! -f "$LAST_SUCCESSFUL_IMAGE_FILE" ]; then
+  echo "FAIL deployment/.last-successful-image is missing"
+  exit 1
 fi
+
+APP_IMAGE="$(tr -d '[:space:]' < "$LAST_SUCCESSFUL_IMAGE_FILE")"
+if [ -z "$APP_IMAGE" ]; then
+  echo "FAIL deployment/.last-successful-image is empty"
+  exit 1
+fi
+export APP_IMAGE
 
 compose() {
   $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "$@"
 }
 
+APP_IMAGE_DIGEST="$($SUDO docker image inspect "$APP_IMAGE" --format '{{.Id}}' 2>/dev/null || true)"
+if [ -z "$APP_IMAGE_DIGEST" ]; then
+  echo "FAIL deployed APP_IMAGE is not present locally: $APP_IMAGE"
+  exit 1
+fi
+
 echo "MyKinLegacy artifact repair"
 echo "Generated at: $(date -u '+%Y-%m-%dT%H:%M:%SZ')"
 echo "Order: $ORDER_NUMBER"
 echo "This regenerates private PNG/PDF/ZIP artifact files for the order."
-echo "Application image: ${APP_IMAGE:-docker-compose-default}"
+echo "APP_IMAGE=$APP_IMAGE"
+echo "APP_IMAGE_DIGEST=$APP_IMAGE_DIGEST"
 echo "No raw vault token, customer email, or secrets are printed."
 echo
 
@@ -199,10 +213,21 @@ function assertContainerSupportsLrePromptBridge() {
   ];
   const pipelinePath = pipelineCandidates.find((candidate) => existsSync(candidate));
   const pipelineSource = pipelinePath ? readFileSync(pipelinePath, "utf8") : "";
-  if (!pipelineSource.includes("selectPngPrompt") || !pipelineSource.includes("applyAllowlistedLrePromptReplacement")) {
+  const report = {
+    dbEntry: databaseEntry,
+    pipelinePath,
+    hasSelectPngPrompt: pipelineSource.includes("selectPngPrompt"),
+    hasApplyAllowlistedLrePromptReplacement: pipelineSource.includes("applyAllowlistedLrePromptReplacement"),
+    pngProbeHasPromptSource: false,
+    pngProbeHasSelectedPrompt: false,
+    pngProbeHasPveScore: false
+  };
+  if (!report.hasSelectPngPrompt || !report.hasApplyAllowlistedLrePromptReplacement) {
+    console.log(JSON.stringify({ preflight: "lre_png_path", ...report }, null, 2));
     throw new Error("worker_image_missing_lre_manifest_png_path");
   }
   if (typeof createMvpCrestPngBuffer !== "function") {
+    console.log(JSON.stringify({ preflight: "lre_png_path", ...report }, null, 2));
     throw new Error("worker_image_missing_png_generator");
   }
   const probe = createMvpCrestPngBuffer({
@@ -222,7 +247,11 @@ function assertContainerSupportsLrePromptBridge() {
       selected_dna: ["embossed antique gold"]
     }
   }).toString("latin1");
-  if (!probe.includes("prompt_source=lre_prompt") || !probe.includes("selected_prompt=LRE Prompt Builder:")) {
+  report.pngProbeHasPromptSource = probe.includes("prompt_source=lre_prompt");
+  report.pngProbeHasSelectedPrompt = probe.includes("selected_prompt=LRE Prompt Builder:");
+  report.pngProbeHasPveScore = probe.includes("pve_score=99");
+  console.log(JSON.stringify({ preflight: "lre_png_path", ...report }, null, 2));
+  if (!report.pngProbeHasPromptSource || !report.pngProbeHasSelectedPrompt || !report.pngProbeHasPveScore) {
     throw new Error("worker_image_missing_lre_png_metadata_support");
   }
 }
