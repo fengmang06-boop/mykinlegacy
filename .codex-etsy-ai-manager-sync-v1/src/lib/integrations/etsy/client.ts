@@ -2,6 +2,9 @@ import { assertNoEtsyWriteCapability, assertEtsyReadOnlyRequest, validateEtsyRea
 import { refreshAccessToken } from "./oauth";
 
 const ETSY_API_BASE = "https://openapi.etsy.com/v3/application";
+const ETSY_MIN_REQUEST_INTERVAL_MS = 350;
+
+let nextEtsyRequestAt = 0;
 
 type EtsyClientOptions = {
   accessToken?: string;
@@ -68,6 +71,26 @@ function assignTokenRefresh(token: { access_token: string; refresh_token?: strin
   };
 }
 
+function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+async function waitForEtsySlot(): Promise<void> {
+  const now = Date.now();
+  const wait = Math.max(0, nextEtsyRequestAt - now);
+  nextEtsyRequestAt = Math.max(now, nextEtsyRequestAt) + ETSY_MIN_REQUEST_INTERVAL_MS;
+  if (wait > 0) await sleep(wait);
+}
+
+function retryDelay(attempt: number, response: Response): number {
+  const retryAfter = response.headers.get("retry-after");
+  const retryAfterSeconds = retryAfter ? Number(retryAfter) : NaN;
+  if (Number.isFinite(retryAfterSeconds) && retryAfterSeconds > 0) {
+    return Math.min(retryAfterSeconds * 1000, 10000);
+  }
+  return Math.min(1000 * 2 ** attempt, 8000);
+}
+
 export async function refreshEtsyTokenIfNeeded(force = false): Promise<EtsyTokenRefreshResult | null> {
   const expiresAt = process.env.ETSY_TOKEN_EXPIRES_AT ? new Date(process.env.ETSY_TOKEN_EXPIRES_AT) : null;
   const expiresSoon = expiresAt ? expiresAt.getTime() - Date.now() < 5 * 60 * 1000 : false;
@@ -80,23 +103,34 @@ export async function refreshEtsyTokenIfNeeded(force = false): Promise<EtsyToken
 async function requestEtsy<T>(path: string, init: RequestInit = {}, options?: EtsyClientOptions): Promise<T> {
   assertEtsyReadOnlyRequest(init.method ?? "GET");
   const config = readAuthOptions(options);
-  const response = await fetch(`${ETSY_API_BASE}${path}`, {
-    ...init,
-    method: init.method ?? "GET",
-    headers: {
-      "x-api-key": `${config.clientId}:${config.clientSecret}`,
-      Authorization: `Bearer ${config.accessToken}`,
-      Accept: "application/json",
-      ...(init.headers ?? {})
-    }
-  });
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    await waitForEtsySlot();
+    const response = await fetch(`${ETSY_API_BASE}${path}`, {
+      ...init,
+      method: init.method ?? "GET",
+      headers: {
+        "x-api-key": `${config.clientId}:${config.clientSecret}`,
+        Authorization: `Bearer ${config.accessToken}`,
+        Accept: "application/json",
+        ...(init.headers ?? {})
+      }
+    });
 
-  if (!response.ok) {
+    if (response.ok) {
+      return (await response.json()) as T;
+    }
+
+    const retryable = response.status === 429 || response.status >= 500;
+    if (retryable && attempt < 4) {
+      await sleep(retryDelay(attempt, response));
+      continue;
+    }
+
     const body = await response.text();
     throw new Error(`Etsy API request failed: ${response.status} ${body}`);
   }
 
-  return (await response.json()) as T;
+  throw new Error("Etsy API request failed after retries.");
 }
 
 async function etsyFetch<T>(path: string, init: RequestInit = {}, options?: EtsyClientOptions): Promise<T> {
