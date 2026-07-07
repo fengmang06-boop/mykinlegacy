@@ -10,6 +10,10 @@ Before this recovery, production PNG deliverables could fall back to `createMvpC
 
 After this recovery, the main customer-facing crest PNG deliverables load recovered approved PNG assets from `packages/storage/assets/official/` before falling back to the deterministic renderer.
 
+Strict full-production status: **NO**.
+
+Reason: the main crest PNG outputs now use approved assets, but no approved transparent crest PNG, standalone certificate frame/background, or standalone PDF ornament assets were found. Those surfaces cannot honestly be marked fully official-asset complete.
+
 ## Recovered Approved Crest Assets
 
 | Asset | Source path | Production path | Approval status | Connected usage |
@@ -23,6 +27,21 @@ After this recovery, the main customer-facing crest PNG deliverables load recove
 
 The final homepage/brand asset pack is already present under `apps/web/public/assets/final-homepage/`. It contains brand, hero, occasion, feature, step, generation, trust, CTA, and texture assets. These assets are approved for website presentation, not order artifact generation.
 
+Inventory summary:
+
+| Category | Count / status |
+| --- | --- |
+| Brand assets | Present under `01_brand/` |
+| Homepage hero assets | Present under `02_homepage/hero/` |
+| Occasion assets | Present under `03_homepage/occasions/` |
+| Feature assets | Present under `04_homepage/features/` |
+| Step assets | Present under `05_homepage/steps/` |
+| Generations assets | Present under `06_homepage/generations/` |
+| Trust assets | Present under `07_homepage/trust/` |
+| CTA assets | Present under `08_homepage/cta/` |
+| Extra archive assets | Present under `09_extras/` |
+| Total files found | 41 |
+
 ## Production Connections
 
 | Surface | Current connection |
@@ -32,6 +51,15 @@ The final homepage/brand asset pack is already present under `apps/web/public/as
 | ZIP package | Inherits the recovered official PNG bodies because ZIP generation packages the materialized artifact bodies. |
 | Certificate / PDF | No separate approved certificate frame/background asset was found. Existing PDF text/layout generation remains unchanged. |
 | Preview pages | Existing review pages remain unchanged; recovered production assets are listed here and embedded in the storage package for fulfillment. |
+
+## Known Legacy / Placeholder Risk Remaining
+
+| Surface | Current behavior | Why not fixed in this sprint |
+| --- | --- | --- |
+| `transparent_crest_png` | Still uses existing local renderer fallback. | No Founder-approved transparent PNG asset was found. Reusing an opaque crest as "transparent" would be dishonest and would change the deliverable. |
+| Certificate visual frame/background | Existing PDF generation remains layout/text based. | No approved standalone certificate frame/background asset was found in the searched asset folders. |
+| Symbol Guide / PDF ornaments | Existing PDF generation remains layout/text based. | No approved standalone PDF ornament package was found beyond website/review visuals. |
+| Existing completed orders | Existing artifact files remain unchanged until repair or fresh generation. | The sprint connected production references without rewriting historical customer artifacts automatically. |
 
 ## Still Missing
 
@@ -47,3 +75,9 @@ The final homepage/brand asset pack is already present under `apps/web/public/as
 - No new artwork was created.
 - The deterministic renderer remains as a fallback only.
 - Existing completed customer orders are not automatically rewritten; they need artifact repair or a fresh generation run to receive the recovered official assets.
+
+## Final Status
+
+Production now uses approved assets for the three main crest PNG deliverables: **YES**.
+
+Production now uses approved assets across every customer-facing download with no placeholder or legacy fallback remaining: **NO**.

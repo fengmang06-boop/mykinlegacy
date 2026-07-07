@@ -2,7 +2,8 @@
   "title": "MyKinLegacy Official Asset Recovery Inventory v1",
   "generatedBy": "Codex",
   "scope": "Recovered existing Founder/CSO-approved assets only. No image generation.",
-  "productionNowUsesApprovedAssets": "partial",
+  "productionNowUsesApprovedAssets": "NO",
+  "productionStatusNote": "Main crest PNG deliverables now use recovered Founder/CSO-approved assets. Strict full-production status is NO because transparent crest, standalone certificate frame/background, and PDF ornament assets were not found as approved production assets.",
   "assets": [
     {
       "id": "01a-classic-shield-legacy",
@@ -55,6 +56,20 @@
     "vaultDownloads": "inherits stored artifact records after fresh generation or repair",
     "certificatePdf": "unchanged; no approved standalone certificate frame/background asset found",
     "previewPages": "official inventory review page added"
+  },
+  "productionApprovedAssetCoverage": {
+    "mainCrestPngDeliverables": "YES",
+    "transparentCrestPng": "NO - no approved transparent crest PNG was found",
+    "certificatePdfVisualAssets": "NO - no approved standalone certificate frame/background asset was found",
+    "symbolGuidePdfVisualAssets": "NO - no approved standalone PDF ornament asset was found",
+    "zipPackage": "PARTIAL - includes official main PNGs after fresh generation or repair, but also includes legacy transparent fallback",
+    "vaultDownloads": "PARTIAL - exposes stored generated assets; official main PNGs appear after fresh generation or repair"
+  },
+  "existingApprovedWebsiteAssetPack": {
+    "path": "apps/web/public/assets/final-homepage/",
+    "assetCount": 41,
+    "currentUsage": "Connected to website/homepage presentation assets, not production order artifact generation",
+    "categories": ["brand", "hero", "occasions", "features", "steps", "generations", "trust", "cta", "extras"]
   },
   "missingAssets": [
     "Approved transparent crest PNG for transparent_crest_png",
