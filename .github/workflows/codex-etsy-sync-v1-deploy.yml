@@ -150,22 +150,26 @@ jobs:
           curl -k -sS -o /tmp/etsy-status-before.json -w "etsy_status=%{http_code}\n" --max-time 30 https://tools.mensskull.com/api/etsy/status
 
           echo "===== SYNC ====="
-          curl -k -sS -X POST -o /tmp/etsy-sync-result.json -w "etsy_sync=%{http_code}\n" --max-time 900 https://tools.mensskull.com/api/etsy/sync
-          node -e '
-            const fs = require("fs");
-            const body = fs.readFileSync("/tmp/etsy-sync-result.json", "utf8");
-            const data = JSON.parse(body);
-            console.log(JSON.stringify({
-              ok: data.ok,
-              message: data.message,
-              listingsPulled: data.listingsPulled,
-              imagesPulled: data.imagesPulled,
-              inventoryPulled: data.inventoryPulled,
-              receiptsPulled: data.receiptsPulled,
-              transactionsPulled: data.transactionsPulled,
-              errorCount: Array.isArray(data.errors) ? data.errors.length : 0
-            }));
-          '
+          cat > .codex-run-sync.ts <<'TS'
+          import { syncEtsyReadOnly } from "./src/lib/integrations/etsy/sync-read-only";
+          import { prisma } from "./src/lib/prisma";
+          const data = await syncEtsyReadOnly();
+          console.log("etsy_sync=local");
+          console.log(JSON.stringify({
+            ok: data.ok,
+            message: data.message,
+            listingsPulled: data.listingsPulled,
+            imagesPulled: data.imagesPulled,
+            inventoryPulled: data.inventoryPulled,
+            receiptsPulled: data.receiptsPulled,
+            transactionsPulled: data.transactionsPulled,
+            errorCount: Array.isArray(data.errors) ? data.errors.length : 0
+          }));
+          await prisma.$disconnect();
+          if (!data.listingsPulled) process.exit(1);
+          TS
+          npx tsx .codex-run-sync.ts
+          rm -f .codex-run-sync.ts
 
           echo "===== STATUS AFTER ====="
           curl -k -sS -o /tmp/etsy-status-after.json -w "etsy_status_after=%{http_code}\n" --max-time 30 https://tools.mensskull.com/api/etsy/status
@@ -183,21 +187,26 @@ jobs:
           '
 
           echo "===== AI ANALYSIS ====="
-          curl -k -sS -X POST -H 'Content-Type: application/json' -d '{"retry":true}' -o /tmp/etsy-ai-result.json -w "etsy_ai_analyze=%{http_code}\n" --max-time 900 https://tools.mensskull.com/api/etsy/ai/analyze
-          node -e '
-            const fs = require("fs");
-            const data = JSON.parse(fs.readFileSync("/tmp/etsy-ai-result.json", "utf8"));
-            console.log(JSON.stringify({
-              ok: data.ok,
-              analyzed: data.analyzed,
-              skipped: data.skipped,
-              totalReports: data.totalReports,
-              snapshotCount: data.snapshotCount,
-              optimizationQueue: data.optimizationQueue,
-              remaining: data.remaining,
-              errorCount: Array.isArray(data.errors) ? data.errors.length : 0
-            }));
-          '
+          cat > .codex-run-ai.ts <<'TS'
+          import { analyzeAllListings } from "./src/lib/etsy-ai/listing-intelligence";
+          import { prisma } from "./src/lib/prisma";
+          const data = await analyzeAllListings({ retry: true });
+          console.log("etsy_ai_analyze=local");
+          console.log(JSON.stringify({
+            ok: data.ok,
+            analyzed: data.analyzed,
+            skipped: data.skipped,
+            totalReports: data.totalReports,
+            snapshotCount: data.snapshotCount,
+            optimizationQueue: data.optimizationQueue,
+            remaining: data.remaining,
+            errorCount: Array.isArray(data.errors) ? data.errors.length : 0
+          }));
+          await prisma.$disconnect();
+          if (!data.totalReports) process.exit(1);
+          TS
+          npx tsx .codex-run-ai.ts
+          rm -f .codex-run-ai.ts
           curl -k -sS -o /tmp/etsy-ai-page.html -w "etsy_ai_page=%{http_code}\n" --max-time 30 https://tools.mensskull.com/etsy-ai
           node -e '
             const html = require("fs").readFileSync("/tmp/etsy-ai-page.html", "utf8");
