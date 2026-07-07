@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Artifact Information Architecture Sprint 01</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #0b0a08;
+        --panel: #14110d;
+        --panel-2: #1c1711;
+        --gold: #c5a45d;
+        --ivory: #f5eddc;
+        --muted: #b9ad96;
+        --line: rgba(197, 164, 93, 0.32);
+      }
+      body {
+        margin: 0;
+        background: radial-gradient(circle at top, #20180f 0, var(--bg) 42rem);
+        color: var(--ivory);
+        font-family: Georgia, "Times New Roman", serif;
+        line-height: 1.55;
+      }
+      main {
+        max-width: 1120px;
+        margin: 0 auto;
+        padding: 56px 20px 72px;
+      }
+      h1,
+      h2,
+      h3 {
+        margin: 0;
+        font-weight: 500;
+      }
+      h1 {
+        max-width: 760px;
+        font-size: clamp(2.1rem, 5vw, 4.2rem);
+        line-height: 1.02;
+      }
+      h2 {
+        margin-top: 56px;
+        font-size: 1.6rem;
+        color: var(--gold);
+      }
+      h3 {
+        color: var(--gold);
+        font-size: 1.08rem;
+      }
+      p {
+        color: var(--muted);
+        max-width: 780px;
+      }
+      .eyebrow {
+        color: var(--gold);
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+        font-size: 0.76rem;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 16px;
+        margin-top: 22px;
+      }
+      .card,
+      .wide {
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.015));
+        border: 1px solid var(--line);
+        border-radius: 10px;
+        padding: 20px;
+        box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28);
+      }
+      .wide {
+        margin-top: 18px;
+      }
+      ul {
+        margin: 12px 0 0;
+        padding-left: 20px;
+        color: var(--muted);
+      }
+      li + li {
+        margin-top: 6px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 18px;
+        overflow: hidden;
+        border: 1px solid var(--line);
+      }
+      th,
+      td {
+        padding: 13px 14px;
+        border-bottom: 1px solid rgba(197, 164, 93, 0.18);
+        text-align: left;
+        vertical-align: top;
+      }
+      th {
+        background: var(--panel-2);
+        color: var(--gold);
+        font-weight: 500;
+      }
+      td {
+        background: rgba(20, 17, 13, 0.74);
+        color: var(--muted);
+      }
+      .tag {
+        display: inline-block;
+        margin: 0 6px 6px 0;
+        padding: 4px 8px;
+        border: 1px solid var(--line);
+        border-radius: 999px;
+        color: var(--ivory);
+        background: rgba(197, 164, 93, 0.08);
+        font-size: 0.86rem;
+      }
+      a {
+        color: var(--gold);
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <div class="eyebrow">Founder Beta IA Review</div>
+      <h1>Artifact Information Architecture Sprint 01</h1>
+      <p>
+        This review locks the Founder Beta deliverables into distinct jobs. The customer should not feel
+        they are reading the same document repeatedly.
+      </p>
+
+      <h2>Information Architecture Map</h2>
+      <section class="grid">
+        <article class="card">
+          <h3>01 Heritage Certificate</h3>
+          <p><strong>Purpose:</strong> Ceremonial. Answers only: what is this collection?</p>
+          <span class="tag">Collection Name</span><span class="tag">Recipient</span><span class="tag">Crest</span>
+          <span class="tag">Archive Number</span><span class="tag">Date</span><span class="tag">Signature</span>
+          <span class="tag">Official Seal</span><span class="tag">Ceremony Statement</span>
+        </article>
+        <article class="card">
+          <h3>02 Family Story</h3>
+          <p><strong>Purpose:</strong> Emotion. Answers only: why does this family matter?</p>
+          <span class="tag">Family Story</span><span class="tag">Memory</span><span class="tag">Legacy</span>
+          <span class="tag">Personal Meaning</span>
+        </article>
+        <article class="card">
+          <h3>03 Symbol Guide</h3>
+          <p><strong>Purpose:</strong> Explanation. Answers only: why these symbols?</p>
+          <span class="tag">Meaning</span><span class="tag">Why Chosen</span><span class="tag">Emotional Role</span>
+          <span class="tag">Relationship to Family</span>
+        </article>
+        <article class="card">
+          <h3>04 ReadMe</h3>
+          <p><strong>Purpose:</strong> Usage. Answers only: how do I use this collection?</p>
+          <span class="tag">Reading Order</span><span class="tag">Printing</span><span class="tag">Storage</span>
+          <span class="tag">ZIP Contents</span><span class="tag">Preservation</span><span class="tag">Boundary</span>
+        </article>
+      </section>
+
+      <h2>Old vs New</h2>
+      <table>
+        <thead>
+          <tr><th>Topic</th><th>Old behavior</th><th>New ownership</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Boundary statement</td><td>Repeated in every PDF.</td><td>ReadMe only.</td></tr>
+          <tr><td>Preservation guidance</td><td>Repeated across PDFs and ReadMe.</td><td>ReadMe only.</td></tr>
+          <tr><td>Certificate</td><td>Mixed ceremony, symbols, story, archive notes.</td><td>Ceremonial fields only.</td></tr>
+          <tr><td>Family Story</td><td>Mixed narrative with usage and archive context.</td><td>Emotion and legacy only.</td></tr>
+          <tr><td>Symbol Guide</td><td>Mixed explanation with how-to-read and preservation notes.</td><td>One symbol per section.</td></tr>
+        </tbody>
+      </table>
+
+      <h2>Duplicate Content Removed</h2>
+      <section class="wide">
+        <ul>
+          <li>Shared Private Archive Note appended to every PDF.</li>
+          <li>Shared Boundary Statement appended to every PDF.</li>
+          <li>Certificate symbol bullet list and family meaning record.</li>
+          <li>Certificate reading, companion, and preservation notes.</li>
+          <li>Family Story reading and preservation context.</li>
+          <li>Symbol Guide how-to-read and preservation/sharing sections.</li>
+          <li>Generic PDF title-page promise of a boundary note.</li>
+        </ul>
+      </section>
+
+      <h2>Topic Ownership</h2>
+      <table>
+        <thead>
+          <tr><th>PDF / File</th><th>Owns</th><th>Must not contain</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Heritage Certificate</td><td>Collection identity and ceremony.</td><td>Symbol explanation, family story, archive instructions.</td></tr>
+          <tr><td>Family Story</td><td>Emotion, memory, legacy, personal meaning.</td><td>Certificate fields, symbol-by-symbol rationale, usage notes.</td></tr>
+          <tr><td>Symbol Guide</td><td>Symbol meaning and family relationship.</td><td>Storytelling, certificate wording, usage notes.</td></tr>
+          <tr><td>ReadMe</td><td>Reading order, printing, storage, preservation, ZIP contents, boundary.</td><td>Ceremonial certificate copy, family narrative, symbol sections.</td></tr>
+        </tbody>
+      </table>
+
+      <p>
+        Machine-readable report:
+        <a href="./report.json">report.json</a>
+      </p>
+    </main>
+  </body>
+</html>

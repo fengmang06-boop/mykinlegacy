@@ -113,12 +113,18 @@ describe("DB-backed orchestration foundation", () => {
     ).toEqual([]);
     expect(result.assets.every((asset) => asset.size_bytes !== 100)).toBe(true);
     const pdfAsset = result.assets.find((asset) => asset.deliverable_code === "family_story_pdf");
+    const certificatePdfAsset = result.assets.find(
+      (asset) => asset.deliverable_code === "heritage_certificate_pdf"
+    );
     const symbolGuidePdfAsset = result.assets.find(
       (asset) => asset.deliverable_code === "symbol_explanation_pdf"
     );
     const pngAsset = result.assets.find((asset) => asset.deliverable_code === "crest_variant_1_png");
     const zipAsset = result.assets.find((asset) => asset.deliverable_code === "download_package_zip");
-    if (!pdfAsset || !symbolGuidePdfAsset || !pngAsset || !zipAsset) throw new Error("expected_artifacts_missing");
+    if (!certificatePdfAsset || !pdfAsset || !symbolGuidePdfAsset || !pngAsset || !zipAsset) {
+      throw new Error("expected_artifacts_missing");
+    }
+    const certificateText = (await readStoredAsset(certificatePdfAsset)).toString("latin1");
     const pdfBody = await readStoredAsset(pdfAsset);
     const symbolGuidePdfBody = await readStoredAsset(symbolGuidePdfAsset);
     const symbolGuideText = symbolGuidePdfBody.toString("latin1");
@@ -127,9 +133,19 @@ describe("DB-backed orchestration foundation", () => {
     expect(pdfBody.subarray(0, 4).toString()).toBe("%PDF");
     expect(pdfBody.toString("latin1")).toContain("House of Alder");
     expect(pdfBody.toString("latin1")).toContain("Legacy, Designed.");
-    expect(pdfBody.toString("latin1")).toContain("Archive Reference:");
     expect(pdfBody.toString("latin1")).toContain("Prepared for:");
-    expect(pdfBody.toString("latin1")).toContain("personalized symbolic keepsake");
+    expect(pdfBody.toString("latin1")).toContain("Family Story");
+    expect(pdfBody.toString("latin1")).toContain("Memory and Legacy");
+    expect(pdfBody.toString("latin1")).not.toContain("personalized symbolic keepsake");
+    expect(certificateText).toContain("Collection Name");
+    expect(certificateText).toContain("Recipient");
+    expect(certificateText).toContain("Crest");
+    expect(certificateText).toContain("Archive Number");
+    expect(certificateText).toContain("Official Seal");
+    expect(certificateText).toContain("Ceremony Statement");
+    expect(certificateText).not.toContain("Meaning:");
+    expect(certificateText).not.toContain("Family Story");
+    expect(certificateText.match(/\/Type \/Page\b/g) ?? []).toHaveLength(2);
     expect(pdfBody.toString("latin1")).not.toMatch(
       /proves your ancestry|official family crest|legally granted arms|noble bloodline/i
     );
@@ -139,15 +155,14 @@ describe("DB-backed orchestration foundation", () => {
     expect(symbolGuidePdfBody.subarray(0, 4).toString()).toBe("%PDF");
     expect(symbolGuidePdfBody.byteLength).toBeGreaterThan(10 * 1024);
     expect(symbolGuideText).toContain("pdf_layout_version=premium_v4");
-    expect(symbolGuideText).toContain("How to Read This Guide");
-    expect(symbolGuideText).toContain("Family signal behind it:");
-    expect(symbolGuideText).toContain("Visual role in the crest:");
-    expect(symbolGuideText).toContain("Emotional purpose:");
-    expect(symbolGuideText).toContain("What this helps the family remember:");
-    expect(symbolGuideText).toContain("Preservation and Sharing Note");
-    expect(symbolGuideText).toContain("personalized symbolic keepsake");
+    expect(symbolGuideText).toContain("Meaning:");
+    expect(symbolGuideText).toContain("Why chosen:");
+    expect(symbolGuideText).toContain("Emotional role:");
+    expect(symbolGuideText).toContain("Relationship to family:");
+    expect(symbolGuideText).not.toContain("Preservation and Sharing Note");
+    expect(symbolGuideText).not.toContain("personalized symbolic keepsake");
     expect(symbolGuideText).not.toMatch(/House of Unknown|Unknown|undefined|null|raw json|debug|placeholder/i);
-    expect(symbolGuideText.match(/Core meaning:/g) ?? []).toHaveLength(
+    expect(symbolGuideText.match(/Meaning:/g) ?? []).toHaveLength(
       new Set(
         result.manifest.optional_assets
           .flatMap((attachment) =>
@@ -177,10 +192,12 @@ describe("DB-backed orchestration foundation", () => {
       const text = body.toString("latin1");
       expect(text).toContain("MyKinLegacy");
       expect(text).toContain("Legacy, Designed.");
-      expect(text).toContain("Archive Reference:");
-      expect(text).toContain("personalized symbolic keepsake");
       expect(text).not.toMatch(/House of Unknown|Unknown|undefined|null|raw json|debug|placeholder/i);
     }
+    expect(zipBody.toString("latin1")).toContain("How to use this archive");
+    expect(zipBody.toString("latin1")).toContain("Printing and keeping");
+    expect(zipBody.toString("latin1")).toContain("Boundary statement");
+    expect(zipBody.toString("latin1")).toContain("personalized symbolic keepsake");
     expect(listZipEntries(zipBody)).toEqual(
       expect.arrayContaining([
         "MyKinLegacy-Private-Legacy-Collection/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf",
@@ -364,7 +381,6 @@ describe("DB-backed orchestration foundation", () => {
       const text = (await readStoredAsset(asset)).toString("latin1");
       expect(text).toContain("Your Family Legacy");
       expect(text).not.toMatch(/\bHouse of Unknown\b|\bUnknown\b/);
-      expect(text).toContain("personalized symbolic keepsake");
     }
   }, 15_000);
 
@@ -406,7 +422,8 @@ describe("DB-backed orchestration foundation", () => {
       const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
       const zipText = (await readStoredAsset(zipAsset)).toString("latin1");
 
-      expect(certificateText).toContain("personal in authority");
+      expect(certificateText).toContain("Ceremony Statement");
+      expect(certificateText).not.toContain("personal in authority");
       expect(familyStoryText).toContain("Nothing here asks the family to believe invented history");
       expect(zipText).toContain("This archive includes an LRE text pass");
       expect(pngText).toContain("artwork_template=shield_legacy_crest_v1");

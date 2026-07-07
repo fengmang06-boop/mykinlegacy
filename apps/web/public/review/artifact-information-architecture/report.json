@@ -1,0 +1,180 @@
+{
+  "title": "Artifact Information Architecture Sprint 01",
+  "status": "completed",
+  "principle": "Every customer-facing artifact has one primary job. Shared archive instructions, preservation guidance, and boundary language belong only in ReadMe.",
+  "informationArchitectureMap": [
+    {
+      "artifact": "01 Heritage Certificate",
+      "purpose": "Ceremonial",
+      "answers": "What is this collection?",
+      "owns": [
+        "Collection Name",
+        "Recipient",
+        "Crest reference",
+        "Archive Number",
+        "Date",
+        "Signature",
+        "Official Seal",
+        "Short Ceremony Statement"
+      ],
+      "doesNotOwn": [
+        "Symbol explanation",
+        "Family story",
+        "Archive instructions",
+        "Printing guidance",
+        "Preservation notes",
+        "Boundary statement"
+      ]
+    },
+    {
+      "artifact": "02 Family Story",
+      "purpose": "Emotion",
+      "answers": "Why does this family matter?",
+      "owns": [
+        "Family story",
+        "Emotional narrative",
+        "Memory",
+        "Legacy",
+        "Personal meaning"
+      ],
+      "doesNotOwn": [
+        "Symbol explanation",
+        "Certificate fields",
+        "Archive instructions",
+        "Printing guidance",
+        "Preservation notes",
+        "Boundary statement"
+      ]
+    },
+    {
+      "artifact": "03 Symbol Guide",
+      "purpose": "Explanation",
+      "answers": "Why these symbols?",
+      "owns": [
+        "One symbol per section",
+        "Meaning",
+        "Why chosen",
+        "Emotional role",
+        "Relationship to family"
+      ],
+      "doesNotOwn": [
+        "Family storytelling",
+        "Certificate wording",
+        "Archive instructions",
+        "Printing guidance",
+        "Preservation notes",
+        "Boundary statement"
+      ]
+    },
+    {
+      "artifact": "04 ReadMe",
+      "purpose": "Usage",
+      "answers": "How do I use this collection?",
+      "owns": [
+        "Reading order",
+        "Printing",
+        "Storage",
+        "ZIP contents",
+        "Preservation",
+        "Privacy note",
+        "Boundary statement"
+      ],
+      "doesNotOwn": [
+        "Ceremonial certificate copy",
+        "Family story",
+        "Symbol-by-symbol rationale"
+      ]
+    }
+  ],
+  "oldVsNewComparison": [
+    {
+      "topic": "Boundary / disclaimer",
+      "oldBehavior": "Repeated inside every PDF through a shared PDF footer.",
+      "newBehavior": "Owned only by ReadMe."
+    },
+    {
+      "topic": "Preservation and archive guidance",
+      "oldBehavior": "Repeated inside Certificate, Family Story, Symbol Guide, and ReadMe.",
+      "newBehavior": "Owned only by ReadMe."
+    },
+    {
+      "topic": "Certificate",
+      "oldBehavior": "Mixed ceremony, meaning summary, symbol list, story guidance, archive guidance, and preservation note.",
+      "newBehavior": "Limited to ceremonial identity fields and one short ceremony statement."
+    },
+    {
+      "topic": "Family Story",
+      "oldBehavior": "Mixed narrative with reading instructions, preservation context, symbol framing, and archive notes.",
+      "newBehavior": "Limited to story, memory, legacy, and personal meaning."
+    },
+    {
+      "topic": "Symbol Guide",
+      "oldBehavior": "Mixed symbol explanation with reading instructions, meaning summary, design basis, certificate feel, and preservation note.",
+      "newBehavior": "Limited to one symbol per section with meaning, why chosen, emotional role, and relationship to family."
+    }
+  ],
+  "contentMoved": [
+    {
+      "content": "How to use the collection",
+      "from": "Certificate / Family Story / Symbol Guide",
+      "to": "ReadMe"
+    },
+    {
+      "content": "Printing and keeping instructions",
+      "from": "Certificate / Family Story / Symbol Guide",
+      "to": "ReadMe"
+    },
+    {
+      "content": "Boundary statement",
+      "from": "Every PDF",
+      "to": "ReadMe"
+    },
+    {
+      "content": "Archive package contents",
+      "from": "Repeated PDF notes",
+      "to": "ReadMe"
+    }
+  ],
+  "contentRemoved": [
+    "Shared Private Archive Note appended to every PDF",
+    "Shared Boundary Statement appended to every PDF",
+    "Certificate symbol bullet list",
+    "Certificate family meaning record",
+    "Certificate reading note",
+    "Certificate companion note",
+    "Certificate preservation note",
+    "Family Story reading note",
+    "Family Story preservation context",
+    "Symbol Guide how-to-read section",
+    "Symbol Guide preservation and sharing note",
+    "Generic PDF title-page promise of a boundary note"
+  ],
+  "topicOwnership": {
+    "collectionIdentity": "Heritage Certificate",
+    "recipient": "Heritage Certificate",
+    "archiveNumber": "Heritage Certificate",
+    "ceremonyStatement": "Heritage Certificate",
+    "familyNarrative": "Family Story",
+    "memory": "Family Story",
+    "legacy": "Family Story",
+    "personalMeaning": "Family Story",
+    "symbolMeaning": "Symbol Guide",
+    "symbolSelectionReason": "Symbol Guide",
+    "symbolEmotionalRole": "Symbol Guide",
+    "symbolFamilyRelationship": "Symbol Guide",
+    "readingOrder": "ReadMe",
+    "printing": "ReadMe",
+    "storage": "ReadMe",
+    "zipContents": "ReadMe",
+    "preservation": "ReadMe",
+    "privacy": "ReadMe",
+    "boundaryStatement": "ReadMe"
+  },
+  "validation": {
+    "certificateMaxPagesTarget": "Content reduced to ceremony-only; layout still controls exact pagination.",
+    "duplicateDisclaimersRemovedFromPdfs": true,
+    "preservationNotesMovedToReadMeOnly": true,
+    "symbolGuideOneSymbolPerSection": true,
+    "stylingChanged": false
+  }
+}

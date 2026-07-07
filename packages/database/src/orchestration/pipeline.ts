@@ -1045,7 +1045,6 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
     if (!text.includes("%%EOF")) failures.push("pdf_eof_missing");
     if (!pdfStartXrefValid(artifact.body)) failures.push("pdf_xref_invalid");
     if (!text.includes("MyKinLegacy")) failures.push("brand_missing");
-    if (!text.includes("personalized symbolic keepsake")) failures.push("boundary_missing");
     if (failures.length > 0) {
       throw new Error(`artifact_not_ready:${deliverableCode}:${failures.join(",")}`);
     }
@@ -1098,13 +1097,14 @@ function assertContentQuality(
   sourceText: string,
   context?: Pick<ArtifactContext, "symbols">
 ): void {
-  const failures = contentQualityFailures(sourceText, context);
+  const failures = contentQualityFailures(deliverableCode, sourceText, context);
   if (failures.length > 0) {
     throw new Error(`content_quality_failed:${deliverableCode}:${failures.join(",")}`);
   }
 }
 
 function contentQualityFailures(
+  deliverableCode: string,
   sourceText: string,
   context?: Pick<ArtifactContext, "symbols">
 ): string[] {
@@ -1118,8 +1118,48 @@ function contentQualityFailures(
   if (/\b(Customer input basis|Artifact Content Version|artifact_content_version)\b/i.test(sourceText)) failures.push("raw_field_label");
   if (/\b(pdf\.pdf|png\.png)\b/i.test(sourceText)) failures.push("bad_file_name");
   if (/[{[]\s*"[^"]+"\s*:/s.test(sourceText)) failures.push("raw_json_detected");
-  if (!sourceText.includes("personalized symbolic keepsake")) failures.push("boundary_statement_missing");
-  if (sourceText.replace(/\s+/g, " ").trim().length < 900) failures.push("content_too_short");
+  const minimumLength: Record<string, number> = {
+    heritage_certificate_pdf: 420,
+    family_story_pdf: 700,
+    symbol_explanation_pdf: 700
+  };
+  if (sourceText.replace(/\s+/g, " ").trim().length < (minimumLength[deliverableCode] ?? 700)) {
+    failures.push("content_too_short");
+  }
+  if (deliverableCode === "heritage_certificate_pdf") {
+    const required = [
+      "Collection Name",
+      "Recipient",
+      "Crest",
+      "Archive Number",
+      "Date",
+      "Signature",
+      "Official Seal",
+      "Ceremony Statement"
+    ];
+    for (const label of required) {
+      if (!sourceText.includes(label)) failures.push(`missing_certificate_field:${label.replaceAll(" ", "_").toLowerCase()}`);
+    }
+    if (/^(Core meaning:|Why this symbol was chosen:|Family Story|Reading Order|Printing Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents)$/im.test(sourceText)) {
+      failures.push("certificate_scope_leak");
+    }
+  }
+  if (deliverableCode === "family_story_pdf") {
+    if (!sourceText.includes("Family Story")) failures.push("story_missing");
+    if (!/\b(memory|legacy|meaning|family)\b/i.test(sourceText)) failures.push("story_emotion_missing");
+    if (/^(Core meaning:|Why this symbol was chosen:|Official Seal|Reading Order|Printing Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents)$/im.test(sourceText)) {
+      failures.push("story_scope_leak");
+    }
+  }
+  if (deliverableCode === "symbol_explanation_pdf") {
+    if (!sourceText.includes("Meaning:")) failures.push("symbol_meaning_missing");
+    if (!sourceText.includes("Why chosen:")) failures.push("symbol_why_chosen_missing");
+    if (!sourceText.includes("Emotional role:")) failures.push("symbol_emotional_role_missing");
+    if (!sourceText.includes("Relationship to family:")) failures.push("symbol_family_relationship_missing");
+    if (/^(Family Story|Official Seal|Reading Order|Printing Guidance|Storage Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents)$/im.test(sourceText)) {
+      failures.push("symbol_guide_scope_leak");
+    }
+  }
   const headings = [...sourceText.matchAll(/^([A-Za-z][A-Za-z\s]+)$/gm)].map((match) => match[1]?.trim().toLowerCase());
   const duplicates = headings.filter((heading, index) => heading && headings.indexOf(heading) !== index);
   if (duplicates.length > 0) failures.push("repeated_sections");
@@ -1191,18 +1231,12 @@ function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext
   if (deliverableCode === "heritage_certificate_pdf") {
     return pdfDocumentText({
       title: "Private Archive Certificate",
-      subtitle: "A clean keepsake document prepared for family recognition and remembrance.",
+      subtitle: "A ceremonial record of this private legacy collection.",
       context,
       sections: [
-        ["Presented For", context.house_name],
-        ["Collection Name", context.collection_content?.collection_name ?? `${context.house_name} Private Legacy Collection`],
-        ["Keepsake Statement", context.collection_content?.certificate_text ?? certificateFallback(context)],
-        ["Meaning Summary", meaningSummary(context)],
-        ["Symbolic Elements", symbolBulletText(context)],
-        ["Family Meaning Record", certificateMeaningRecord(context)],
-        ["Reading Note", certificateReadingNote(context)],
-        ["Private Archive Companion Note", certificateCompanionNote(context)],
-        ["Preservation Note", "Prepared as a private archival keepsake for personal gifting, keeping, and family remembrance."]
+        ["Collection Record", certificateRecordText(context)],
+        ["Signature and Seal", "Signature: MyKinLegacy Legacy Curator\nOfficial Seal: MyKinLegacy private archive seal"],
+        ["Ceremony Statement", ceremonyStatement(context)]
       ]
     });
   }
@@ -1210,31 +1244,22 @@ function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext
   if (deliverableCode === "family_story_pdf") {
     return pdfDocumentText({
       title: "Family Story",
-      subtitle: "A warm narrative companion for the private legacy collection.",
+      subtitle: "An emotional reflection on why this family matters.",
       context,
       sections: [
-        ["Collection Letter", context.collection_content?.collection_letter ?? letterFallback(context)],
-        ["Family Story", context.collection_content?.family_story ?? storyFallback(context)],
-        ["Values Carried Forward", themeBulletText(context)],
-        ["Story Reading Note", familyStoryReadingNote(context)],
-        ["Preservation Context", familyStoryPreservationContext(context)],
-        ["Closing Keepsake Message", closingKeepsakeMessage(context)]
+        ["Story", context.collection_content?.family_story ?? storyFallback(context)],
+        ["Memory and Legacy", familyMemoryText(context)],
+        ["Personal Meaning", context.collection_content?.collection_letter ?? personalMeaningFallback(context)],
+        ["Legacy Reflection", closingStoryReflection(context)]
       ]
     });
   }
 
   return pdfDocumentText({
     title: "Symbol Guide",
-    subtitle: "The meaning behind each symbol chosen for this family collection.",
+    subtitle: "A clear explanation of why these symbols were chosen.",
     context,
-    sections: [
-      ["How to Read This Guide", symbolGuideIntro(context)],
-      ["The Meaning Behind This Collection", meaningSummary(context)],
-      ["Symbols Chosen for Your Family", symbolGuideText(context)],
-      ["Why It Was Designed This Way", context.collection_content?.design_basis ?? designFallback(context)],
-      ["How the Archive Document Should Feel", context.certificate_direction ?? "Private, warm, archival, and suitable for family keeping."],
-      ["Preservation and Sharing Note", symbolGuidePreservationNote(context)]
-    ]
+    sections: symbolGuideSections(context)
   });
 }
 
@@ -1254,139 +1279,27 @@ function pdfDocumentText(input: {
     "Legacy, Designed.",
     input.title,
     input.subtitle,
-    `Archive Reference: ${input.context.order_number}`,
     `Prepared for: ${input.context.house_name}`,
     input.context.motto ? `Motto: ${input.context.motto}` : "",
     "",
-    ...expandedSections,
-    "Private Archive Note",
-    archiveCareText(input.context),
-    "",
-    "Boundary Statement",
-    ARTIFACT_BOUNDARY_STATEMENT
+    ...expandedSections
   ]
     .filter((line) => line !== "")
     .join("\n");
 }
 
-function meaningSummary(context: ArtifactContext): string {
-  return (
-    context.collection_content?.house_meaning_summary ??
-    `${context.house_name} is represented through ${naturalList(context.themes.map((theme) => theme.theme), "family meaning")}. The collection uses symbolic artwork and written artifacts to preserve what the family wants to recognize, share, and carry forward.`
-  );
+function ceremonyStatement(context: ArtifactContext): string {
+  return `${context.house_name} is recognized through this private collection with care, dignity, and gratitude. This certificate names the collection and marks the moment it was prepared as a keepsake for the recipient.`;
 }
 
-function symbolGuideText(context: ArtifactContext): string {
-  return context.symbols
-    .map(
-      (symbol) =>
-        `${titleCase(symbol.symbol)}\nCore meaning: ${symbol.meaning ?? "A chosen family symbol"}.\nWhy this symbol was chosen: ${
-          symbol.why_chosen ?? symbol.rationale ?? "It supports the collection's core family meaning."
-        }\nFamily signal behind it: ${
-          symbol.customer_input_basis ?? "This is used as a symbolic interpretation from the family interview details."
-        }\nVisual role in the crest: ${
-          symbol.visual_role ?? "This symbol is treated as part of the crest structure, framed in a restrained black and antique gold archive style."
-        }\nEmotional purpose: ${
-          symbol.emotional_relevance ??
-          "It gives the recipient a visible reminder of the family's values, memory, and continuity."
-        }\nWhat this helps the family remember: ${symbolMemoryPurpose(symbol, context)}\nHow it connects to the collection: ${
-          symbol.artifact_role ?? "It connects the artwork, certificate, and written explanation into one private collection."
-        }`
-    )
-    .join("\n\n");
-}
-
-function symbolGuideIntro(context: ArtifactContext): string {
+function certificateRecordText(context: ArtifactContext): string {
   return [
-    `This guide explains the symbolic language chosen for ${context.house_name}.`,
-    "It is meant to be read beside the crest artwork, private archive certificate, and family story so the family can see how the visual choices connect to the written meaning.",
-    "Each symbol is included once, with its meaning, family signal, visual role, emotional purpose, and connection to the wider collection.",
-    "The symbols are personal interpretation, not official heraldry. They do not claim legal arms, noble title, certified ancestry, or public family authority.",
-    "Read the guide slowly. The strongest use is not to memorize the symbols, but to let them open a family conversation about what should be recognized, protected, remembered, and passed down."
-  ].join(" ");
-}
-
-function symbolMemoryPurpose(
-  symbol: ArtifactContext["symbols"][number],
-  context: ArtifactContext
-): string {
-  const theme = context.themes[0]?.theme ?? "family meaning";
-  const meaning = symbol.meaning ?? theme;
-  return `It gives future readers a plain-language way to connect ${meaning.toLowerCase()} with the family's own values, memories, and reasons for preserving this collection.`;
-}
-
-function symbolGuidePreservationNote(context: ArtifactContext): string {
-  return [
-    `Keep this Symbol Guide with the full ${context.collection_content?.collection_name ?? `${context.house_name} Private Legacy Collection`}.`,
-    "The crest artwork may be the first thing a recipient notices, but this guide preserves why the artwork matters.",
-    "If the collection is given to a parent, grandparent, spouse, child, or close relative, the guide can help the giver explain the meaning without making a long speech.",
-    "If the collection is reopened years later, this guide should still make clear which values, memories, and emotional signals shaped the symbols.",
-    "Families may add their own notes beside it: a photograph, a handwritten story, a favorite saying, a remembered place, or the name of the person who best represents one of the symbols.",
-    "That added family voice is part of the archive. MyKinLegacy provides the symbolic structure; the family gives it living memory.",
-    "The guide should remain private by default and shared by choice, especially when it includes personal family meaning.",
-    "Its value is not that it proves something official. Its value is that it helps the family recognize itself with care, language, and symbols that can be preserved."
-  ].join(" ");
-}
-
-function symbolBulletText(context: ArtifactContext): string {
-  return context.symbols
-    .map((symbol) => `- ${titleCase(symbol.symbol)}: ${symbol.meaning ?? "symbolic family meaning"}`)
-    .join("\n");
-}
-
-function themeBulletText(context: ArtifactContext): string {
-  return context.themes
-    .map((theme) => `- ${titleCase(theme.theme)}: ${theme.evidence ?? "Supported by the family interview details."}`)
-    .join("\n");
-}
-
-function certificateFallback(context: ArtifactContext): string {
-  return `Presented as a private symbolic keepsake for ${context.house_name}. This archive document honors ${naturalList(
-    context.themes.map((theme) => theme.theme),
-    "family meaning"
-  )} and the symbols chosen to represent the family with dignity.`;
-}
-
-function certificateMeaningRecord(context: ArtifactContext): string {
-  return [
-    `${context.house_name} is recorded here through ${naturalList(
-      context.themes.map((theme) => titleCase(theme.theme)),
-      "family meaning"
-    )}.`,
-    `The visible symbols in this collection are ${naturalList(
-      context.symbols.map((symbol) => titleCase(symbol.symbol)),
-      "chosen symbols"
-    )}. They are included because the family interview pointed toward values, memory, protection, gratitude, continuity, or other private meanings worth preserving.`,
-    "This record is intentionally personal. It does not attempt to prove ancestry, rank, noble status, or legal heraldic authority.",
-    "Its purpose is to give the recipient a dignified object of recognition: something that can be opened, read aloud, kept with family records, and revisited when ordinary gifts feel too small."
-  ].join(" ");
-}
-
-function certificateReadingNote(context: ArtifactContext): string {
-  return [
-    "If this keepsake document is given as a gift, it is meant to be opened slowly.",
-    `Begin with the collection name and the archive reference for ${context.order_number}, then read the meaning statement before looking at the crest artwork.`,
-    "The document works best when paired with a short personal note, a family photograph, or a memory spoken aloud by the person giving it.",
-    "Future readers should understand that the value of this artifact comes from family recognition and preservation, not from public authority.",
-    "The strongest moment is simple: the recipient should be able to see the symbols, read the story, and feel that the collection was prepared with care for this family.",
-    "A private archive document like this becomes more meaningful when the family adds its own voice around it. It can sit beside a handwritten card, a printed photograph, an old recipe, a recording, or a story told at the table. Those real family details are not replaced by the document; they complete it.",
-    "When this artifact is opened years later, it should still be clear why it was made: to name the qualities the family wanted to honor, to make those qualities visible through symbols, and to leave a private record that future relatives can understand without needing a long explanation.",
-    "If a child or grandchild asks what the symbols mean, begin with the family values before the artwork. Explain what protection, continuity, gratitude, resilience, memory, guidance, unity, or sacrifice meant in the family's real life. The design is strongest when it becomes a doorway into those conversations.",
-    "This document should be treated as one piece of a wider private archive. The crest artwork gives the collection a visual emblem, the story gives it a human voice, the symbol guide explains the language, and this document marks the moment when the collection was prepared for keeping.",
-    "Nothing here should be read as a final word on the family. It is a beginning: a careful, symbolic record that can invite more names, dates, photographs, corrections, and memories over time."
-  ].join(" ");
-}
-
-function certificateCompanionNote(context: ArtifactContext): string {
-  return [
-    "This private archive certificate is the opening document of the collection, but it should not stand alone.",
-    "The family story gives the document warmth, the symbol guide gives it clarity, and the crest artwork gives it a visual center.",
-    `For ${context.house_name}, the best use is to let each artifact answer a different question: what does this family mean, which symbols carry that meaning, why was this collection prepared, and what should be remembered later?`,
-    "When the collection is shared with a parent, grandparent, spouse, child, or close relative, the document can serve as the first page: dignified enough to present, clear enough to understand, and careful enough not to make claims the family did not provide.",
-    "The archive reference connects the document to this private order record, while the private vault keeps the full collection together for future access.",
-    "If the family adds more memories later, this document should remain as the first version of the symbolic record rather than being treated as a final historical document.",
-    "Keep it with the full collection so the meaning, artwork, and story stay connected."
-  ].join(" ");
+    `Collection Name: ${context.collection_content?.collection_name ?? `${context.house_name} Private Legacy Collection`}`,
+    `Recipient: ${context.house_name}`,
+    "Crest: Classic shield legacy crest artwork prepared for this collection.",
+    `Archive Number: ${context.order_number}`,
+    "Date: Recorded at the time this collection was prepared."
+  ].join("\n");
 }
 
 function storyFallback(context: ArtifactContext): string {
@@ -1396,88 +1309,41 @@ function storyFallback(context: ArtifactContext): string {
   )}. This collection gathers those qualities into a private keepsake so the family can see its values reflected with warmth and care.`;
 }
 
-function familyStoryReadingNote(context: ArtifactContext): string {
-  return [
-    "This story is written to be read as a private family reflection, not as a public biography.",
-    "It intentionally stays close to the values, memory signals, and symbolic direction available from the family interview.",
-    `For ${context.house_name}, the story should be opened beside the crest artwork and symbol guide so the reader can move from meaning, to image, to explanation.`,
-    "If the family has more memories to add later, this story should be treated as the first chapter rather than the final version.",
-    "The strongest reading moment often happens when someone pauses after a sentence and adds a real family detail in their own words."
-  ].join(" ");
-}
-
-function familyStoryPreservationContext(context: ArtifactContext): string {
-  return [
-    "A family story becomes more valuable when it gives people language for things they already felt but rarely named.",
-    `This document uses ${naturalList(
-      context.themes.map((theme) => titleCase(theme.theme)),
-      "family meaning"
-    )} as the emotional structure of the collection.`,
-    `It connects those themes to ${naturalList(
-      context.symbols.map((symbol) => titleCase(symbol.symbol)),
-      "chosen symbols"
-    )}, so the artwork is not treated as decoration alone.`,
-    "The story should be kept with the private archive certificate because the document marks the occasion, while the story explains why the occasion matters.",
-    "It should be kept with the symbol guide because future readers may remember the image before they remember the reason behind it.",
-    "It should be kept with the complete archive because family meaning is strongest when words, symbols, and artifacts stay together.",
-    "When shared as a gift, this story can be read privately before the full collection is shown to others.",
-    "When preserved for children or future relatives, it can become a starting point for deeper names, dates, places, photographs, and recorded memories.",
-    "The story intentionally avoids invented genealogy. If a place, ancestor, title, or historic event was not provided by the customer, it is not presented as fact.",
-    "Instead, the writing focuses on recognizable meaning: what the family values, what kind of gift moment this collection belongs to, what the selected symbols are meant to hold, and what future readers should feel when they open the archive.",
-    "A parent might read it as recognition. A grandparent might read it as gratitude. A child might read it as a beginning. A spouse might read it as a shared promise. The same story can hold different emotional roles because family meaning changes as people return to it.",
-    "If the collection is opened at a holiday, anniversary, retirement, memorial, birthday, or family gathering, this story can help the person giving the gift explain why it was made without needing a long speech.",
-    "If the family later builds a deeper archive, this story can sit beside real photographs, letters, recipes, voice recordings, family tree notes, and corrected memories as the first symbolic layer.",
-    "It is not the final record of the family. It is a carefully prepared opening: a way to start a conversation, give a meaningful gift, and preserve a version of what mattered at the time the collection was created.",
-    "The family can return to it later and add the details only they know: nicknames, places, favorite sayings, small rituals, acts of care, difficult seasons, ordinary rooms, and the moments that made the family feel like itself.",
-    "That ability to keep adding memory is part of what makes the story worth preserving.",
-    "Keep the story with the full archive so its meaning remains connected to the certificate, symbols, and artwork."
-  ].join(" ");
-}
-
-function letterFallback(context: ArtifactContext): string {
+function personalMeaningFallback(context: ArtifactContext): string {
   return `To ${context.house_name},\n\nThis collection was prepared to recognize what ordinary gifts often cannot hold: the values, symbols, and memories that make a family feel like itself.\n\nWith care,\nMyKinLegacy`;
 }
 
-function closingKeepsakeMessage(context: ArtifactContext): string {
-  return `May this collection become something the family can open again in future seasons: on birthdays, holidays, family gatherings, anniversaries, and quiet moments of remembrance. Its value is not a public claim. Its value is recognition: ${context.house_name} seeing itself with language, symbols, and care.`;
-}
-
-function designFallback(context: ArtifactContext): string {
-  return `The design basis uses ${naturalList(
-    context.symbols.map((symbol) => titleCase(symbol.symbol)),
-    "chosen symbols"
-  )} to express ${naturalList(context.themes.map((theme) => theme.theme), "family meaning")} in a private archival style.`;
-}
-
-function archiveCareText(context: ArtifactContext): string {
+function familyMemoryText(context: ArtifactContext): string {
   return [
-    "This private archive was prepared to feel gift-ready, calm, and suitable for long-term keeping.",
-    "Keep this collection with family photographs, letters, keepsake boxes, or digital family archives.",
-    "It was designed to be opened again on birthdays, holidays, family gatherings, anniversaries, and quiet moments of remembrance.",
-    "The value of the collection is not a public claim. Its value is recognition: a family seeing itself with language, symbols, and care.",
-    "Share it only with the people you choose. Preserve it in the way your family naturally keeps meaningful things.",
-    `${context.house_name} is presented here as a private symbolic keepsake shaped by ${naturalList(
+    `${context.house_name} carries ${naturalList(
       context.themes.map((theme) => theme.theme),
       "family meaning"
-    )}.`,
-    "The purpose is to give the family a readable, gift-ready artifact that can be revisited over time without claiming public authority, legal heraldry, or certified genealogy.",
-    "MyKinLegacy creates these documents as personalized symbolic keepsakes: meaningful, private, and designed to be preserved.",
-    "Suggested family use: open the private archive certificate when giving the collection as a gift, then read the story slowly with the person receiving it.",
-    "Suggested family use: keep the symbol guide near the crest artwork so future readers understand why each element was chosen.",
-    "Suggested family use: place the collection archive beside family photos, letters, recipes, recordings, or other private records that carry emotional weight.",
-    "Suggested family use: revisit the collection when a child asks what the family values or why certain memories matter.",
-    "Preservation note: the collection is intentionally private by default. It is meant to be shared by choice, not published as a public claim.",
-    "Preservation note: the writing favors recognition over exaggeration, so the keepsake can remain sincere when read years from now.",
-    "Conversation prompt: which value in this collection feels most true to the family right now?",
-    "Conversation prompt: which symbol would a parent or grandparent recognize first, and why?",
-    "Conversation prompt: what story should be added beside this collection so future readers understand the family better?",
-    "Conversation prompt: which family habit, phrase, place, room, recipe, workshop, garden, or holiday carries more meaning than outsiders would understand?",
-    "Conversation prompt: who in the family quietly protected, guided, served, or held others together when ordinary language felt too small?",
-    "Conversation prompt: if this collection were reopened in ten years, what would the family hope still feels true?",
-    "Conversation prompt: what should remain private, and what can be shared with relatives by choice?",
-    "Conversation prompt: which real memory, photograph, letter, voice recording, or object should be preserved beside this archive later?",
-    "Conversation prompt: when this collection is given as a gift, what first sentence should be spoken so the recipient understands why it was made?"
+    )} in ways that are easier to feel than to summarize.`,
+    "The memories behind those themes may be ordinary on the surface: people showing up, keeping faith, making a home, crossing distance, teaching by example, or holding one another through difficult seasons.",
+    "That ordinary faithfulness is the emotional center of the story. It is why the collection matters before any artwork or document is opened."
   ].join(" ");
+}
+
+function closingStoryReflection(context: ArtifactContext): string {
+  return `The story of ${context.house_name} is not valuable because it tries to sound grand. It is valuable because it gives language to care, memory, sacrifice, and continuity that the family may already recognize. The collection should leave the recipient feeling seen, thanked, and gently connected to what the family hopes to carry forward.`;
+}
+
+function symbolGuideSections(context: ArtifactContext): Array<[string, string]> {
+  return context.symbols.map((symbol) => [
+    titleCase(symbol.symbol),
+    [
+      `Meaning: ${symbol.meaning ?? "A chosen family symbol"}.`,
+      `Why chosen: ${symbol.why_chosen ?? symbol.rationale ?? "It supports the collection's core family meaning."}`,
+      `Emotional role: ${
+        symbol.emotional_relevance ??
+        "It gives the recipient a visible reminder of the family's values, memory, and continuity."
+      }`,
+      `Relationship to family: ${
+        symbol.customer_input_basis ??
+        "It reflects the family interview details through a careful symbolic interpretation."
+      }`
+    ].join("\n")
+  ]);
 }
 
 function customerFileName(deliverableCode: string): string {

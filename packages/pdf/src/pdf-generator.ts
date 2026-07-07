@@ -191,7 +191,7 @@ function buildCoverPage(model: PdfModel, image: PdfImage | null): string {
     textCommand(76, 334, "Inside this document", "F2", 13, COLOR.ink),
     strokeLineCommand(76, 324, 536, 324, COLOR.goldSoft, 0.65),
     ...wrappedTextCommands(
-      "A title page, framed archive sections, readable body text, and a calm boundary note so the piece feels giftable without pretending to be official heraldry.",
+      "A title page and focused sections shaped for this document's specific role in the collection.",
       76,
       300,
       75,
@@ -200,7 +200,7 @@ function buildCoverPage(model: PdfModel, image: PdfImage | null): string {
       15,
       COLOR.ink
     ),
-    textCommand(76, 96, "Prepared as a private archive document for family keeping.", "F3", 8.5, COLOR.muted),
+    textCommand(76, 96, "Prepared by MyKinLegacy.", "F3", 8.5, COLOR.muted),
     textCommand(410, 96, "MyKinLegacy", "F2", 9.5, COLOR.goldSoft)
   ];
 
