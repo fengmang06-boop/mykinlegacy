@@ -1,0 +1,190 @@
+name: Codex Etsy OAuth PKCE Fallback
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-oauth-pkce.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-mykinlegacy
+  cancel-in-progress: false
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Patch production OAuth flow
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          if command -v pm2 >/dev/null 2>&1; then
+            FOUND_DIR="$(pm2 jlist | node -e '
+              let data="";
+              process.stdin.on("data", c => data += c);
+              process.stdin.on("end", () => {
+                const arr = JSON.parse(data || "[]");
+                const match = arr.find(p => p.name === "mensskull-etsy-ai-manager" || JSON.stringify(p).includes("etsy-ai-manager") || p.pm2_env?.PORT == "3000");
+                if (match?.pm2_env?.pm_cwd) console.log(match.pm2_env.pm_cwd);
+              });
+            ' || true)"
+            if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
+          fi
+          test -d "$APP_DIR"
+          cd "$APP_DIR"
+
+          TS="$(date +%Y%m%d%H%M%S)"
+          cp -a src/app/api/etsy/auth/start/route.ts "src/app/api/etsy/auth/start/route.ts.codex-pkce-backup-$TS"
+          cp -a src/app/api/etsy/callback/route.ts "src/app/api/etsy/callback/route.ts.codex-pkce-backup-$TS"
+
+          python3 - <<'PY'
+          from pathlib import Path
+          import textwrap
+
+          start = Path("src/app/api/etsy/auth/start/route.ts")
+          start.write_text(textwrap.dedent(r'''
+          import fs from "node:fs";
+          import path from "node:path";
+          import { cookies } from "next/headers";
+          import { NextResponse } from "next/server";
+          import { buildAuthorizationUrl } from "@/lib/integrations/etsy/oauth";
+
+          export const runtime = "nodejs";
+
+          function pkceStateDir(): string {
+            const dir = path.join(process.cwd(), ".etsy-oauth-state");
+            fs.mkdirSync(dir, { recursive: true, mode: 0o700 });
+            return dir;
+          }
+
+          function savePkceState(state: string, codeVerifier: string): void {
+            const now = Date.now();
+            const dir = pkceStateDir();
+            for (const entry of fs.readdirSync(dir)) {
+              if (!entry.endsWith(".json")) continue;
+              const file = path.join(dir, entry);
+              try {
+                const parsed = JSON.parse(fs.readFileSync(file, "utf8")) as { createdAt?: number };
+                if (!parsed.createdAt || now - parsed.createdAt > 15 * 60 * 1000) fs.unlinkSync(file);
+              } catch {
+                fs.unlinkSync(file);
+              }
+            }
+            fs.writeFileSync(
+              path.join(dir, `${state}.json`),
+              JSON.stringify({ codeVerifier, createdAt: now }),
+              { mode: 0o600 }
+            );
+          }
+
+          export async function GET() {
+            try {
+              const { url, state, codeVerifier } = buildAuthorizationUrl();
+              savePkceState(state, codeVerifier);
+              const cookieStore = await cookies();
+              cookieStore.set("etsy_oauth_state", state, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 600 });
+              cookieStore.set("etsy_code_verifier", codeVerifier, { httpOnly: true, sameSite: "lax", path: "/", maxAge: 600 });
+              return NextResponse.redirect(url);
+            } catch (error) {
+              return NextResponse.json({ error: error instanceof Error ? error.message : String(error) }, { status: 400 });
+            }
+          }
+          ''').lstrip())
+
+          callback = Path("src/app/api/etsy/callback/route.ts")
+          text = callback.read_text()
+          if "function readPkceState" not in text:
+              insert_after = 'function saveOAuthEnv(values: Record<string, string>): string[] {\n'
+              if insert_after not in text:
+                  raise SystemExit("saveOAuthEnv not found")
+              helper = textwrap.dedent(r'''
+
+              function readPkceState(state: string): string | null {
+                const file = path.join(process.cwd(), ".etsy-oauth-state", `${state}.json`);
+                try {
+                  const parsed = JSON.parse(fs.readFileSync(file, "utf8")) as { codeVerifier?: string; createdAt?: number };
+                  if (!parsed.createdAt || Date.now() - parsed.createdAt > 15 * 60 * 1000) {
+                    fs.unlinkSync(file);
+                    return null;
+                  }
+                  return parsed.codeVerifier ?? null;
+                } catch {
+                  return null;
+                }
+              }
+
+              function deletePkceState(state: string): void {
+                const file = path.join(process.cwd(), ".etsy-oauth-state", `${state}.json`);
+                try {
+                  fs.unlinkSync(file);
+                } catch {
+                  // Ignore cleanup errors.
+                }
+              }
+              ''')
+              text = text.replace(insert_after, helper + "\n" + insert_after)
+
+          old = '    const expectedState = cookieStore.get("etsy_oauth_state")?.value;\n    const codeVerifier = cookieStore.get("etsy_code_verifier")?.value;\n\n    if (!expectedState || callback.state !== expectedState) {\n      return NextResponse.json({ error: "Etsy OAuth state mismatch. Restart OAuth." }, { status: 400 });\n    }\n    if (!codeVerifier) {\n      return NextResponse.json({ error: "Missing local PKCE verifier cookie. Restart OAuth." }, { status: 400 });\n    }\n\n    const token = await exchangeCodeForToken({ code: callback.code, codeVerifier });\n'
+          new = '    const expectedState = cookieStore.get("etsy_oauth_state")?.value;\n    let codeVerifier = cookieStore.get("etsy_code_verifier")?.value;\n\n    if (expectedState && callback.state !== expectedState) {\n      return NextResponse.json({ error: "Etsy OAuth state mismatch. Restart OAuth." }, { status: 400 });\n    }\n    if (!codeVerifier) {\n      codeVerifier = readPkceState(callback.state) ?? undefined;\n    }\n    if (!codeVerifier) {\n      return NextResponse.json({ error: "Missing PKCE verifier. Restart OAuth." }, { status: 400 });\n    }\n\n    const token = await exchangeCodeForToken({ code: callback.code, codeVerifier });\n    deletePkceState(callback.state);\n'
+          if old not in text:
+              raise SystemExit("callback verifier block not found")
+          text = text.replace(old, new)
+          callback.write_text(text)
+          PY
+
+          npm run build
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 4
+          curl -k -sS -o /dev/null -w "tools_home=%{http_code}\n" --max-time 20 https://tools.mensskull.com/
+          curl -k -sS -o /dev/null -w "etsy_page=%{http_code}\n" --max-time 20 https://tools.mensskull.com/etsy-connection
+          curl -k -sS -D /tmp/codex-start-h.txt -o /tmp/codex-start-b.txt --max-time 20 https://tools.mensskull.com/api/etsy/auth/start
+          LOCATION="$(awk 'BEGIN{IGNORECASE=1} /^location:/{sub(/\r$/,""); print substr($0,11)}' /tmp/codex-start-h.txt | tail -n 1)"
+          test -n "$LOCATION"
+          node -e 'const u=new URL(process.argv[1]); if(u.host!=="www.etsy.com") throw new Error("bad host"); if(u.searchParams.get("redirect_uri")!=="https://tools.mensskull.com/api/etsy/callback") throw new Error("bad redirect"); console.log("oauth_start=ok")' "$LOCATION"
+          curl -k -sS -o /dev/null -w "mykinlegacy_home=%{http_code}\n" --max-time 20 https://mykinlegacy.com/
+          REMOTE
