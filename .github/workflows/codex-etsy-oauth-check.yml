@@ -1,0 +1,166 @@
+name: Codex Etsy OAuth Check
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-check-20260707
+    paths:
+      - ".github/workflows/codex-etsy-oauth-check.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-mykinlegacy
+  cancel-in-progress: false
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Inspect Etsy OAuth production state
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+
+          redact_value() {
+            local key="$1"
+            local value="${2:-}"
+            if [ -z "$value" ]; then
+              printf '%s=missing\n' "$key"
+            elif [[ "$key" =~ REDIRECT_URI|BASE_URL|NEXT_PUBLIC_BASE_URL ]]; then
+              printf '%s=%s\n' "$key" "$value"
+            else
+              printf '%s=present(len=%s)\n' "$key" "${#value}"
+            fi
+          }
+
+          APP_DIR="/www/wwwroot/tools.mensskull.com/etsy-ai-manager"
+          if command -v pm2 >/dev/null 2>&1; then
+            echo "===== PM2 LIST ====="
+            pm2 jlist | node -e '
+              let data=""; process.stdin.on("data", c => data += c); process.stdin.on("end", () => {
+                const arr = JSON.parse(data || "[]");
+                for (const p of arr) {
+                  console.log(JSON.stringify({
+                    name: p.name,
+                    pm_id: p.pm_id,
+                    status: p.pm2_env?.status,
+                    cwd: p.pm2_env?.pm_cwd,
+                    script: p.pm2_env?.pm_exec_path
+                  }));
+                }
+              });
+            '
+            FOUND_DIR="$(pm2 jlist | node -e '
+              let data=""; process.stdin.on("data", c => data += c); process.stdin.on("end", () => {
+                const arr = JSON.parse(data || "[]");
+                const match = arr.find(p => JSON.stringify(p).includes("tools.mensskull.com") || JSON.stringify(p).includes("etsy-ai-manager") || p.pm2_env?.PORT == "3000");
+                if (match?.pm2_env?.pm_cwd) console.log(match.pm2_env.pm_cwd);
+              });
+            ' || true)"
+            if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
+          fi
+
+          echo "app_dir=$APP_DIR"
+          cd "$APP_DIR"
+          echo "pwd=$(pwd)"
+          echo "node=$(node -v 2>/dev/null || true)"
+          echo "pm2=$(pm2 -v 2>/dev/null || true)"
+
+          echo "===== ENV FILES ====="
+          for f in .env .env.local .env.production ecosystem.config.js ecosystem.config.cjs ecosystem.config.mjs; do
+            [ -e "$f" ] && ls -l "$f"
+          done
+
+          echo "===== ENV FILE PRESENCE ====="
+          for f in .env .env.local .env.production; do
+            [ -f "$f" ] || continue
+            echo "file=$f"
+            while IFS='=' read -r key value; do
+              case "$key" in
+                ETSY_CLIENT_ID|ETSY_CLIENT_SECRET|ETSY_REDIRECT_URI|BASE_URL|NEXT_PUBLIC_BASE_URL|NEXT_PUBLIC_SITE_URL|ETSY_ACCESS_TOKEN|ETSY_REFRESH_TOKEN|ETSY_SHOP_ID|ETSY_USER_ID|ETSY_TOKEN_EXPIRES_AT)
+                  redact_value "$key" "$value"
+                  ;;
+              esac
+            done < "$f"
+          done
+
+          echo "===== PM2 ENV PRESENCE ====="
+          if command -v pm2 >/dev/null 2>&1; then
+            pm2 jlist | node -e '
+              let data=""; process.stdin.on("data", c => data += c); process.stdin.on("end", () => {
+                const arr = JSON.parse(data || "[]");
+                const p = arr.find(p => JSON.stringify(p).includes("tools.mensskull.com") || JSON.stringify(p).includes("etsy-ai-manager") || p.pm2_env?.PORT == "3000") || arr[0];
+                const env = p?.pm2_env || {};
+                const keys = ["ETSY_CLIENT_ID","ETSY_CLIENT_SECRET","ETSY_REDIRECT_URI","BASE_URL","NEXT_PUBLIC_BASE_URL","NEXT_PUBLIC_SITE_URL","ETSY_ACCESS_TOKEN","ETSY_REFRESH_TOKEN","ETSY_SHOP_ID","ETSY_USER_ID","ETSY_TOKEN_EXPIRES_AT","PORT"];
+                for (const key of keys) {
+                  const value = env[key] || "";
+                  if (!value) console.log(`${key}=missing`);
+                  else if (/REDIRECT_URI|BASE_URL|NEXT_PUBLIC_BASE_URL|NEXT_PUBLIC_SITE_URL|PORT/.test(key)) console.log(`${key}=${value}`);
+                  else console.log(`${key}=present(len=${String(value).length})`);
+                }
+              });
+            '
+          fi
+
+          echo "===== HTTP CHECKS ====="
+          curl -k -sS -o /tmp/etsy-start-body.txt -D /tmp/etsy-start-headers.txt --max-time 20 https://tools.mensskull.com/api/etsy/auth/start || true
+          head -n 20 /tmp/etsy-start-headers.txt
+          echo "body=$(head -c 300 /tmp/etsy-start-body.txt | tr '\n' ' ')"
+          LOCATION="$(awk 'BEGIN{IGNORECASE=1} /^location:/{sub(/\r$/,""); print substr($0,11)}' /tmp/etsy-start-headers.txt | tail -n 1)"
+          if [ -n "$LOCATION" ]; then
+            echo "location_host=$(node -e 'const u=new URL(process.argv[1]); console.log(u.host)' "$LOCATION")"
+            echo "location_redirect_uri=$(node -e 'const u=new URL(process.argv[1]); console.log(u.searchParams.get("redirect_uri") || "")' "$LOCATION")"
+            echo "location_client_id_present=$(node -e 'const u=new URL(process.argv[1]); console.log(Boolean(u.searchParams.get("client_id")))' "$LOCATION")"
+            echo "location_scope_present=$(node -e 'const u=new URL(process.argv[1]); console.log(Boolean(u.searchParams.get("scope")))' "$LOCATION")"
+          fi
+
+          echo "===== PM2 LOGS TAIL ====="
+          pm2 logs --nostream --lines 80 2>/dev/null | sed -E 's/(access_token|refresh_token|client_secret|code_verifier|code)=([^& ]+)/\1=REDACTED/Ig' | tail -n 120 || true
+
+          echo "===== NGINX LOGS TAIL ====="
+          docker logs mykinlegacy_nginx --tail 80 2>&1 | tail -n 80 || true
+
+          echo "===== MYKINLEGACY CHECK ====="
+          curl -k -sS -o /dev/null -w "mykinlegacy_home=%{http_code}\n" --max-time 20 https://mykinlegacy.com/
+          REMOTE
