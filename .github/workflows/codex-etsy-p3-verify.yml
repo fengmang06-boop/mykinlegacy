@@ -76,6 +76,15 @@ jobs:
           if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
           cd "$APP_DIR"
           node <<'NODE'
+          const fs = require("fs");
+          for (const file of [".env", ".env.local"]) {
+            if (!fs.existsSync(file)) continue;
+            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+              const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+              if (!match) continue;
+              process.env[match[1]] = match[2].trim().replace(/^['"]|['"]$/g, "");
+            }
+          }
           const { PrismaClient } = require("@prisma/client");
           const prisma = new PrismaClient();
           const avg = (items, key) => Math.round(items.reduce((sum, item) => sum + item[key], 0) / Math.max(items.length, 1));
