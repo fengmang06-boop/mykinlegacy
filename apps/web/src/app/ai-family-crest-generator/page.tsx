@@ -14,7 +14,7 @@ export default function AiFamilyCrestGeneratorPage() {
   return (
     <SeoLandingPage
       eyebrow="AI family crest generator"
-      title="AI-generated symbolic crest artwork for your family story"
+      title="Symbolic crest artwork for your family story"
       description="MyKinLegacy turns guided family details into a private heritage-inspired digital collection prepared for download, printing, and gifting."
       highlights={["AI crest variants", "Server-rendered PDF text", "No public gallery by default"]}
       faq={[
@@ -24,7 +24,7 @@ export default function AiFamilyCrestGeneratorPage() {
         },
         {
           question: "Is a real AI provider required for staging?",
-          answer: "No. MVP staging uses mock AI; production provider setup is separate."
+          answer: "No. The service creates personalized symbolic artwork from the details you provide."
         },
         {
           question: "Is this historically certified?",

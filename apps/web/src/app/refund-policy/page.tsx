@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Refund Policy | MyKinLegacy",
   description:
-    "MVP refund policy draft for personalized digital MyKinLegacy heritage-inspired collections and download delivery status.",
+    "Refund policy for personalized digital MyKinLegacy heritage-inspired collections and download delivery status.",
   path: "/refund-policy"
 });
 
@@ -15,7 +15,7 @@ export default function RefundPolicyPage() {
     <PolicyPage
       eyebrow="Refund policy"
       title="Refund Policy"
-      intro="This MVP refund policy explains how personalized digital goods are reviewed after purchase."
+      intro="This refund policy explains how personalized digital goods are reviewed after purchase."
       sections={[
         {
           title: "Before generation",

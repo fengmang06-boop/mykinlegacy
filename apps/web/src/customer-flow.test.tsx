@@ -321,7 +321,7 @@ describe("customer frontend flow", () => {
     expect(html).toContain("Documents are being prepared");
   });
 
-  it("download vault helpers hide alpha placeholder sizes without raw token data", () => {
+  it("download vault helpers hide sample placeholder sizes without raw token data", () => {
     expect(isPlaceholderAsset({ size_bytes: 100, status: "available_for_download" })).toBe(true);
     expect(formatArtifactSizeLabel({ size_bytes: 100, status: "available_for_download" })).toBeNull();
     expect(formatArtifactSizeLabel({ size_bytes: 2048, status: "available_for_download" })).toBe("2.0 KB");

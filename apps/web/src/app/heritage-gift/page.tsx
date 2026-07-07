@@ -20,7 +20,7 @@ export default function HeritageGiftPage() {
       faq={[
         {
           question: "Is this a physical gift?",
-          answer: "No. The MVP product is delivered digitally through a private Download Vault."
+          answer: "No. The product is delivered digitally through a private Download Vault."
         },
         {
           question: "Can recipients print the files?",

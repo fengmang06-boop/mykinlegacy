@@ -7,11 +7,10 @@ export const productSeed = {
     locale: "en-US",
     name: "Family Legacy Collection",
     shortDescription:
-      "A personalized, AI-generated, heritage-inspired symbolic family identity collection.",
+      "A personalized, heritage-inspired symbolic family identity collection.",
     descriptionJson: {
       attributes: [
         "personalized",
-        "AI-generated",
         "heritage-inspired",
         "symbolic",
         "private download vault"
@@ -184,7 +183,7 @@ export const packageDeliverableSeeds = [
 ] as const;
 
 const globalDisclaimer =
-  "This output is a personalized, AI-generated, heritage-inspired symbolic design and is not an official, legally granted, or historically certified coat of arms.";
+  "This output is a personalized, heritage-inspired symbolic design and is not an official, legally granted, or historically certified coat of arms.";
 
 const forbiddenTerms =
   "Forbidden terms and claims: official coat of arms, legally granted arms, historically certified crest, verified noble lineage, guaranteed ancestry, royal entitlement, trademarked logo, copyrighted emblem.";
@@ -194,7 +193,7 @@ export const promptTemplateSeeds = [
     code: "image_crest_variant_prompt",
     promptType: "image",
     status: "active",
-    description: "MVP image prompt placeholder for crest variants.",
+    description: "Initial image prompt placeholder for crest variants.",
     version: {
       version: 1,
       status: "active",
@@ -230,7 +229,7 @@ export const promptTemplateSeeds = [
     code: "story_prompt",
     promptType: "story",
     status: "active",
-    description: "MVP story prompt placeholder.",
+    description: "Initial story prompt placeholder.",
     version: {
       version: 1,
       status: "active",
@@ -253,7 +252,7 @@ export const promptTemplateSeeds = [
     code: "certificate_text_prompt",
     promptType: "certificate",
     status: "active",
-    description: "MVP certificate text prompt placeholder.",
+    description: "Initial certificate text prompt placeholder.",
     version: {
       version: 1,
       status: "active",
@@ -276,7 +275,7 @@ export const promptTemplateSeeds = [
     code: "symbol_explanation_prompt",
     promptType: "explanation",
     status: "active",
-    description: "MVP symbol explanation prompt placeholder.",
+    description: "Initial symbol explanation prompt placeholder.",
     version: {
       version: 1,
       status: "active",
@@ -315,7 +314,7 @@ export const emailTemplateSeed = {
     "",
     "If you need help, contact support and include your order number.",
     "",
-    "Your collection is a personalized, AI-generated, heritage-inspired symbolic design and is not an official, legally granted, or historically certified coat of arms."
+    "Your collection is a personalized, heritage-inspired symbolic design and is not an official, legally granted, or historically certified coat of arms."
   ].join("\n")
 } as const;
 

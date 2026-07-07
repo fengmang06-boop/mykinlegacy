@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Family Legacy Gift | MyKinLegacy",
   description:
-    "Design a private family legacy gift with AI-generated symbolic crest artwork, family story, certificate, and digital delivery.",
+    "Design a private family legacy gift with symbolic crest artwork, family story, certificate, and digital delivery.",
   path: "/family-legacy-gift"
 });
 

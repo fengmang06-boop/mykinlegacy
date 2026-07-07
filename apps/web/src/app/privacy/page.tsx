@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Privacy Policy | MyKinLegacy",
   description:
-    "MVP privacy draft for MyKinLegacy digital heritage collections, private storage, download vault access, and customer data handling.",
+    "Privacy policy for MyKinLegacy digital heritage collections, private storage, download vault access, and customer data handling.",
   path: "/privacy"
 });
 
@@ -27,7 +27,7 @@ export default function PrivacyPage() {
         },
         {
           title: "AI provider usage",
-          body: "MVP staging uses mock AI. Future production AI providers should only use customer inputs for the current generation unless separate consent allows broader use."
+          body: "Production providers should only use customer inputs for the current generation unless separate consent allows broader use."
         },
         {
           title: "Download access",

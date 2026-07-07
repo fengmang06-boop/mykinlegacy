@@ -19,7 +19,7 @@ export default function DigitalDeliveryPage() {
       sections={[
         {
           title: "What is delivered",
-          body: "The MVP package includes crest-inspired PNG files, transparent artwork, symbolic explanation PDF, certificate PDF, family story PDF, and ZIP package."
+          body: "The package includes crest-inspired PNG files, transparent artwork, symbolic explanation PDF, certificate PDF, family story PDF, and ZIP package."
         },
         {
           title: "Download Vault",
@@ -31,7 +31,7 @@ export default function DigitalDeliveryPage() {
         },
         {
           title: "No shipping",
-          body: "This MVP does not include printed goods, frames, shipping, customs, or physical fulfillment."
+          body: "This digital delivery does not include printed goods, frames, shipping, customs, or physical fulfillment."
         }
       ]}
     />

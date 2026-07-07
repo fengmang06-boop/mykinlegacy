@@ -341,8 +341,8 @@ export function DownloadVault({ token }: { token: string }) {
             )}
           </div>
           {hasPlaceholderAssets ? (
-            <p className="notice alpha-vault-notice">
-              This internal alpha order contains placeholder collection artifacts. Future real
+            <p className="notice placeholder-vault-notice">
+              This internal sample order contains placeholder collection artifacts. Future real
               customer orders should replace these with final generated collection files.
             </p>
           ) : null}

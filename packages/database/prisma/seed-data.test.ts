@@ -13,8 +13,8 @@ import {
   promptTemplateSeeds
 } from "./seed-data";
 
-describe("MVP seed definitions", () => {
-  it("defines the MVP product and premium package", () => {
+describe("baseline seed definitions", () => {
+  it("defines the product and premium package", () => {
     expect(productSeed.code).toBe("family_legacy_collection");
     expect(packageSeed.code).toBe("premium");
     expect(packageSeed.priceCents).toBe(4900n);

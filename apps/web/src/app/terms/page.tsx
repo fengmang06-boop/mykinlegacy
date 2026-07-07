@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Terms of Service | MyKinLegacy",
   description:
-    "MVP terms draft for MyKinLegacy digital delivery, AI-generated symbolic designs, accountless checkout, and customer responsibilities.",
+    "Terms for MyKinLegacy digital delivery, symbolic heritage designs, accountless checkout, and customer responsibilities.",
   path: "/terms"
 });
 
@@ -15,11 +15,11 @@ export default function TermsPage() {
     <PolicyPage
       eyebrow="Terms"
       title="Terms of Service"
-      intro="These MVP terms describe use of the MyKinLegacy digital heritage collection service."
+      intro="These terms describe use of the MyKinLegacy digital heritage collection service."
       sections={[
         {
           title: "Digital product",
-          body: "The Family Legacy Collection is a digital product delivered through a Download Vault. No physical shipping is included in the MVP product."
+          body: "The Family Legacy Collection is a digital product delivered through a Download Vault. No physical shipping is included."
         },
         {
           title: "Customer inputs",
@@ -27,7 +27,7 @@ export default function TermsPage() {
         },
         {
           title: "Symbolic nature",
-          body: "Generated designs are personalized, AI-generated, heritage-inspired symbolic designs and are not official, legally granted, or historically certified arms."
+          body: "Generated designs are personalized, heritage-inspired symbolic designs and are not official, legally granted, or historically certified arms."
         },
         {
           title: "Service availability",

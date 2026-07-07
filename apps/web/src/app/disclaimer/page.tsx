@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Heritage Design Disclaimer | MyKinLegacy",
   description:
-    "MyKinLegacy creates personalized AI-generated heritage-inspired symbolic designs, not official or legally granted coats of arms.",
+    "MyKinLegacy creates personalized heritage-inspired symbolic designs, not official or legally granted coats of arms.",
   path: "/disclaimer"
 });
 
@@ -22,7 +22,7 @@ export default function DisclaimerPage() {
           body: "The service does not grant, register, certify, or verify official coats of arms, family crests, heraldic rights, noble status, or ancestral entitlement."
         },
         {
-          title: "AI-generated design",
+          title: "Personalized symbolic design",
           body: "Artwork, story, and explanations are generated from customer inputs and curated rules as heritage-inspired symbolic creative output."
         },
         {

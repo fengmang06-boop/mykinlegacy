@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Family Crest Generator | MyKinLegacy",
   description:
-    "Create a private AI-generated family crest-inspired digital collection with symbolic artwork, story PDFs, and secure vault delivery.",
+    "Create a private family crest-inspired digital collection with symbolic artwork, story PDFs, and secure vault delivery.",
   path: "/family-crest-generator"
 });
 

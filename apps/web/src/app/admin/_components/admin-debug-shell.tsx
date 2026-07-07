@@ -26,7 +26,7 @@ export function AdminDebugShell({
           <p className="eyebrow">Internal founder debug</p>
           <h1>MyKinLegacy Transaction Monitor</h1>
           <p className="lead">
-            Temporary read-only alpha pages for checking orders, log-mode email delivery, and
+            Temporary read-only check pages for reviewing orders, log-mode email delivery, and
             token-protected vault readiness.
           </p>
           <nav className="admin-debug-tabs" aria-label="Admin debug navigation">

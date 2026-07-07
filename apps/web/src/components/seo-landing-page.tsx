@@ -88,8 +88,8 @@ export function SeoLandingPage({
             <article className="card" key={item}>
               <h3>{item}</h3>
               <p className="muted">
-                Included as part of a personalized, AI-generated, heritage-inspired digital
-                collection for personal use, gifting, and archiving.
+                Included as part of a personalized, heritage-inspired digital collection for
+                personal use, gifting, and archiving.
               </p>
             </article>
           ))}
@@ -101,9 +101,9 @@ export function SeoLandingPage({
           <p className="eyebrow">Important disclaimer</p>
           <h2>Inspired symbolism, not official heraldic certification</h2>
           <p className="lead">
-            {BRAND_NAME} creates personalized AI-generated heritage-inspired symbolic designs. The
-            collection is not an official, legally granted, or historically certified coat of arms,
-            and it does not verify ancestral rights or heraldic entitlement.
+            {BRAND_NAME} creates personalized heritage-inspired symbolic designs. The collection is
+            not an official, legally granted, or historically certified coat of arms, and it does
+            not verify ancestral rights or heraldic entitlement.
           </p>
         </div>
       </section>
