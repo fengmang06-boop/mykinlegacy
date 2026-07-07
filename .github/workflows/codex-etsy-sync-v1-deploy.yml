@@ -151,9 +151,21 @@ jobs:
 
           echo "===== SYNC ====="
           cat > .codex-run-sync.ts <<'TS'
+          import fs from "node:fs";
           import { syncEtsyReadOnly } from "./src/lib/integrations/etsy/sync-read-only";
           import { prisma } from "./src/lib/prisma";
+          function loadEnvFile(file: string) {
+            if (!fs.existsSync(file)) return;
+            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+              const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+              if (!match) continue;
+              const value = match[2].trim().replace(/^['"]|['"]$/g, "");
+              process.env[match[1]] = value;
+            }
+          }
           async function main() {
+            loadEnvFile(".env");
+            loadEnvFile(".env.local");
             const data = await syncEtsyReadOnly();
             console.log("etsy_sync=local");
             console.log(JSON.stringify({
@@ -190,9 +202,21 @@ jobs:
 
           echo "===== AI ANALYSIS ====="
           cat > .codex-run-ai.ts <<'TS'
+          import fs from "node:fs";
           import { analyzeAllListings } from "./src/lib/etsy-ai/listing-intelligence";
           import { prisma } from "./src/lib/prisma";
+          function loadEnvFile(file: string) {
+            if (!fs.existsSync(file)) return;
+            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+              const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+              if (!match) continue;
+              const value = match[2].trim().replace(/^['"]|['"]$/g, "");
+              process.env[match[1]] = value;
+            }
+          }
           async function main() {
+            loadEnvFile(".env");
+            loadEnvFile(".env.local");
             const data = await analyzeAllListings({ retry: true });
             console.log("etsy_ai_analyze=local");
             console.log(JSON.stringify({
