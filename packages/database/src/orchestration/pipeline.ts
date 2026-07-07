@@ -1004,8 +1004,9 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
     if (metadata.width < 640 || metadata.height < 640) failures.push("png_dimensions_too_small");
     if (artifact.body.byteLength < MIN_CUSTOMER_ARTIFACT_BYTES) failures.push(`png_too_small:${artifact.body.byteLength}`);
     const aiProviderMode = text.includes("artwork_mode=ai_image_provider");
+    const recoveredOfficialMode = text.includes("artwork_mode=recovered_official_asset");
     if (!text.includes("artwork_template=shield_legacy_crest_v1")) failures.push("artwork_template_missing");
-    if (!text.includes("artwork_mode=deterministic_symbolic_template") && !aiProviderMode) {
+    if (!text.includes("artwork_mode=deterministic_symbolic_template") && !aiProviderMode && !recoveredOfficialMode) {
       failures.push("artwork_mode_missing");
     }
     if (text.includes("prompt_source=lre_prompt")) {
@@ -1018,7 +1019,7 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
         if (!/image_model=(?!none\b)[a-z0-9_.:-]+/i.test(text)) failures.push("ai_image_model_missing");
         if (!text.includes("fallback_used=false")) failures.push("ai_image_fallback_flag_invalid");
       }
-    } else {
+    } else if (!recoveredOfficialMode) {
       if (!text.includes("main_symbol=tree")) failures.push("main_symbol_missing");
       if (!text.includes("supporting_symbols=shield,knot")) failures.push("supporting_symbols_missing");
     }

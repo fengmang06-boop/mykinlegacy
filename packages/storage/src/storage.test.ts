@@ -21,6 +21,7 @@ import {
   getDownloadVault,
   hashDownloadToken,
   listDownloadAssets,
+  listRecoveredOfficialCrestAssets,
   isAssetDownloadable,
   listZipEntries,
   markAssetGenerated,
@@ -100,7 +101,31 @@ describe("private storage and assets", () => {
     await rm(dir, { recursive: true, force: true });
   });
 
-  it("creates deterministic MVP crest artwork with customer-ready dimensions and size", () => {
+  it("lists recovered Founder-approved official crest assets", () => {
+    const recovered = listRecoveredOfficialCrestAssets();
+
+    expect(recovered).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          deliverable_code: "crest_variant_1_png",
+          id: "01a-classic-shield-legacy",
+          available: true
+        }),
+        expect.objectContaining({
+          deliverable_code: "crest_variant_2_png",
+          id: "03a-gothic-memory-lantern",
+          available: true
+        }),
+        expect.objectContaining({
+          deliverable_code: "crest_variant_3_png",
+          id: "05a-compass-journey-medallion",
+          available: true
+        })
+      ])
+    );
+  });
+
+  it("uses recovered official crest artwork for primary customer-facing PNG variants", () => {
     const body = createMvpCrestPngBuffer({
       variant: "crest_variant_1_png",
       house_name: "House of Alder",
@@ -116,14 +141,12 @@ describe("private storage and assets", () => {
     const transparentMetadata = readPngMetadata(transparentBody);
 
     expect(body.subarray(1, 4).toString()).toBe("PNG");
-    expect(metadataText).toContain("artwork_template=shield_legacy_crest_v1");
-    expect(metadataText).toContain("artwork_mode=deterministic_symbolic_template");
-    expect(metadataText).toContain("main_symbol=tree");
-    expect(metadataText).toContain("supporting_symbols=shield,knot");
-    expect(metadataText).toContain("theme_mapping=continuity,unity");
-    expect(metadataText).toContain("artwork_quality=internal_beta");
+    expect(metadataText).toContain("artwork_source=founder_approved_asset");
+    expect(metadataText).toContain("artwork_mode=recovered_official_asset");
+    expect(metadataText).toContain("official_asset_id=01a-classic-shield-legacy");
+    expect(metadataText).toContain("artwork_quality=founder_approved");
     expect(body.byteLength).toBeGreaterThan(10 * 1024);
-    expect(readPngMetadata(body)).toMatchObject({ width: 640, height: 640, has_alpha: true });
+    expect(readPngMetadata(body)).toMatchObject({ width: 1254, height: 1254, has_alpha: false });
     expect(transparentMetadata).toMatchObject({
       width: 640,
       height: 640,
@@ -157,17 +180,25 @@ describe("private storage and assets", () => {
       })
     ];
     const serialized = variants.map((variant) => variant.toString("base64"));
+    const [variantOne, variantTwo, variantThree, transparentVariant] = variants;
+    if (!variantOne || !variantTwo || !variantThree || !transparentVariant) {
+      throw new Error("expected_png_variants_missing");
+    }
 
     expect(new Set(serialized).size).toBe(4);
+    expect(variantOne.toString("latin1")).toContain("official_asset_id=01a-classic-shield-legacy");
+    expect(variantTwo.toString("latin1")).toContain("official_asset_id=03a-gothic-memory-lantern");
+    expect(variantThree.toString("latin1")).toContain("official_asset_id=05a-compass-journey-medallion");
+    expect(transparentVariant.toString("latin1")).toContain("artwork_mode=deterministic_symbolic_template");
     for (const variant of variants) {
       const metadataText = variant.toString("latin1");
-      expect(metadataText).toContain("artwork_template=shield_legacy_crest_v1");
-      expect(metadataText).toContain("main_symbol=tree");
-      expect(metadataText).toContain("supporting_symbols=shield,knot");
       expect(metadataText).not.toContain("unsupported laser");
       expect(variant.byteLength).toBeGreaterThan(10 * 1024);
-      expect(readPngMetadata(variant)).toMatchObject({ width: 640, height: 640, has_alpha: true });
     }
+    for (const variant of variants.slice(0, 3)) {
+      expect(readPngMetadata(variant)).toMatchObject({ width: 1254, height: 1254, has_alpha: false });
+    }
+    expect(readPngMetadata(transparentVariant)).toMatchObject({ width: 640, height: 640, has_alpha: true });
   }, 15_000);
 
   it("stores asset record with checksum, size, mime and null public_url", async () => {

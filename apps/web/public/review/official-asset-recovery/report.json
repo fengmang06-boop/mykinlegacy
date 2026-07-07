@@ -1,0 +1,70 @@
+{
+  "title": "MyKinLegacy Official Asset Recovery Inventory v1",
+  "generatedBy": "Codex",
+  "scope": "Recovered existing Founder/CSO-approved assets only. No image generation.",
+  "productionNowUsesApprovedAssets": "partial",
+  "assets": [
+    {
+      "id": "01a-classic-shield-legacy",
+      "filename": "01a-classic-shield-legacy.png",
+      "reviewPreviewPath": "/review/official-asset-recovery/images/01a-classic-shield-legacy.png",
+      "productionPath": "packages/storage/assets/official/01a-classic-shield-legacy.png",
+      "sourcePath": "apps/web/public/review/crest-genome-directions-v2/images/01a-classic-shield-legacy.png",
+      "approvalStatus": "Founder/CSO approved primary production direction",
+      "currentUsage": "crest_variant_1_png",
+      "connected": true,
+      "fileSizeBytes": 3291084
+    },
+    {
+      "id": "03a-gothic-memory-lantern",
+      "filename": "03a-gothic-memory-lantern.png",
+      "reviewPreviewPath": "/review/official-asset-recovery/images/03a-gothic-memory-lantern.png",
+      "productionPath": "packages/storage/assets/official/03a-gothic-memory-lantern.png",
+      "sourcePath": "apps/web/public/review/crest-genome-directions-v2/images/03a-gothic-memory-lantern.png",
+      "approvalStatus": "Founder/CSO approved secondary direction",
+      "currentUsage": "crest_variant_2_png",
+      "connected": true,
+      "fileSizeBytes": 3134778
+    },
+    {
+      "id": "05a-compass-journey-medallion",
+      "filename": "05a-compass-journey-medallion.png",
+      "reviewPreviewPath": "/review/official-asset-recovery/images/05a-compass-journey-medallion.png",
+      "productionPath": "packages/storage/assets/official/05a-compass-journey-medallion.png",
+      "sourcePath": "apps/web/public/review/crest-genome-directions-v2/images/05a-compass-journey-medallion.png",
+      "approvalStatus": "Founder/CSO approved secondary direction",
+      "currentUsage": "crest_variant_3_png",
+      "connected": true,
+      "fileSizeBytes": 3254064
+    },
+    {
+      "id": "08a-mountain-resilience-path",
+      "filename": "08a-mountain-resilience-path.png",
+      "reviewPreviewPath": "/review/official-asset-recovery/images/08a-mountain-resilience-path.png",
+      "productionPath": "packages/storage/assets/official/08a-mountain-resilience-path.png",
+      "sourcePath": "apps/web/public/review/crest-genome-directions-v2/images/08a-mountain-resilience-path.png",
+      "approvalStatus": "Founder/CSO approved secondary direction",
+      "currentUsage": "recovered only; no current deliverable code maps to it",
+      "connected": false,
+      "fileSizeBytes": 3211430
+    }
+  ],
+  "connectedSurfaces": {
+    "pngOutput": ["crest_variant_1_png", "crest_variant_2_png", "crest_variant_3_png"],
+    "zipPackage": "inherits materialized PNG artifact bodies",
+    "vaultDownloads": "inherits stored artifact records after fresh generation or repair",
+    "certificatePdf": "unchanged; no approved standalone certificate frame/background asset found",
+    "previewPages": "official inventory review page added"
+  },
+  "missingAssets": [
+    "Approved transparent crest PNG for transparent_crest_png",
+    "Approved standalone certificate frame/background asset",
+    "Approved standalone PDF ornament assets"
+  ],
+  "safety": {
+    "imageGenerationPerformed": false,
+    "newArtworkCreated": false,
+    "deterministicRendererRemoved": false,
+    "fallbackRendererStatus": "kept as fallback for missing official assets and transparent output"
+  }
+}

@@ -160,12 +160,11 @@ describe("DB-backed orchestration foundation", () => {
     );
     expect(pngBody.subarray(1, 4).toString()).toBe("PNG");
     expect(pngBody.byteLength).toBeGreaterThan(10 * 1024);
-    expect(pngBody.readUInt32BE(16)).toBe(640);
-    expect(pngBody.readUInt32BE(20)).toBe(640);
+    expect(pngBody.readUInt32BE(16)).toBe(1254);
+    expect(pngBody.readUInt32BE(20)).toBe(1254);
     expect(pngBody.toString("latin1")).toContain("artwork_template=shield_legacy_crest_v1");
-    expect(pngBody.toString("latin1")).toContain("artwork_mode=deterministic_symbolic_template");
-    expect(pngBody.toString("latin1")).toContain("main_symbol=tree");
-    expect(pngBody.toString("latin1")).toContain("supporting_symbols=shield,knot");
+    expect(pngBody.toString("latin1")).toContain("artwork_mode=recovered_official_asset");
+    expect(pngBody.toString("latin1")).toContain("official_asset_id=01a-classic-shield-legacy");
     const pngBodies = await Promise.all(
       result.assets
         .filter((asset) => asset.file_ext === "png")
@@ -317,7 +316,8 @@ describe("DB-backed orchestration foundation", () => {
     if (!pngAsset) throw new Error("png_asset_missing");
     const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
 
-    expect(pngText).toContain("artwork_mode=deterministic_symbolic_template");
+    expect(pngText).toContain("artwork_mode=recovered_official_asset");
+    expect(pngText).toContain("official_asset_id=01a-classic-shield-legacy");
     expect(pngText).toContain("prompt_source=lre_prompt");
     expect(pngText).toContain("image_provider=openai");
     expect(pngText).toContain("fallback_used=true");
@@ -408,7 +408,8 @@ describe("DB-backed orchestration foundation", () => {
       expect(familyStoryText).toContain("Nothing here asks the family to believe invented history");
       expect(zipText).toContain("This archive includes an LRE text pass");
       expect(pngText).toContain("artwork_template=shield_legacy_crest_v1");
-      expect(pngText).toContain("artwork_mode=deterministic_symbolic_template");
+      expect(pngText).toContain("artwork_mode=recovered_official_asset");
+      expect(pngText).toContain("official_asset_id=01a-classic-shield-legacy");
       expect(pngText).not.toContain("LRE text pass");
     } finally {
       if (originalAllowlist === undefined) {

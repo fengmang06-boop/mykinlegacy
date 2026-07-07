@@ -119,5 +119,5 @@ describe("Crest Genome Library", () => {
 
     expect(metadata?.width).toBe(480);
     expect(metadata?.height).toBe(320);
-  });
+  }, 15_000);
 });

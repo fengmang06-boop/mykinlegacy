@@ -1,8 +1,30 @@
+import { existsSync, readFileSync } from "node:fs";
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname } from "node:path";
+import { dirname, join } from "node:path";
 import { deflateSync, inflateSync } from "node:zlib";
 
 const PNG_SIGNATURE = Buffer.from("89504e470d0a1a0a", "hex");
+
+const OFFICIAL_CREST_ASSETS = {
+  crest_variant_1_png: {
+    id: "01a-classic-shield-legacy",
+    file: "01a-classic-shield-legacy.png",
+    approval: "Founder/CSO approved primary production direction",
+    usage: "default family roots and unity crest artwork"
+  },
+  crest_variant_2_png: {
+    id: "03a-gothic-memory-lantern",
+    file: "03a-gothic-memory-lantern.png",
+    approval: "Founder/CSO approved secondary direction",
+    usage: "memory and remembrance crest artwork"
+  },
+  crest_variant_3_png: {
+    id: "05a-compass-journey-medallion",
+    file: "05a-compass-journey-medallion.png",
+    approval: "Founder/CSO approved secondary direction",
+    usage: "journey and new-beginning crest artwork"
+  }
+} as const;
 
 export function createMockPngBuffer(): Buffer {
   return createMvpCrestPngBuffer({
@@ -38,6 +60,9 @@ export function createMvpCrestPngBuffer(input: {
   transparent?: boolean;
   prompt_metadata?: MvpCrestPngPromptMetadata;
 }): Buffer {
+  const official = createRecoveredOfficialCrestPngBuffer(input);
+  if (official) return official;
+
   const width = 640;
   const height = 640;
   const raw = Buffer.alloc((width * 4 + 1) * height);
@@ -122,7 +147,7 @@ export function createMvpCrestPngBuffer(input: {
   const text = Buffer.from(
       `Description\0MyKinLegacy symbolic crest artwork. artwork_template=shield_legacy_crest_v1; artwork_mode=deterministic_symbolic_template; ` +
       `main_symbol=${symbolMapping.main_symbol}; supporting_symbols=${symbolMapping.supporting_symbols.join(",")}; ` +
-      `theme_mapping=continuity,unity; artwork_quality=internal_beta; variant=${style.name}; ` +
+      `theme_mapping=continuity,unity; artwork_quality=fallback_asset; variant=${style.name}; ` +
       promptMetadataText(input.prompt_metadata) +
       `House ${input.house_name ?? "family"}. Mapped symbols shield, tree, knot. `.repeat(220)
   );
@@ -364,6 +389,82 @@ function rootShape(x: number, y: number, centerX: number, style: CrestStyle): bo
     distanceToSegment(x, y, centerX, 392, centerX - 42 * scale, 446) < 3.4 ||
     distanceToSegment(x, y, centerX, 392, centerX + 42 * scale, 446) < 3.4
   );
+}
+
+export function listRecoveredOfficialCrestAssets(): Array<{
+  deliverable_code: keyof typeof OFFICIAL_CREST_ASSETS;
+  id: string;
+  file: string;
+  available: boolean;
+  approval: string;
+  usage: string;
+}> {
+  return Object.entries(OFFICIAL_CREST_ASSETS).map(([deliverableCode, asset]) => ({
+    deliverable_code: deliverableCode as keyof typeof OFFICIAL_CREST_ASSETS,
+    id: asset.id,
+    file: asset.file,
+    available: existsSync(officialAssetPath(asset.file)),
+    approval: asset.approval,
+    usage: asset.usage
+  }));
+}
+
+function createRecoveredOfficialCrestPngBuffer(input: {
+  variant: string;
+  house_name?: string;
+  symbols?: string[];
+  transparent?: boolean;
+  prompt_metadata?: MvpCrestPngPromptMetadata;
+}): Buffer | null {
+  if (input.transparent) return null;
+  const key = officialAssetKey(input.variant);
+  if (!key) return null;
+  const asset = OFFICIAL_CREST_ASSETS[key];
+  const path = officialAssetPath(asset.file);
+  if (!existsSync(path)) return null;
+
+  const officialBody = readFileSync(path);
+  const metadata = [
+    "MyKinLegacy symbolic crest artwork",
+    "artwork_template=shield_legacy_crest_v1",
+    "artwork_source=founder_approved_asset",
+    "artwork_mode=recovered_official_asset",
+    `official_asset_id=${asset.id}`,
+    `official_asset_usage=${asset.usage}`,
+    `official_asset_approval=${asset.approval}`,
+    "artwork_quality=founder_approved",
+    "theme_mapping=continuity,unity",
+    `variant=${input.variant}`,
+    promptMetadataText(input.prompt_metadata),
+    `House ${input.house_name ?? "family"}`
+  ].join("; ");
+  return appendPngTextMetadata(officialBody, metadata);
+}
+
+function officialAssetKey(variant: string): keyof typeof OFFICIAL_CREST_ASSETS | null {
+  if (variant in OFFICIAL_CREST_ASSETS) {
+    return variant as keyof typeof OFFICIAL_CREST_ASSETS;
+  }
+  if (variant.includes("1")) return "crest_variant_1_png";
+  if (variant.includes("2")) return "crest_variant_2_png";
+  if (variant.includes("3")) return "crest_variant_3_png";
+  return null;
+}
+
+function officialAssetPath(fileName: string): string {
+  const candidates = officialAssetPathCandidates(fileName);
+  return candidates.find((candidate) => existsSync(candidate)) ?? join(process.cwd(), "packages", "storage", "assets", "official", fileName);
+}
+
+function officialAssetPathCandidates(fileName: string): string[] {
+  const candidates = [
+    join(process.cwd(), "packages", "storage", "assets", "official", fileName),
+    join(process.cwd(), "assets", "official", fileName)
+  ];
+  if (typeof __dirname === "string") {
+    candidates.unshift(join(__dirname, "..", "assets", "official", fileName));
+  }
+  return candidates;
 }
 
 function knotShape(x: number, y: number, centerX: number, style: CrestStyle): boolean {
