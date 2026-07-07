@@ -1,0 +1,278 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Shop {
+  id         String    @id @default(cuid())
+  etsyShopId String?   @unique
+  name       String
+  url        String?
+  currency   String?
+  rawJson    String?
+  createdAt  DateTime  @default(now())
+  updatedAt  DateTime  @updatedAt
+  listings   Listing[]
+  syncLogs   SyncLog[]
+  receipts   EtsyReceipt[]
+  transactions EtsyTransaction[]
+}
+
+model Listing {
+  id              String                       @id @default(cuid())
+  shopId          String
+  etsyListingId   String                       @unique
+  title           String
+  description     String
+  price           Float
+  currency        String?
+  quantity        Int
+  state           String
+  tags            String
+  materials       String
+  productType     String
+  targetCustomer  String
+  url             String?
+  rawJson         String?
+  lastSyncedAt    DateTime?
+  createdAt       DateTime                     @default(now())
+  updatedAt       DateTime                     @updatedAt
+  shop            Shop                         @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  images          ListingImage[]
+  inventory       ListingInventory?
+  keywords        ListingKeyword[]
+  scores          ListingScore[]
+  bestsellerScores BestsellerScore[]
+  promotionTasks  PromotionTask[]
+  exportLogs      ExportLog[]
+  recommendations OptimizationRecommendation[]
+}
+
+model ListingImage {
+  id        String   @id @default(cuid())
+  listingId String
+  etsyImageId String?
+  url       String
+  alt       String
+  position  Int
+  role      String
+  rawJson   String?
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ListingInventory {
+  id            String   @id @default(cuid())
+  listingId     String   @unique
+  etsyListingId String   @unique
+  productCount  Int      @default(0)
+  minPrice      Float?
+  maxPrice      Float?
+  currency      String?
+  quantity      Int      @default(0)
+  rawJson       String
+  syncedAt      DateTime @default(now())
+  listing       Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ListingKeyword {
+  id        String   @id @default(cuid())
+  listingId String
+  keyword   String
+  type      String
+  source    String
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ListingScore {
+  id              String   @id @default(cuid())
+  listingId       String
+  seoScore        Int
+  ctrScore        Int
+  conversionScore Int
+  brandScore      Int
+  overallScore    Int
+  scoreReasons    String
+  fixPriorities   String
+  createdAt       DateTime @default(now())
+  listing         Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model BestsellerScore {
+  id                         String   @id @default(cuid())
+  listingId                  String
+  productMarketFitScore      Int
+  searchDemandScore          Int
+  competitionScore           Int
+  giftPotentialScore         Int
+  visualHookScore            Int
+  profitPotentialScore       Int
+  seasonalityScore           Int
+  aiSearchPotentialScore     Int
+  bestsellerPotentialScore   Int
+  verdict                    String
+  reasons                    String
+  nextActions                String
+  createdAt                  DateTime @default(now())
+  listing                    Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model OptimizationRecommendation {
+  id               String          @id @default(cuid())
+  listingId        String
+  type             String
+  priority         String
+  currentValue     String
+  suggestedValue   String
+  reason           String
+  expectedImpact   String
+  status           String          @default("pending")
+  requiresApproval Boolean         @default(true)
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  listing          Listing         @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  approvalQueue    ApprovalQueue?
+}
+
+model ApprovalQueue {
+  id               String                     @id @default(cuid())
+  recommendationId String                     @unique
+  actionType       String
+  beforeSnapshot   String
+  afterSnapshot    String
+  status           String                     @default("pending")
+  approvedAt       DateTime?
+  appliedAt        DateTime?
+  createdAt        DateTime                   @default(now())
+  recommendation   OptimizationRecommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+}
+
+model SyncLog {
+  id             String    @id @default(cuid())
+  shopId         String?
+  source         String
+  mode           String    @default("read_only")
+  status         String
+  message        String
+  itemCount      Int
+  listingsPulled Int       @default(0)
+  imagesPulled   Int       @default(0)
+  inventoryPulled Int      @default(0)
+  receiptsPulled Int       @default(0)
+  transactionsPulled Int   @default(0)
+  errors         String?
+  startedAt      DateTime?
+  finishedAt     DateTime?
+  createdAt      DateTime  @default(now())
+  shop           Shop?     @relation(fields: [shopId], references: [id], onDelete: SetNull)
+}
+
+model EtsyReceipt {
+  id             String   @id @default(cuid())
+  shopId         String
+  etsyReceiptId  String   @unique
+  status         String?
+  buyerUserId    String?
+  buyerEmail     String?
+  name           String?
+  totalPrice     Float?
+  currency       String?
+  createdTimestamp Int?
+  updatedTimestamp Int?
+  rawJson        String
+  syncedAt       DateTime @default(now())
+  shop           Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+}
+
+model EtsyTransaction {
+  id                String   @id @default(cuid())
+  shopId            String
+  etsyTransactionId String   @unique
+  etsyReceiptId     String?
+  etsyListingId     String?
+  title             String?
+  quantity          Int      @default(0)
+  price             Float?
+  currency          String?
+  createdTimestamp  Int?
+  rawJson           String
+  syncedAt          DateTime @default(now())
+  shop              Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+
+  @@index([shopId])
+  @@index([etsyReceiptId])
+  @@index([etsyListingId])
+}
+
+model EtsySyncState {
+  id                 String   @id @default("etsy")
+  shopId             String?
+  status             String   @default("idle")
+  message            String   @default("")
+  error              String?
+  listingsCount      Int      @default(0)
+  imagesCount        Int      @default(0)
+  inventoryCount     Int      @default(0)
+  receiptsCount      Int      @default(0)
+  transactionsCount  Int      @default(0)
+  lastStartedAt      DateTime?
+  lastFinishedAt     DateTime?
+  updatedAt          DateTime @updatedAt
+}
+
+model CompetitorSnapshot {
+  id               String   @id @default(cuid())
+  title            String
+  price            Float
+  tags             String
+  description      String
+  reviewCount      Int
+  imageNotes       String
+  comparisonReport String
+  createdAt        DateTime @default(now())
+}
+
+model PromotionTask {
+  id          String   @id @default(cuid())
+  listingId   String
+  channel     String
+  taskDate    DateTime
+  title       String
+  description String
+  status      String   @default("planned")
+  createdAt   DateTime @default(now())
+  listing     Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model ExportLog {
+  id        String   @id @default(cuid())
+  listingId String
+  filePath  String
+  status    String
+  createdAt DateTime @default(now())
+  listing   Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+}
+
+model OpportunityHistory {
+  id               String   @id @default(cuid())
+  date             String   @unique
+  topOpportunities String
+  topActions       String
+  createdAt        DateTime @default(now())
+}
+
+model WinningProductHistory {
+  id           String   @id @default(cuid())
+  date         String
+  product      String
+  winningScore Int
+  verdict      String
+  reason       String
+  report       String
+  createdAt    DateTime @default(now())
+}

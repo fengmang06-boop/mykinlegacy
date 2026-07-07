@@ -1,0 +1,186 @@
+name: Codex Etsy Sync v1 Deploy
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-sync-v1-deploy.yml"
+      - ".codex-etsy-ai-manager-sync-v1/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-mykinlegacy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload Etsy AI Manager sync v1 files
+        shell: bash
+        run: |
+          tar -czf /tmp/etsy-sync-v1.tgz -C .codex-etsy-ai-manager-sync-v1 .
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" /tmp/etsy-sync-v1.tgz "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-sync-v1.tgz"
+
+      - name: Deploy, migrate, sync, and verify
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          if command -v pm2 >/dev/null 2>&1; then
+            FOUND_DIR="$(pm2 jlist | node -e '
+              let data="";
+              process.stdin.on("data", c => data += c);
+              process.stdin.on("end", () => {
+                const arr = JSON.parse(data || "[]");
+                const match = arr.find(p => p.name === "mensskull-etsy-ai-manager" || JSON.stringify(p).includes("etsy-ai-manager") || p.pm2_env?.PORT == "3000");
+                if (match?.pm2_env?.pm_cwd) console.log(match.pm2_env.pm_cwd);
+              });
+            ' || true)"
+            if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
+          fi
+          test -d "$APP_DIR"
+          cd "$APP_DIR"
+          TS="$(date +%Y%m%d%H%M%S)"
+
+          DB_FILE="$(node <<'NODE'
+          const fs = require("fs");
+          const path = require("path");
+          let value = "file:./dev.db";
+          for (const file of [".env", ".env.local"]) {
+            if (!fs.existsSync(file)) continue;
+            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+              const match = line.match(/^\s*DATABASE_URL\s*=\s*(.*)\s*$/);
+              if (match) value = match[1].trim().replace(/^['"]|['"]$/g, "");
+            }
+          }
+          if (value.startsWith("file:")) console.log(path.resolve(value.slice(5)));
+          NODE
+          )"
+          if [ -n "$DB_FILE" ] && [ -f "$DB_FILE" ]; then
+            cp -a "$DB_FILE" "$DB_FILE.codex-backup-$TS"
+            echo "db_backup=created"
+          else
+            echo "db_backup=not_found"
+          fi
+
+          mkdir -p "/tmp/etsy-sync-v1-$TS"
+          tar -xzf /tmp/etsy-sync-v1.tgz -C "/tmp/etsy-sync-v1-$TS"
+          cp -a "/tmp/etsy-sync-v1-$TS/prisma/schema.prisma" prisma/schema.prisma
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/client.ts" src/lib/integrations/etsy/client.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/sync-read-only.ts" src/lib/integrations/etsy/sync-read-only.ts
+          mkdir -p src/app/api/etsy/sync src/app/api/etsy/status src/app/etsy-connection
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/api/etsy/sync/route.ts" src/app/api/etsy/sync/route.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/api/etsy/sync/read-only/route.ts" src/app/api/etsy/sync/read-only/route.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/api/etsy/status/route.ts" src/app/api/etsy/status/route.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/etsy-connection/page.tsx" src/app/etsy-connection/page.tsx
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/etsy-connection/SyncButton.tsx" src/app/etsy-connection/SyncButton.tsx
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/globals.css" src/app/globals.css
+
+          npx prisma db push --accept-data-loss
+          npm run build
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 5
+
+          echo "===== HTTP PRECHECK ====="
+          curl -k -sS -o /dev/null -w "tools_connection=%{http_code}\n" --max-time 30 https://tools.mensskull.com/etsy-connection
+          curl -k -sS -o /tmp/etsy-status-before.json -w "etsy_status=%{http_code}\n" --max-time 30 https://tools.mensskull.com/api/etsy/status
+
+          echo "===== SYNC ====="
+          curl -k -sS -X POST -o /tmp/etsy-sync-result.json -w "etsy_sync=%{http_code}\n" --max-time 300 https://tools.mensskull.com/api/etsy/sync
+          node -e '
+            const fs = require("fs");
+            const body = fs.readFileSync("/tmp/etsy-sync-result.json", "utf8");
+            const data = JSON.parse(body);
+            console.log(JSON.stringify({
+              ok: data.ok,
+              message: data.message,
+              listingsPulled: data.listingsPulled,
+              imagesPulled: data.imagesPulled,
+              inventoryPulled: data.inventoryPulled,
+              receiptsPulled: data.receiptsPulled,
+              transactionsPulled: data.transactionsPulled,
+              errorCount: Array.isArray(data.errors) ? data.errors.length : 0
+            }));
+          '
+
+          echo "===== STATUS AFTER ====="
+          curl -k -sS -o /tmp/etsy-status-after.json -w "etsy_status_after=%{http_code}\n" --max-time 30 https://tools.mensskull.com/api/etsy/status
+          node -e '
+            const fs = require("fs");
+            const data = JSON.parse(fs.readFileSync("/tmp/etsy-status-after.json", "utf8"));
+            console.log(JSON.stringify({
+              connected: data.connected,
+              shopName: data.shop && data.shop.name,
+              etsyShopId: data.shop && data.shop.etsyShopId,
+              counts: data.counts,
+              lastSyncStatus: data.lastSync && data.lastSync.status,
+              lastSyncMessage: data.lastSync && data.lastSync.message
+            }));
+          '
+
+          echo "===== DB COUNTS ====="
+          node <<'NODE'
+          const { PrismaClient } = require("@prisma/client");
+          const prisma = new PrismaClient();
+          (async () => {
+            const [shops, listings, images, inventory, receipts, transactions] = await Promise.all([
+              prisma.shop.count(),
+              prisma.listing.count(),
+              prisma.listingImage.count(),
+              prisma.listingInventory.count(),
+              prisma.etsyReceipt.count(),
+              prisma.etsyTransaction.count()
+            ]);
+            console.log(JSON.stringify({ shops, listings, images, inventory, receipts, transactions }));
+          })().finally(() => prisma.$disconnect());
+          NODE
+
+          echo "===== MYKINLEGACY ====="
+          curl -k -sS -o /dev/null -w "mykinlegacy_home=%{http_code}\n" --max-time 30 https://mykinlegacy.com/
+          REMOTE
