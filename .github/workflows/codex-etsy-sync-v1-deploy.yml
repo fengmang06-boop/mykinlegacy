@@ -153,20 +153,22 @@ jobs:
           cat > .codex-run-sync.ts <<'TS'
           import { syncEtsyReadOnly } from "./src/lib/integrations/etsy/sync-read-only";
           import { prisma } from "./src/lib/prisma";
-          const data = await syncEtsyReadOnly();
-          console.log("etsy_sync=local");
-          console.log(JSON.stringify({
-            ok: data.ok,
-            message: data.message,
-            listingsPulled: data.listingsPulled,
-            imagesPulled: data.imagesPulled,
-            inventoryPulled: data.inventoryPulled,
-            receiptsPulled: data.receiptsPulled,
-            transactionsPulled: data.transactionsPulled,
-            errorCount: Array.isArray(data.errors) ? data.errors.length : 0
-          }));
-          await prisma.$disconnect();
-          if (!data.listingsPulled) process.exit(1);
+          async function main() {
+            const data = await syncEtsyReadOnly();
+            console.log("etsy_sync=local");
+            console.log(JSON.stringify({
+              ok: data.ok,
+              message: data.message,
+              listingsPulled: data.listingsPulled,
+              imagesPulled: data.imagesPulled,
+              inventoryPulled: data.inventoryPulled,
+              receiptsPulled: data.receiptsPulled,
+              transactionsPulled: data.transactionsPulled,
+              errorCount: Array.isArray(data.errors) ? data.errors.length : 0
+            }));
+            if (!data.listingsPulled) process.exitCode = 1;
+          }
+          main().finally(async () => prisma.$disconnect());
           TS
           npx tsx .codex-run-sync.ts
           rm -f .codex-run-sync.ts
@@ -190,20 +192,22 @@ jobs:
           cat > .codex-run-ai.ts <<'TS'
           import { analyzeAllListings } from "./src/lib/etsy-ai/listing-intelligence";
           import { prisma } from "./src/lib/prisma";
-          const data = await analyzeAllListings({ retry: true });
-          console.log("etsy_ai_analyze=local");
-          console.log(JSON.stringify({
-            ok: data.ok,
-            analyzed: data.analyzed,
-            skipped: data.skipped,
-            totalReports: data.totalReports,
-            snapshotCount: data.snapshotCount,
-            optimizationQueue: data.optimizationQueue,
-            remaining: data.remaining,
-            errorCount: Array.isArray(data.errors) ? data.errors.length : 0
-          }));
-          await prisma.$disconnect();
-          if (!data.totalReports) process.exit(1);
+          async function main() {
+            const data = await analyzeAllListings({ retry: true });
+            console.log("etsy_ai_analyze=local");
+            console.log(JSON.stringify({
+              ok: data.ok,
+              analyzed: data.analyzed,
+              skipped: data.skipped,
+              totalReports: data.totalReports,
+              snapshotCount: data.snapshotCount,
+              optimizationQueue: data.optimizationQueue,
+              remaining: data.remaining,
+              errorCount: Array.isArray(data.errors) ? data.errors.length : 0
+            }));
+            if (!data.totalReports) process.exitCode = 1;
+          }
+          main().finally(async () => prisma.$disconnect());
           TS
           npx tsx .codex-run-ai.ts
           rm -f .codex-run-ai.ts
