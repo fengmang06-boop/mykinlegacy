@@ -53,6 +53,9 @@ model Listing {
   recommendations OptimizationRecommendation[]
   aiSnapshots     ListingAiSnapshot[]
   optimizationQueueItems OptimizationQueueItem[]
+  growthPlans     EtsyGrowthPlan[]
+  growthTrackings EtsyGrowthDailyTracking[]
+  growthBaselines EtsyGrowthBaseline[]
 }
 
 model ListingAiReport {
@@ -299,6 +302,74 @@ model EtsySyncState {
   lastStartedAt      DateTime?
   lastFinishedAt     DateTime?
   updatedAt          DateTime @updatedAt
+}
+
+model EtsyGrowthPlan {
+  id                  String   @id @default(cuid())
+  listingId           String   @map("listing_id")
+  batchKey            String   @map("batch_key")
+  productName         String   @map("product_name")
+  currentTitle        String   @map("current_title")
+  currentIssues       String   @map("current_issues")
+  trafficImpactReason String   @map("traffic_impact_reason")
+  proposedTitle       String   @map("proposed_title")
+  proposedTags        String   @map("proposed_tags")
+  imageRecommendations String  @map("image_recommendations")
+  priority            String
+  expectedImpact      String   @map("expected_impact")
+  status              String   @default("draft")
+  createdAt           DateTime @default(now()) @map("created_at")
+  updatedAt           DateTime @updatedAt @map("updated_at")
+  listing             Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  baseline            EtsyGrowthBaseline?
+  dailyTrackings      EtsyGrowthDailyTracking[]
+
+  @@unique([batchKey, listingId])
+  @@index([batchKey])
+  @@index([priority])
+  @@map("etsy_growth_plan")
+}
+
+model EtsyGrowthBaseline {
+  id             String   @id @default(cuid())
+  planId         String   @unique @map("plan_id")
+  listingId      String   @map("listing_id")
+  baselineDate   String   @map("baseline_date")
+  views          Int      @default(0)
+  favorites      Int      @default(0)
+  orders         Int      @default(0)
+  revenue        Float    @default(0)
+  conversionRate Float    @default(0) @map("conversion_rate")
+  snapshotJson   String   @map("snapshot_json")
+  createdAt      DateTime @default(now()) @map("created_at")
+  listing        Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  plan           EtsyGrowthPlan @relation(fields: [planId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([baselineDate])
+  @@map("etsy_growth_baseline")
+}
+
+model EtsyGrowthDailyTracking {
+  id             String   @id @default(cuid())
+  planId         String?  @map("plan_id")
+  listingId      String   @map("listing_id")
+  trackingDate   String   @map("tracking_date")
+  views          Int      @default(0)
+  favorites      Int      @default(0)
+  orders         Int      @default(0)
+  revenue        Float    @default(0)
+  conversionRate Float    @default(0) @map("conversion_rate")
+  source         String   @default("local_etsy_sync")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+  listing        Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+  plan           EtsyGrowthPlan? @relation(fields: [planId], references: [id], onDelete: SetNull)
+
+  @@unique([listingId, trackingDate])
+  @@index([trackingDate])
+  @@index([planId])
+  @@map("etsy_growth_daily_tracking")
 }
 
 model CompetitorSnapshot {

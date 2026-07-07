@@ -139,6 +139,10 @@ jobs:
           cp -a "/tmp/etsy-sync-v1-$TS/src/app/layout.tsx" src/app/layout.tsx
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/etsy-ai/listing-intelligence.ts" src/lib/etsy-ai/listing-intelligence.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/app/globals.css" src/app/globals.css
+          mkdir -p src/app/etsy-growth-plan src/app/api/etsy/growth-plan/track
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/etsy-growth-plan/page.tsx" src/app/etsy-growth-plan/page.tsx
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/api/etsy/growth-plan/track/route.ts" src/app/api/etsy/growth-plan/track/route.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/etsy-growth-plan.ts" src/lib/etsy-growth-plan.ts
 
           npx prisma db push --accept-data-loss
           npm run build
@@ -245,12 +249,26 @@ jobs:
             }));
           '
 
+          echo "===== GROWTH PLAN ====="
+          curl -k -sS -o /tmp/etsy-growth-track.json -w "etsy_growth_track=%{http_code}\n" --max-time 60 https://tools.mensskull.com/api/etsy/growth-plan/track
+          cat /tmp/etsy-growth-track.json
+          echo
+          curl -k -sS -o /tmp/etsy-growth-plan-page.html -w "etsy_growth_plan_page=%{http_code}\n" --max-time 60 https://tools.mensskull.com/etsy-growth-plan
+          node -e '
+            const html = require("fs").readFileSync("/tmp/etsy-growth-plan-page.html", "utf8");
+            console.log(JSON.stringify({
+              hasGrowthPlan: html.includes("Etsy Growth Plan"),
+              hasCustomSolidBrass: html.includes("Custom Solid Brass Car Emblem"),
+              hasDailyTracking: html.includes("Daily Tracking")
+            }));
+          '
+
           echo "===== DB COUNTS ====="
           node <<'NODE'
           const { PrismaClient } = require("@prisma/client");
           const prisma = new PrismaClient();
           (async () => {
-            const [shops, listings, images, inventory, receipts, transactions, aiReports, snapshots, queueItems] = await Promise.all([
+            const [shops, listings, images, inventory, receipts, transactions, aiReports, snapshots, queueItems, growthPlans, growthBaselines, growthTrackings] = await Promise.all([
               prisma.shop.count(),
               prisma.listing.count(),
               prisma.listingImage.count(),
@@ -259,7 +277,10 @@ jobs:
               prisma.etsyTransaction.count(),
               prisma.listingAiReport.count(),
               prisma.listingAiSnapshot.count(),
-              prisma.optimizationQueueItem.count({ where: { status: "pending" } })
+              prisma.optimizationQueueItem.count({ where: { status: "pending" } }),
+              prisma.etsyGrowthPlan.count(),
+              prisma.etsyGrowthBaseline.count(),
+              prisma.etsyGrowthDailyTracking.count()
             ]);
             const avg = await prisma.listingAiReport.aggregate({ _avg: { seoScore: true, conversionScore: true, opportunityScore: true } });
             const highPriority = await prisma.listingAiReport.findMany({
@@ -278,6 +299,9 @@ jobs:
               aiReports,
               snapshots,
               queueItems,
+              growthPlans,
+              growthBaselines,
+              growthTrackings,
               avgSeo: Math.round(avg._avg.seoScore || 0),
               avgConversion: Math.round(avg._avg.conversionScore || 0),
               avgOpportunity: Math.round(avg._avg.opportunityScore || 0),

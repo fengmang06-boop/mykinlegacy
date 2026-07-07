@@ -244,6 +244,22 @@ textarea {
   color: var(--soft);
   padding: 5px 8px;
   font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.plain-list {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--soft);
+  display: grid;
+  gap: 8px;
+  line-height: 1.45;
+}
+
+.panel h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .button-row {

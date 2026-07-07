@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { BarChart3, BrainCircuit, CalendarDays, CheckSquare, Database, FlaskConical, Link2, Radar, Swords } from "lucide-react";
+import { BarChart3, BrainCircuit, CalendarDays, CheckSquare, ClipboardList, Database, FlaskConical, Link2, Radar, Swords } from "lucide-react";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -45,6 +45,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
               <a href="/etsy-ai">
                 <BrainCircuit size={17} />
                 Etsy AI
+              </a>
+              <a href="/etsy-growth-plan">
+                <ClipboardList size={17} />
+                Growth Plan
               </a>
               <a href="/opportunity-radar">
                 <Radar size={17} />
