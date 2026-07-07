@@ -10,7 +10,7 @@ describe("PDF generation foundation", () => {
   it.each([
     ["heritage_certificate_pdf", "Heritage Certificate"],
     ["family_story_pdf", "Family Story"],
-    ["symbol_explanation_pdf", "Symbol Explanation"]
+    ["symbol_explanation_pdf", "Symbol Guide"]
   ] as const)("generates %s with full disclaimer", async (deliverableCode, title) => {
     const dir = await mkdtemp(join(tmpdir(), "ai-heritage-pdf-"));
     const output = await generateHeritagePdf({
@@ -30,11 +30,22 @@ describe("PDF generation foundation", () => {
     expect(output.mime_type).toBe("application/pdf");
     expect(output.size_bytes).toBeGreaterThan(10 * 1024);
     expect(body.subarray(0, 4).toString()).toBe("%PDF");
-    expect(body.toString("latin1")).toContain("pdf_layout_version=premium_v2");
+    const pdfText = body.toString("latin1");
+    expect(pdfText).toContain("pdf_layout_version=premium_v4");
+    expect(pdfText).toContain("approved crest artwork");
+    expect(pdfText).toContain("/Subtype /Image");
+    expect(pdfText).toContain("clean keepsake document");
+    expect(pdfText).toContain("Private Legacy Collection");
     expect(body.includes(Buffer.from("%%EOF"))).toBe(true);
     expect(pdfStartXrefValid(body)).toBe(true);
-    expect(body.includes(Buffer.from("official"))).toBe(true);
-    expect(body.includes(Buffer.from("historically certified"))).toBe(true);
+    expect(pdfText).toContain("MyKinLegacy");
+    expect(pdfText).toContain("Private Archive");
+    expect(pdfText).toContain("Important Note");
+    expect(pdfText).toContain("personalized symbolic keepsake");
+    expect(pdfText).toContain("certified genealogical");
+    expect(pdfText).toContain("record");
+    expect(pdfText).not.toMatch(/AI-generated|AI generated|placeholder|internal beta|alpha/i);
+    expect(pdfText.indexOf("Important Note")).toBeGreaterThan(pdfText.indexOf(title));
     await rm(dir, { recursive: true, force: true });
   });
 });

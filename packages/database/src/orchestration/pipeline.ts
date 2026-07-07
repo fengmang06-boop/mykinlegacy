@@ -25,7 +25,7 @@ export const REQUIRED_DELIVERABLES = [
 
 const MIN_CUSTOMER_ARTIFACT_BYTES = 10 * 1024;
 const ARTIFACT_BUCKET = "private-assets";
-const PDF_LAYOUT_VERSION = "premium_v2";
+const PDF_LAYOUT_VERSION = "premium_v4";
 const ZIP_ROOT = "MyKinLegacy-Private-Legacy-Collection";
 const ARTIFACT_BOUNDARY_STATEMENT =
   "This is a personalized symbolic keepsake. It is not a legal heraldic grant, noble title claim, or certified genealogical record.";

@@ -138,7 +138,7 @@ describe("DB-backed orchestration foundation", () => {
     );
     expect(symbolGuidePdfBody.subarray(0, 4).toString()).toBe("%PDF");
     expect(symbolGuidePdfBody.byteLength).toBeGreaterThan(10 * 1024);
-    expect(symbolGuideText).toContain("pdf_layout_version=premium_v2");
+    expect(symbolGuideText).toContain("pdf_layout_version=premium_v4");
     expect(symbolGuideText).toContain("How to Read This Guide");
     expect(symbolGuideText).toContain("Family signal behind it:");
     expect(symbolGuideText).toContain("Visual role in the crest:");

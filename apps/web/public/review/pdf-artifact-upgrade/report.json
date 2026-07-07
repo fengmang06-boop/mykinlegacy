@@ -1,0 +1,35 @@
+{
+  "generatedAt": "2026-07-07T12:40:50.988Z",
+  "layoutVersion": "premium_v4",
+  "approvedCrestArtwork": "packages/storage/assets/official/01a-classic-shield-legacy.png",
+  "samples": [
+    {
+      "code": "heritage_certificate_pdf",
+      "title": "Heritage Certificate",
+      "file": "heritage-certificate.pdf",
+      "size": 135752,
+      "checksum": "81cc6304522e1029d09e60eab85f1a75d81b992ac8d51e338d73043c2407beb8"
+    },
+    {
+      "code": "family_story_pdf",
+      "title": "Family Story",
+      "file": "family-story.pdf",
+      "size": 135279,
+      "checksum": "4268a60bdc8b9481a80ccce2e58cdb95400282d3f1cbb0b96c2edf4f37fd375a"
+    },
+    {
+      "code": "symbol_explanation_pdf",
+      "title": "Symbol Guide",
+      "file": "symbol-guide.pdf",
+      "size": 135694,
+      "checksum": "16861ca320ce4c02b750bd8953c7fd813e274e896b2b0d3bf365b6d6a8b8df38"
+    }
+  ],
+  "checks": {
+    "premiumArchiveLayout": true,
+    "approvedCrestEmbedded": true,
+    "customerSafeBoundaryLanguage": true,
+    "noAiGeneratedLanguage": true,
+    "noInternalBetaLanguage": true
+  }
+}
