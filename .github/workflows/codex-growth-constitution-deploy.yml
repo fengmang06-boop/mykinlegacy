@@ -1,0 +1,109 @@
+name: Codex Growth Constitution Deploy
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-growth-constitution-deploy.yml"
+      - ".codex-growth-constitution/**"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: growth-constitution-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload Growth Constitution package
+        shell: bash
+        run: |
+          tar -czf /tmp/growth-constitution.tgz -C .codex-growth-constitution .
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" /tmp/growth-constitution.tgz "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/growth-constitution.tgz"
+
+      - name: Deploy and verify
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          FOUND_DIR="$(pm2 jlist | node -e '
+            let data="";
+            process.stdin.on("data", c => data += c);
+            process.stdin.on("end", () => {
+              const arr = JSON.parse(data || "[]");
+              const match = arr.find(p => p.name === "mensskull-etsy-ai-manager" || JSON.stringify(p).includes("etsy-ai-manager") || p.pm2_env?.PORT == "3000");
+              if (match?.pm2_env?.pm_cwd) console.log(match.pm2_env.pm_cwd);
+            });
+          ' || true)"
+          if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
+          test -d "$APP_DIR"
+          cd "$APP_DIR"
+          TS="$(date +%Y%m%d%H%M%S)"
+          mkdir -p "/tmp/growth-constitution-$TS"
+          tar -xzf /tmp/growth-constitution.tgz -C "/tmp/growth-constitution-$TS"
+          cp -a "/tmp/growth-constitution-$TS/README.md" README.md
+          mkdir -p docs/growth growth/image-queue growth/generated-images growth/image-prompts/templates src/lib/safety src/lib/integrations/etsy
+          cp -a "/tmp/growth-constitution-$TS/docs/growth/." docs/growth/
+          cp -a "/tmp/growth-constitution-$TS/growth/image-queue/." growth/image-queue/
+          cp -a "/tmp/growth-constitution-$TS/growth/generated-images/." growth/generated-images/
+          cp -a "/tmp/growth-constitution-$TS/growth/image-prompts/." growth/image-prompts/
+          cp -a "/tmp/growth-constitution-$TS/src/lib/safety/growth-constitution.ts" src/lib/safety/growth-constitution.ts
+          cp -a "/tmp/growth-constitution-$TS/src/lib/safety/etsy-safety-rules.ts" src/lib/safety/etsy-safety-rules.ts
+          cp -a "/tmp/growth-constitution-$TS/src/lib/integrations/etsy/read-only-guard.ts" src/lib/integrations/etsy/read-only-guard.ts
+          npm run build
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 5
+          test -f docs/growth/MENSSKULL_GROWTH_CONSTITUTION.md
+          test -f docs/growth/GROWTH_JOURNAL.md
+          test -f growth/image-queue/TASK_TEMPLATE.md
+          test -f growth/image-prompts/templates/gemini-product-image-prompt.md
+          grep -q "Growth Constitution" README.md
+          grep -q "versionHistoryRequired" src/lib/safety/growth-constitution.ts
+          curl -k -sS -o /dev/null -w "tools=%{http_code}\n" --max-time 30 https://tools.mensskull.com/
+          curl -k -sS -o /dev/null -w "mykinlegacy=%{http_code}\n" --max-time 30 https://mykinlegacy.com/
+          REMOTE
