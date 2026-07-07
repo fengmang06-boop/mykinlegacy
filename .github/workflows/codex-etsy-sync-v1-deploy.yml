@@ -88,10 +88,9 @@ jobs:
           cd "$APP_DIR"
           TS="$(date +%Y%m%d%H%M%S)"
 
-          DB_FILE="$(node <<'NODE'
+          DATABASE_URL_VALUE="$(node <<'NODE'
           const fs = require("fs");
-          const path = require("path");
-          let value = "file:./dev.db";
+          let value = "";
           for (const file of [".env", ".env.local"]) {
             if (!fs.existsSync(file)) continue;
             for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
@@ -99,7 +98,19 @@ jobs:
               if (match) value = match[1].trim().replace(/^['"]|['"]$/g, "");
             }
           }
-          if (value.startsWith("file:")) console.log(path.resolve(value.slice(5)));
+          console.log(value || "file:./dev.db");
+          NODE
+          )"
+          export DATABASE_URL="$DATABASE_URL_VALUE"
+          if ! grep -q '^[[:space:]]*DATABASE_URL[[:space:]]*=' .env 2>/dev/null && ! grep -q '^[[:space:]]*DATABASE_URL[[:space:]]*=' .env.local 2>/dev/null; then
+            printf '\nDATABASE_URL=file:./dev.db\n' >> .env.local
+            chmod 600 .env.local
+          fi
+
+          DB_FILE="$(node <<'NODE'
+          const path = require("path");
+          const value = process.env.DATABASE_URL || "file:./dev.db";
+          if (value.startsWith("file:")) console.log(path.resolve("prisma", value.slice(5)));
           NODE
           )"
           if [ -n "$DB_FILE" ] && [ -f "$DB_FILE" ]; then
