@@ -1,0 +1,233 @@
+name: Codex Etsy P3 Analysis Export
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-p3-analysis-export.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: etsy-p3-analysis-export
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Export read-only Etsy analysis
+        shell: bash
+        run: |
+          mkdir -p codex_outputs
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' > codex_outputs/etsy-p3-analysis.json <<'REMOTE'
+          set -euo pipefail
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          FOUND_DIR="$(pm2 jlist | node -e '
+            let data="";
+            process.stdin.on("data", c => data += c);
+            process.stdin.on("end", () => {
+              const arr = JSON.parse(data || "[]");
+              const match = arr.find(p => p.name === "mensskull-etsy-ai-manager" || JSON.stringify(p).includes("etsy-ai-manager") || p.pm2_env?.PORT == "3000");
+              if (match?.pm2_env?.pm_cwd) console.log(match.pm2_env.pm_cwd);
+            });
+          ' || true)"
+          if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
+          cd "$APP_DIR"
+          node <<'NODE'
+          const fs = require("fs");
+          for (const file of [".env", ".env.local"]) {
+            if (!fs.existsSync(file)) continue;
+            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+              const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+              if (!match) continue;
+              process.env[match[1]] = match[2].trim().replace(/^['"]|['"]$/g, "");
+            }
+          }
+          const { PrismaClient } = require("@prisma/client");
+          const prisma = new PrismaClient();
+          const parse = (value, fallback = {}) => {
+            try { return value ? JSON.parse(value) : fallback; } catch { return fallback; }
+          };
+          const avg = (items, key) => Math.round(items.reduce((sum, item) => sum + item[key], 0) / Math.max(items.length, 1));
+          const weaknessArea = (r) => {
+            const scores = [
+              ["title", r.titleScore],
+              ["tags", r.tagScore],
+              ["images", r.imageScore],
+              ["pricing", r.pricingScore],
+              ["conversion", r.conversionScore],
+              ["freshness", r.freshnessScore]
+            ];
+            scores.sort((a, b) => a[1] - b[1]);
+            return { area: scores[0][0], score: scores[0][1] };
+          };
+          const signalScore = (e) => (e.salesQuantity || 0) * 10 + (e.transactionCount || 0) * 6 + (e.favorites || 0) * 2 + Math.min(e.views || 0, 1000) / 100;
+          (async () => {
+            const reports = await prisma.listingAiReport.findMany({
+              where: { analysisVersion: "listing-intelligence-v2" },
+              include: { listing: { include: { images: true, inventory: true } } },
+              orderBy: { updatedAt: "desc" }
+            });
+            const latestByListing = new Map();
+            for (const report of reports) {
+              if (!latestByListing.has(report.listingId)) latestByListing.set(report.listingId, report);
+            }
+            const latest = Array.from(latestByListing.values()).map((report) => {
+              const actions = parse(report.recommendedActions);
+              const breakdown = parse(report.scoreBreakdown);
+              const evidence = breakdown.evidence || {};
+              const weak = weaknessArea(report);
+              return {
+                id: report.listingId,
+                etsyListingId: report.listing.etsyListingId,
+                title: report.listing.title,
+                url: report.listing.url,
+                price: report.listing.price,
+                quantity: report.listing.inventory?.quantity ?? report.listing.quantity,
+                imageCount: report.listing.images.length,
+                scores: {
+                  seo: report.seoScore,
+                  title: report.titleScore,
+                  tags: report.tagScore,
+                  images: report.imageScore,
+                  conversion: report.conversionScore,
+                  pricing: report.pricingScore,
+                  competition: report.competitionScore,
+                  freshness: report.freshnessScore,
+                  opportunity: report.opportunityScore
+                },
+                priority: report.overallPriority,
+                risk: report.riskLevel,
+                weakestArea: weak.area,
+                weakestScore: weak.score,
+                evidence: {
+                  views: evidence.views || 0,
+                  favorites: evidence.favorites || 0,
+                  salesQuantity: evidence.salesQuantity || 0,
+                  transactionCount: evidence.transactionCount || 0,
+                  inventoryQuantity: evidence.inventoryQuantity ?? (report.listing.inventory?.quantity ?? report.listing.quantity)
+                },
+                reasons: {
+                  priorityReasons: actions.priorityReasons || [],
+                  titleWeaknesses: actions.title?.weaknesses || [],
+                  tagWeaknesses: [
+                    ...(actions.tags?.weakTags || []).map((x) => `weak tag: ${x}`),
+                    ...(actions.tags?.duplicateMeaning || []).map((x) => `duplicate tag meaning: ${x}`),
+                    ...(actions.tags?.unusedKeywordOpportunities || []).slice(0, 4).map((x) => `missing keyword: ${x}`)
+                  ],
+                  imageSuggestions: actions.images?.suggestions || [],
+                  pricingVerdict: actions.pricing?.verdict || "",
+                  pricingReasons: actions.pricing?.reasons || [],
+                  conversionSuggestions: actions.conversion?.suggestions || []
+                },
+                summary: actions.summary || ""
+              };
+            });
+            const top = [...latest].sort((a, b) => b.scores.opportunity - a.scores.opportunity || a.scores.conversion - b.scores.conversion);
+            const soldWeak = latest
+              .filter((x) => (x.evidence.salesQuantity > 0 || x.evidence.transactionCount > 0) && (x.scores.seo < 82 || x.scores.images < 78))
+              .sort((a, b) => b.evidence.salesQuantity - a.evidence.salesQuantity || b.scores.opportunity - a.scores.opportunity);
+            const signalHighRisk = latest
+              .filter((x) => signalScore(x.evidence) > 0 && (x.risk !== "Low" || x.scores.conversion < 80 || x.scores.images < 78))
+              .sort((a, b) => signalScore(b.evidence) - signalScore(a.evidence) || b.scores.opportunity - a.scores.opportunity);
+            const lowPriority = latest
+              .filter((x) => x.scores.opportunity <= 20 && x.evidence.salesQuantity === 0 && x.evidence.transactionCount === 0 && x.risk === "Low")
+              .sort((a, b) => a.scores.opportunity - b.scores.opportunity || b.scores.seo - a.scores.seo);
+            const counts = {
+              titleBelow80: latest.filter((x) => x.scores.title < 80).length,
+              tagsBelow80: latest.filter((x) => x.scores.tags < 80).length,
+              imagesBelow78: latest.filter((x) => x.scores.images < 78).length,
+              pricingBelow75: latest.filter((x) => x.scores.pricing < 75).length,
+              conversionBelow80: latest.filter((x) => x.scores.conversion < 80).length,
+              highOrMediumRisk: latest.filter((x) => x.risk !== "Low").length,
+              hasSales: latest.filter((x) => x.evidence.salesQuantity > 0 || x.evidence.transactionCount > 0).length,
+              hasFavorites: latest.filter((x) => x.evidence.favorites > 0).length,
+              hasViews: latest.filter((x) => x.evidence.views > 0).length,
+              lowInventory: latest.filter((x) => x.quantity <= 2).length
+            };
+            const queue = await prisma.optimizationQueueItem.findMany({
+              where: { status: "pending" },
+              include: { listing: true },
+              orderBy: [{ rank: "asc" }],
+              take: 25
+            });
+            console.log(JSON.stringify({
+              generatedAt: new Date().toISOString(),
+              source: "production local database, read-only export",
+              metrics: {
+                listings: await prisma.listing.count(),
+                receipts: await prisma.etsyReceipt.count(),
+                transactions: await prisma.etsyTransaction.count(),
+                images: await prisma.listingImage.count(),
+                analyzed: latest.length,
+                avgSeo: avg(latest.map((x) => ({ value: x.scores.seo })), "value"),
+                avgConversion: avg(latest.map((x) => ({ value: x.scores.conversion })), "value"),
+                avgOpportunity: avg(latest.map((x) => ({ value: x.scores.opportunity })), "value")
+              },
+              bottleneckCounts: counts,
+              top20: top.slice(0, 20),
+              soldWeakSeoOrImages: soldWeak.slice(0, 20),
+              signalHighRisk: signalHighRisk.slice(0, 20),
+              lowPriority: lowPriority.slice(0, 25),
+              queue: queue.map((item) => ({
+                rank: item.rank,
+                title: item.listing.title,
+                opportunity: item.opportunityScore,
+                priority: item.priority,
+                risk: item.riskLevel,
+                taskType: item.taskType,
+                taskTitle: item.taskTitle,
+                taskReason: item.taskReason
+              }))
+            }, null, 2));
+          })().finally(() => prisma.$disconnect());
+          NODE
+          REMOTE
+          git config user.name "codex-analysis-bot"
+          git config user.email "codex-analysis-bot@users.noreply.github.com"
+          git add codex_outputs/etsy-p3-analysis.json
+          git commit -m "Add Etsy P3 read-only analysis export" || exit 0
+          git push
