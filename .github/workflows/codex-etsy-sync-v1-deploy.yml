@@ -131,6 +131,13 @@ jobs:
           cp -a "/tmp/etsy-sync-v1-$TS/src/app/api/etsy/status/route.ts" src/app/api/etsy/status/route.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/app/etsy-connection/page.tsx" src/app/etsy-connection/page.tsx
           cp -a "/tmp/etsy-sync-v1-$TS/src/app/etsy-connection/SyncButton.tsx" src/app/etsy-connection/SyncButton.tsx
+          mkdir -p src/app/etsy-ai src/app/api/etsy/ai/analyze src/app/listings/'[id]' src/lib/etsy-ai
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/etsy-ai/page.tsx" src/app/etsy-ai/page.tsx
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/etsy-ai/AnalyzeButton.tsx" src/app/etsy-ai/AnalyzeButton.tsx
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/api/etsy/ai/analyze/route.ts" src/app/api/etsy/ai/analyze/route.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/listings/[id]/page.tsx" src/app/listings/'[id]'/page.tsx
+          cp -a "/tmp/etsy-sync-v1-$TS/src/app/layout.tsx" src/app/layout.tsx
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/etsy-ai/listing-intelligence.ts" src/lib/etsy-ai/listing-intelligence.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/app/globals.css" src/app/globals.css
 
           npx prisma db push --accept-data-loss
@@ -175,20 +182,69 @@ jobs:
             }));
           '
 
+          echo "===== AI ANALYSIS ====="
+          curl -k -sS -X POST -H 'Content-Type: application/json' -d '{"retry":true}' -o /tmp/etsy-ai-result.json -w "etsy_ai_analyze=%{http_code}\n" --max-time 300 https://tools.mensskull.com/api/etsy/ai/analyze
+          node -e '
+            const fs = require("fs");
+            const data = JSON.parse(fs.readFileSync("/tmp/etsy-ai-result.json", "utf8"));
+            console.log(JSON.stringify({
+              ok: data.ok,
+              analyzed: data.analyzed,
+              skipped: data.skipped,
+              totalReports: data.totalReports,
+              remaining: data.remaining,
+              errorCount: Array.isArray(data.errors) ? data.errors.length : 0
+            }));
+          '
+          curl -k -sS -o /tmp/etsy-ai-page.html -w "etsy_ai_page=%{http_code}\n" --max-time 30 https://tools.mensskull.com/etsy-ai
+          node -e '
+            const html = require("fs").readFileSync("/tmp/etsy-ai-page.html", "utf8");
+            console.log(JSON.stringify({
+              hasDashboard: html.includes("Etsy AI Intelligence"),
+              hasAverageSeo: html.includes("Average SEO Score"),
+              hasOpportunities: html.includes("Top 10 Opportunities")
+            }));
+          '
+
           echo "===== DB COUNTS ====="
           node <<'NODE'
           const { PrismaClient } = require("@prisma/client");
           const prisma = new PrismaClient();
           (async () => {
-            const [shops, listings, images, inventory, receipts, transactions] = await Promise.all([
+            const [shops, listings, images, inventory, receipts, transactions, aiReports] = await Promise.all([
               prisma.shop.count(),
               prisma.listing.count(),
               prisma.listingImage.count(),
               prisma.listingInventory.count(),
               prisma.etsyReceipt.count(),
-              prisma.etsyTransaction.count()
+              prisma.etsyTransaction.count(),
+              prisma.listingAiReport.count()
             ]);
-            console.log(JSON.stringify({ shops, listings, images, inventory, receipts, transactions }));
+            const avg = await prisma.listingAiReport.aggregate({ _avg: { seoScore: true, conversionScore: true } });
+            const highPriority = await prisma.listingAiReport.findMany({
+              where: { overallPriority: { in: ["Critical", "High"] } },
+              include: { listing: true },
+              orderBy: [{ overallPriority: "asc" }, { seoScore: "asc" }],
+              take: 10
+            });
+            console.log(JSON.stringify({
+              shops,
+              listings,
+              images,
+              inventory,
+              receipts,
+              transactions,
+              aiReports,
+              avgSeo: Math.round(avg._avg.seoScore || 0),
+              avgConversion: Math.round(avg._avg.conversionScore || 0),
+              highestPriorityListings: highPriority.map((report) => ({
+                title: report.listing.title,
+                priority: report.overallPriority,
+                risk: report.riskLevel,
+                seo: report.seoScore,
+                conversion: report.conversionScore
+              }))
+            }));
           })().finally(() => prisma.$disconnect());
           NODE
 

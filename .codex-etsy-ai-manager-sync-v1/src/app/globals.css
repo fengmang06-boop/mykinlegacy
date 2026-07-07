@@ -138,6 +138,10 @@ textarea {
   grid-template-columns: minmax(0, 1.2fr) minmax(360px, 0.8fr);
 }
 
+.three-col {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
 .metric,
 .panel,
 .listing-row,
@@ -174,6 +178,12 @@ textarea {
 .panel h3 {
   margin: 0 0 14px;
   font-size: 18px;
+}
+
+.panel h2 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .list {
@@ -340,6 +350,31 @@ pre,
   max-width: 420px;
 }
 
+.chart-list {
+  display: grid;
+  gap: 10px;
+}
+
+.chart-row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 34px;
+  gap: 10px;
+  align-items: center;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.bar-track {
+  height: 10px;
+  background: #090909;
+  border: 1px solid var(--line);
+}
+
+.bar-fill {
+  height: 100%;
+  background: var(--silver);
+}
+
 @media (max-width: 980px) {
   .shell {
     grid-template-columns: 1fr;
@@ -352,6 +387,7 @@ pre,
 
   .metrics,
   .two-col,
+  .three-col,
   .split,
   .detail-grid {
     grid-template-columns: 1fr;

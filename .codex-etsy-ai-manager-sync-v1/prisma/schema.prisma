@@ -44,12 +44,38 @@ model Listing {
   shop            Shop                         @relation(fields: [shopId], references: [id], onDelete: Cascade)
   images          ListingImage[]
   inventory       ListingInventory?
+  aiReports       ListingAiReport[]
   keywords        ListingKeyword[]
   scores          ListingScore[]
   bestsellerScores BestsellerScore[]
   promotionTasks  PromotionTask[]
   exportLogs      ExportLog[]
   recommendations OptimizationRecommendation[]
+}
+
+model ListingAiReport {
+  id               String   @id @default(cuid())
+  listingId        String   @map("listing_id")
+  seoScore         Int      @map("seo_score")
+  titleScore       Int      @map("title_score")
+  tagScore         Int      @map("tag_score")
+  imageScore       Int      @map("image_score")
+  conversionScore  Int      @map("conversion_score")
+  pricingScore     Int      @map("pricing_score")
+  competitionScore Int      @map("competition_score")
+  freshnessScore   Int      @map("freshness_score")
+  overallPriority  String   @map("overall_priority")
+  riskLevel        String   @map("risk_level")
+  recommendedActions String @map("recommended_actions")
+  analysisVersion  String   @map("analysis_version")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
+  listing          Listing  @relation(fields: [listingId], references: [id], onDelete: Cascade)
+
+  @@index([listingId])
+  @@index([overallPriority])
+  @@index([riskLevel])
+  @@map("listing_ai_report")
 }
 
 model ListingImage {
