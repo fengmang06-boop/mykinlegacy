@@ -20,9 +20,18 @@ export function AnalyzeButton() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ retry })
       });
-      const payload = (await response.json()) as { analyzed?: number; skipped?: number; totalReports?: number; errors?: string[] };
+      const payload = (await response.json()) as {
+        analyzed?: number;
+        skipped?: number;
+        totalReports?: number;
+        snapshotCount?: number;
+        optimizationQueue?: { generated?: number };
+        errors?: string[];
+      };
       if (!response.ok && response.status !== 207) throw new Error(payload.errors?.[0] ?? "AI analysis failed.");
-      setMessage(`Analyzed ${payload.analyzed ?? 0}, skipped ${payload.skipped ?? 0}, reports ${payload.totalReports ?? 0}.`);
+      setMessage(
+        `Analyzed ${payload.analyzed ?? 0}, skipped ${payload.skipped ?? 0}, reports ${payload.totalReports ?? 0}, queue ${payload.optimizationQueue?.generated ?? 0}.`
+      );
       if (payload.errors?.length) setError(payload.errors.slice(0, 3).join("\n"));
       startTransition(() => router.refresh());
     } catch (analysisError) {

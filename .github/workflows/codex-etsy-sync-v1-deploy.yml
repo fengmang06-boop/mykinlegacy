@@ -150,7 +150,7 @@ jobs:
           curl -k -sS -o /tmp/etsy-status-before.json -w "etsy_status=%{http_code}\n" --max-time 30 https://tools.mensskull.com/api/etsy/status
 
           echo "===== SYNC ====="
-          curl -k -sS -X POST -o /tmp/etsy-sync-result.json -w "etsy_sync=%{http_code}\n" --max-time 300 https://tools.mensskull.com/api/etsy/sync
+          curl -k -sS -X POST -o /tmp/etsy-sync-result.json -w "etsy_sync=%{http_code}\n" --max-time 900 https://tools.mensskull.com/api/etsy/sync
           node -e '
             const fs = require("fs");
             const body = fs.readFileSync("/tmp/etsy-sync-result.json", "utf8");
@@ -183,7 +183,7 @@ jobs:
           '
 
           echo "===== AI ANALYSIS ====="
-          curl -k -sS -X POST -H 'Content-Type: application/json' -d '{"retry":true}' -o /tmp/etsy-ai-result.json -w "etsy_ai_analyze=%{http_code}\n" --max-time 300 https://tools.mensskull.com/api/etsy/ai/analyze
+          curl -k -sS -X POST -H 'Content-Type: application/json' -d '{"retry":true}' -o /tmp/etsy-ai-result.json -w "etsy_ai_analyze=%{http_code}\n" --max-time 900 https://tools.mensskull.com/api/etsy/ai/analyze
           node -e '
             const fs = require("fs");
             const data = JSON.parse(fs.readFileSync("/tmp/etsy-ai-result.json", "utf8"));
@@ -192,6 +192,8 @@ jobs:
               analyzed: data.analyzed,
               skipped: data.skipped,
               totalReports: data.totalReports,
+              snapshotCount: data.snapshotCount,
+              optimizationQueue: data.optimizationQueue,
               remaining: data.remaining,
               errorCount: Array.isArray(data.errors) ? data.errors.length : 0
             }));
@@ -211,20 +213,22 @@ jobs:
           const { PrismaClient } = require("@prisma/client");
           const prisma = new PrismaClient();
           (async () => {
-            const [shops, listings, images, inventory, receipts, transactions, aiReports] = await Promise.all([
+            const [shops, listings, images, inventory, receipts, transactions, aiReports, snapshots, queueItems] = await Promise.all([
               prisma.shop.count(),
               prisma.listing.count(),
               prisma.listingImage.count(),
               prisma.listingInventory.count(),
               prisma.etsyReceipt.count(),
               prisma.etsyTransaction.count(),
-              prisma.listingAiReport.count()
+              prisma.listingAiReport.count(),
+              prisma.listingAiSnapshot.count(),
+              prisma.optimizationQueueItem.count({ where: { status: "pending" } })
             ]);
-            const avg = await prisma.listingAiReport.aggregate({ _avg: { seoScore: true, conversionScore: true } });
+            const avg = await prisma.listingAiReport.aggregate({ _avg: { seoScore: true, conversionScore: true, opportunityScore: true } });
             const highPriority = await prisma.listingAiReport.findMany({
               where: { overallPriority: { in: ["Critical", "High"] } },
               include: { listing: true },
-              orderBy: [{ overallPriority: "asc" }, { seoScore: "asc" }],
+              orderBy: [{ opportunityScore: "desc" }, { conversionScore: "asc" }],
               take: 10
             });
             console.log(JSON.stringify({
@@ -235,14 +239,18 @@ jobs:
               receipts,
               transactions,
               aiReports,
+              snapshots,
+              queueItems,
               avgSeo: Math.round(avg._avg.seoScore || 0),
               avgConversion: Math.round(avg._avg.conversionScore || 0),
+              avgOpportunity: Math.round(avg._avg.opportunityScore || 0),
               highestPriorityListings: highPriority.map((report) => ({
                 title: report.listing.title,
                 priority: report.overallPriority,
                 risk: report.riskLevel,
                 seo: report.seoScore,
-                conversion: report.conversionScore
+                conversion: report.conversionScore,
+                opportunity: report.opportunityScore
               }))
             }));
           })().finally(() => prisma.$disconnect());

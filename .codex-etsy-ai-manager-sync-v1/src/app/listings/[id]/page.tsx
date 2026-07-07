@@ -18,7 +18,10 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
     where: { id },
     include: {
       images: true,
+      inventory: true,
       aiReports: { orderBy: { updatedAt: "desc" }, take: 1 },
+      aiSnapshots: { orderBy: { createdAt: "desc" }, take: 5 },
+      optimizationQueueItems: { where: { status: "pending" }, orderBy: [{ queueDate: "desc" }, { rank: "asc" }], take: 5 },
       scores: { orderBy: { createdAt: "desc" }, take: 1 },
       recommendations: { orderBy: [{ priority: "asc" }, { createdAt: "desc" }] },
       bestsellerScores: { orderBy: { createdAt: "desc" }, take: 1 }
@@ -45,6 +48,11 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
   const thumbnail = scoreThumbnail(engineListing);
   const score = listing.scores[0];
   const aiReport = listing.aiReports[0];
+  const scoreBreakdown = aiReport?.scoreBreakdown ? JSON.parse(aiReport.scoreBreakdown) as {
+    seo?: Record<string, { score: number; weight: number; basis: string }>;
+    conversion?: Record<string, { score: number; weight: number; basis: string }>;
+    opportunity?: Record<string, { score: number; weight: number; basis: string }>;
+  } : null;
   const aiActions = aiReport?.recommendedActions ? JSON.parse(aiReport.recommendedActions) as {
     summary?: string;
     title?: { strengths?: string[]; weaknesses?: string[]; suggestedTitle?: string };
@@ -66,7 +74,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 
       <section className="grid metrics">
         <div className="metric"><span>AI SEO</span><strong>{aiReport?.seoScore ?? score?.seoScore ?? 0}</strong></div>
-        <div className="metric"><span>CTR</span><strong>{score?.ctrScore ?? 0}</strong></div>
+        <div className="metric"><span>Opportunity</span><strong>{aiReport?.opportunityScore ?? 0}</strong></div>
         <div className="metric"><span>AI Conversion</span><strong>{aiReport?.conversionScore ?? score?.conversionScore ?? 0}</strong></div>
         <div className="metric"><span>AI Priority</span><strong className="compact-value">{aiReport?.overallPriority ?? "Not run"}</strong></div>
       </section>
@@ -76,6 +84,13 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
         <div className="metric"><span>Tag Score</span><strong>{aiReport?.tagScore ?? 0}</strong></div>
         <div className="metric"><span>Image Score</span><strong>{aiReport?.imageScore ?? thumbnail.thumbnailScore}</strong></div>
         <div className="metric"><span>Risk Level</span><strong className="compact-value">{aiReport?.riskLevel ?? thumbnail.mobileThumbnailRisk}</strong></div>
+      </section>
+
+      <section className="grid metrics" style={{ marginTop: 16 }}>
+        <div className="metric"><span>History Snapshots</span><strong>{listing.aiSnapshots.length}</strong></div>
+        <div className="metric"><span>Queue Tasks</span><strong>{listing.optimizationQueueItems.length}</strong></div>
+        <div className="metric"><span>Inventory</span><strong>{listing.inventory?.quantity ?? listing.quantity}</strong></div>
+        <div className="metric"><span>CTR</span><strong>{score?.ctrScore ?? 0}</strong></div>
       </section>
 
       <section className="grid two-col" style={{ marginTop: 16 }}>
@@ -96,6 +111,45 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
               <p className="muted" key={item}>{item}</p>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="grid two-col" style={{ marginTop: 16 }}>
+        <div className="panel">
+          <h2>Score Basis</h2>
+          <div className="list">
+            {Object.entries(scoreBreakdown?.seo ?? {}).map(([key, item]) => (
+              <p className="muted" key={key}><strong>{key}</strong>: {item.score} x {item.weight} - {item.basis}</p>
+            ))}
+            {Object.entries(scoreBreakdown?.conversion ?? {}).map(([key, item]) => (
+              <p className="muted" key={key}><strong>{key}</strong>: {item.score} x {item.weight} - {item.basis}</p>
+            ))}
+          </div>
+        </div>
+        <div className="panel">
+          <h2>Opportunity Basis</h2>
+          <div className="list">
+            {Object.entries(scoreBreakdown?.opportunity ?? {}).map(([key, item]) => (
+              <p className="muted" key={key}><strong>{key}</strong>: {item.score} x {item.weight} - {item.basis}</p>
+            ))}
+            {!scoreBreakdown ? <p className="muted">Run analysis to generate weighted score evidence.</p> : null}
+          </div>
+        </div>
+      </section>
+
+      <section className="panel" style={{ marginTop: 16 }}>
+        <h2>Optimization Queue</h2>
+        <div className="list">
+          {listing.optimizationQueueItems.map((item) => (
+            <div className="recommendation" key={item.id}>
+              <div className="row-head">
+                <strong>#{item.rank} {item.taskTitle}</strong>
+                <span className="chip">Opp {item.opportunityScore}</span>
+              </div>
+              <span className="muted">{item.taskReason}</span>
+            </div>
+          ))}
+          {!listing.optimizationQueueItems.length ? <p className="muted">No pending queue task for this listing.</p> : null}
         </div>
       </section>
 

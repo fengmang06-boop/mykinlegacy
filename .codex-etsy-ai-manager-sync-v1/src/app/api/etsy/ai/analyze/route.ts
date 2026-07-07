@@ -17,14 +17,18 @@ export async function POST(request: Request) {
 }
 
 export async function GET() {
-  const [listingCount, reportCount, latestReport] = await Promise.all([
+  const [listingCount, reportCount, snapshotCount, pendingQueueCount, latestReport] = await Promise.all([
     prisma.listing.count(),
     prisma.listingAiReport.count(),
+    prisma.listingAiSnapshot.count(),
+    prisma.optimizationQueueItem.count({ where: { status: "pending" } }),
     prisma.listingAiReport.findFirst({ orderBy: { updatedAt: "desc" } })
   ]);
   return NextResponse.json({
     listingCount,
     reportCount,
+    snapshotCount,
+    pendingQueueCount,
     remaining: Math.max(0, listingCount - reportCount),
     latestReportAt: latestReport?.updatedAt ?? null
   });

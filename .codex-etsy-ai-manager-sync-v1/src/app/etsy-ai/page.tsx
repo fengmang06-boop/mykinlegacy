@@ -47,12 +47,19 @@ function Chart({ title, buckets }: { title: string; buckets: Bucket[] }) {
 }
 
 export default async function EtsyAiPage() {
-  const [reports, listings] = await Promise.all([
+  const [reports, listings, queueItems, snapshotCount] = await Promise.all([
     prisma.listingAiReport.findMany({
       include: { listing: { include: { inventory: true } } },
       orderBy: [{ updatedAt: "desc" }]
     }),
-    prisma.listing.findMany({ include: { inventory: true }, orderBy: { updatedAt: "desc" } })
+    prisma.listing.findMany({ include: { inventory: true }, orderBy: { updatedAt: "desc" } }),
+    prisma.optimizationQueueItem.findMany({
+      where: { status: "pending" },
+      include: { listing: true },
+      orderBy: [{ queueDate: "desc" }, { rank: "asc" }],
+      take: 10
+    }),
+    prisma.listingAiSnapshot.count()
   ]);
 
   const latestByListing = new Map<string, (typeof reports)[number]>();
@@ -62,9 +69,10 @@ export default async function EtsyAiPage() {
   const latestReports = Array.from(latestByListing.values());
   const avgSeo = average(latestReports.map((report) => report.seoScore));
   const avgConversion = average(latestReports.map((report) => report.conversionScore));
+  const avgOpportunity = average(latestReports.map((report) => report.opportunityScore));
   const needingAttention = latestReports.filter((report) => ["Critical", "High"].includes(report.overallPriority) || report.riskLevel === "High");
   const topOpportunities = [...latestReports]
-    .sort((a, b) => priorityRank(a.overallPriority) - priorityRank(b.overallPriority) || a.seoScore + a.conversionScore - (b.seoScore + b.conversionScore))
+    .sort((a, b) => b.opportunityScore - a.opportunityScore || priorityRank(a.overallPriority) - priorityRank(b.overallPriority))
     .slice(0, 10);
   const topRisks = [...latestReports]
     .sort((a, b) => {
@@ -90,7 +98,14 @@ export default async function EtsyAiPage() {
         <div className="metric"><span>Overall Shop Health</span><strong>{health}</strong></div>
         <div className="metric"><span>Average SEO Score</span><strong>{avgSeo}</strong></div>
         <div className="metric"><span>Average Conversion</span><strong>{avgConversion}</strong></div>
-        <div className="metric"><span>Needs Attention</span><strong>{needingAttention.length}</strong></div>
+        <div className="metric"><span>Average Opportunity</span><strong>{avgOpportunity}</strong></div>
+      </section>
+
+      <section className="grid metrics" style={{ marginTop: 16 }}>
+        <div className="metric"><span>Listings Needing Attention</span><strong>{needingAttention.length}</strong></div>
+        <div className="metric"><span>Analyzed Listings</span><strong>{latestReports.length}</strong></div>
+        <div className="metric"><span>Optimization Queue</span><strong>{queueItems.length}</strong></div>
+        <div className="metric"><span>History Snapshots</span><strong>{snapshotCount}</strong></div>
       </section>
 
       <section className="grid three-col" style={{ marginTop: 16 }}>
@@ -136,6 +151,7 @@ export default async function EtsyAiPage() {
                 <div className="chips">
                   <span className={scoreClass(report.seoScore)}>SEO {report.seoScore}</span>
                   <span className={scoreClass(report.conversionScore)}>CVR {report.conversionScore}</span>
+                  <span className={scoreClass(report.opportunityScore)}>Opp {report.opportunityScore}</span>
                   <span className="chip">{report.riskLevel} risk</span>
                 </div>
               </a>
@@ -160,6 +176,28 @@ export default async function EtsyAiPage() {
               </a>
             ))}
           </div>
+        </div>
+      </section>
+
+      <section className="panel" style={{ marginTop: 16 }}>
+        <h2>Optimization Queue</h2>
+        <p className="muted">Read-only tasks generated from explainable listing reports. Nothing is sent back to Etsy.</p>
+        <div className="list">
+          {queueItems.map((item) => (
+            <a className="listing-row" href={`/listings/${item.listing.id}`} key={item.id}>
+              <div className="row-head">
+                <strong>#{item.rank} {item.taskTitle}</strong>
+                <span className="chip">Opp {item.opportunityScore}</span>
+              </div>
+              <span className="muted">{item.listing.title}</span>
+              <div className="chips">
+                <span className="chip">{item.priority}</span>
+                <span className="chip">{item.riskLevel} risk</span>
+                <span className="chip">{item.taskType}</span>
+              </div>
+            </a>
+          ))}
+          {!queueItems.length ? <p className="muted">Run Analyze to generate today's queue.</p> : null}
         </div>
       </section>
 

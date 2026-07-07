@@ -3,6 +3,8 @@ import { refreshAccessToken } from "./oauth";
 
 const ETSY_API_BASE = "https://openapi.etsy.com/v3/application";
 const ETSY_MIN_REQUEST_INTERVAL_MS = 350;
+const ETSY_PAGE_SIZE = 100;
+const DEFAULT_MAX_PAGINATED_ITEMS = Number(process.env.ETSY_MAX_SYNC_ITEMS ?? "2500");
 
 let nextEtsyRequestAt = 0;
 
@@ -45,6 +47,15 @@ export type EtsyConnectedShop = {
   userId: string;
   shopId: string;
   shopName: string;
+};
+
+type EtsyPaginatedResponse<T> = {
+  results?: T[];
+  count?: number;
+};
+
+type EtsyPaginationOptions = {
+  maxItems?: number;
 };
 
 function readAuthOptions(options?: EtsyAuthOptions): Required<EtsyAuthOptions> {
@@ -147,6 +158,40 @@ async function etsyFetch<T>(path: string, init: RequestInit = {}, options?: Etsy
   }
 }
 
+function withPagination(path: string, limit: number, offset: number): string {
+  const separator = path.includes("?") ? "&" : "?";
+  return `${path}${separator}limit=${limit}&offset=${offset}`;
+}
+
+async function etsyFetchAllPages<T>(
+  path: string,
+  options?: EtsyClientOptions,
+  pagination: EtsyPaginationOptions = {}
+): Promise<EtsyPaginatedResponse<T> & { pages: number }> {
+  const maxItems = Math.max(ETSY_PAGE_SIZE, pagination.maxItems ?? DEFAULT_MAX_PAGINATED_ITEMS);
+  const results: T[] = [];
+  let count: number | undefined;
+  let pages = 0;
+
+  for (let offset = 0; offset < maxItems; offset += ETSY_PAGE_SIZE) {
+    const page = await etsyFetch<EtsyPaginatedResponse<T>>(withPagination(path, ETSY_PAGE_SIZE, offset), {}, options);
+    const pageResults = Array.isArray(page.results) ? page.results : [];
+    results.push(...pageResults);
+    count = typeof page.count === "number" ? page.count : count;
+    pages += 1;
+
+    if (!pageResults.length) break;
+    if (typeof count === "number" && results.length >= count) break;
+    if (pageResults.length < ETSY_PAGE_SIZE) break;
+  }
+
+  return {
+    results: results.slice(0, maxItems),
+    count,
+    pages
+  };
+}
+
 export function validateEtsyClientEnv(): { ok: true } | { ok: false; errors: string[] } {
   return validateEtsyReadOnlyEnv();
 }
@@ -172,13 +217,13 @@ export async function fetchShop(options?: EtsyClientOptions) {
   return etsyFetch(`/shops/${shopId}`, {}, { ...options, shopId });
 }
 
-export async function fetchShopListings(options?: EtsyClientOptions) {
+export async function fetchShopListings(options?: EtsyClientOptions, pagination?: EtsyPaginationOptions) {
   const shopId = await resolveEtsyShopId(options);
-  return etsyFetch<{ results?: EtsyListingSummary[]; count?: number }>(`/shops/${shopId}/listings/active?limit=100`, {}, { ...options, shopId });
+  return etsyFetchAllPages<EtsyListingSummary>(`/shops/${shopId}/listings/active`, { ...options, shopId }, pagination);
 }
 
-export async function fetchListings(options?: EtsyClientOptions) {
-  return fetchShopListings(options);
+export async function fetchListings(options?: EtsyClientOptions, pagination?: EtsyPaginationOptions) {
+  return fetchShopListings(options, pagination);
 }
 
 export async function fetchListingDetails(listingId: string | number, options?: EtsyClientOptions) {
@@ -209,19 +254,19 @@ export async function fetchListingInventory(listingId: string | number, options?
   }>(`/listings/${listingId}/inventory?max_variations_supported=3`, {}, options);
 }
 
-export async function fetchReceipts(options?: EtsyClientOptions) {
+export async function fetchReceipts(options?: EtsyClientOptions, pagination?: EtsyPaginationOptions) {
   const shopId = await resolveEtsyShopId(options);
-  return etsyFetch(`/shops/${shopId}/receipts?limit=100`, {}, { ...options, shopId });
+  return etsyFetchAllPages<Record<string, unknown>>(`/shops/${shopId}/receipts`, { ...options, shopId }, pagination);
 }
 
-export async function fetchTransactions(options?: EtsyClientOptions) {
+export async function fetchTransactions(options?: EtsyClientOptions, pagination?: EtsyPaginationOptions) {
   const shopId = await resolveEtsyShopId(options);
-  return etsyFetch(`/shops/${shopId}/transactions?limit=100`, {}, { ...options, shopId });
+  return etsyFetchAllPages<Record<string, unknown>>(`/shops/${shopId}/transactions`, { ...options, shopId }, pagination);
 }
 
-export async function fetchReviews(options?: EtsyClientOptions) {
+export async function fetchReviews(options?: EtsyClientOptions, pagination?: EtsyPaginationOptions) {
   const shopId = await resolveEtsyShopId(options);
-  return etsyFetch(`/shops/${shopId}/reviews?limit=100`, {}, { ...options, shopId });
+  return etsyFetchAllPages<Record<string, unknown>>(`/shops/${shopId}/reviews`, { ...options, shopId }, pagination);
 }
 
 export async function fetchTaxonomy(options?: EtsyClientOptions) {
