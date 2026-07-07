@@ -1,0 +1,305 @@
+name: Codex Etsy Growth Diagnosis Export
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-growth-diagnosis-export.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: etsy-growth-diagnosis-export
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Export read-only growth diagnosis data
+        shell: bash
+        run: |
+          mkdir -p codex_outputs
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' > codex_outputs/etsy-growth-diagnosis.json <<'REMOTE'
+          set -euo pipefail
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          FOUND_DIR="$(pm2 jlist | node -e '
+            let data="";
+            process.stdin.on("data", c => data += c);
+            process.stdin.on("end", () => {
+              const arr = JSON.parse(data || "[]");
+              const match = arr.find(p => p.name === "mensskull-etsy-ai-manager" || JSON.stringify(p).includes("etsy-ai-manager") || p.pm2_env?.PORT == "3000");
+              if (match?.pm2_env?.pm_cwd) console.log(match.pm2_env.pm_cwd);
+            });
+          ' || true)"
+          if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
+          cd "$APP_DIR"
+          node <<'NODE'
+          const fs = require("fs");
+          for (const file of [".env", ".env.local"]) {
+            if (!fs.existsSync(file)) continue;
+            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+              const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
+              if (!match) continue;
+              process.env[match[1]] = match[2].trim().replace(/^['"]|['"]$/g, "");
+            }
+          }
+          const { PrismaClient } = require("@prisma/client");
+          const prisma = new PrismaClient();
+          const parse = (value, fallback = {}) => {
+            try { return value ? JSON.parse(value) : fallback; } catch { return fallback; }
+          };
+          const num = (value) => {
+            if (typeof value === "number" && Number.isFinite(value)) return value;
+            if (typeof value === "string" && value.trim()) {
+              const parsed = Number(value);
+              return Number.isFinite(parsed) ? parsed : 0;
+            }
+            return 0;
+          };
+          const avg = (items, getter) => items.length ? Math.round(items.reduce((sum, item) => sum + getter(item), 0) / items.length) : 0;
+          const words = (value) => (value || "").toLowerCase().match(/[a-z0-9]+/g) || [];
+          const has = (value, terms) => terms.some((term) => (value || "").toLowerCase().includes(term));
+          const styleOf = (title, tags) => {
+            const text = `${title} ${tags.join(" ")}`.toLowerCase();
+            if (has(text, ["skull"])) return "skull/gothic";
+            if (has(text, ["snake", "serpent", "mamba"])) return "snake/serpent";
+            if (has(text, ["angel", "cross", "ankh"])) return "symbolic/faith";
+            if (has(text, ["chain", "wallet chain", "pants chain"])) return "chain/accessory";
+            if (has(text, ["dog", "pitbull", "wolf", "lion", "animal"])) return "animal";
+            if (has(text, ["emblem", "badge"])) return "vehicle badge";
+            return "other";
+          };
+          const materialOf = (title, tags) => {
+            const text = `${title} ${tags.join(" ")}`.toLowerCase();
+            if (has(text, ["sterling", "925", "silver"])) return "sterling silver";
+            if (has(text, ["brass"])) return "brass";
+            if (has(text, ["steel", "stainless", "titanium"])) return "steel";
+            if (has(text, ["gold"])) return "gold-accent";
+            return "unclear";
+          };
+          const weakest = (report) => {
+            const pairs = [
+              ["title", report?.titleScore ?? 0],
+              ["tags", report?.tagScore ?? 0],
+              ["images", report?.imageScore ?? 0],
+              ["pricing", report?.pricingScore ?? 0],
+              ["conversion", report?.conversionScore ?? 0],
+              ["freshness", report?.freshnessScore ?? 0]
+            ];
+            pairs.sort((a, b) => a[1] - b[1]);
+            return pairs[0][0];
+          };
+          const categoryOf = (item) => {
+            if (item.orders >= 8 || item.revenue >= 1500) return "already_selling_well";
+            if (item.views < 100) return "no_traffic";
+            if (item.favorites <= 1 && item.orders === 0) return "traffic_low_click_interest";
+            if ((item.favorites >= 2 || item.views >= 250) && item.orders === 0) return "click_favorite_low_conversion";
+            if ((item.favorites >= 2 || item.orders > 0) && item.conversionRate < 0.35) return "click_favorite_low_conversion";
+            return "traffic_low_click_interest";
+          };
+          const roiScore = (item) => {
+            const demand = Math.min(40, item.orders * 3 + item.favorites * 0.08 + item.views * 0.004);
+            const gap = Math.max(0, 100 - item.conversionScore) * 0.22 + Math.max(0, 82 - item.imageScore) * 0.22 + Math.max(0, 82 - item.titleScore) * 0.18 + Math.max(0, 82 - item.tagScore) * 0.18;
+            const feasibility = item.quantity > 2 ? 12 : item.quantity > 0 ? 6 : -20;
+            const riskPenalty = item.orders === 0 && item.views < 100 ? 8 : 0;
+            return Math.round(Math.max(0, demand + gap + feasibility - riskPenalty));
+          };
+          (async () => {
+            const [listings, txs, receipts] = await Promise.all([
+              prisma.listing.findMany({
+                include: {
+                  images: true,
+                  inventory: true,
+                  aiReports: { where: { analysisVersion: "listing-intelligence-v2" }, orderBy: { updatedAt: "desc" }, take: 1 }
+                }
+              }),
+              prisma.etsyTransaction.findMany({ select: { etsyListingId: true, quantity: true, price: true, title: true } }),
+              prisma.etsyReceipt.findMany({ select: { totalPrice: true, createdTimestamp: true } })
+            ]);
+            const items = listings.map((listing) => {
+              const report = listing.aiReports[0];
+              const raw = parse(listing.rawJson);
+              const tags = parse(listing.tags, []);
+              const txRows = txs.filter((tx) => tx.etsyListingId === listing.etsyListingId);
+              const orders = txRows.length;
+              const units = txRows.reduce((sum, tx) => sum + (tx.quantity || 0), 0);
+              const revenue = txRows.reduce((sum, tx) => sum + (tx.price || listing.price) * Math.max(tx.quantity || 1, 1), 0);
+              const views = Math.round(num(raw.views ?? raw.views_count));
+              const favorites = Math.round(num(raw.num_favorers ?? raw.favorers));
+              const conversionRate = views > 0 ? Math.round((orders / views) * 10000) / 100 : 0;
+              const imageText = listing.images.map((img) => `${img.role || ""} ${img.alt || ""}`).join(" ").toLowerCase();
+              const item = {
+                id: listing.id,
+                etsyListingId: listing.etsyListingId,
+                title: listing.title,
+                price: listing.price,
+                quantity: listing.inventory?.quantity ?? listing.quantity,
+                views,
+                favorites,
+                orders,
+                units,
+                revenue: Math.round(revenue * 100) / 100,
+                conversionRate,
+                imageCount: listing.images.length,
+                hasVideo: String(listing.rawJson || "").toLowerCase().includes("video"),
+                hasLifestyle: has(imageText, ["lifestyle", "worn", "model", "hand", "neck", "finger"]),
+                hasCloseup: has(imageText, ["close", "detail", "macro", "texture"]),
+                hasScale: has(imageText, ["scale", "size", "hand", "coin", "ruler", "worn"]),
+                hasPackaging: has(imageText, ["packaging", "box", "gift", "pouch"]),
+                titleLength: listing.title.length,
+                tagCount: Array.isArray(tags) ? tags.length : 0,
+                style: styleOf(listing.title, Array.isArray(tags) ? tags : []),
+                material: materialOf(listing.title, Array.isArray(tags) ? tags : []),
+                scores: {
+                  seo: report?.seoScore ?? 0,
+                  title: report?.titleScore ?? 0,
+                  tags: report?.tagScore ?? 0,
+                  images: report?.imageScore ?? 0,
+                  conversion: report?.conversionScore ?? 0,
+                  pricing: report?.pricingScore ?? 0,
+                  opportunity: report?.opportunityScore ?? 0
+                },
+                priority: report?.overallPriority || "",
+                risk: report?.riskLevel || "",
+                weakest: weakest(report),
+                actions: parse(report?.recommendedActions, {})
+              };
+              item.category = categoryOf(item);
+              item.roiScore = roiScore({
+                ...item,
+                titleScore: item.scores.title,
+                tagScore: item.scores.tags,
+                imageScore: item.scores.images,
+                conversionScore: item.scores.conversion
+              });
+              return item;
+            });
+            const byCategory = {};
+            for (const name of ["no_traffic", "traffic_low_click_interest", "click_favorite_low_conversion", "already_selling_well"]) {
+              byCategory[name] = {
+                count: items.filter((item) => item.category === name).length,
+                representatives: items
+                  .filter((item) => item.category === name)
+                  .sort((a, b) => {
+                    if (name === "no_traffic") return a.views - b.views || b.scores.opportunity - a.scores.opportunity;
+                    if (name === "traffic_low_click_interest") return b.views - a.views || a.favorites - b.favorites;
+                    if (name === "click_favorite_low_conversion") return b.favorites - a.favorites || b.views - a.views;
+                    return b.orders - a.orders || b.revenue - a.revenue;
+                  })
+                  .slice(0, 20)
+              };
+            }
+            const sellers = items.filter((item) => item.category === "already_selling_well").sort((a, b) => b.orders - a.orders || b.revenue - a.revenue);
+            const poor = items.filter((item) => item.orders === 0);
+            const groupCount = (arr, key) => arr.reduce((acc, item) => ((acc[item[key]] = (acc[item[key]] || 0) + 1), acc), {});
+            const roiTop30 = [...items].sort((a, b) => b.roiScore - a.roiScore || b.orders - a.orders || b.favorites - a.favorites).slice(0, 30);
+            console.log(JSON.stringify({
+              exportedAt: new Date().toISOString(),
+              source: "production local database, read-only",
+              metrics: {
+                listings: items.length,
+                receipts: receipts.length,
+                transactions: txs.length,
+                images: items.reduce((sum, item) => sum + item.imageCount, 0),
+                totalViews: items.reduce((sum, item) => sum + item.views, 0),
+                totalFavorites: items.reduce((sum, item) => sum + item.favorites, 0),
+                totalOrders: items.reduce((sum, item) => sum + item.orders, 0),
+                totalRevenue: Math.round(items.reduce((sum, item) => sum + item.revenue, 0) * 100) / 100,
+                avgImageCount: Math.round(items.reduce((sum, item) => sum + item.imageCount, 0) / Math.max(items.length, 1)),
+                avgConversionScore: avg(items, (item) => item.scores.conversion),
+                avgImageScore: avg(items, (item) => item.scores.images),
+                avgTitleScore: avg(items, (item) => item.scores.title),
+                avgTagScore: avg(items, (item) => item.scores.tags)
+              },
+              categories: byCategory,
+              successfulPatterns: {
+                sellerCount: sellers.length,
+                avgViews: avg(sellers, (item) => item.views),
+                avgFavorites: avg(sellers, (item) => item.favorites),
+                avgOrders: avg(sellers, (item) => item.orders),
+                avgRevenue: Math.round(sellers.reduce((sum, item) => sum + item.revenue, 0) / Math.max(sellers.length, 1)),
+                avgImageCount: avg(sellers, (item) => item.imageCount),
+                avgTitleLength: avg(sellers, (item) => item.titleLength),
+                avgPrice: avg(sellers, (item) => item.price),
+                styleCounts: groupCount(sellers, "style"),
+                materialCounts: groupCount(sellers, "material"),
+                imageProof: {
+                  lifestyle: sellers.filter((item) => item.hasLifestyle).length,
+                  closeup: sellers.filter((item) => item.hasCloseup).length,
+                  scale: sellers.filter((item) => item.hasScale).length,
+                  packaging: sellers.filter((item) => item.hasPackaging).length,
+                  video: sellers.filter((item) => item.hasVideo).length
+                },
+                topSellers: sellers.slice(0, 30)
+              },
+              poorPatterns: {
+                noOrderCount: poor.length,
+                avgViews: avg(poor, (item) => item.views),
+                avgFavorites: avg(poor, (item) => item.favorites),
+                avgImageCount: avg(poor, (item) => item.imageCount),
+                avgPrice: avg(poor, (item) => item.price),
+                styleCounts: groupCount(poor, "style"),
+                materialCounts: groupCount(poor, "material"),
+                weaknessCounts: groupCount(poor, "weakest"),
+                issueBuckets: {
+                  noExposure: poor.filter((item) => item.views < 100).length,
+                  exposureNoInterest: poor.filter((item) => item.views >= 100 && item.favorites <= 1).length,
+                  interestNoOrder: poor.filter((item) => item.favorites >= 2 && item.orders === 0).length,
+                  conversionRisk: poor.filter((item) => item.views >= 250 && item.favorites >= 2 && item.orders === 0).length
+                },
+                representatives: poor.sort((a, b) => b.views - a.views || b.favorites - a.favorites).slice(0, 40)
+              },
+              roiTop30,
+              all: items
+            }, null, 2));
+          })().finally(() => prisma.$disconnect());
+          NODE
+          REMOTE
+          git config user.name "codex-analysis-bot"
+          git config user.email "codex-analysis-bot@users.noreply.github.com"
+          git add codex_outputs/etsy-growth-diagnosis.json
+          git commit -m "Add Etsy growth diagnosis export" || exit 0
+          git push
