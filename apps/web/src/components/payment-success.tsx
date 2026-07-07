@@ -77,7 +77,7 @@ export function PaymentSuccess() {
           <h1>{message}</h1>
           <p className="lead">
             Your payment has been confirmed. Your private collection is being prepared for review,
-            including the Heritage Certificate, Family Story, Symbol Guide, Crest Artwork, and
+            including the Private Archive Certificate, Family Story, Symbol Guide, Crest Artwork, and
             Collection Letter.
           </p>
           {!isFounderDemo ? (

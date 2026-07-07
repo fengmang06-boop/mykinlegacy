@@ -22,7 +22,10 @@ describe("baseline seed definitions", () => {
 
   it("defines required deliverables and templates", () => {
     expect(deliverableTypeSeeds).toHaveLength(6);
-    expect(packageDeliverableSeeds).toHaveLength(8);
+    expect(packageDeliverableSeeds).toHaveLength(7);
+    expect(packageDeliverableSeeds.map((deliverable) => deliverable.deliverableCode)).not.toContain(
+      "transparent_crest_png"
+    );
     expect(packageDeliverableSeeds.every((deliverable) => deliverable.required)).toBe(true);
     expect(promptTemplateSeeds).toHaveLength(4);
     expect(productPromptBindingSeeds).toHaveLength(4);

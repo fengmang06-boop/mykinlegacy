@@ -20,7 +20,6 @@ import {
   LocalPrivateStorageAdapter,
   createDownloadToken,
   createSignedAssetUrl,
-  createTransparentPng,
   generateReadme,
   generateZipPackage,
   getDownloadVault,
@@ -91,29 +90,6 @@ describe("MVP E2E happy path with mock providers", () => {
           required: true
         });
       }
-
-      const transparent = await createTransparentPng({
-        output_file_path: join(tempDir, "transparent_crest_png.png")
-      });
-      storedAssets.push(
-        await storeAvailableAsset({
-          assetRepository,
-          storage,
-          sourceFilePath: transparent.file_path,
-          deliverableCode: "transparent_crest_png",
-          assetType: "image",
-          assetKind: "generated",
-          fileExt: "png",
-          mimeType: "image/png",
-          width: transparent.width,
-          height: transparent.height
-        })
-      );
-      zipInputs.push({
-        archive_path: "transparent-png/transparent_crest_png.png",
-        file_path: transparent.file_path,
-        required: true
-      });
 
       const storyCandidate = await handleAiTextGenerationJob(sampleTextJob("family_story_pdf"), {
         providerRegistry,

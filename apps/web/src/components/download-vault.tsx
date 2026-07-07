@@ -38,7 +38,7 @@ const demoArtifacts: DownloadAsset[] = [
   {
     asset_id: "demo_heritage_certificate",
     deliverable_code: "heritage_certificate_pdf",
-    friendly_name: "Heritage Certificate",
+    friendly_name: "Private Archive Certificate",
     asset_type: "pdf",
     file_ext: "pdf",
     mime_type: "application/pdf",
@@ -99,12 +99,22 @@ const artifactDescriptions: Record<string, string> = {
   crest_variant_1_png: "A symbolic family centerpiece shaped around values, story, and belonging.",
   crest_variant_2_png: "A second crest artwork option for family review.",
   crest_variant_3_png: "A third crest artwork option for family review.",
-  transparent_crest_png: "A transparent crest artwork prepared for personal display uses.",
-  heritage_certificate_pdf: "A ceremonial keepsake for gifting, printing, and preserving.",
+  heritage_certificate_pdf: "A clean private archive document for gifting, printing, and preserving.",
   family_story_pdf: "A written family narrative meant to be read, shared, and kept.",
   symbol_explanation_pdf: "A guide to the symbols, colors, and motto in the collection.",
   download_package_zip: "The complete private collection prepared for safekeeping."
 };
+const customerVisibleDeliverables = new Set([
+  "collection_letter",
+  "crest_artwork",
+  "crest_variant_1_png",
+  "crest_variant_2_png",
+  "crest_variant_3_png",
+  "heritage_certificate_pdf",
+  "family_story_pdf",
+  "symbol_explanation_pdf",
+  "download_package_zip"
+]);
 
 export function DownloadVault({ token }: { token: string }) {
   const [vault, setVault] = useState<DownloadVaultData | null>(null);
@@ -203,7 +213,9 @@ export function DownloadVault({ token }: { token: string }) {
     );
   }
 
-  const sortedAssets = [...assets].sort((a, b) => artifactOrder(a) - artifactOrder(b));
+  const sortedAssets = assets
+    .filter((asset) => customerVisibleDeliverables.has(asset.deliverable_code))
+    .sort((a, b) => artifactOrder(a) - artifactOrder(b));
   const hasPlaceholderAssets = sortedAssets.some(isPlaceholderAsset);
   const hasMeaningContext = Boolean(vault?.meaning_profile || vault?.collection_content);
   const firstPdfAsset = sortedAssets.find(
@@ -481,11 +493,10 @@ function artifactOrder(asset: DownloadAsset): number {
     crest_variant_1_png: 2,
     crest_variant_2_png: 3,
     crest_variant_3_png: 4,
-    transparent_crest_png: 5,
-    heritage_certificate_pdf: 6,
-    family_story_pdf: 7,
-    symbol_explanation_pdf: 8,
-    download_package_zip: 9
+    heritage_certificate_pdf: 5,
+    family_story_pdf: 6,
+    symbol_explanation_pdf: 7,
+    download_package_zip: 8
   };
   return order[asset.deliverable_code] ?? 50;
 }
@@ -501,7 +512,7 @@ function downloadDemoCollection(asset: DownloadAsset): void {
     "Included in the complete Family Legacy Collection:",
     "- Collection Letter",
     "- Crest Artwork",
-    "- Heritage Certificate",
+    "- Private Archive Certificate",
     "- Family Story",
     "- Symbol Guide",
     "- Complete Collection Archive",

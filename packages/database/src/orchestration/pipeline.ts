@@ -17,7 +17,6 @@ export const REQUIRED_DELIVERABLES = [
   "crest_variant_1_png",
   "crest_variant_2_png",
   "crest_variant_3_png",
-  "transparent_crest_png",
   "symbol_explanation_pdf",
   "heritage_certificate_pdf",
   "family_story_pdf",
@@ -117,16 +116,19 @@ export async function runManifestDrivenGeneration(input: {
   const orderItem = await input.repository.findOrderItem(manifest.order_item_id);
   if (!orderItem) throw new Error("order_item_not_found");
   const timestamp = iso(input.now);
-  const refreshedMeaning = createMeaningAttachment(
-    meaningInputFromOrder({
-      order,
-      orderItem,
-      payload: {
-        ...order.metadata_json,
-        ...existingMeaningCustomerInputs(manifest)
-      }
-    }),
-    input.now ?? new Date()
+  const refreshedMeaning = applySingleOrderLreTextIntegration(
+    createMeaningAttachment(
+      meaningInputFromOrder({
+        order,
+        orderItem,
+        payload: {
+          ...order.metadata_json,
+          ...existingMeaningCustomerInputs(manifest)
+        }
+      }),
+      input.now ?? new Date()
+    ),
+    order.order_number
   );
   const manifestWithFreshMeaning = {
     ...manifest,
@@ -1056,11 +1058,12 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
   if (artifact.file_ext === "zip") {
     const entries = tools.listZipEntries(artifact.body);
     const requiredEntries = [
-      `${ZIP_ROOT}/01-Heritage-Certificate/Heritage-Certificate.pdf`,
+      `${ZIP_ROOT}/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf`,
       `${ZIP_ROOT}/02-Family-Story/Family-Story.pdf`,
       `${ZIP_ROOT}/03-Symbol-Guide/Symbol-Guide.pdf`,
       `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-01.png`,
-      `${ZIP_ROOT}/04-Crest-Artwork/Transparent-Crest-Artwork.png`,
+      `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-02.png`,
+      `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-03.png`,
       `${ZIP_ROOT}/05-Private-Archive-Notes/Read-Me.txt`
     ];
     if (
@@ -1187,17 +1190,17 @@ function createArtifactContext(input: {
 function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext): string {
   if (deliverableCode === "heritage_certificate_pdf") {
     return pdfDocumentText({
-      title: "Heritage Certificate",
-      subtitle: "A private symbolic keepsake prepared for family recognition and remembrance.",
+      title: "Private Archive Certificate",
+      subtitle: "A clean keepsake document prepared for family recognition and remembrance.",
       context,
       sections: [
         ["Presented For", context.house_name],
         ["Collection Name", context.collection_content?.collection_name ?? `${context.house_name} Private Legacy Collection`],
-        ["Certificate Statement", context.collection_content?.certificate_text ?? certificateFallback(context)],
+        ["Keepsake Statement", context.collection_content?.certificate_text ?? certificateFallback(context)],
         ["Meaning Summary", meaningSummary(context)],
         ["Symbolic Elements", symbolBulletText(context)],
         ["Family Meaning Record", certificateMeaningRecord(context)],
-        ["Ceremonial Reading Note", certificateReadingNote(context)],
+        ["Reading Note", certificateReadingNote(context)],
         ["Private Archive Companion Note", certificateCompanionNote(context)],
         ["Preservation Note", "Prepared as a private archival keepsake for personal gifting, keeping, and family remembrance."]
       ]
@@ -1229,7 +1232,7 @@ function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext
       ["The Meaning Behind This Collection", meaningSummary(context)],
       ["Symbols Chosen for Your Family", symbolGuideText(context)],
       ["Why It Was Designed This Way", context.collection_content?.design_basis ?? designFallback(context)],
-      ["How the Certificate Should Feel", context.certificate_direction ?? "Private, warm, archival, and suitable for family keeping."],
+      ["How the Archive Document Should Feel", context.certificate_direction ?? "Private, warm, archival, and suitable for family keeping."],
       ["Preservation and Sharing Note", symbolGuidePreservationNote(context)]
     ]
   });
@@ -1296,7 +1299,7 @@ function symbolGuideText(context: ArtifactContext): string {
 function symbolGuideIntro(context: ArtifactContext): string {
   return [
     `This guide explains the symbolic language chosen for ${context.house_name}.`,
-    "It is meant to be read beside the crest artwork, certificate, and family story so the family can see how the visual choices connect to the written meaning.",
+    "It is meant to be read beside the crest artwork, private archive certificate, and family story so the family can see how the visual choices connect to the written meaning.",
     "Each symbol is included once, with its meaning, family signal, visual role, emotional purpose, and connection to the wider collection.",
     "The symbols are personal interpretation, not official heraldry. They do not claim legal arms, noble title, certified ancestry, or public family authority.",
     "Read the guide slowly. The strongest use is not to memorize the symbols, but to let them open a family conversation about what should be recognized, protected, remembered, and passed down."
@@ -1338,7 +1341,7 @@ function themeBulletText(context: ArtifactContext): string {
 }
 
 function certificateFallback(context: ArtifactContext): string {
-  return `Presented as a private symbolic keepsake for ${context.house_name}. This certificate honors ${naturalList(
+  return `Presented as a private symbolic keepsake for ${context.house_name}. This archive document honors ${naturalList(
     context.themes.map((theme) => theme.theme),
     "family meaning"
   )} and the symbols chosen to represent the family with dignity.`;
@@ -1361,27 +1364,27 @@ function certificateMeaningRecord(context: ArtifactContext): string {
 
 function certificateReadingNote(context: ArtifactContext): string {
   return [
-    "If this certificate is given as a gift, it is meant to be opened slowly.",
+    "If this keepsake document is given as a gift, it is meant to be opened slowly.",
     `Begin with the collection name and the archive reference for ${context.order_number}, then read the meaning statement before looking at the crest artwork.`,
-    "The certificate works best when paired with a short personal note, a family photograph, or a memory spoken aloud by the person giving it.",
+    "The document works best when paired with a short personal note, a family photograph, or a memory spoken aloud by the person giving it.",
     "Future readers should understand that the value of this artifact comes from family recognition and preservation, not from public authority.",
     "The strongest moment is simple: the recipient should be able to see the symbols, read the story, and feel that the collection was prepared with care for this family.",
-    "A certificate like this becomes more meaningful when the family adds its own voice around it. It can sit beside a handwritten card, a printed photograph, an old recipe, a recording, or a story told at the table. Those real family details are not replaced by the certificate; they complete it.",
+    "A private archive document like this becomes more meaningful when the family adds its own voice around it. It can sit beside a handwritten card, a printed photograph, an old recipe, a recording, or a story told at the table. Those real family details are not replaced by the document; they complete it.",
     "When this artifact is opened years later, it should still be clear why it was made: to name the qualities the family wanted to honor, to make those qualities visible through symbols, and to leave a private record that future relatives can understand without needing a long explanation.",
     "If a child or grandchild asks what the symbols mean, begin with the family values before the artwork. Explain what protection, continuity, gratitude, resilience, memory, guidance, unity, or sacrifice meant in the family's real life. The design is strongest when it becomes a doorway into those conversations.",
-    "The certificate should be treated as one piece of a wider private archive. The crest artwork gives the collection a visual emblem, the story gives it a human voice, the symbol guide explains the language, and this certificate marks the moment when the collection was prepared for keeping.",
+    "This document should be treated as one piece of a wider private archive. The crest artwork gives the collection a visual emblem, the story gives it a human voice, the symbol guide explains the language, and this document marks the moment when the collection was prepared for keeping.",
     "Nothing here should be read as a final word on the family. It is a beginning: a careful, symbolic record that can invite more names, dates, photographs, corrections, and memories over time."
   ].join(" ");
 }
 
 function certificateCompanionNote(context: ArtifactContext): string {
   return [
-    "This certificate is the formal opening piece of the collection, but it should not stand alone.",
-    "The family story gives the certificate warmth, the symbol guide gives it clarity, and the crest artwork gives it a visual center.",
+    "This private archive certificate is the opening document of the collection, but it should not stand alone.",
+    "The family story gives the document warmth, the symbol guide gives it clarity, and the crest artwork gives it a visual center.",
     `For ${context.house_name}, the best use is to let each artifact answer a different question: what does this family mean, which symbols carry that meaning, why was this collection prepared, and what should be remembered later?`,
-    "When the collection is shared with a parent, grandparent, spouse, child, or close relative, the certificate can serve as the first page: dignified enough to present, clear enough to understand, and careful enough not to make claims the family did not provide.",
-    "The archive reference connects the certificate to this private order record, while the private vault keeps the full collection together for future access.",
-    "If the family adds more memories later, this certificate should remain as the first version of the symbolic record rather than being treated as a final historical document.",
+    "When the collection is shared with a parent, grandparent, spouse, child, or close relative, the document can serve as the first page: dignified enough to present, clear enough to understand, and careful enough not to make claims the family did not provide.",
+    "The archive reference connects the document to this private order record, while the private vault keeps the full collection together for future access.",
+    "If the family adds more memories later, this document should remain as the first version of the symbolic record rather than being treated as a final historical document.",
     "Keep it with the full collection so the meaning, artwork, and story stay connected."
   ].join(" ");
 }
@@ -1414,7 +1417,7 @@ function familyStoryPreservationContext(context: ArtifactContext): string {
       context.symbols.map((symbol) => titleCase(symbol.symbol)),
       "chosen symbols"
     )}, so the artwork is not treated as decoration alone.`,
-    "The story should be kept with the certificate because the certificate marks the occasion, while the story explains why the occasion matters.",
+    "The story should be kept with the private archive certificate because the document marks the occasion, while the story explains why the occasion matters.",
     "It should be kept with the symbol guide because future readers may remember the image before they remember the reason behind it.",
     "It should be kept with the complete archive because family meaning is strongest when words, symbols, and artifacts stay together.",
     "When shared as a gift, this story can be read privately before the full collection is shown to others.",
@@ -1459,7 +1462,7 @@ function archiveCareText(context: ArtifactContext): string {
     )}.`,
     "The purpose is to give the family a readable, gift-ready artifact that can be revisited over time without claiming public authority, legal heraldry, or certified genealogy.",
     "MyKinLegacy creates these documents as personalized symbolic keepsakes: meaningful, private, and designed to be preserved.",
-    "Suggested family use: open the certificate when giving the collection as a gift, then read the story slowly with the person receiving it.",
+    "Suggested family use: open the private archive certificate when giving the collection as a gift, then read the story slowly with the person receiving it.",
     "Suggested family use: keep the symbol guide near the crest artwork so future readers understand why each element was chosen.",
     "Suggested family use: place the collection archive beside family photos, letters, recipes, recordings, or other private records that carry emotional weight.",
     "Suggested family use: revisit the collection when a child asks what the family values or why certain memories matter.",
@@ -1479,13 +1482,12 @@ function archiveCareText(context: ArtifactContext): string {
 
 function customerFileName(deliverableCode: string): string {
   const names: Record<string, string> = {
-    heritage_certificate_pdf: "Heritage-Certificate.pdf",
+    heritage_certificate_pdf: "Private-Archive-Certificate.pdf",
     family_story_pdf: "Family-Story.pdf",
     symbol_explanation_pdf: "Symbol-Guide.pdf",
     crest_variant_1_png: "Crest-Artwork-01.png",
     crest_variant_2_png: "Crest-Artwork-02.png",
     crest_variant_3_png: "Crest-Artwork-03.png",
-    transparent_crest_png: "Transparent-Crest-Artwork.png",
     download_package_zip: "Complete-Collection-Archive.zip"
   };
   return names[deliverableCode] ?? `${deliverableCode}.${deliverableCode.endsWith("_png") ? "png" : "pdf"}`;
@@ -1493,13 +1495,12 @@ function customerFileName(deliverableCode: string): string {
 
 function archivePathForDeliverable(deliverableCode: string): string {
   const paths: Record<string, string> = {
-    heritage_certificate_pdf: `${ZIP_ROOT}/01-Heritage-Certificate/Heritage-Certificate.pdf`,
+    heritage_certificate_pdf: `${ZIP_ROOT}/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf`,
     family_story_pdf: `${ZIP_ROOT}/02-Family-Story/Family-Story.pdf`,
     symbol_explanation_pdf: `${ZIP_ROOT}/03-Symbol-Guide/Symbol-Guide.pdf`,
     crest_variant_1_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-01.png`,
     crest_variant_2_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-02.png`,
-    crest_variant_3_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-03.png`,
-    transparent_crest_png: `${ZIP_ROOT}/04-Crest-Artwork/Transparent-Crest-Artwork.png`
+    crest_variant_3_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-03.png`
   };
   return paths[deliverableCode] ?? `${ZIP_ROOT}/${customerFileName(deliverableCode)}`;
 }
@@ -1670,6 +1671,49 @@ function meaningInputFromOrder(input: {
 function createMeaningAttachment(input: Record<string, unknown>, now: Date): Record<string, unknown> {
   const meaningModule = loadMeaningEngine();
   return meaningModule.createMeaningManifestAttachment(input, now) as Record<string, unknown>;
+}
+
+function applySingleOrderLreTextIntegration(attachment: Record<string, unknown>, orderNumber: string): Record<string, unknown> {
+  const allowlist = (process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST ?? "")
+    .split(",")
+    .map((value) => value.trim())
+    .filter(Boolean);
+  if (!allowlist.includes(orderNumber)) return attachment;
+
+  const content = isRecord(attachment.collection_content) ? attachment.collection_content : {};
+  return {
+    ...attachment,
+    collection_content: {
+      ...content,
+      certificate_text: [
+        stringOrNull(recordValue(content, "certificate_text")),
+        "This private archive certificate is personal in authority: it reflects the family evidence provided for this order and does not claim public rank, official arms, or certified ancestry."
+      ]
+        .filter(Boolean)
+        .join(" "),
+      family_story: [
+        "Nothing here asks the family to believe invented history; the story stays close to the values, memories, and symbols the family chose to preserve.",
+        stringOrNull(recordValue(content, "family_story"))
+      ]
+        .filter(Boolean)
+        .join(" "),
+      share_caption:
+        stringOrNull(recordValue(content, "share_caption")) ??
+        "A private symbolic keepsake shaped around family meaning, made to be kept and shared only by choice.",
+      readme_note: [
+        stringOrNull(recordValue(content, "readme_note")),
+        "This archive includes an LRE text pass for one controlled order. Payment, email, vault, and PNG generation were not changed."
+      ]
+        .filter(Boolean)
+        .join(" "),
+      lre_text_integration: {
+        enabled: true,
+        mode: "single_order_allowlist",
+        png_generation_changed: false,
+        payment_email_vault_changed: false
+      }
+    }
+  };
 }
 
 function loadArtifactTooling(): ArtifactTooling {

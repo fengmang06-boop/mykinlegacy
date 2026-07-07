@@ -22,8 +22,8 @@ const heroArtifacts = [
     `${finalHomepageAsset}/02_homepage/hero/hero-house-identity.webp`
   ],
   [
-    "Heritage Certificate",
-    "A ceremonial piece for gifting, printing, and keeping.",
+    "Private Archive Certificate",
+    "A clean keepsake document for gifting, printing, and keeping.",
     `${finalHomepageAsset}/02_homepage/hero/hero-heritage-certificate.webp`
   ],
   [
@@ -83,8 +83,8 @@ const receives = [
     `${finalHomepageAsset}/04_homepage/features/feature-house-identity.webp`
   ],
   [
-    "Heritage Certificate",
-    "A premium ceremonial artifact designed for personal keeping and gifting.",
+    "Private Archive Certificate",
+    "A clean keepsake document designed for personal keeping and gifting.",
     `${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`
   ],
   [
@@ -233,7 +233,7 @@ export default function HomePage() {
               />
               <div className="home-hero-visual-caption">
                 <span>Private collection display</span>
-                <strong>Identity, story, certificate, and vault in one keepsake.</strong>
+                <strong>Identity, story, archive document, and vault in one keepsake.</strong>
               </div>
             </div>
             <div className="home-artifact-grid">

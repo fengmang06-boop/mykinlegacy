@@ -101,7 +101,6 @@ export const expectedMvpDeliverables = [
   "crest_variant_1_png",
   "crest_variant_2_png",
   "crest_variant_3_png",
-  "transparent_crest_png",
   "symbol_explanation_pdf",
   "heritage_certificate_pdf",
   "family_story_pdf",

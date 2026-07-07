@@ -143,7 +143,7 @@ export function CreateStart() {
                   alt=""
                   aria-hidden="true"
                 />
-                Certificate
+                Archive Certificate
               </span>
               <span>
                 <Image

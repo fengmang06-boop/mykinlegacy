@@ -19,7 +19,7 @@ export default function DigitalDeliveryPage() {
       sections={[
         {
           title: "What is delivered",
-          body: "The package includes crest-inspired PNG files, transparent artwork, symbolic explanation PDF, certificate PDF, family story PDF, and ZIP package."
+          body: "The Founder Beta package includes three approved crest-inspired PNG files, a symbol guide PDF, a private archive certificate PDF, a family story PDF, and a ZIP archive."
         },
         {
           title: "Download Vault",

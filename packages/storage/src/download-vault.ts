@@ -3,7 +3,8 @@ import { createHash, randomBytes } from "node:crypto";
 import type { StorageProviderAdapter } from "./types";
 
 export const DOWNLOAD_VAULT_DISCLAIMER =
-  "Your collection is a personalized, AI-generated, heritage-inspired symbolic design and is not an official, legally granted, or historically certified coat of arms.";
+  "Your collection is a personalized heritage-inspired symbolic keepsake and is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record.";
+const CUSTOMER_DE_SCOPED_DELIVERABLES = new Set(["transparent_crest_png"]);
 
 export type DownloadVaultErrorCode =
   | "download_token_invalid"
@@ -305,7 +306,7 @@ export async function getDownloadVault(input: {
   now?: Date;
 }): Promise<DownloadVaultSummary> {
   const token = await validateDownloadToken(input);
-  const assets = await input.repository.listAssetsForToken(token.id);
+  const assets = (await input.repository.listAssetsForToken(token.id)).filter(isCustomerFacingAsset);
   const meaningContext = input.repository.getMeaningContextForToken
     ? await input.repository.getMeaningContextForToken(token.id)
     : null;
@@ -346,7 +347,7 @@ export async function listDownloadAssets(input: {
   now?: Date;
 }): Promise<DownloadAssetListItem[]> {
   const token = await validateDownloadToken(input);
-  const assets = await input.repository.listAssetsForToken(token.id);
+  const assets = (await input.repository.listAssetsForToken(token.id)).filter(isCustomerFacingAsset);
   return assets.map((asset) => ({
     asset_id: asset.asset_id,
     deliverable_code: asset.deliverable_code,
@@ -484,6 +485,10 @@ export function isAssetAvailable(asset: DownloadAssetRecord): boolean {
     (asset.status === "available" || asset.status === "available_for_download") &&
     asset.size_bytes >= minimumDownloadableBytes(asset.file_ext)
   );
+}
+
+function isCustomerFacingAsset(asset: Pick<DownloadAssetRecord, "deliverable_code">): boolean {
+  return !CUSTOMER_DE_SCOPED_DELIVERABLES.has(asset.deliverable_code);
 }
 
 function minimumDownloadableBytes(fileExt: string): number {

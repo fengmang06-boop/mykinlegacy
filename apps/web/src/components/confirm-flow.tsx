@@ -166,7 +166,7 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
           <aside className="interview-preview" aria-label="Collection summary">
             <div className="preview-cover">
               <strong>Collection Preview</strong>
-              <span>Crest artwork, certificate, story, symbol guide, and private vault.</span>
+              <span>Crest artwork, private archive certificate, story, symbol guide, and private vault.</span>
             </div>
             <p className="notice">
               Required consent and secure checkout happen before collection preparation begins.

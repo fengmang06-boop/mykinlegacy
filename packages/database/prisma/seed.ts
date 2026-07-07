@@ -143,6 +143,15 @@ async function seedDeliverables(productPackageId: string) {
     deliverableTypes.set(deliverableTypeSeed.code, deliverableType.id);
   }
 
+  await prisma.packageDeliverable.deleteMany({
+    where: {
+      packageId: productPackageId,
+      deliverableCode: {
+        notIn: packageDeliverableSeeds.map((seed) => seed.deliverableCode)
+      }
+    }
+  });
+
   for (const packageDeliverableSeed of packageDeliverableSeeds) {
     const deliverableTypeId = deliverableTypes.get(packageDeliverableSeed.deliverableTypeCode);
     if (!deliverableTypeId) {

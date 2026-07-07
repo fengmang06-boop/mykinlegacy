@@ -172,7 +172,7 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
             <li>Your payment is confirmed.</li>
             <li>Your House Identity is being prepared.</li>
             <li>We are creating your crest variants.</li>
-            <li>We are preparing your story and certificate.</li>
+            <li>We are preparing your story and private archive certificate.</li>
             <li>We are packaging your private vault files.</li>
           </ul>
           {showSupport ? (

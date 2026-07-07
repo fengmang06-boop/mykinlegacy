@@ -30,7 +30,7 @@ const collectionArtifacts = [
   "Private family collection",
   "Recognition letter",
   "Symbolic crest artwork",
-  "Heritage certificate",
+  "Private archive certificate",
   "Family story",
   "Symbol guide",
   "Secure private vault"

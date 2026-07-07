@@ -29,7 +29,7 @@ export const packageSeed = {
   sortOrder: 1,
   generationConfigJson: {
     image_count: 3,
-    transparent_png: true,
+    transparent_png: false,
     required_pdf_count: 3,
     zip_required: true,
     text_strategy: {
@@ -125,24 +125,14 @@ export const packageDeliverableSeeds = [
     configJson: crestVariantConfig
   },
   {
-    deliverableCode: "transparent_crest_png",
-    deliverableTypeCode: "transparent_crest_png",
-    quantity: 1,
-    required: true,
-    sortOrder: 40,
-    configJson: {
-      transparent_background: true,
-      derived_from: "selected_or_best_crest_variant"
-    }
-  },
-  {
     deliverableCode: "heritage_certificate_pdf",
     deliverableTypeCode: "heritage_certificate_pdf",
     quantity: 1,
     required: true,
-    sortOrder: 50,
+    sortOrder: 40,
     configJson: {
       server_side_text_rendering: true,
+      positioning: "clean_private_archive_keepsake_document",
       heritage_disclaimer_required: true
     }
   },
@@ -151,7 +141,7 @@ export const packageDeliverableSeeds = [
     deliverableTypeCode: "family_story_pdf",
     quantity: 1,
     required: true,
-    sortOrder: 60,
+    sortOrder: 50,
     configJson: {
       server_side_text_rendering: true,
       heritage_disclaimer_required: true
@@ -162,7 +152,7 @@ export const packageDeliverableSeeds = [
     deliverableTypeCode: "symbol_explanation_pdf",
     quantity: 1,
     required: true,
-    sortOrder: 70,
+    sortOrder: 60,
     configJson: {
       server_side_text_rendering: true,
       approved_symbol_knowledge_only: true,
@@ -174,10 +164,10 @@ export const packageDeliverableSeeds = [
     deliverableTypeCode: "download_package_zip",
     quantity: 1,
     required: true,
-    sortOrder: 80,
+    sortOrder: 70,
     configJson: {
       include_all_required_assets: true,
-      zip_structure: ["crest-designs", "transparent-png", "pdfs", "read-me"]
+      zip_structure: ["crest-artwork", "pdfs", "read-me"]
     }
   }
 ] as const;

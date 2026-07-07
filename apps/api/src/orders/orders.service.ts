@@ -710,9 +710,8 @@ function friendlyDeliverableName(code: string): string {
     crest_variant_1_png: "Crest Artwork 1",
     crest_variant_2_png: "Crest Artwork 2",
     crest_variant_3_png: "Crest Artwork 3",
-    transparent_crest_png: "Transparent Crest Artwork",
     symbol_explanation_pdf: "Symbol Guide",
-    heritage_certificate_pdf: "Heritage Certificate",
+    heritage_certificate_pdf: "Private Archive Certificate",
     family_story_pdf: "Family Story",
     download_package_zip: "Complete Collection Archive"
   };

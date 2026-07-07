@@ -459,6 +459,8 @@ function officialAssetPath(fileName: string): string {
 function officialAssetPathCandidates(fileName: string): string[] {
   const candidates = [
     join(process.cwd(), "packages", "storage", "assets", "official", fileName),
+    join(process.cwd(), "..", "storage", "assets", "official", fileName),
+    join(process.cwd(), "..", "..", "packages", "storage", "assets", "official", fileName),
     join(process.cwd(), "assets", "official", fileName)
   ];
   if (typeof __dirname === "string") {

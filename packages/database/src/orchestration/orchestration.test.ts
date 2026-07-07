@@ -171,7 +171,7 @@ describe("DB-backed orchestration foundation", () => {
         .sort((a, b) => a.deliverable_code.localeCompare(b.deliverable_code))
         .map((asset) => readStoredAsset(asset))
     );
-    expect(new Set(pngBodies.map((body) => body.toString("base64"))).size).toBe(4);
+    expect(new Set(pngBodies.map((body) => body.toString("base64"))).size).toBe(3);
     for (const asset of result.assets.filter((item) => item.file_ext === "pdf")) {
       const body = await readStoredAsset(asset);
       const text = body.toString("latin1");
@@ -183,17 +183,19 @@ describe("DB-backed orchestration foundation", () => {
     }
     expect(listZipEntries(zipBody)).toEqual(
       expect.arrayContaining([
-        "MyKinLegacy-Private-Legacy-Collection/01-Heritage-Certificate/Heritage-Certificate.pdf",
+        "MyKinLegacy-Private-Legacy-Collection/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf",
         "MyKinLegacy-Private-Legacy-Collection/02-Family-Story/Family-Story.pdf",
         "MyKinLegacy-Private-Legacy-Collection/03-Symbol-Guide/Symbol-Guide.pdf",
         "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
-        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Transparent-Crest-Artwork.png",
+        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-02.png",
+        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-03.png",
         "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
       ])
     );
+    expect(listZipEntries(zipBody).join("\n")).not.toContain("Transparent-Crest-Artwork");
     expect(result.assets.map((asset) => asset.file_name)).toEqual(
       expect.arrayContaining([
-        "Heritage-Certificate.pdf",
+        "Private-Archive-Certificate.pdf",
         "Family-Story.pdf",
         "Symbol-Guide.pdf",
         "Crest-Artwork-01.png",

@@ -271,7 +271,7 @@ describe("customer frontend flow", () => {
     expect(html).not.toContain("Download files will be available in the next delivery step.");
     expect(html).toContain("House Meaning Summary");
     expect(html).toContain("Family Story");
-    expect(html).toContain("Heritage Certificate Text");
+    expect(html).toContain("Private Archive Certificate Text");
     expect(html).toContain("Collection Letter");
     expect(html).toContain("Design Basis");
     expect(html).toContain("Symbol Guide");

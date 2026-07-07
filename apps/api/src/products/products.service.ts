@@ -54,6 +54,8 @@ interface PackageDeliverableRecord {
   };
 }
 
+const CUSTOMER_DE_SCOPED_DELIVERABLES = new Set(["transparent_crest_png"]);
+
 @Injectable()
 export class ProductsService {
   private readonly prisma: ProductClient;
@@ -127,22 +129,36 @@ function serializeProduct(product: ProductRecord) {
       price_cents: Number(productPackage.priceCents),
       currency: productPackage.currency,
       sort_order: productPackage.sortOrder,
-      generation_config: productPackage.generationConfigJson,
+      generation_config: customerSafeGenerationConfig(productPackage.generationConfigJson),
       metadata: productPackage.metadataJson,
-      deliverables: productPackage.packageDeliverables.map((deliverable) => ({
-        deliverable_code: deliverable.deliverableCode,
-        deliverable_type: deliverable.deliverableType.code,
-        category: deliverable.deliverableType.category,
-        format: deliverable.deliverableType.defaultFileExt,
-        mime_type: deliverable.deliverableType.defaultMimeType,
-        is_digital: deliverable.deliverableType.isDigital,
-        quantity: deliverable.quantity,
-        required: deliverable.required,
-        sort_order: deliverable.sortOrder,
-        config: deliverable.configJson
-      }))
+      deliverables: productPackage.packageDeliverables
+        .filter((deliverable) => !CUSTOMER_DE_SCOPED_DELIVERABLES.has(deliverable.deliverableCode))
+        .map((deliverable) => ({
+          deliverable_code: deliverable.deliverableCode,
+          deliverable_type: deliverable.deliverableType.code,
+          category: deliverable.deliverableType.category,
+          format: deliverable.deliverableType.defaultFileExt,
+          mime_type: deliverable.deliverableType.defaultMimeType,
+          is_digital: deliverable.deliverableType.isDigital,
+          quantity: deliverable.quantity,
+          required: deliverable.required,
+          sort_order: deliverable.sortOrder,
+          config: deliverable.configJson
+        }))
     }))
   };
+}
+
+function customerSafeGenerationConfig(value: unknown): unknown {
+  if (!value || typeof value !== "object" || Array.isArray(value)) return value;
+  const config = { ...(value as Record<string, unknown>) };
+  if ("transparent_png" in config) {
+    config.transparent_png = false;
+  }
+  if (Array.isArray(config.zip_structure)) {
+    config.zip_structure = config.zip_structure.filter((entry) => entry !== "transparent-png");
+  }
+  return config;
 }
 
 function customerSafeProductCopy(value: string | null): string | null {

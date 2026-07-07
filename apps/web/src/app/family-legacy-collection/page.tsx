@@ -49,7 +49,7 @@ export default function FamilyLegacyCollectionPage() {
                 alt=""
                 aria-hidden="true"
               />
-              <strong>Heritage Certificate</strong>
+              <strong>Private Archive Certificate</strong>
               <span>Personal keepsake</span>
             </article>
             <article className="product-artifact-card">
@@ -148,7 +148,7 @@ export default function FamilyLegacyCollectionPage() {
               alt=""
               aria-hidden="true"
             />
-            <span>Heritage Certificate</span>
+            <span>Private Archive Certificate</span>
             <strong>Personal keepsake</strong>
           </article>
           <article className="mock-page artifact-preview-card">
@@ -184,7 +184,7 @@ export default function FamilyLegacyCollectionPage() {
             <strong>From your guided interview and confirmed order details.</strong>
           </div>
           <div className="faq-row">
-            <span>Can I print the certificate and artwork?</span>
+            <span>Can I print the archive document and artwork?</span>
             <strong>Yes, the collection is prepared for personal gifting and keeping.</strong>
           </div>
           <div className="faq-row">

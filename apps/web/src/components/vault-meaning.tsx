@@ -3,7 +3,7 @@ import React from "react";
 import type { VaultCollectionContent, VaultMeaningProfile } from "../lib/api-client";
 
 const includedItems = [
-  "Heritage Certificate",
+  "Private Archive Certificate",
   "Family Story",
   "Symbol Guide",
   "Crest Artwork",
@@ -85,8 +85,8 @@ export function CollectionDocuments({ collectionContent }: VaultMeaningProps) {
       body: collectionContent.family_story
     },
     {
-      title: "Heritage Certificate Text",
-      description: "Ceremonial wording for the private keepsake certificate.",
+      title: "Private Archive Certificate Text",
+      description: "Clean keepsake wording for the private archive document.",
       body: collectionContent.certificate_text
     },
     {

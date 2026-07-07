@@ -11,13 +11,16 @@ describe("ProductsService", () => {
     expect(result.products[0]?.product_code).toBe("family_legacy_collection");
   });
 
-  it("returns premium package and 8 deliverables", async () => {
+  it("returns premium package and 7 customer-facing deliverables", async () => {
     const service = new ProductsService(createPrismaServiceMock());
     const result = await service.getProduct("family_legacy_collection");
 
     expect(result.packages[0]?.package_code).toBe("premium");
     expect(result.packages[0]?.price_cents).toBe(4900);
-    expect(result.packages[0]?.deliverables).toHaveLength(8);
+    expect(result.packages[0]?.deliverables).toHaveLength(7);
+    expect(result.packages[0]?.deliverables.map((deliverable) => deliverable.deliverable_code)).not.toContain(
+      "transparent_crest_png"
+    );
   });
 
   it("removes AI-generated wording from customer-facing product payload", async () => {

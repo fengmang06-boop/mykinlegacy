@@ -27,7 +27,7 @@ export async function generateReadme(input: {
     ...input.included_files.map((file) => `- ${file}`),
     "",
     "How to use this archive",
-    "Open the Heritage Certificate first when giving the collection as a gift. It is the ceremonial entry point.",
+    "Open the Private Archive Certificate first when giving the collection as a gift. It is the clean keepsake entry point for the archive.",
     "Read the Family Story slowly, preferably with the person receiving the collection or with close family nearby.",
     "Use the Symbol Guide beside the crest artwork so the symbols feel connected to memory, values, and family meaning.",
     "Keep the crest artwork with the documents. The image is strongest when the written meaning stays beside it.",
