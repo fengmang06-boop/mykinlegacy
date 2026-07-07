@@ -40,8 +40,9 @@ export function PolicyPage({ eyebrow, title, intro, sections }: PolicyPageProps)
         <div className="section">
           <h2>Core service disclaimer</h2>
           <p className="lead">
-            {BRAND_NAME} provides personalized heritage-inspired symbolic design as a digital
-            product. It is not an official, legally granted, or historically certified coat of arms.
+            {BRAND_NAME} provides personalized heritage-inspired symbolic keepsakes as a digital
+            product. It is not an official coat of arms, legal heraldic grant, noble title claim, or
+            certified genealogical record.
           </p>
           <p>
             Contact: <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>

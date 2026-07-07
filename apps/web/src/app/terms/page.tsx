@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Terms of Service | MyKinLegacy",
   description:
-    "Terms for MyKinLegacy digital delivery, symbolic heritage designs, accountless checkout, and customer responsibilities.",
+    "Terms for MyKinLegacy digital delivery, symbolic keepsake preparation, accountless checkout, and customer responsibilities.",
   path: "/terms"
 });
 
@@ -19,7 +19,7 @@ export default function TermsPage() {
       sections={[
         {
           title: "Digital product",
-          body: "The Family Legacy Collection is a digital product delivered through a Download Vault. No physical shipping is included."
+          body: "The Family Legacy Collection is a digital product delivered through a private vault. No physical shipping is included."
         },
         {
           title: "Customer inputs",
@@ -27,7 +27,7 @@ export default function TermsPage() {
         },
         {
           title: "Symbolic nature",
-          body: "Generated designs are personalized, heritage-inspired symbolic designs and are not official, legally granted, or historically certified arms."
+          body: "Delivered designs are personalized, heritage-inspired symbolic keepsakes. They are not official coats of arms, legal heraldic grants, noble title claims, or certified genealogical records."
         },
         {
           title: "Service availability",

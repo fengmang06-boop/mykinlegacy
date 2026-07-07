@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Heritage Design Disclaimer | MyKinLegacy",
   description:
-    "MyKinLegacy creates personalized heritage-inspired symbolic designs, not official or legally granted coats of arms.",
+    "MyKinLegacy creates personalized heritage-inspired symbolic keepsakes, not official coats of arms or legal heraldic grants.",
   path: "/disclaimer"
 });
 
@@ -23,7 +23,7 @@ export default function DisclaimerPage() {
         },
         {
           title: "Personalized symbolic design",
-          body: "Artwork, story, and explanations are generated from customer inputs and curated rules as heritage-inspired symbolic creative output."
+          body: "Artwork, story, and explanations are prepared from customer inputs and curated symbolic rules as heritage-inspired creative output."
         },
         {
           title: "Historical limits",

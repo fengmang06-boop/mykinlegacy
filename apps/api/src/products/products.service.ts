@@ -118,8 +118,8 @@ function serializeProduct(product: ProductRecord) {
     translations: product.translations.map((translation) => ({
       locale: translation.locale,
       name: translation.name,
-      short_description: translation.shortDescription,
-      description: translation.descriptionJson
+      short_description: customerSafeProductCopy(translation.shortDescription),
+      description: customerSafeProductDescription(translation.descriptionJson)
     })),
     packages: product.packages.map((productPackage) => ({
       package_code: productPackage.code,
@@ -143,4 +143,40 @@ function serializeProduct(product: ProductRecord) {
       }))
     }))
   };
+}
+
+function customerSafeProductCopy(value: string | null): string | null {
+  if (!value) return value;
+  return value
+    .replace(/\bAI-generated,\s*/gi, "")
+    .replace(/\bAI generated,\s*/gi, "")
+    .replace(/\bAI-generated\b/gi, "personalized")
+    .replace(/\bAI generated\b/gi, "personalized")
+    .replace(
+      /\bofficial,\s*legally granted,\s*or historically certified coat of arms\b/gi,
+      "official coat of arms, legal heraldic grant, or certified genealogical record"
+    )
+    .replace(/\blegally granted\b/gi, "legal heraldic grant")
+    .replace(/\bhistorically certified\b/gi, "certified genealogical")
+    .replace(/\bprivate download vault\b/gi, "private vault")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function customerSafeProductDescription(value: unknown): unknown {
+  if (Array.isArray(value)) {
+    return value.map(customerSafeProductDescription);
+  }
+  if (value && typeof value === "object") {
+    return Object.fromEntries(
+      Object.entries(value as Record<string, unknown>).map(([key, entry]) => [
+        key,
+        customerSafeProductDescription(entry)
+      ])
+    );
+  }
+  if (typeof value === "string") {
+    return customerSafeProductCopy(value);
+  }
+  return value;
 }

@@ -19,6 +19,19 @@ describe("ProductsService", () => {
     expect(result.packages[0]?.price_cents).toBe(4900);
     expect(result.packages[0]?.deliverables).toHaveLength(8);
   });
+
+  it("removes AI-generated wording from customer-facing product payload", async () => {
+    const service = new ProductsService(createPrismaServiceMock());
+    const result = await service.getProduct("family_legacy_collection");
+    const serialized = JSON.stringify(result);
+
+    expect(serialized).not.toMatch(/AI-generated|AI generated/i);
+    expect(serialized).not.toMatch(/legally granted|historically certified|private download vault/i);
+    expect(result.translations[0]?.short_description).toContain("heritage-inspired");
+    expect(result.translations[0]?.description).toMatchObject({
+      disclaimer: expect.stringContaining("certified genealogical record")
+    });
+  });
 });
 
 function createPrismaServiceMock(): PrismaService {
@@ -51,7 +64,19 @@ function createProductRecord() {
     status: "active",
     productType: "digital",
     defaultLocale: "en-US",
-    translations: [],
+    translations: [
+      {
+        locale: "en-US",
+        name: "Family Legacy Collection",
+        shortDescription:
+          "A personalized, AI-generated, heritage-inspired symbolic family identity collection.",
+        descriptionJson: {
+          attributes: ["personalized", "AI-generated", "heritage-inspired", "symbolic"],
+          disclaimer:
+            "This is not an official, legally granted, or historically certified coat of arms."
+        }
+      }
+    ],
     packages: [
       {
         code: "premium",
