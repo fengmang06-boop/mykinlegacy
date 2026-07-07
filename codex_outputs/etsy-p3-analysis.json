@@ -1,0 +1,4821 @@
+{
+  "generatedAt": "2026-07-07T08:39:16.248Z",
+  "source": "production local database, read-only export",
+  "metrics": {
+    "listings": 215,
+    "receipts": 267,
+    "transactions": 260,
+    "images": 2023,
+    "analyzed": 215,
+    "avgSeo": 86,
+    "avgConversion": 85,
+    "avgOpportunity": 31
+  },
+  "bottleneckCounts": {
+    "titleBelow80": 67,
+    "tagsBelow80": 44,
+    "imagesBelow78": 85,
+    "pricingBelow75": 11,
+    "conversionBelow80": 34,
+    "highOrMediumRisk": 62,
+    "hasSales": 71,
+    "hasFavorites": 207,
+    "hasViews": 214,
+    "lowInventory": 0
+  },
+  "top20": [
+    {
+      "id": "cmrad1bgb02uwy4yd0p2h224a",
+      "etsyListingId": "4309463444",
+      "title": "Custom Solid Brass Car Emblem: Engraved Vintage Vehicle Badge",
+      "url": "https://www.etsy.com/listing/4309463444/custom-solid-brass-car-emblem-engraved",
+      "price": 199,
+      "quantity": 12,
+      "imageCount": 10,
+      "scores": {
+        "seo": 68,
+        "title": 46,
+        "tags": 94,
+        "images": 76,
+        "conversion": 77,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 82,
+        "opportunity": 53
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 46,
+      "evidence": {
+        "views": 892,
+        "favorites": 22,
+        "salesQuantity": 6,
+        "transactionCount": 4,
+        "inventoryQuantity": 12
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: custom auto badge",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 53. Focus on Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "id": "cmrad308104y1y4ydyvz04xyi",
+      "etsyListingId": "953602764",
+      "title": "Handcrafted Hellboy Skull Ring: 925 Sterling Silver Hells Baron Ring",
+      "url": "https://www.etsy.com/listing/953602764/handcrafted-hellboy-skull-ring-925",
+      "price": 226,
+      "quantity": 374,
+      "imageCount": 6,
+      "scores": {
+        "seo": 69,
+        "title": 83,
+        "tags": 52,
+        "images": 80,
+        "conversion": 79,
+        "pricing": 90,
+        "competition": 77,
+        "freshness": 82,
+        "opportunity": 53
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 52,
+      "evidence": {
+        "views": 2106,
+        "favorites": 105,
+        "salesQuantity": 6,
+        "transactionCount": 6,
+        "inventoryQuantity": 374
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: skull rings for men",
+          "duplicate tag meaning: silver rings",
+          "duplicate tag meaning: mens jewelry",
+          "duplicate tag meaning: skull rings",
+          "duplicate tag meaning: Hellboy Fan Gift",
+          "duplicate tag meaning: hellboy ring",
+          "duplicate tag meaning: hellboy rings",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: 925 silver pendant",
+          "missing keyword: dark jewelry gift"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 53. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraakba002fgy4w15fnuq5w8",
+      "etsyListingId": "1491847732",
+      "title": "Bearded Skull Ring Handcrafted Sterling Silver Artisan Biker Jewelry",
+      "url": "https://www.etsy.com/listing/1491847732/handcrafted-sterling-silver-bearded",
+      "price": 126,
+      "quantity": 1020,
+      "imageCount": 13,
+      "scores": {
+        "seo": 69,
+        "title": 88,
+        "tags": 46,
+        "images": 92,
+        "conversion": 83,
+        "pricing": 90,
+        "competition": 67,
+        "freshness": 82,
+        "opportunity": 52
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 46,
+      "evidence": {
+        "views": 1076,
+        "favorites": 35,
+        "salesQuantity": 4,
+        "transactionCount": 4,
+        "inventoryQuantity": 1020
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull ring",
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: skull rings for men",
+          "duplicate tag meaning: mens skull rings",
+          "duplicate tag meaning: mens jewelry",
+          "duplicate tag meaning: silver jewelry",
+          "duplicate tag meaning: skull ring for women",
+          "duplicate tag meaning: mens skull ring",
+          "duplicate tag meaning: silver skull ring",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: 925 silver pendant"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 52. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraailp100bay4w1tu636u8i",
+      "etsyListingId": "4432511462",
+      "title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "url": "https://www.etsy.com/listing/4432511462/fishbone-pants-chain-gothic-fish-bone",
+      "price": 136,
+      "quantity": 3,
+      "imageCount": 9,
+      "scores": {
+        "seo": 74,
+        "title": 63,
+        "tags": 88,
+        "images": 76,
+        "conversion": 80,
+        "pricing": 90,
+        "competition": 76,
+        "freshness": 95,
+        "opportunity": 48
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 63,
+      "evidence": {
+        "views": 1858,
+        "favorites": 283,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 3
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Repeated wording detected: chain."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: punk accessory",
+          "duplicate tag meaning: gothic accessory",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 48. Focus on Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "id": "cmraaij9n008ey4w19btjx71a",
+      "etsyListingId": "868314062",
+      "title": "Sterling Silver Skull Ring for Men - Gothic Biker Custom Size Ring",
+      "url": "https://www.etsy.com/listing/868314062/handcrafted-sterling-silver-skull-ring",
+      "price": 226,
+      "quantity": 816,
+      "imageCount": 7,
+      "scores": {
+        "seo": 85,
+        "title": 83,
+        "tags": 88,
+        "images": 72,
+        "conversion": 82,
+        "pricing": 90,
+        "competition": 68,
+        "freshness": 95,
+        "opportunity": 47
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 72,
+      "evidence": {
+        "views": 4475,
+        "favorites": 194,
+        "salesQuantity": 8,
+        "transactionCount": 8,
+        "inventoryQuantity": 816
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: gothic jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 47. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaj3j900x0y4w15kubc2z8",
+      "etsyListingId": "878616671",
+      "title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "url": "https://www.etsy.com/listing/878616671/handcrafted-sterling-silver-skull-ring",
+      "price": 206,
+      "quantity": 1122,
+      "imageCount": 17,
+      "scores": {
+        "seo": 83,
+        "title": 83,
+        "tags": 82,
+        "images": 76,
+        "conversion": 83,
+        "pricing": 90,
+        "competition": 53,
+        "freshness": 95,
+        "opportunity": 47
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 5538,
+        "favorites": 314,
+        "salesQuantity": 14,
+        "transactionCount": 14,
+        "inventoryQuantity": 1122
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: biker jewelry",
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: mens gothic ring",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 47. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaja0h015by4w16l4lczny",
+      "etsyListingId": "1767970801",
+      "title": "V Mask Ring in 925 Sterling Silver - Gothic Statement Ring for Men",
+      "url": "https://www.etsy.com/listing/1767970801/v-for-vendetta-mask-ring-925-sterling",
+      "price": 226,
+      "quantity": 306,
+      "imageCount": 9,
+      "scores": {
+        "seo": 88,
+        "title": 83,
+        "tags": 94,
+        "images": 76,
+        "conversion": 85,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 45
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 612,
+        "favorites": 37,
+        "salesQuantity": 4,
+        "transactionCount": 4,
+        "inventoryQuantity": 306
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: gothic jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 45. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad1rnt03fey4ydu58hcncl",
+      "etsyListingId": "1903822437",
+      "title": "Handmade Sterling Silver Wolf Bracelet: Viking Leather Cord Jewelry",
+      "url": "https://www.etsy.com/listing/1903822437/handmade-sterling-silver-wolf-bracelet",
+      "price": 180,
+      "quantity": 48,
+      "imageCount": 8,
+      "scores": {
+        "seo": 77,
+        "title": 78,
+        "tags": 76,
+        "images": 92,
+        "conversion": 86,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 82,
+        "opportunity": 45
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 374,
+        "favorites": 11,
+        "salesQuantity": 5,
+        "transactionCount": 5,
+        "inventoryQuantity": 48
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: Wolf Tooth Bracelet",
+          "duplicate tag meaning: Wolf Spirit Bracelet",
+          "duplicate tag meaning: Wolf Lover Gift",
+          "duplicate tag meaning: Viking Bracelet",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 45. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmraaju9c01uey4w1qjoweels",
+      "etsyListingId": "1681075317",
+      "title": "Sterling Silver Gothic Key Necklace - Oxidized 24 Inch Unisex Pendant",
+      "url": "https://www.etsy.com/listing/1681075317/sterling-silver-key-necklace-gothic-key",
+      "price": 166,
+      "quantity": 28,
+      "imageCount": 19,
+      "scores": {
+        "seo": 85,
+        "title": 88,
+        "tags": 82,
+        "images": 84,
+        "conversion": 87,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 95,
+        "opportunity": 45
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 82,
+      "evidence": {
+        "views": 9065,
+        "favorites": 980,
+        "salesQuantity": 37,
+        "transactionCount": 34,
+        "inventoryQuantity": 28
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: silver pendant",
+          "duplicate tag meaning: gothic pendant",
+          "duplicate tag meaning: key jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 45. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraajcgl0183y4w126cgns3n",
+      "etsyListingId": "899931401",
+      "title": "Anubis Ring in Sterling Silver - Egyptian Mythology Gothic Ring",
+      "url": "https://www.etsy.com/listing/899931401/anubis-ring-handmade-sterling-silver",
+      "price": 236,
+      "quantity": 170,
+      "imageCount": 6,
+      "scores": {
+        "seo": 85,
+        "title": 83,
+        "tags": 88,
+        "images": 88,
+        "conversion": 88,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 45
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "title",
+      "weakestScore": 83,
+      "evidence": {
+        "views": 1001,
+        "favorites": 77,
+        "salesQuantity": 4,
+        "transactionCount": 4,
+        "inventoryQuantity": 170
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: egyptian jewelry",
+          "duplicate tag meaning: gothic jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 45. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaj5yp0108y4w13wex4ahg",
+      "etsyListingId": "1756185464",
+      "title": "Chunky Sterling Silver Skull Ring - Gothic Biker Ring for Men",
+      "url": "https://www.etsy.com/listing/1756185464/chunky-sterling-silver-skull-ring-gothic",
+      "price": 266,
+      "quantity": 69,
+      "imageCount": 13,
+      "scores": {
+        "seo": 83,
+        "title": 83,
+        "tags": 82,
+        "images": 100,
+        "conversion": 91,
+        "pricing": 90,
+        "competition": 58,
+        "freshness": 95,
+        "opportunity": 45
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 82,
+      "evidence": {
+        "views": 1375,
+        "favorites": 60,
+        "salesQuantity": 8,
+        "transactionCount": 8,
+        "inventoryQuantity": 69
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: gothic jewelry",
+          "duplicate tag meaning: biker jewelry",
+          "duplicate tag meaning: skull jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 45. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad1u2z03i7y4ydsds0go5l",
+      "etsyListingId": "1707620821",
+      "title": "Gothic Biker Jewelry - Heavy Sterling Silver Skull Bracelet",
+      "url": "https://www.etsy.com/listing/1707620821/gothic-biker-jewelry-heavy-sterling",
+      "price": 486,
+      "quantity": 72,
+      "imageCount": 7,
+      "scores": {
+        "seo": 88,
+        "title": 88,
+        "tags": 88,
+        "images": 64,
+        "conversion": 80,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 82,
+        "opportunity": 44
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 892,
+        "favorites": 30,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 72
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: Skull Bead Bracelet",
+          "duplicate tag meaning: Skull Cuff Men",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 44. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraajnrw01m7y4w1np8thaxc",
+      "etsyListingId": "1865435490",
+      "title": "Amenadiel Angel Pendant Necklace - 925 Silver Gothic Talisman",
+      "url": "https://www.etsy.com/listing/1865435490/amenadiel-necklace-sterling-silver",
+      "price": 288,
+      "quantity": 7,
+      "imageCount": 12,
+      "scores": {
+        "seo": 88,
+        "title": 88,
+        "tags": 88,
+        "images": 84,
+        "conversion": 87,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 95,
+        "opportunity": 44
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 84,
+      "evidence": {
+        "views": 9625,
+        "favorites": 353,
+        "salesQuantity": 35,
+        "transactionCount": 35,
+        "inventoryQuantity": 7
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: gothic jewelry",
+          "duplicate tag meaning: mens pendant",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 44. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraajpep01oey4w1dn33gdy9",
+      "etsyListingId": "4387570273",
+      "title": "Gothic Cross Pants Chain - Titanium Steel Punk Wallet Chain for Men",
+      "url": "https://www.etsy.com/listing/4387570273/gothic-cross-pants-chain-for-men",
+      "price": 126,
+      "quantity": 35,
+      "imageCount": 8,
+      "scores": {
+        "seo": 62,
+        "title": 51,
+        "tags": 76,
+        "images": 76,
+        "conversion": 75,
+        "pricing": 90,
+        "competition": 81,
+        "freshness": 95,
+        "opportunity": 43
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 51,
+      "evidence": {
+        "views": 130,
+        "favorites": 14,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 35
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: chain."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: gothic punk jewelry",
+          "duplicate tag meaning: skull buckle chain",
+          "duplicate tag meaning: punk chain jewelry",
+          "duplicate tag meaning: biker gothic chain",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 43. Focus on Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "id": "cmraaeqwp007ky4fxsnkmz6jk",
+      "etsyListingId": "1620950628",
+      "title": "Black Mamba Snake Ring - 925 Sterling Silver Reptile Ring for Men",
+      "url": "https://www.etsy.com/listing/1620950628/black-mamba-snake-ring-925-sterling",
+      "price": 246,
+      "quantity": 204,
+      "imageCount": 6,
+      "scores": {
+        "seo": 91,
+        "title": 83,
+        "tags": 100,
+        "images": 64,
+        "conversion": 81,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 43
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 1047,
+        "favorites": 48,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 204
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 43. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaix1c00pby4w1j0q0h13k",
+      "etsyListingId": "994985179",
+      "title": "Sterling Silver Skull Bead Bracelet - Gothic Mens Biker Bracelet",
+      "url": "https://www.etsy.com/listing/994985179/hand-forged-sterling-silver-skull-bead",
+      "price": 496,
+      "quantity": 66,
+      "imageCount": 6,
+      "scores": {
+        "seo": 83,
+        "title": 83,
+        "tags": 82,
+        "images": 88,
+        "conversion": 87,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 95,
+        "opportunity": 43
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 82,
+      "evidence": {
+        "views": 1968,
+        "favorites": 90,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 66
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: bracelet.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: bracelet."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: gothic jewelry",
+          "duplicate tag meaning: mens jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 43. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaiqkx00hay4w190e5qdi0",
+      "etsyListingId": "949279802",
+      "title": "Heavy Sterling Silver Skull Ring for Men - Gothic Biker Statement Ring",
+      "url": "https://www.etsy.com/listing/949279802/sterling-silver-punisher-ring-heavy",
+      "price": 126,
+      "quantity": 68,
+      "imageCount": 17,
+      "scores": {
+        "seo": 89,
+        "title": 95,
+        "tags": 82,
+        "images": 92,
+        "conversion": 91,
+        "pricing": 90,
+        "competition": 63,
+        "freshness": 95,
+        "opportunity": 43
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 82,
+      "evidence": {
+        "views": 3715,
+        "favorites": 174,
+        "salesQuantity": 16,
+        "transactionCount": 16,
+        "inventoryQuantity": 68
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: biker jewelry",
+          "duplicate tag meaning: gothic jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 43. Focus on Repeated wording detected: ring."
+    },
+    {
+      "id": "cmrad31u304zry4ydlb6ka6kx",
+      "etsyListingId": "1757666279",
+      "title": "Mens Sterling Silver Chain Bracelet: Knife Etched Design, Handmade",
+      "url": "https://www.etsy.com/listing/1757666279/mens-sterling-silver-chain-bracelet",
+      "price": 486,
+      "quantity": 55,
+      "imageCount": 5,
+      "scores": {
+        "seo": 66,
+        "title": 78,
+        "tags": 52,
+        "images": 80,
+        "conversion": 78,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 82,
+        "opportunity": 42
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 52,
+      "evidence": {
+        "views": 596,
+        "favorites": 35,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 55
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: mens Bracelet",
+          "duplicate tag meaning: silver Bracelet",
+          "duplicate tag meaning: mens bracelets",
+          "duplicate tag meaning: silver bracelets",
+          "duplicate tag meaning: bracelets for women",
+          "duplicate tag meaning: bracelet for women",
+          "duplicate tag meaning: bracelet 925",
+          "duplicate tag meaning: bracelet silver",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 42. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmraajyb501zky4w1fclh54ce",
+      "etsyListingId": "1823952340",
+      "title": "Ruby Skull Ring Sterling Silver | Gothic Skull Band for Men",
+      "url": "https://www.etsy.com/listing/1823952340/ruby-skull-ring-sterling-silver-gothic",
+      "price": 266,
+      "quantity": 442,
+      "imageCount": 11,
+      "scores": {
+        "seo": 80,
+        "title": 83,
+        "tags": 76,
+        "images": 76,
+        "conversion": 81,
+        "pricing": 90,
+        "competition": 68,
+        "freshness": 82,
+        "opportunity": 42
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 218,
+        "favorites": 15,
+        "salesQuantity": 2,
+        "transactionCount": 2,
+        "inventoryQuantity": 442
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: skull.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: skull."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry men",
+          "duplicate tag meaning: ruby gothic ring",
+          "duplicate tag meaning: gothic gift for him",
+          "duplicate tag meaning: skull ring for men",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 42. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad3bk305bby4ydaclp6t5t",
+      "etsyListingId": "1696664061",
+      "title": "Grassland Overlord - Handmade Sterling Silver Lion Pendant Necklace",
+      "url": "https://www.etsy.com/listing/1696664061/grassland-overlord-handmade-sterling",
+      "price": 266,
+      "quantity": 14,
+      "imageCount": 9,
+      "scores": {
+        "seo": 66,
+        "title": 78,
+        "tags": 52,
+        "images": 92,
+        "conversion": 82,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 70,
+        "opportunity": 42
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 52,
+      "evidence": {
+        "views": 118,
+        "favorites": 10,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 14
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: necklace for women",
+          "duplicate tag meaning: pendant for women",
+          "duplicate tag meaning: silver pendant",
+          "duplicate tag meaning: Lion necklace",
+          "duplicate tag meaning: lion pendant",
+          "duplicate tag meaning: silver lion",
+          "duplicate tag meaning: lion king",
+          "duplicate tag meaning: lion for men",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 42. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    }
+  ],
+  "soldWeakSeoOrImages": [
+    {
+      "id": "cmraaj3j900x0y4w15kubc2z8",
+      "etsyListingId": "878616671",
+      "title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "url": "https://www.etsy.com/listing/878616671/handcrafted-sterling-silver-skull-ring",
+      "price": 206,
+      "quantity": 1122,
+      "imageCount": 17,
+      "scores": {
+        "seo": 83,
+        "title": 83,
+        "tags": 82,
+        "images": 76,
+        "conversion": 83,
+        "pricing": 90,
+        "competition": 53,
+        "freshness": 95,
+        "opportunity": 47
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 5538,
+        "favorites": 314,
+        "salesQuantity": 14,
+        "transactionCount": 14,
+        "inventoryQuantity": 1122
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: biker jewelry",
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: mens gothic ring",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 47. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad1dvx02xxy4yd1b072ykl",
+      "etsyListingId": "4364083038",
+      "title": "Customize with your name - Sterling Silver Personalized Serpent Key Pendant",
+      "url": "https://www.etsy.com/listing/4364083038/customize-with-your-name-sterling-silver",
+      "price": 83,
+      "quantity": 40,
+      "imageCount": 13,
+      "scores": {
+        "seo": 84,
+        "title": 90,
+        "tags": 76,
+        "images": 76,
+        "conversion": 82,
+        "pricing": 86,
+        "competition": 91,
+        "freshness": 82,
+        "opportunity": 40
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 75,
+        "favorites": 2,
+        "salesQuantity": 10,
+        "transactionCount": 1,
+        "inventoryQuantity": 40
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Premium price is supported by material or handmade signals.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: Key Necklace",
+          "duplicate tag meaning: custom word pendant",
+          "duplicate tag meaning: custom jewelry gift",
+          "duplicate tag meaning: custom name gift",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 40. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmraaij9n008ey4w19btjx71a",
+      "etsyListingId": "868314062",
+      "title": "Sterling Silver Skull Ring for Men - Gothic Biker Custom Size Ring",
+      "url": "https://www.etsy.com/listing/868314062/handcrafted-sterling-silver-skull-ring",
+      "price": 226,
+      "quantity": 816,
+      "imageCount": 7,
+      "scores": {
+        "seo": 85,
+        "title": 83,
+        "tags": 88,
+        "images": 72,
+        "conversion": 82,
+        "pricing": 90,
+        "competition": 68,
+        "freshness": 95,
+        "opportunity": 47
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 72,
+      "evidence": {
+        "views": 4475,
+        "favorites": 194,
+        "salesQuantity": 8,
+        "transactionCount": 8,
+        "inventoryQuantity": 816
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: gothic jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 47. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad1bgb02uwy4yd0p2h224a",
+      "etsyListingId": "4309463444",
+      "title": "Custom Solid Brass Car Emblem: Engraved Vintage Vehicle Badge",
+      "url": "https://www.etsy.com/listing/4309463444/custom-solid-brass-car-emblem-engraved",
+      "price": 199,
+      "quantity": 12,
+      "imageCount": 10,
+      "scores": {
+        "seo": 68,
+        "title": 46,
+        "tags": 94,
+        "images": 76,
+        "conversion": 77,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 82,
+        "opportunity": 53
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 46,
+      "evidence": {
+        "views": 892,
+        "favorites": 22,
+        "salesQuantity": 6,
+        "transactionCount": 4,
+        "inventoryQuantity": 12
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: custom auto badge",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 53. Focus on Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "id": "cmrad308104y1y4ydyvz04xyi",
+      "etsyListingId": "953602764",
+      "title": "Handcrafted Hellboy Skull Ring: 925 Sterling Silver Hells Baron Ring",
+      "url": "https://www.etsy.com/listing/953602764/handcrafted-hellboy-skull-ring-925",
+      "price": 226,
+      "quantity": 374,
+      "imageCount": 6,
+      "scores": {
+        "seo": 69,
+        "title": 83,
+        "tags": 52,
+        "images": 80,
+        "conversion": 79,
+        "pricing": 90,
+        "competition": 77,
+        "freshness": 82,
+        "opportunity": 53
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 52,
+      "evidence": {
+        "views": 2106,
+        "favorites": 105,
+        "salesQuantity": 6,
+        "transactionCount": 6,
+        "inventoryQuantity": 374
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: skull rings for men",
+          "duplicate tag meaning: silver rings",
+          "duplicate tag meaning: mens jewelry",
+          "duplicate tag meaning: skull rings",
+          "duplicate tag meaning: Hellboy Fan Gift",
+          "duplicate tag meaning: hellboy ring",
+          "duplicate tag meaning: hellboy rings",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: 925 silver pendant",
+          "missing keyword: dark jewelry gift"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 53. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad1rnt03fey4ydu58hcncl",
+      "etsyListingId": "1903822437",
+      "title": "Handmade Sterling Silver Wolf Bracelet: Viking Leather Cord Jewelry",
+      "url": "https://www.etsy.com/listing/1903822437/handmade-sterling-silver-wolf-bracelet",
+      "price": 180,
+      "quantity": 48,
+      "imageCount": 8,
+      "scores": {
+        "seo": 77,
+        "title": 78,
+        "tags": 76,
+        "images": 92,
+        "conversion": 86,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 82,
+        "opportunity": 45
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 374,
+        "favorites": 11,
+        "salesQuantity": 5,
+        "transactionCount": 5,
+        "inventoryQuantity": 48
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: Wolf Tooth Bracelet",
+          "duplicate tag meaning: Wolf Spirit Bracelet",
+          "duplicate tag meaning: Wolf Lover Gift",
+          "duplicate tag meaning: Viking Bracelet",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 45. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmraakba002fgy4w15fnuq5w8",
+      "etsyListingId": "1491847732",
+      "title": "Bearded Skull Ring Handcrafted Sterling Silver Artisan Biker Jewelry",
+      "url": "https://www.etsy.com/listing/1491847732/handcrafted-sterling-silver-bearded",
+      "price": 126,
+      "quantity": 1020,
+      "imageCount": 13,
+      "scores": {
+        "seo": 69,
+        "title": 88,
+        "tags": 46,
+        "images": 92,
+        "conversion": 83,
+        "pricing": 90,
+        "competition": 67,
+        "freshness": 82,
+        "opportunity": 52
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 46,
+      "evidence": {
+        "views": 1076,
+        "favorites": 35,
+        "salesQuantity": 4,
+        "transactionCount": 4,
+        "inventoryQuantity": 1020
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull ring",
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: skull rings for men",
+          "duplicate tag meaning: mens skull rings",
+          "duplicate tag meaning: mens jewelry",
+          "duplicate tag meaning: silver jewelry",
+          "duplicate tag meaning: skull ring for women",
+          "duplicate tag meaning: mens skull ring",
+          "duplicate tag meaning: silver skull ring",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: 925 silver pendant"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 52. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaja0h015by4w16l4lczny",
+      "etsyListingId": "1767970801",
+      "title": "V Mask Ring in 925 Sterling Silver - Gothic Statement Ring for Men",
+      "url": "https://www.etsy.com/listing/1767970801/v-for-vendetta-mask-ring-925-sterling",
+      "price": 226,
+      "quantity": 306,
+      "imageCount": 9,
+      "scores": {
+        "seo": 88,
+        "title": 83,
+        "tags": 94,
+        "images": 76,
+        "conversion": 85,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 45
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 612,
+        "favorites": 37,
+        "salesQuantity": 4,
+        "transactionCount": 4,
+        "inventoryQuantity": 306
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: gothic jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 45. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraailp100bay4w1tu636u8i",
+      "etsyListingId": "4432511462",
+      "title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "url": "https://www.etsy.com/listing/4432511462/fishbone-pants-chain-gothic-fish-bone",
+      "price": 136,
+      "quantity": 3,
+      "imageCount": 9,
+      "scores": {
+        "seo": 74,
+        "title": 63,
+        "tags": 88,
+        "images": 76,
+        "conversion": 80,
+        "pricing": 90,
+        "competition": 76,
+        "freshness": 95,
+        "opportunity": 48
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 63,
+      "evidence": {
+        "views": 1858,
+        "favorites": 283,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 3
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Repeated wording detected: chain."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: punk accessory",
+          "duplicate tag meaning: gothic accessory",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 48. Focus on Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "id": "cmrad1u2z03i7y4ydsds0go5l",
+      "etsyListingId": "1707620821",
+      "title": "Gothic Biker Jewelry - Heavy Sterling Silver Skull Bracelet",
+      "url": "https://www.etsy.com/listing/1707620821/gothic-biker-jewelry-heavy-sterling",
+      "price": 486,
+      "quantity": 72,
+      "imageCount": 7,
+      "scores": {
+        "seo": 88,
+        "title": 88,
+        "tags": 88,
+        "images": 64,
+        "conversion": 80,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 82,
+        "opportunity": 44
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 892,
+        "favorites": 30,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 72
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: Skull Bead Bracelet",
+          "duplicate tag meaning: Skull Cuff Men",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 44. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaeqwp007ky4fxsnkmz6jk",
+      "etsyListingId": "1620950628",
+      "title": "Black Mamba Snake Ring - 925 Sterling Silver Reptile Ring for Men",
+      "url": "https://www.etsy.com/listing/1620950628/black-mamba-snake-ring-925-sterling",
+      "price": 246,
+      "quantity": 204,
+      "imageCount": 6,
+      "scores": {
+        "seo": 91,
+        "title": 83,
+        "tags": 100,
+        "images": 64,
+        "conversion": 81,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 43
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 1047,
+        "favorites": 48,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 204
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 43. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaihna006cy4w1j7aa0kd3",
+      "etsyListingId": "1772572586",
+      "title": "Demon Horn Skull Ring for Men – Solid 925 Sterling Silver Heavy Gothic Biker Ring, Copper Inlay Short Horns",
+      "url": "https://www.etsy.com/listing/1772572586/handcrafted-sterling-silver-hellboy-ring",
+      "price": 246,
+      "quantity": 306,
+      "imageCount": 8,
+      "scores": {
+        "seo": 97,
+        "title": 95,
+        "tags": 100,
+        "images": 76,
+        "conversion": 88,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 39
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 2068,
+        "favorites": 138,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 306
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 39. Focus on Repeated wording detected: ring."
+    },
+    {
+      "id": "cmraak2de024cy4w11uyg2dic",
+      "etsyListingId": "1851967837",
+      "title": "Heavy Green Rage Monster Ring for Men – Solid 925 Sterling Silver Gothic Biker Statement Jewelry, Hulk Inspired Power Ring",
+      "url": "https://www.etsy.com/listing/1851967837/hulk-ring-925-sterling-silver-marvel",
+      "price": 246,
+      "quantity": 306,
+      "imageCount": 10,
+      "scores": {
+        "seo": 97,
+        "title": 95,
+        "tags": 100,
+        "images": 76,
+        "conversion": 88,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 39
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 465,
+        "favorites": 27,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 306
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Missing keyword opportunity: mens skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring",
+          "missing keyword: 925 silver pendant",
+          "missing keyword: dark jewelry gift"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 39. Focus on Repeated wording detected: ring."
+    },
+    {
+      "id": "cmraajyb501zky4w1fclh54ce",
+      "etsyListingId": "1823952340",
+      "title": "Ruby Skull Ring Sterling Silver | Gothic Skull Band for Men",
+      "url": "https://www.etsy.com/listing/1823952340/ruby-skull-ring-sterling-silver-gothic",
+      "price": 266,
+      "quantity": 442,
+      "imageCount": 11,
+      "scores": {
+        "seo": 80,
+        "title": 83,
+        "tags": 76,
+        "images": 76,
+        "conversion": 81,
+        "pricing": 90,
+        "competition": 68,
+        "freshness": 82,
+        "opportunity": 42
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 218,
+        "favorites": 15,
+        "salesQuantity": 2,
+        "transactionCount": 2,
+        "inventoryQuantity": 442
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: skull.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: skull."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry men",
+          "duplicate tag meaning: ruby gothic ring",
+          "duplicate tag meaning: gothic gift for him",
+          "duplicate tag meaning: skull ring for men",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 42. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaizgw00s8y4w1js8qr2ns",
+      "etsyListingId": "1840081864",
+      "title": "Heavy 925 Silver Chain Necklace for Men - Handmade Minimalist Chain",
+      "url": "https://www.etsy.com/listing/1840081864/heavy-925-sterling-silver-mens-chain",
+      "price": 446,
+      "quantity": 12,
+      "imageCount": 9,
+      "scores": {
+        "seo": 77,
+        "title": 73,
+        "tags": 82,
+        "images": 100,
+        "conversion": 89,
+        "pricing": 90,
+        "competition": 96,
+        "freshness": 95,
+        "opportunity": 39
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "title",
+      "weakestScore": 73,
+      "evidence": {
+        "views": 358,
+        "favorites": 14,
+        "salesQuantity": 2,
+        "transactionCount": 2,
+        "inventoryQuantity": 12
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: chain."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: mens chain",
+          "duplicate tag meaning: silver necklace",
+          "duplicate tag meaning: mens jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 39. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmrad1quo03eey4yd5wiglj1c",
+      "etsyListingId": "1883023114",
+      "title": "Handcrafted 24K Gold Mobius Bracelet: Sterling Silver Infinity Bangle",
+      "url": "https://www.etsy.com/listing/1883023114/handcrafted-24k-gold-mobius-bracelet",
+      "price": 586,
+      "quantity": 42,
+      "imageCount": 8,
+      "scores": {
+        "seo": 80,
+        "title": 78,
+        "tags": 82,
+        "images": 100,
+        "conversion": 90,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 82,
+        "opportunity": 39
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "title",
+      "weakestScore": 78,
+      "evidence": {
+        "views": 642,
+        "favorites": 31,
+        "salesQuantity": 2,
+        "transactionCount": 2,
+        "inventoryQuantity": 42
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: bracelet for women",
+          "duplicate tag meaning: bracelet silver",
+          "duplicate tag meaning: silver star bracelet",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 39. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmraaj2q000w0y4w1k280ry0e",
+      "etsyListingId": "1849471197",
+      "title": "Sterling Silver Cross Cuff Bracelet - Gothic Unisex Statement Bracelet",
+      "url": "https://www.etsy.com/listing/1849471197/sterling-silver-cross-cuff-bracelet",
+      "price": 486,
+      "quantity": 55,
+      "imageCount": 8,
+      "scores": {
+        "seo": 89,
+        "title": 95,
+        "tags": 82,
+        "images": 76,
+        "conversion": 85,
+        "pricing": 90,
+        "competition": 96,
+        "freshness": 95,
+        "opportunity": 38
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 404,
+        "favorites": 20,
+        "salesQuantity": 2,
+        "transactionCount": 2,
+        "inventoryQuantity": 55
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Repeated wording detected: bracelet.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Repeated wording detected: bracelet."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: silver jewelry",
+          "duplicate tag meaning: gothic jewelry",
+          "duplicate tag meaning: cross jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 38. Focus on Repeated wording detected: bracelet."
+    },
+    {
+      "id": "cmraajld301jcy4w1cpg5l6hx",
+      "etsyListingId": "1827467695",
+      "title": "Heavy Horseshoe Ring for Men - 925 Silver Lucky Biker Statement Ring",
+      "url": "https://www.etsy.com/listing/1827467695/handmade-sterling-silver-horseshoe-ring",
+      "price": 246,
+      "quantity": 204,
+      "imageCount": 5,
+      "scores": {
+        "seo": 91,
+        "title": 83,
+        "tags": 100,
+        "images": 64,
+        "conversion": 81,
+        "pricing": 90,
+        "competition": 70,
+        "freshness": 95,
+        "opportunity": 38
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 280,
+        "favorites": 20,
+        "salesQuantity": 2,
+        "transactionCount": 2,
+        "inventoryQuantity": 204
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 38. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaevsh00ksy4fxpjb21kc8",
+      "etsyListingId": "1758216320",
+      "title": "Anubis Ring - Handmade 925 Sterling Silver Egyptian God Jewelry",
+      "url": "https://www.etsy.com/listing/1758216320/anubis-ring-handmade-925-sterling-silver",
+      "price": 186,
+      "quantity": 612,
+      "imageCount": 11,
+      "scores": {
+        "seo": 74,
+        "title": 78,
+        "tags": 70,
+        "images": 92,
+        "conversion": 84,
+        "pricing": 86,
+        "competition": 77,
+        "freshness": 82,
+        "opportunity": 38
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 70,
+      "evidence": {
+        "views": 229,
+        "favorites": 7,
+        "salesQuantity": 2,
+        "transactionCount": 2,
+        "inventoryQuantity": 612
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Premium price is supported by material or handmade signals.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: mens jewelry",
+          "duplicate tag meaning: silver jewelry",
+          "duplicate tag meaning: mens anubis",
+          "duplicate tag meaning: anubis rings",
+          "duplicate tag meaning: anubis jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 38. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmrad2yli04w1y4ydylav7cko",
+      "etsyListingId": "4326417911",
+      "title": "Custom Brass Motorcycle Emblem: Harley Rider Eagle Badge, 3M Adhesive",
+      "url": "https://www.etsy.com/listing/4326417911/custom-brass-motorcycle-emblem-harley",
+      "price": 266,
+      "quantity": 4,
+      "imageCount": 10,
+      "scores": {
+        "seo": 68,
+        "title": 46,
+        "tags": 94,
+        "images": 76,
+        "conversion": 70,
+        "pricing": 64,
+        "competition": 86,
+        "freshness": 82,
+        "opportunity": 37
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 46,
+      "evidence": {
+        "views": 437,
+        "favorites": 1,
+        "salesQuantity": 2,
+        "transactionCount": 2,
+        "inventoryQuantity": 4
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "High price with low favorite signal creates conversion risk.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: motorcycle club gift",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Too expensive",
+        "pricingReasons": [
+          "High price with low favorite signal creates conversion risk."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword.",
+          "Review price against inventory and favorite/view signal."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 37. Focus on Add verified material wording near the front, such as sterling silver or 925 silver."
+    }
+  ],
+  "signalHighRisk": [
+    {
+      "id": "cmraaj3j900x0y4w15kubc2z8",
+      "etsyListingId": "878616671",
+      "title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "url": "https://www.etsy.com/listing/878616671/handcrafted-sterling-silver-skull-ring",
+      "price": 206,
+      "quantity": 1122,
+      "imageCount": 17,
+      "scores": {
+        "seo": 83,
+        "title": 83,
+        "tags": 82,
+        "images": 76,
+        "conversion": 83,
+        "pricing": 90,
+        "competition": 53,
+        "freshness": 95,
+        "opportunity": 47
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 5538,
+        "favorites": 314,
+        "salesQuantity": 14,
+        "transactionCount": 14,
+        "inventoryQuantity": 1122
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: biker jewelry",
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: mens gothic ring",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 47. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraailp100bay4w1tu636u8i",
+      "etsyListingId": "4432511462",
+      "title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "url": "https://www.etsy.com/listing/4432511462/fishbone-pants-chain-gothic-fish-bone",
+      "price": 136,
+      "quantity": 3,
+      "imageCount": 9,
+      "scores": {
+        "seo": 74,
+        "title": 63,
+        "tags": 88,
+        "images": 76,
+        "conversion": 80,
+        "pricing": 90,
+        "competition": 76,
+        "freshness": 95,
+        "opportunity": 48
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 63,
+      "evidence": {
+        "views": 1858,
+        "favorites": 283,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 3
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Repeated wording detected: chain."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: punk accessory",
+          "duplicate tag meaning: gothic accessory",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 48. Focus on Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "id": "cmraaij9n008ey4w19btjx71a",
+      "etsyListingId": "868314062",
+      "title": "Sterling Silver Skull Ring for Men - Gothic Biker Custom Size Ring",
+      "url": "https://www.etsy.com/listing/868314062/handcrafted-sterling-silver-skull-ring",
+      "price": 226,
+      "quantity": 816,
+      "imageCount": 7,
+      "scores": {
+        "seo": 85,
+        "title": 83,
+        "tags": 88,
+        "images": 72,
+        "conversion": 82,
+        "pricing": 90,
+        "competition": 68,
+        "freshness": 95,
+        "opportunity": 47
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 72,
+      "evidence": {
+        "views": 4475,
+        "favorites": 194,
+        "salesQuantity": 8,
+        "transactionCount": 8,
+        "inventoryQuantity": 816
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: gothic jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 47. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaihna006cy4w1j7aa0kd3",
+      "etsyListingId": "1772572586",
+      "title": "Demon Horn Skull Ring for Men – Solid 925 Sterling Silver Heavy Gothic Biker Ring, Copper Inlay Short Horns",
+      "url": "https://www.etsy.com/listing/1772572586/handcrafted-sterling-silver-hellboy-ring",
+      "price": 246,
+      "quantity": 306,
+      "imageCount": 8,
+      "scores": {
+        "seo": 97,
+        "title": 95,
+        "tags": 100,
+        "images": 76,
+        "conversion": 88,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 39
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 2068,
+        "favorites": 138,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 306
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 39. Focus on Repeated wording detected: ring."
+    },
+    {
+      "id": "cmraak3zr026cy4w1epkf29rm",
+      "etsyListingId": "1763723700",
+      "title": "Skull Link Bracelet for Men - 925 Silver Gothic Biker Chain Bracelet",
+      "url": "https://www.etsy.com/listing/1763723700/skull-link-bracelets-925-sterling-silver",
+      "price": 596,
+      "quantity": 60,
+      "imageCount": 10,
+      "scores": {
+        "seo": 85,
+        "title": 83,
+        "tags": 88,
+        "images": 76,
+        "conversion": 84,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 95,
+        "opportunity": 34
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 3337,
+        "favorites": 151,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 60
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: bracelet.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: bracelet."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: biker jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 34. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad308104y1y4ydyvz04xyi",
+      "etsyListingId": "953602764",
+      "title": "Handcrafted Hellboy Skull Ring: 925 Sterling Silver Hells Baron Ring",
+      "url": "https://www.etsy.com/listing/953602764/handcrafted-hellboy-skull-ring-925",
+      "price": 226,
+      "quantity": 374,
+      "imageCount": 6,
+      "scores": {
+        "seo": 69,
+        "title": 83,
+        "tags": 52,
+        "images": 80,
+        "conversion": 79,
+        "pricing": 90,
+        "competition": 77,
+        "freshness": 82,
+        "opportunity": 53
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 52,
+      "evidence": {
+        "views": 2106,
+        "favorites": 105,
+        "salesQuantity": 6,
+        "transactionCount": 6,
+        "inventoryQuantity": 374
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: skull rings for men",
+          "duplicate tag meaning: silver rings",
+          "duplicate tag meaning: mens jewelry",
+          "duplicate tag meaning: skull rings",
+          "duplicate tag meaning: Hellboy Fan Gift",
+          "duplicate tag meaning: hellboy ring",
+          "duplicate tag meaning: hellboy rings",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: 925 silver pendant",
+          "missing keyword: dark jewelry gift"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 53. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaj96t0149y4w1zjsok78f",
+      "etsyListingId": "1892386117",
+      "title": "Sterling Silver Skull Trouser Chain - Heavy Gothic Biker Pants Chain",
+      "url": "https://www.etsy.com/listing/1892386117/sterling-silver-skull-trouser-chain-edgy",
+      "price": 866,
+      "quantity": 36,
+      "imageCount": 10,
+      "scores": {
+        "seo": 72,
+        "title": 69,
+        "tags": 76,
+        "images": 76,
+        "conversion": 79,
+        "pricing": 90,
+        "competition": 81,
+        "freshness": 95,
+        "opportunity": 40
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 69,
+      "evidence": {
+        "views": 2355,
+        "favorites": 122,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 36
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Move the concrete product type into the first title phrase.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Move the concrete product type into the first title phrase.",
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: chain."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: silver wallet chain",
+          "duplicate tag meaning: biker jewelry",
+          "duplicate tag meaning: gothic accessory",
+          "duplicate tag meaning: skull jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 40. Focus on Move the concrete product type into the first title phrase."
+    },
+    {
+      "id": "cmraajwp401xay4w1zjo10dn3",
+      "etsyListingId": "4311760608",
+      "title": "Snake Ear Cuff in 925 Silver - Gothic Serpent Ear Climber",
+      "url": "https://www.etsy.com/listing/4311760608/sterling-silver-snake-ear-cuff-gothic",
+      "price": 166,
+      "quantity": 15,
+      "imageCount": 13,
+      "scores": {
+        "seo": 78,
+        "title": 74,
+        "tags": 82,
+        "images": 76,
+        "conversion": 81,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 95,
+        "opportunity": 33
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "title",
+      "weakestScore": 74,
+      "evidence": {
+        "views": 663,
+        "favorites": 76,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 15
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Move the concrete product type into the first title phrase.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Move the concrete product type into the first title phrase.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: snake jewelry",
+          "duplicate tag meaning: gothic jewelry",
+          "duplicate tag meaning: gift for him",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 33. Focus on Move the concrete product type into the first title phrase."
+    },
+    {
+      "id": "cmrad227103s6y4ydf0bbcvoy",
+      "etsyListingId": "1761289610",
+      "title": "Sterling Silver Mermaid Necklace: Pearl Pendant, Ocean Depths",
+      "url": "https://www.etsy.com/listing/1761289610/sterling-silver-mermaid-necklace-pearl",
+      "price": 266,
+      "quantity": 16,
+      "imageCount": 9,
+      "scores": {
+        "seo": 69,
+        "title": 78,
+        "tags": 58,
+        "images": 84,
+        "conversion": 80,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 82,
+        "opportunity": 41
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 58,
+      "evidence": {
+        "views": 590,
+        "favorites": 67,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 16
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: silver pendant",
+          "duplicate tag meaning: Pearl Pendant",
+          "duplicate tag meaning: Mermaid necklace",
+          "duplicate tag meaning: necklace mermaid",
+          "duplicate tag meaning: mermaid necklaces",
+          "duplicate tag meaning: mermaid gifts",
+          "duplicate tag meaning: mermaid tail",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 41. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmraaeqwp007ky4fxsnkmz6jk",
+      "etsyListingId": "1620950628",
+      "title": "Black Mamba Snake Ring - 925 Sterling Silver Reptile Ring for Men",
+      "url": "https://www.etsy.com/listing/1620950628/black-mamba-snake-ring-925-sterling",
+      "price": 246,
+      "quantity": 204,
+      "imageCount": 6,
+      "scores": {
+        "seo": 91,
+        "title": 83,
+        "tags": 100,
+        "images": 64,
+        "conversion": 81,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 43
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 1047,
+        "favorites": 48,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 204
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 43. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraaja0h015by4w16l4lczny",
+      "etsyListingId": "1767970801",
+      "title": "V Mask Ring in 925 Sterling Silver - Gothic Statement Ring for Men",
+      "url": "https://www.etsy.com/listing/1767970801/v-for-vendetta-mask-ring-925-sterling",
+      "price": 226,
+      "quantity": 306,
+      "imageCount": 9,
+      "scores": {
+        "seo": 88,
+        "title": 83,
+        "tags": 94,
+        "images": 76,
+        "conversion": 85,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 45
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 612,
+        "favorites": 37,
+        "salesQuantity": 4,
+        "transactionCount": 4,
+        "inventoryQuantity": 306
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: gothic jewelry",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 45. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraakba002fgy4w15fnuq5w8",
+      "etsyListingId": "1491847732",
+      "title": "Bearded Skull Ring Handcrafted Sterling Silver Artisan Biker Jewelry",
+      "url": "https://www.etsy.com/listing/1491847732/handcrafted-sterling-silver-bearded",
+      "price": 126,
+      "quantity": 1020,
+      "imageCount": 13,
+      "scores": {
+        "seo": 69,
+        "title": 88,
+        "tags": 46,
+        "images": 92,
+        "conversion": 83,
+        "pricing": 90,
+        "competition": 67,
+        "freshness": 82,
+        "opportunity": 52
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 46,
+      "evidence": {
+        "views": 1076,
+        "favorites": 35,
+        "salesQuantity": 4,
+        "transactionCount": 4,
+        "inventoryQuantity": 1020
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: skull ring",
+          "duplicate tag meaning: skull jewelry",
+          "duplicate tag meaning: skull rings for men",
+          "duplicate tag meaning: mens skull rings",
+          "duplicate tag meaning: mens jewelry",
+          "duplicate tag meaning: silver jewelry",
+          "duplicate tag meaning: skull ring for women",
+          "duplicate tag meaning: mens skull ring",
+          "duplicate tag meaning: silver skull ring",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: 925 silver pendant"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 52. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad1bgb02uwy4yd0p2h224a",
+      "etsyListingId": "4309463444",
+      "title": "Custom Solid Brass Car Emblem: Engraved Vintage Vehicle Badge",
+      "url": "https://www.etsy.com/listing/4309463444/custom-solid-brass-car-emblem-engraved",
+      "price": 199,
+      "quantity": 12,
+      "imageCount": 10,
+      "scores": {
+        "seo": 68,
+        "title": 46,
+        "tags": 94,
+        "images": 76,
+        "conversion": 77,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 82,
+        "opportunity": 53
+      },
+      "priority": "High",
+      "risk": "Medium",
+      "weakestArea": "title",
+      "weakestScore": 46,
+      "evidence": {
+        "views": 892,
+        "favorites": 22,
+        "salesQuantity": 6,
+        "transactionCount": 4,
+        "inventoryQuantity": 12
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add verified material wording near the front, such as sterling silver or 925 silver.",
+          "Move the concrete product type into the first title phrase.",
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: custom auto badge",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions.",
+          "Rewrite title around material, product type, and strongest buyer keyword."
+        ]
+      },
+      "summary": "High priority with medium conversion risk and Opportunity Score 53. Focus on Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "id": "cmrad1u2z03i7y4ydsds0go5l",
+      "etsyListingId": "1707620821",
+      "title": "Gothic Biker Jewelry - Heavy Sterling Silver Skull Bracelet",
+      "url": "https://www.etsy.com/listing/1707620821/gothic-biker-jewelry-heavy-sterling",
+      "price": 486,
+      "quantity": 72,
+      "imageCount": 7,
+      "scores": {
+        "seo": 88,
+        "title": 88,
+        "tags": 88,
+        "images": 64,
+        "conversion": 80,
+        "pricing": 90,
+        "competition": 86,
+        "freshness": 82,
+        "opportunity": 44
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 892,
+        "favorites": 30,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 72
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: Skull Bead Bracelet",
+          "duplicate tag meaning: Skull Cuff Men",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 44. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad1dvx02xxy4yd1b072ykl",
+      "etsyListingId": "4364083038",
+      "title": "Customize with your name - Sterling Silver Personalized Serpent Key Pendant",
+      "url": "https://www.etsy.com/listing/4364083038/customize-with-your-name-sterling-silver",
+      "price": 83,
+      "quantity": 40,
+      "imageCount": 13,
+      "scores": {
+        "seo": 84,
+        "title": 90,
+        "tags": 76,
+        "images": 76,
+        "conversion": 82,
+        "pricing": 86,
+        "competition": 91,
+        "freshness": 82,
+        "opportunity": 40
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "tags",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 75,
+        "favorites": 2,
+        "salesQuantity": 10,
+        "transactionCount": 1,
+        "inventoryQuantity": 40
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Premium price is supported by material or handmade signals.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: Key Necklace",
+          "duplicate tag meaning: custom word pendant",
+          "duplicate tag meaning: custom jewelry gift",
+          "duplicate tag meaning: custom name gift",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 40. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmraak2de024cy4w11uyg2dic",
+      "etsyListingId": "1851967837",
+      "title": "Heavy Green Rage Monster Ring for Men – Solid 925 Sterling Silver Gothic Biker Statement Jewelry, Hulk Inspired Power Ring",
+      "url": "https://www.etsy.com/listing/1851967837/hulk-ring-925-sterling-silver-marvel",
+      "price": 246,
+      "quantity": 306,
+      "imageCount": 10,
+      "scores": {
+        "seo": 97,
+        "title": 95,
+        "tags": 100,
+        "images": 76,
+        "conversion": 88,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 39
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 465,
+        "favorites": 27,
+        "salesQuantity": 3,
+        "transactionCount": 3,
+        "inventoryQuantity": 306
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Missing keyword opportunity: mens skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring",
+          "missing keyword: 925 silver pendant",
+          "missing keyword: dark jewelry gift"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 39. Focus on Repeated wording detected: ring."
+    },
+    {
+      "id": "cmraaesg000bsy4fxqanmd5q5",
+      "etsyListingId": "4451790645",
+      "title": "Red Horn Demon Ring - 925 Sterling Silver Gothic Comic Statement Ring",
+      "url": "https://www.etsy.com/listing/4451790645/hellboy-inspired-sterling-silver-ring",
+      "price": 246,
+      "quantity": 340,
+      "imageCount": 10,
+      "scores": {
+        "seo": 91,
+        "title": 83,
+        "tags": 100,
+        "images": 76,
+        "conversion": 85,
+        "pricing": 90,
+        "competition": 75,
+        "freshness": 95,
+        "opportunity": 28
+      },
+      "priority": "Medium",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 263,
+        "favorites": 45,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 340
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring",
+          "missing keyword: 925 silver pendant"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with low conversion risk and Opportunity Score 28. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmrad31u304zry4ydlb6ka6kx",
+      "etsyListingId": "1757666279",
+      "title": "Mens Sterling Silver Chain Bracelet: Knife Etched Design, Handmade",
+      "url": "https://www.etsy.com/listing/1757666279/mens-sterling-silver-chain-bracelet",
+      "price": 486,
+      "quantity": 55,
+      "imageCount": 5,
+      "scores": {
+        "seo": 66,
+        "title": 78,
+        "tags": 52,
+        "images": 80,
+        "conversion": 78,
+        "pricing": 90,
+        "competition": 91,
+        "freshness": 82,
+        "opportunity": 42
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "tags",
+      "weakestScore": 52,
+      "evidence": {
+        "views": 596,
+        "favorites": 35,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 55
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Title is short for Etsy SEO coverage."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: mens Bracelet",
+          "duplicate tag meaning: silver Bracelet",
+          "duplicate tag meaning: mens bracelets",
+          "duplicate tag meaning: silver bracelets",
+          "duplicate tag meaning: bracelets for women",
+          "duplicate tag meaning: bracelet for women",
+          "duplicate tag meaning: bracelet 925",
+          "duplicate tag meaning: bracelet silver",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Replace weak or duplicate tags with long-tail buying phrases."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 42. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmraajhax01ehy4w1v3cf42zg",
+      "etsyListingId": "1765410568",
+      "title": "Abstract Face Ring in Sterling Silver - Avant Garde Gothic Ring",
+      "url": "https://www.etsy.com/listing/1765410568/abstract-face-ring-edgy-sterling-silver",
+      "price": 226,
+      "quantity": 272,
+      "imageCount": 6,
+      "scores": {
+        "seo": 91,
+        "title": 83,
+        "tags": 100,
+        "images": 64,
+        "conversion": 81,
+        "pricing": 90,
+        "competition": 80,
+        "freshness": 95,
+        "opportunity": 34
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 390,
+        "favorites": 35,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 272
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Title is short for Etsy SEO coverage.",
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 34. Focus on Title is short for Etsy SEO coverage."
+    },
+    {
+      "id": "cmraajr0m01qby4w1p8omd46b",
+      "etsyListingId": "4301414719",
+      "title": "Sterling Silver Lighter Case – Chinese Mythical Beast, Gothic Flame Holder",
+      "url": "https://www.etsy.com/listing/4301414719/sterling-silver-lighter-case-chinese",
+      "price": 488,
+      "quantity": 4,
+      "imageCount": 7,
+      "scores": {
+        "seo": 90,
+        "title": 86,
+        "tags": 94,
+        "images": 64,
+        "conversion": 80,
+        "pricing": 90,
+        "competition": 96,
+        "freshness": 82,
+        "opportunity": 35
+      },
+      "priority": "Medium",
+      "risk": "Medium",
+      "weakestArea": "images",
+      "weakestScore": 64,
+      "evidence": {
+        "views": 470,
+        "favorites": 33,
+        "salesQuantity": 1,
+        "transactionCount": 1,
+        "inventoryQuantity": 4
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Move the concrete product type into the first title phrase.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Favorites and available inventory suggest conversion potential.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Move the concrete product type into the first title phrase."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: Gothic mens gift",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "High conversion candidate",
+        "pricingReasons": [
+          "Favorites and available inventory suggest conversion potential."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Medium priority with medium conversion risk and Opportunity Score 35. Focus on Move the concrete product type into the first title phrase."
+    }
+  ],
+  "lowPriority": [
+    {
+      "id": "cmrad3m3805pfy4ydzvuwciym",
+      "etsyListingId": "4404020367",
+      "title": "Snake Pendant Necklace Sterling Silver | Handmade Gothic Serpent Jewelry",
+      "url": "https://www.etsy.com/listing/4404020367/snake-pendant-necklace-sterling-silver",
+      "price": 366,
+      "quantity": 9,
+      "imageCount": 11,
+      "scores": {
+        "seo": 100,
+        "title": 100,
+        "tags": 100,
+        "images": 92,
+        "conversion": 92,
+        "pricing": 86,
+        "competition": 91,
+        "freshness": 70,
+        "opportunity": 17
+      },
+      "priority": "Low",
+      "risk": "Low",
+      "weakestArea": "freshness",
+      "weakestScore": 70,
+      "evidence": {
+        "views": 34,
+        "favorites": 1,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 9
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Premium price is supported by material or handmade signals."
+        ],
+        "titleWeaknesses": [],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Low priority with low conversion risk and Opportunity Score 17. Focus on Missing keyword opportunity: sterling silver ring."
+    },
+    {
+      "id": "cmraajrtv01ray4w10mwfr071",
+      "etsyListingId": "4348359625",
+      "title": "Gothic Skull Ring for Men – Solid 925 Sterling Silver Biker Statement Jewelry, Handcrafted Bone Texture Design",
+      "url": "https://www.etsy.com/listing/4348359625/handmade-gothic-skull-ring-925-sterling",
+      "price": 262,
+      "quantity": 170,
+      "imageCount": 10,
+      "scores": {
+        "seo": 100,
+        "title": 100,
+        "tags": 100,
+        "images": 92,
+        "conversion": 93,
+        "pricing": 86,
+        "competition": 75,
+        "freshness": 82,
+        "opportunity": 19
+      },
+      "priority": "Low",
+      "risk": "Low",
+      "weakestArea": "freshness",
+      "weakestScore": 82,
+      "evidence": {
+        "views": 120,
+        "favorites": 5,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 170
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Add packaging or gift-ready proof.",
+          "Premium price is supported by material or handmade signals."
+        ],
+        "titleWeaknesses": [],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring",
+          "missing keyword: 925 silver pendant"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Low priority with low conversion risk and Opportunity Score 19. Focus on Missing keyword opportunity: sterling silver ring."
+    },
+    {
+      "id": "cmrad2b3l0437y4yd93dpbntp",
+      "etsyListingId": "4487285495",
+      "title": "Heavy Sterling Silver Peace Dove Ring for Men – Gothic Oxidized Bird Spirit Animal Statement Jewelry, Handmade Symbolic Ring",
+      "url": "https://www.etsy.com/listing/4487285495/heavy-sterling-silver-peace-dove-ring",
+      "price": 246,
+      "quantity": 306,
+      "imageCount": 15,
+      "scores": {
+        "seo": 97,
+        "title": 95,
+        "tags": 100,
+        "images": 92,
+        "conversion": 92,
+        "pricing": 86,
+        "competition": 87,
+        "freshness": 95,
+        "opportunity": 19
+      },
+      "priority": "Low",
+      "risk": "Low",
+      "weakestArea": "pricing",
+      "weakestScore": 86,
+      "evidence": {
+        "views": 40,
+        "favorites": 2,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 306
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Premium price is supported by material or handmade signals."
+        ],
+        "titleWeaknesses": [
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Low priority with low conversion risk and Opportunity Score 19. Focus on Repeated wording detected: ring."
+    },
+    {
+      "id": "cmraak4ss027ay4w1bvr1faui",
+      "etsyListingId": "4439637452",
+      "title": "Red Agate Statement Ring – 925 Sterling Silver Gothic Bold Mens Jewelry",
+      "url": "https://www.etsy.com/listing/4439637452/red-agate-statement-ring-925-sterling",
+      "price": 225,
+      "quantity": 816,
+      "imageCount": 12,
+      "scores": {
+        "seo": 100,
+        "title": 100,
+        "tags": 100,
+        "images": 76,
+        "conversion": 87,
+        "pricing": 86,
+        "competition": 80,
+        "freshness": 82,
+        "opportunity": 20
+      },
+      "priority": "Low",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 22,
+        "favorites": 1,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 816
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Premium price is supported by material or handmade signals.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Low priority with low conversion risk and Opportunity Score 20. Focus on Missing keyword opportunity: sterling silver ring."
+    },
+    {
+      "id": "cmrad24mc03v4y4ydprhg8q3j",
+      "etsyListingId": "4490216363",
+      "title": "Heavy Gothic Skull Ring for Men – Solid 925 Sterling Silver Biker Rock Statement Jewelry, Handmade Skeleton Ring",
+      "url": "https://www.etsy.com/listing/4490216363/heavy-gothic-skull-ring-for-men-solid",
+      "price": 226,
+      "quantity": 170,
+      "imageCount": 6,
+      "scores": {
+        "seo": 97,
+        "title": 95,
+        "tags": 100,
+        "images": 80,
+        "conversion": 88,
+        "pricing": 86,
+        "competition": 80,
+        "freshness": 82,
+        "opportunity": 20
+      },
+      "priority": "Low",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 80,
+      "evidence": {
+        "views": 22,
+        "favorites": 1,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 170
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Repeated wording detected: ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Missing keyword opportunity: mens skull ring.",
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof.",
+          "Premium price is supported by material or handmade signals."
+        ],
+        "titleWeaknesses": [
+          "Repeated wording detected: ring."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring",
+          "missing keyword: 925 silver pendant",
+          "missing keyword: dark jewelry gift"
+        ],
+        "imageSuggestions": [
+          "Add more Etsy images; target 8-10 frames for trust and mobile scanning.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Low priority with low conversion risk and Opportunity Score 20. Focus on Repeated wording detected: ring."
+    },
+    {
+      "id": "cmraaio4u00e8y4w1e7fvp8cr",
+      "etsyListingId": "4391704918",
+      "title": "Couple Skull Pendant Necklace – 925 Sterling Silver Gothic Love Jewelry",
+      "url": "https://www.etsy.com/listing/4391704918/couple-skull-pendant-necklace-925",
+      "price": 366,
+      "quantity": 8,
+      "imageCount": 12,
+      "scores": {
+        "seo": 95,
+        "title": 100,
+        "tags": 88,
+        "images": 84,
+        "conversion": 89,
+        "pricing": 86,
+        "competition": 100,
+        "freshness": 95,
+        "opportunity": 20
+      },
+      "priority": "Low",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 84,
+      "evidence": {
+        "views": 71,
+        "favorites": 3,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 8
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof.",
+          "Premium price is supported by material or handmade signals."
+        ],
+        "titleWeaknesses": [],
+        "tagWeaknesses": [
+          "duplicate tag meaning: couple gift",
+          "duplicate tag meaning: skull love necklace",
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Low priority with low conversion risk and Opportunity Score 20. Focus on Missing keyword opportunity: sterling silver ring."
+    },
+    {
+      "id": "cmraaif88002zy4w19ngqhpqe",
+      "etsyListingId": "4396766200",
+      "title": "Middle Finger Pendant Necklace – 925 Sterling Silver Rebel Hand Necklace",
+      "url": "https://www.etsy.com/listing/4396766200/middle-finger-pendant-necklace-925",
+      "price": 288,
+      "quantity": 18,
+      "imageCount": 17,
+      "scores": {
+        "seo": 92,
+        "title": 85,
+        "tags": 100,
+        "images": 92,
+        "conversion": 90,
+        "pricing": 86,
+        "competition": 96,
+        "freshness": 95,
+        "opportunity": 20
+      },
+      "priority": "Low",
+      "risk": "Low",
+      "weakestArea": "title",
+      "weakestScore": 85,
+      "evidence": {
+        "views": 48,
+        "favorites": 2,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 18
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Repeated wording detected: necklace.",
+          "Missing keyword opportunity: sterling silver ring.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Add packaging or gift-ready proof.",
+          "Premium price is supported by material or handmade signals."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Repeated wording detected: necklace."
+        ],
+        "tagWeaknesses": [
+          "missing keyword: sterling silver ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring"
+        ],
+        "imageSuggestions": [
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": []
+      },
+      "summary": "Low priority with low conversion risk and Opportunity Score 20. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "id": "cmrad1c9k02vyy4yd03pn0q6k",
+      "etsyListingId": "4368610357",
+      "title": "Natural lapis lazuli Ring – 925 Sterling Silver Gemstone Statement Jewelry",
+      "url": "https://www.etsy.com/listing/4368610357/natural-red-agate-mens-ring-925-sterling",
+      "price": 246,
+      "quantity": 816,
+      "imageCount": 11,
+      "scores": {
+        "seo": 92,
+        "title": 90,
+        "tags": 94,
+        "images": 76,
+        "conversion": 85,
+        "pricing": 86,
+        "competition": 82,
+        "freshness": 95,
+        "opportunity": 20
+      },
+      "priority": "Low",
+      "risk": "Low",
+      "weakestArea": "images",
+      "weakestScore": 76,
+      "evidence": {
+        "views": 31,
+        "favorites": 1,
+        "salesQuantity": 0,
+        "transactionCount": 0,
+        "inventoryQuantity": 816
+      },
+      "reasons": {
+        "priorityReasons": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry.",
+          "Missing keyword opportunity: gothic skull ring.",
+          "Missing keyword opportunity: biker silver jewelry.",
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Premium price is supported by material or handmade signals.",
+          "Improve image proof before scaling ads or promotions."
+        ],
+        "titleWeaknesses": [
+          "Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+        ],
+        "tagWeaknesses": [
+          "duplicate tag meaning: gothic gemstone ring",
+          "missing keyword: gothic skull ring",
+          "missing keyword: biker silver jewelry",
+          "missing keyword: mens skull ring",
+          "missing keyword: 925 silver pendant"
+        ],
+        "imageSuggestions": [
+          "Add a lifestyle or worn photo.",
+          "Add a scale reference image.",
+          "Add packaging or gift-ready proof."
+        ],
+        "pricingVerdict": "Premium candidate",
+        "pricingReasons": [
+          "Premium price is supported by material or handmade signals."
+        ],
+        "conversionSuggestions": [
+          "Improve image proof before scaling ads or promotions."
+        ]
+      },
+      "summary": "Low priority with low conversion risk and Opportunity Score 20. Focus on Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    }
+  ],
+  "queue": [
+    {
+      "rank": 1,
+      "title": "Custom Solid Brass Car Emblem: Engraved Vintage Vehicle Badge",
+      "opportunity": 53,
+      "priority": "High",
+      "risk": "Medium",
+      "taskType": "title",
+      "taskTitle": "Review title keyword order",
+      "taskReason": "Title score is the weakest explainable lever. Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "rank": 2,
+      "title": "Handcrafted Hellboy Skull Ring: 925 Sterling Silver Hells Baron Ring",
+      "opportunity": 53,
+      "priority": "High",
+      "risk": "Medium",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 3,
+      "title": "Bearded Skull Ring Handcrafted Sterling Silver Artisan Biker Jewelry",
+      "opportunity": 52,
+      "priority": "High",
+      "risk": "Medium",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 4,
+      "title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "opportunity": 48,
+      "priority": "High",
+      "risk": "Medium",
+      "taskType": "title",
+      "taskTitle": "Review title keyword order",
+      "taskReason": "Title score is the weakest explainable lever. Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "rank": 5,
+      "title": "Sterling Silver Skull Ring for Men - Gothic Biker Custom Size Ring",
+      "opportunity": 47,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "images",
+      "taskTitle": "Review listing image proof",
+      "taskReason": "Image score indicates conversion proof gaps. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 6,
+      "title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "opportunity": 47,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "images",
+      "taskTitle": "Review listing image proof",
+      "taskReason": "Image score indicates conversion proof gaps. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 7,
+      "title": "V Mask Ring in 925 Sterling Silver - Gothic Statement Ring for Men",
+      "opportunity": 45,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "images",
+      "taskTitle": "Review listing image proof",
+      "taskReason": "Image score indicates conversion proof gaps. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 8,
+      "title": "Handmade Sterling Silver Wolf Bracelet: Viking Leather Cord Jewelry",
+      "opportunity": 45,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "rank": 9,
+      "title": "Sterling Silver Gothic Key Necklace - Oxidized 24 Inch Unisex Pendant",
+      "opportunity": 45,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 10,
+      "title": "Anubis Ring in Sterling Silver - Egyptian Mythology Gothic Ring",
+      "opportunity": 45,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "title",
+      "taskTitle": "Review title keyword order",
+      "taskReason": "Title score is the weakest explainable lever. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 11,
+      "title": "Chunky Sterling Silver Skull Ring - Gothic Biker Ring for Men",
+      "opportunity": 45,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 12,
+      "title": "Gothic Biker Jewelry - Heavy Sterling Silver Skull Bracelet",
+      "opportunity": 44,
+      "priority": "Medium",
+      "risk": "Medium",
+      "taskType": "images",
+      "taskTitle": "Review listing image proof",
+      "taskReason": "Image score indicates conversion proof gaps. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 13,
+      "title": "Amenadiel Angel Pendant Necklace - 925 Silver Gothic Talisman",
+      "opportunity": 44,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "images",
+      "taskTitle": "Review listing image proof",
+      "taskReason": "Image score indicates conversion proof gaps. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 14,
+      "title": "Gothic Cross Pants Chain - Titanium Steel Punk Wallet Chain for Men",
+      "opportunity": 43,
+      "priority": "Medium",
+      "risk": "Medium",
+      "taskType": "title",
+      "taskTitle": "Review title keyword order",
+      "taskReason": "Title score is the weakest explainable lever. Add verified material wording near the front, such as sterling silver or 925 silver."
+    },
+    {
+      "rank": 15,
+      "title": "Black Mamba Snake Ring - 925 Sterling Silver Reptile Ring for Men",
+      "opportunity": 43,
+      "priority": "Medium",
+      "risk": "Medium",
+      "taskType": "images",
+      "taskTitle": "Review listing image proof",
+      "taskReason": "Image score indicates conversion proof gaps. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 16,
+      "title": "Sterling Silver Skull Bead Bracelet - Gothic Mens Biker Bracelet",
+      "opportunity": 43,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 17,
+      "title": "Heavy Sterling Silver Skull Ring for Men - Gothic Biker Statement Ring",
+      "opportunity": 43,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Repeated wording detected: ring."
+    },
+    {
+      "rank": 18,
+      "title": "Mens Sterling Silver Chain Bracelet: Knife Etched Design, Handmade",
+      "opportunity": 42,
+      "priority": "Medium",
+      "risk": "Medium",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "rank": 19,
+      "title": "Ruby Skull Ring Sterling Silver | Gothic Skull Band for Men",
+      "opportunity": 42,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Title is short for Etsy SEO coverage."
+    },
+    {
+      "rank": 20,
+      "title": "Grassland Overlord - Handmade Sterling Silver Lion Pendant Necklace",
+      "opportunity": 42,
+      "priority": "Medium",
+      "risk": "Medium",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "rank": 21,
+      "title": "Sterling Silver Mermaid Necklace: Pearl Pendant, Ocean Depths",
+      "opportunity": 41,
+      "priority": "Medium",
+      "risk": "Medium",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "rank": 22,
+      "title": "Heavy Skull Ring for Men – Solid 925 Sterling Silver Gothic Biker Statement Jewelry, Oxidized Dark Skull Rings Gift",
+      "opportunity": 41,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "pricing",
+      "taskTitle": "Review price and inventory signal",
+      "taskReason": "Pricing score indicates price or inventory risk. Repeated wording detected: skull."
+    },
+    {
+      "rank": 23,
+      "title": "Sterling Silver Skull Trouser Chain - Heavy Gothic Biker Pants Chain",
+      "opportunity": 40,
+      "priority": "Medium",
+      "risk": "Medium",
+      "taskType": "title",
+      "taskTitle": "Review title keyword order",
+      "taskReason": "Title score is the weakest explainable lever. Move the concrete product type into the first title phrase."
+    },
+    {
+      "rank": 24,
+      "title": "Van Gogh Sunflower Pendant: Handmade 925 Sterling Silver Necklace",
+      "opportunity": 40,
+      "priority": "Medium",
+      "risk": "Medium",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    },
+    {
+      "rank": 25,
+      "title": "Customize with your name - Sterling Silver Personalized Serpent Key Pendant",
+      "opportunity": 40,
+      "priority": "Medium",
+      "risk": "Low",
+      "taskType": "tags",
+      "taskTitle": "Review tags and long-tail keywords",
+      "taskReason": "Tag score indicates missing or duplicate keyword coverage. Add a stronger style keyword such as skull, gothic, biker, or dark jewelry."
+    }
+  ]
+}
