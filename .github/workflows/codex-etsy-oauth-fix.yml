@@ -1,0 +1,231 @@
+name: Codex Etsy OAuth Fix
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-oauth-fix.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-mykinlegacy
+  cancel-in-progress: false
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      TEMP_ETSY_CLIENT_ID: ${{ secrets.TEMP_ETSY_CLIENT_ID_CODEX }}
+      TEMP_ETSY_CLIENT_SECRET: ${{ secrets.TEMP_ETSY_CLIENT_SECRET_CODEX }}
+    steps:
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          : "${TEMP_ETSY_CLIENT_ID:?Missing TEMP_ETSY_CLIENT_ID}"
+          : "${TEMP_ETSY_CLIENT_SECRET:?Missing TEMP_ETSY_CLIENT_SECRET}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Configure production OAuth and token persistence
+        shell: bash
+        run: |
+          CLIENT_ID_B64="$(printf '%s' "$TEMP_ETSY_CLIENT_ID" | base64 -w0)"
+          CLIENT_SECRET_B64="$(printf '%s' "$TEMP_ETSY_CLIENT_SECRET" | base64 -w0)"
+
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            "ETSY_CLIENT_ID_B64='$CLIENT_ID_B64' ETSY_CLIENT_SECRET_B64='$CLIENT_SECRET_B64' bash -s" <<'REMOTE'
+          set -euo pipefail
+
+          export ETSY_CLIENT_ID="$(printf '%s' "$ETSY_CLIENT_ID_B64" | base64 -d)"
+          export ETSY_CLIENT_SECRET="$(printf '%s' "$ETSY_CLIENT_SECRET_B64" | base64 -d)"
+          : "${ETSY_CLIENT_ID:?}"
+          : "${ETSY_CLIENT_SECRET:?}"
+
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          if command -v pm2 >/dev/null 2>&1; then
+            FOUND_DIR="$(pm2 jlist | node -e '
+              let data="";
+              process.stdin.on("data", c => data += c);
+              process.stdin.on("end", () => {
+                const arr = JSON.parse(data || "[]");
+                const match = arr.find(p => p.name === "mensskull-etsy-ai-manager" || JSON.stringify(p).includes("etsy-ai-manager") || p.pm2_env?.PORT == "3000");
+                if (match?.pm2_env?.pm_cwd) console.log(match.pm2_env.pm_cwd);
+              });
+            ' || true)"
+            if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
+          fi
+          test -d "$APP_DIR"
+          cd "$APP_DIR"
+
+          TS="$(date +%Y%m%d%H%M%S)"
+          cp -a .env.local ".env.local.codex-backup-$TS" 2>/dev/null || true
+          cp -a src/app/api/etsy/callback/route.ts "src/app/api/etsy/callback/route.ts.codex-backup-$TS"
+
+          python3 - <<'PY'
+          import os
+          from pathlib import Path
+
+          env_path = Path(".env.local")
+          updates = {
+              "ETSY_CLIENT_ID": os.environ["ETSY_CLIENT_ID"],
+              "ETSY_CLIENT_SECRET": os.environ["ETSY_CLIENT_SECRET"],
+              "ETSY_REDIRECT_URI": "https://tools.mensskull.com/api/etsy/callback",
+              "BASE_URL": "https://tools.mensskull.com",
+              "NEXT_PUBLIC_BASE_URL": "https://tools.mensskull.com",
+              "NEXT_PUBLIC_SITE_URL": "https://tools.mensskull.com",
+              "ETSY_READ_ONLY_MODE": "true",
+          }
+          lines = env_path.read_text().splitlines() if env_path.exists() else []
+          kept = []
+          for line in lines:
+              key = line.split("=", 1)[0].strip() if "=" in line else ""
+              if key not in updates:
+                  kept.append(line)
+          def quote(value: str) -> str:
+              if value == "" or any(ch.isspace() or ch in '"#\\' for ch in value):
+                  return '"' + value.replace("\\", "\\\\").replace('"', '\\"') + '"'
+              return value
+          kept.extend(f"{key}={quote(value)}" for key, value in updates.items())
+          env_path.write_text("\n".join([line for line in kept if line.strip()]) + "\n")
+          env_path.chmod(0o600)
+          PY
+
+          python3 - <<'PY'
+          from pathlib import Path
+
+          p = Path("src/app/api/etsy/callback/route.ts")
+          text = p.read_text()
+          if 'saveOAuthEnv' not in text:
+              text = text.replace(
+                  'import { cookies } from "next/headers";\n',
+                  'import fs from "node:fs";\nimport path from "node:path";\nimport { cookies } from "next/headers";\n',
+              )
+              text = text.replace(
+                  'import { prisma } from "@/lib/prisma";\n',
+                  'import { prisma } from "@/lib/prisma";\n\nexport const runtime = "nodejs";\n',
+              )
+              helper = r'''
+
+function formatEnvValue(value: string): string {
+  if (value === "" || /[\s"#\\]/.test(value)) {
+    return JSON.stringify(value);
+  }
+  return value;
+}
+
+function saveOAuthEnv(values: Record<string, string>): string[] {
+  const envPath = path.join(process.cwd(), ".env.local");
+  const keys = new Set(Object.keys(values));
+  const existing = fs.existsSync(envPath) ? fs.readFileSync(envPath, "utf8").split(/\r?\n/) : [];
+  const kept = existing.filter((line) => {
+    const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=/);
+    return !match || !keys.has(match[1]);
+  });
+  const savedKeys = Object.keys(values).filter((key) => values[key] !== "");
+  const nextLines = kept
+    .filter((line) => line.trim() !== "")
+    .concat(savedKeys.map((key) => `${key}=${formatEnvValue(values[key])}`));
+  fs.writeFileSync(envPath, `${nextLines.join("\n")}\n`, { mode: 0o600 });
+  fs.chmodSync(envPath, 0o600);
+  Object.assign(process.env, Object.fromEntries(savedKeys.map((key) => [key, values[key]])));
+  return savedKeys;
+}
+'''
+              text = text.replace(
+                  'function escapeHtml(value: string): string {\n  return value\n    .replaceAll("&", "&amp;")\n    .replaceAll("<", "&lt;")\n    .replaceAll(">", "&gt;")\n    .replaceAll(\'"\', "&quot;");\n}\n',
+                  'function escapeHtml(value: string): string {\n  return value\n    .replaceAll("&", "&amp;")\n    .replaceAll("<", "&lt;")\n    .replaceAll(">", "&gt;")\n    .replaceAll(\'"\', "&quot;");\n}\n' + helper,
+              )
+              old = '''    const envSnippet = [
+      connectedShop?.userId ? `ETSY_USER_ID=${connectedShop.userId}` : null,
+      connectedShop?.shopId ? `ETSY_SHOP_ID=${connectedShop.shopId}` : null,
+      `ETSY_ACCESS_TOKEN=${token.access_token}`,
+      `ETSY_REFRESH_TOKEN=${token.refresh_token ?? ""}`,
+      `ETSY_TOKEN_EXPIRES_AT=${expiresAt}`,
+      "ETSY_READ_ONLY_MODE=true"
+    ].filter(Boolean).join("\\n");
+'''
+              new = '''    const tokenEnv: Record<string, string> = {
+      ETSY_ACCESS_TOKEN: token.access_token,
+      ETSY_REFRESH_TOKEN: token.refresh_token ?? "",
+      ETSY_TOKEN_EXPIRES_AT: expiresAt,
+      ETSY_READ_ONLY_MODE: "true"
+    };
+    if (connectedShop?.userId) tokenEnv.ETSY_USER_ID = connectedShop.userId;
+    if (connectedShop?.shopId) tokenEnv.ETSY_SHOP_ID = connectedShop.shopId;
+    const savedEnvKeys = saveOAuthEnv(tokenEnv).join("\\n");
+'''
+              if old not in text:
+                  raise SystemExit("callback token block not found")
+              text = text.replace(old, new)
+              text = text.replace(
+                  '<p class=\\"muted\\">Full tokens are not displayed as normal page text. They are only placed in the copy block below so you can move them into <code>.env.local</code>. Do not commit that file.</p>",',
+                  '<p class=\\"ok\\">Tokens saved to <code>.env.local</code> on the production server.</p>",',
+              )
+              text = text.replace(
+                  '"<h2>Copy Into .env.local</h2>",\n        `<pre>${escapeHtml(envSnippet)}</pre>`,',
+                  '"<h2>Saved Environment Keys</h2>",\n        `<pre>${escapeHtml(savedEnvKeys)}</pre>`,',
+              )
+              text = text.replace(
+                  '"<h2>Next Step</h2>",\n        "<p>Restart the dev server if needed, then run:</p>",\n        "<code>npm run etsy:sync:read-only</code>",',
+                  '"<h2>Next Step</h2>",\n        "<p>The production server can now use the saved Etsy token for read-only sync.</p>",',
+              )
+          p.write_text(text)
+          PY
+
+          npm run build
+          pm2 restart mensskull-etsy-ai-manager --update-env
+
+          sleep 4
+          curl -k -sS -o /tmp/codex-tools-home.txt -w "tools_home=%{http_code}\n" --max-time 20 https://tools.mensskull.com/
+          curl -k -sS -o /tmp/codex-etsy-page.txt -w "etsy_page=%{http_code}\n" --max-time 20 https://tools.mensskull.com/etsy-connection
+          curl -k -sS -o /tmp/codex-start-body.txt -D /tmp/codex-start-headers.txt -w "oauth_start=%{http_code}\n" --max-time 20 https://tools.mensskull.com/api/etsy/auth/start
+          LOCATION="$(awk 'BEGIN{IGNORECASE=1} /^location:/{sub(/\r$/,""); print substr($0,11)}' /tmp/codex-start-headers.txt | tail -n 1)"
+          if [ -z "$LOCATION" ]; then
+            echo "oauth_location=missing"
+            head -c 300 /tmp/codex-start-body.txt | tr '\n' ' '
+            exit 1
+          fi
+          node -e '
+            const u = new URL(process.argv[1]);
+            if (u.host !== "www.etsy.com") throw new Error(`unexpected auth host ${u.host}`);
+            if (u.searchParams.get("redirect_uri") !== "https://tools.mensskull.com/api/etsy/callback") throw new Error("redirect_uri mismatch");
+            if (!u.searchParams.get("client_id")) throw new Error("missing client_id");
+            console.log("oauth_location=etsy");
+            console.log("oauth_redirect_uri=ok");
+          ' "$LOCATION"
+          curl -k -sS -o /dev/null -w "mykinlegacy_home=%{http_code}\n" --max-time 20 https://mykinlegacy.com/
+          REMOTE
