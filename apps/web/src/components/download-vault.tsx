@@ -15,8 +15,8 @@ import { PrivateVaultPreview } from "./vault-meaning";
 const demoArtifacts: DownloadAsset[] = [
   {
     asset_id: "demo_crest_artwork",
-    deliverable_code: "crest_artwork",
-    friendly_name: "Crest Artwork",
+    deliverable_code: "crest_variant_1_png",
+    friendly_name: "Final Crest",
     asset_type: "image",
     file_ext: "png",
     mime_type: "image/png",
@@ -27,7 +27,7 @@ const demoArtifacts: DownloadAsset[] = [
   {
     asset_id: "demo_heritage_certificate",
     deliverable_code: "heritage_certificate_pdf",
-    friendly_name: "Private Archive Certificate",
+    friendly_name: "Heritage Certificate",
     asset_type: "pdf",
     file_ext: "pdf",
     mime_type: "application/pdf",
@@ -49,7 +49,7 @@ const demoArtifacts: DownloadAsset[] = [
   {
     asset_id: "demo_symbol_guide",
     deliverable_code: "symbol_explanation_pdf",
-    friendly_name: "Symbol Guide",
+    friendly_name: "Meaning Behind Your Crest",
     asset_type: "pdf",
     file_ext: "pdf",
     mime_type: "application/pdf",
@@ -84,19 +84,15 @@ const demoVault: DownloadVaultData = {
 
 const artifactDescriptions: Record<string, string> = {
   crest_artwork: "A symbolic family centerpiece shaped around values, story, and belonging.",
-  crest_variant_1_png: "A symbolic family centerpiece shaped around values, story, and belonging.",
-  crest_variant_2_png: "A second crest artwork option for family review.",
-  crest_variant_3_png: "A third crest artwork option for family review.",
-  heritage_certificate_pdf: "Start here: a clean private archive document for gifting, printing, and preserving.",
+  crest_variant_1_png: "The final approved crest artwork for this private collection.",
+  heritage_certificate_pdf: "A clean keepsake document for collection identity, ceremony, signature, and seal.",
   family_story_pdf: "A written family narrative meant to be read, shared, and kept.",
-  symbol_explanation_pdf: "A guide to the symbols, colors, and family meaning in the collection.",
+  symbol_explanation_pdf: "A focused explanation of why this crest was created for this family.",
   download_package_zip: "Final step: the complete private collection prepared for safekeeping."
 };
 const customerVisibleDeliverables = new Set([
   "crest_artwork",
   "crest_variant_1_png",
-  "crest_variant_2_png",
-  "crest_variant_3_png",
   "heritage_certificate_pdf",
   "family_story_pdf",
   "symbol_explanation_pdf",
@@ -290,8 +286,8 @@ export function DownloadVault({ token }: { token: string }) {
             {vault ? <span className="vault-status-pill">{vault.assets_ready ? "Vault ready" : "Preparing"}</span> : null}
           </div>
           <p className="lead">
-            Begin with the welcome, then move through the certificate, artwork, story, and symbol
-            guide before saving the complete collection.
+            Open the final crest, certificate, story, and meaning document before saving the
+            complete collection.
           </p>
           {hasPlaceholderAssets ? (
             <p className="notice placeholder-vault-notice">
@@ -300,25 +296,6 @@ export function DownloadVault({ token }: { token: string }) {
             </p>
           ) : null}
           <div className="vault-artifact-grid">
-            <article className="vault-artifact-card" key="welcome">
-              <span className="vault-artifact-icon pdf" aria-hidden="true" />
-              <div>
-                <h3>Welcome</h3>
-                <p className="muted">
-                  Start here. This short opening step explains the intended reading order for the
-                  private collection.
-                </p>
-              </div>
-              <div className="artifact-meta-row">
-                <span>START</span>
-                <span className="status-ready">Ready</span>
-              </div>
-              <div>
-                <button className="secondary-button" type="button" disabled>
-                  Begin Below
-                </button>
-              </div>
-            </article>
             {reviewAssets.map((asset) => (
               <article className="vault-artifact-card" key={asset.asset_id}>
                 <span className={`vault-artifact-icon ${asset.file_ext}`} aria-hidden="true" />
@@ -448,20 +425,20 @@ export function downloadFileName(asset: Pick<DownloadAsset, "friendly_name" | "f
 
 function artifactOrder(asset: DownloadAsset): number {
   const order: Record<string, number> = {
-    heritage_certificate_pdf: 1,
-    crest_artwork: 2,
-    crest_variant_1_png: 2,
-    crest_variant_2_png: 3,
-    crest_variant_3_png: 4,
-    family_story_pdf: 5,
-    symbol_explanation_pdf: 6,
+    crest_artwork: 1,
+    crest_variant_1_png: 1,
+    heritage_certificate_pdf: 2,
+    family_story_pdf: 3,
+    symbol_explanation_pdf: 4,
     download_package_zip: 8
   };
   return order[asset.deliverable_code] ?? 50;
 }
 
 function displayArtifactName(asset: Pick<DownloadAsset, "deliverable_code" | "friendly_name">): string {
-  if (asset.deliverable_code === "heritage_certificate_pdf") return "Certificate";
+  if (asset.deliverable_code === "crest_artwork" || asset.deliverable_code === "crest_variant_1_png") return "Final Crest";
+  if (asset.deliverable_code === "heritage_certificate_pdf") return "Heritage Certificate";
+  if (asset.deliverable_code === "symbol_explanation_pdf") return "Meaning Behind Your Crest";
   if (asset.deliverable_code === "download_package_zip") return "Download Complete Collection";
   return asset.friendly_name;
 }
@@ -476,10 +453,10 @@ function downloadDemoCollection(asset: DownloadAsset): void {
     "",
     "Open the Family Legacy Collection in this order:",
     "- Welcome",
-    "- Certificate",
-    "- Crest Artwork",
+    "- Final Crest",
+    "- Heritage Certificate",
     "- Family Story",
-    "- Symbol Guide",
+    "- Meaning Behind Your Crest",
     "- Download Complete Collection",
     "",
     "This demo artifact proves the Founder can move from checkout to vault to collection access without admin, logs, or email."

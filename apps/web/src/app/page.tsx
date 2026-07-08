@@ -22,7 +22,7 @@ const heroArtifacts = [
     `${finalHomepageAsset}/02_homepage/hero/hero-house-identity.webp`
   ],
   [
-    "Private Archive Certificate",
+    "Heritage Certificate",
     "A clean keepsake document for gifting, printing, and keeping.",
     `${finalHomepageAsset}/02_homepage/hero/hero-heritage-certificate.webp`
   ],
@@ -83,7 +83,7 @@ const receives = [
     `${finalHomepageAsset}/04_homepage/features/feature-house-identity.webp`
   ],
   [
-    "Private Archive Certificate",
+    "Heritage Certificate",
     "A clean keepsake document designed for personal keeping and gifting.",
     `${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`
   ],
@@ -93,8 +93,8 @@ const receives = [
     `${finalHomepageAsset}/04_homepage/features/feature-family-story.webp`
   ],
   [
-    "Symbol Guide",
-    "A clear explanation of why each symbol belongs in the collection.",
+    "Meaning Behind Your Crest",
+    "A clear explanation of why this crest was created for the family.",
     `${finalHomepageAsset}/04_homepage/features/feature-symbol-guide.webp`
   ],
   [

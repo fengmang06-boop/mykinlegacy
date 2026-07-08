@@ -269,13 +269,12 @@ describe("customer frontend flow", () => {
     expect(html).toContain("complete collection archive");
     expect(html).not.toContain("Files will be prepared next");
     expect(html).not.toContain("Download files will be available in the next delivery step.");
-    expect(html).toContain("House Meaning Summary");
+    expect(html).toContain("Heritage Certificate");
     expect(html).toContain("Family Story");
-    expect(html).toContain("Private Archive Certificate Text");
-    expect(html).toContain("Collection Letter");
-    expect(html).toContain("Design Basis");
-    expect(html).toContain("Symbol Guide");
-    expect(html).toContain("A private symbolic keepsake shaped around protection.");
+    expect(html).toContain("Meaning Behind Your Crest");
+    expect(html).not.toContain("House Meaning Summary");
+    expect(html).not.toContain("Collection Letter");
+    expect(html).not.toContain("Design Basis");
     expect(html).toContain("Chosen because the family values protection.");
     expect(html).toContain("Oak gives the collection a steady family anchor.");
     expect(html).toContain("Private Vault Includes");

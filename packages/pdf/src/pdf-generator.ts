@@ -220,7 +220,7 @@ function buildCoverPage(model: PdfModel, image: PdfImage | null): string {
   } else {
     commands.push(
       strokeRectCommand(366, 506, 132, 132, COLOR.gold, 0.8),
-      textCommand(386, 574, "Crest Artwork", "F2", 11, COLOR.gold),
+      textCommand(392, 574, "Final Crest", "F2", 11, COLOR.gold),
       textCommand(392, 558, "linked when", "F3", 8, COLOR.ivory),
       textCommand(398, 546, "available", "F3", 8, COLOR.ivory)
     );

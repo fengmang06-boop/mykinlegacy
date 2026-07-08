@@ -27,12 +27,10 @@ const consentLabels: Record<(typeof REQUIRED_CONSENTS)[number], string> = {
 };
 
 const collectionArtifacts = [
-  "Private family collection",
-  "Recognition letter",
-  "Symbolic crest artwork",
-  "Private archive certificate",
+  "Final crest artwork",
+  "Heritage certificate",
   "Family story",
-  "Symbol guide",
+  "Meaning behind your crest",
   "Secure private vault"
 ];
 

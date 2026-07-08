@@ -84,11 +84,13 @@ describe("MVP E2E happy path with mock providers", () => {
             height: image.height
           })
         );
-        zipInputs.push({
-          archive_path: `crest-designs/${deliverableCode}.png`,
-          file_path: image.file_path,
-          required: true
-        });
+        if (deliverableCode === "crest_variant_1_png") {
+          zipInputs.push({
+            archive_path: "MyKinLegacy-Private-Legacy-Collection/01-Final-Crest/Final-Crest.png",
+            file_path: image.file_path,
+            required: true
+          });
+        }
       }
 
       const storyCandidate = await handleAiTextGenerationJob(sampleTextJob("family_story_pdf"), {
@@ -98,7 +100,7 @@ describe("MVP E2E happy path with mock providers", () => {
       for (const [deliverableCode, title, bodyText] of [
         ["family_story_pdf", "Family Story", storyCandidate.output_text],
         ["heritage_certificate_pdf", "Heritage Certificate", "Certificate copy for House Alder."],
-        ["symbol_explanation_pdf", "Symbol Explanation", "Lion, oak, black, and gold symbolism."]
+        ["symbol_explanation_pdf", "Meaning Behind Your Crest", "Lion, oak, black, and gold symbolism."]
       ] as const) {
         const pdf = await generateHeritagePdf({
           title,
@@ -120,8 +122,15 @@ describe("MVP E2E happy path with mock providers", () => {
             mimeType: "application/pdf"
           })
         );
+        const archivePathByDeliverable: Record<typeof deliverableCode, string> = {
+          family_story_pdf: "MyKinLegacy-Private-Legacy-Collection/03-Family-Story/Family-Story.pdf",
+          heritage_certificate_pdf:
+            "MyKinLegacy-Private-Legacy-Collection/02-Heritage-Certificate/Heritage-Certificate.pdf",
+          symbol_explanation_pdf:
+            "MyKinLegacy-Private-Legacy-Collection/04-Meaning-Behind-Your-Crest/Meaning-Behind-Your-Crest.pdf"
+        };
         zipInputs.push({
-          archive_path: `pdfs/${deliverableCode}.pdf`,
+          archive_path: archivePathByDeliverable[deliverableCode],
           file_path: pdf.file_path,
           required: true
         });
@@ -221,7 +230,15 @@ describe("MVP E2E happy path with mock providers", () => {
       });
 
       expect(vault.assets_ready).toBe(true);
-      expect(downloadableAssets).toHaveLength(expectedMvpDeliverables.length);
+      expect(downloadableAssets.map((asset) => asset.deliverable_code).sort()).toEqual([
+        "crest_variant_1_png",
+        "download_package_zip",
+        "family_story_pdf",
+        "heritage_certificate_pdf",
+        "symbol_explanation_pdf"
+      ]);
+      expect(downloadableAssets.map((asset) => asset.deliverable_code)).not.toContain("crest_variant_2_png");
+      expect(downloadableAssets.map((asset) => asset.deliverable_code)).not.toContain("crest_variant_3_png");
       expect(signed.signed_url).toContain("expires=600");
       expect(JSON.stringify(downloadRepository.events)).not.toContain("local-private://");
       expect(verifyNoPrivateApiFields(vault).ok).toBe(true);

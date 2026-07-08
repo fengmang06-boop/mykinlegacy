@@ -23,6 +23,13 @@ export const REQUIRED_DELIVERABLES = [
   "download_package_zip"
 ] as const;
 
+const CUSTOMER_PACKAGE_DELIVERABLES = [
+  "crest_variant_1_png",
+  "heritage_certificate_pdf",
+  "family_story_pdf",
+  "symbol_explanation_pdf"
+] as const;
+
 const MIN_CUSTOMER_ARTIFACT_BYTES = 10 * 1024;
 const ARTIFACT_BUCKET = "private-assets";
 const PDF_LAYOUT_VERSION = "premium_v4";
@@ -608,14 +615,14 @@ async function createArtifactBody(input: {
   }
 
   if (input.deliverable_code === "download_package_zip") {
-    const sourceEntries = REQUIRED_DELIVERABLES.filter((code) => code !== "download_package_zip")
+    const sourceEntries = CUSTOMER_PACKAGE_DELIVERABLES
       .map((code) => {
         const artifact = input.generatedBodies.get(code);
         if (!artifact) throw new Error(`zip_required_asset_missing:${code}`);
         return { name: artifact.archive_path, body: artifact.body };
       })
       .sort((a, b) => a.name.localeCompare(b.name));
-    const readme = await tools.generateReadme({
+    const readme = generateCustomerPackageReadme({
       package_title: `${input.context.house_name} Private Legacy Collection`,
       included_files: sourceEntries.map((entry) => entry.name),
       support_note: [
@@ -643,6 +650,47 @@ async function createArtifactBody(input: {
   }
 
   throw new Error(`unsupported_deliverable:${input.deliverable_code}`);
+}
+
+function generateCustomerPackageReadme(input: {
+  package_title: string;
+  included_files: string[];
+  support_note?: string;
+  disclaimer: string;
+}): string {
+  return [
+    "MyKinLegacy",
+    "Legacy, Designed.",
+    "",
+    input.package_title,
+    "Private Legacy Collection Archive",
+    "",
+    "What is included",
+    ...input.included_files.map((file) => `- ${file}`),
+    "",
+    "Opening order",
+    "1. Welcome: begin here and understand how the private collection is arranged.",
+    "2. Final Crest: view the finished crest artwork before reading the longer story.",
+    "3. Heritage Certificate: open the keepsake document that introduces the collection.",
+    "4. Family Story: read the emotional narrative slowly, preferably with close family nearby.",
+    "5. Meaning Behind Your Crest: use this after the story to understand why this crest was created.",
+    "",
+    "Printing and keeping",
+    "The PDF documents are intended for reading, printing, and private family preservation.",
+    "The PNG artwork can be used for personal keepsake printing, family sharing, or private display.",
+    "Store a copy with family photographs, letters, keepsake boxes, or a private digital archive.",
+    "",
+    "Privacy note",
+    "This archive is private by default. Share it only with the people you choose.",
+    "Do not publish private family details unless the family is comfortable doing so.",
+    "",
+    input.support_note ? `Support: ${input.support_note}` : "",
+    "",
+    "Boundary statement",
+    input.disclaimer
+  ]
+    .filter((line, index, lines) => line !== "" || lines[index - 1] !== "")
+    .join("\n");
 }
 
 interface PngPromptSelection {
@@ -1060,12 +1108,10 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
     const entries = tools.listZipEntries(artifact.body);
     const requiredEntries = [
       `${ZIP_ROOT}/00-Welcome/Welcome.txt`,
-      `${ZIP_ROOT}/01-Certificate/Private-Archive-Certificate.pdf`,
-      `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-01.png`,
-      `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-02.png`,
-      `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-03.png`,
+      `${ZIP_ROOT}/01-Final-Crest/Final-Crest.png`,
+      `${ZIP_ROOT}/02-Heritage-Certificate/Heritage-Certificate.pdf`,
       `${ZIP_ROOT}/03-Family-Story/Family-Story.pdf`,
-      `${ZIP_ROOT}/04-Symbol-Guide/Symbol-Guide.pdf`
+      `${ZIP_ROOT}/04-Meaning-Behind-Your-Crest/Meaning-Behind-Your-Crest.pdf`
     ];
     if (
       artifact.body.subarray(0, 4).toString("hex") !== "504b0304" ||
@@ -1232,7 +1278,7 @@ function createArtifactContext(input: {
 function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext): string {
   if (deliverableCode === "heritage_certificate_pdf") {
     return pdfDocumentText({
-      title: "Private Archive Certificate",
+      title: "Heritage Certificate",
       subtitle: "A ceremonial record of this private legacy collection.",
       context,
       sections: [
@@ -1258,8 +1304,8 @@ function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext
   }
 
   return pdfDocumentText({
-    title: "Symbol Guide",
-    subtitle: "A clear explanation of why these symbols were chosen.",
+    title: "Meaning Behind Your Crest",
+    subtitle: "A clear explanation of why this crest was created.",
     context,
     sections: symbolGuideSections(context)
   });
@@ -1350,10 +1396,10 @@ function symbolGuideSections(context: ArtifactContext): Array<[string, string]> 
 
 function customerFileName(deliverableCode: string): string {
   const names: Record<string, string> = {
-    heritage_certificate_pdf: "Private-Archive-Certificate.pdf",
+    heritage_certificate_pdf: "Heritage-Certificate.pdf",
     family_story_pdf: "Family-Story.pdf",
-    symbol_explanation_pdf: "Symbol-Guide.pdf",
-    crest_variant_1_png: "Crest-Artwork-01.png",
+    symbol_explanation_pdf: "Meaning-Behind-Your-Crest.pdf",
+    crest_variant_1_png: "Final-Crest.png",
     crest_variant_2_png: "Crest-Artwork-02.png",
     crest_variant_3_png: "Crest-Artwork-03.png",
     download_package_zip: "Complete-Collection-Archive.zip"
@@ -1363,12 +1409,12 @@ function customerFileName(deliverableCode: string): string {
 
 function archivePathForDeliverable(deliverableCode: string): string {
   const paths: Record<string, string> = {
-    heritage_certificate_pdf: `${ZIP_ROOT}/01-Certificate/Private-Archive-Certificate.pdf`,
-    crest_variant_1_png: `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-01.png`,
-    crest_variant_2_png: `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-02.png`,
-    crest_variant_3_png: `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-03.png`,
+    crest_variant_1_png: `${ZIP_ROOT}/01-Final-Crest/Final-Crest.png`,
+    heritage_certificate_pdf: `${ZIP_ROOT}/02-Heritage-Certificate/Heritage-Certificate.pdf`,
+    crest_variant_2_png: `${ZIP_ROOT}/_Internal-Crest-Variants/Crest-Artwork-02.png`,
+    crest_variant_3_png: `${ZIP_ROOT}/_Internal-Crest-Variants/Crest-Artwork-03.png`,
     family_story_pdf: `${ZIP_ROOT}/03-Family-Story/Family-Story.pdf`,
-    symbol_explanation_pdf: `${ZIP_ROOT}/04-Symbol-Guide/Symbol-Guide.pdf`
+    symbol_explanation_pdf: `${ZIP_ROOT}/04-Meaning-Behind-Your-Crest/Meaning-Behind-Your-Crest.pdf`
   };
   return paths[deliverableCode] ?? `${ZIP_ROOT}/${customerFileName(deliverableCode)}`;
 }
@@ -1586,29 +1632,17 @@ function applySingleOrderLreTextIntegration(attachment: Record<string, unknown>,
 
 function loadArtifactTooling(): ArtifactTooling {
   try {
-    // Prefer source PNG helpers during package-level tests before workspace dist outputs are rebuilt.
+    // Prefer source storage helpers during package-level tests before workspace dist outputs are rebuilt.
     const sourceBase = process.cwd().endsWith("packages\\database") || process.cwd().endsWith("packages/database")
       ? join(process.cwd(), "..")
       : join(process.cwd(), "packages");
     // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const pngSource = require(join(sourceBase, "storage/src/png.ts")) as Pick<
-      ArtifactTooling,
-      "appendPngTextMetadata" | "buildMvpCrestPngMetadataText" | "createMvpCrestPngBuffer" | "readPngMetadata"
-    >;
+    const storageSource = require(join(sourceBase, "storage/src/index.ts")) as Omit<ArtifactTooling, "buildSimplePdf">;
     // eslint-disable-next-line @typescript-eslint/no-require-imports
     const pdfPackage = require("@ai-heritage/pdf") as Pick<ArtifactTooling, "buildSimplePdf">;
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const storagePackage = require("@ai-heritage/storage") as Omit<
-      ArtifactTooling,
-      "buildSimplePdf" | "createMvpCrestPngBuffer" | "readPngMetadata"
-    >;
-    if (typeof pngSource.createMvpCrestPngBuffer === "function") {
+    if (typeof storageSource.generateReadme === "function" && typeof storageSource.createMvpCrestPngBuffer === "function") {
       return {
-        ...storagePackage,
-        appendPngTextMetadata: pngSource.appendPngTextMetadata,
-        buildMvpCrestPngMetadataText: pngSource.buildMvpCrestPngMetadataText,
-        createMvpCrestPngBuffer: pngSource.createMvpCrestPngBuffer,
-        readPngMetadata: pngSource.readPngMetadata,
+        ...storageSource,
         buildSimplePdf: pdfPackage.buildSimplePdf
       };
     }

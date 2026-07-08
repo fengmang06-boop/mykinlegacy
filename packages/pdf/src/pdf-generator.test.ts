@@ -10,7 +10,7 @@ describe("PDF generation foundation", () => {
   it.each([
     ["heritage_certificate_pdf", "Heritage Certificate"],
     ["family_story_pdf", "Family Story"],
-    ["symbol_explanation_pdf", "Symbol Guide"]
+    ["symbol_explanation_pdf", "Meaning Behind Your Crest"]
   ] as const)("generates %s with full disclaimer", async (deliverableCode, title) => {
     const dir = await mkdtemp(join(tmpdir(), "ai-heritage-pdf-"));
     const output = await generateHeritagePdf({

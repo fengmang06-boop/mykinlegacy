@@ -580,7 +580,7 @@ function visualRoleForSymbol(symbol: string, theme: string): string {
 }
 
 function artifactRoleForSymbol(symbol: string, theme: string): string {
-  return `${titleCase(symbol)} connects the crest artwork to the written Symbol Guide, where ${theme} is explained as family meaning rather than official heraldry.`;
+  return `${titleCase(symbol)} connects the crest artwork to Meaning Behind Your Crest, where ${theme} is explained as family meaning rather than official heraldry.`;
 }
 
 function emotionalPurposeForSymbol(symbol: string, theme: string): string {

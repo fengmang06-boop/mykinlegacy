@@ -3,11 +3,10 @@ import React from "react";
 import type { VaultCollectionContent, VaultMeaningProfile } from "../lib/api-client";
 
 const includedItems = [
-  "Private Archive Certificate",
+  "Final Crest",
+  "Heritage Certificate",
   "Family Story",
-  "Symbol Guide",
-  "Crest Artwork",
-  "Collection Letter",
+  "Meaning Behind Your Crest",
   "Private Vault Access"
 ];
 
@@ -70,14 +69,9 @@ export function CollectionDocuments({ collectionContent }: VaultMeaningProps) {
 
   const documents = [
     {
-      title: "House Meaning Summary",
-      description: "A short opening explanation of what this collection represents.",
-      body: collectionContent.house_meaning_summary
-    },
-    {
-      title: "Symbol Guide",
-      description: "The symbols chosen for your family and what each one carries.",
-      body: null
+      title: "Heritage Certificate",
+      description: "Clean keepsake wording for the private archive document.",
+      body: collectionContent.certificate_text
     },
     {
       title: "Family Story",
@@ -85,26 +79,16 @@ export function CollectionDocuments({ collectionContent }: VaultMeaningProps) {
       body: collectionContent.family_story
     },
     {
-      title: "Private Archive Certificate Text",
-      description: "Clean keepsake wording for the private archive document.",
-      body: collectionContent.certificate_text
-    },
-    {
-      title: "Collection Letter",
-      description: "A short opening letter that can be used as a gift message.",
-      body: collectionContent.collection_letter
-    },
-    {
-      title: "Design Basis",
-      description: "Why the symbols, tone, and archive style were selected.",
-      body: collectionContent.design_basis
+      title: "Meaning Behind Your Crest",
+      description: "The symbols chosen for this crest and what each one carries.",
+      body: null
     },
     {
       title: "Important Note",
       description: "The clear symbolic boundary for this private keepsake.",
       body: collectionContent.boundary_statement ?? defaultBoundaryStatement
     }
-  ].filter((item) => item.title === "Symbol Guide" || Boolean(cleanText(item.body)));
+  ].filter((item) => item.title === "Meaning Behind Your Crest" || Boolean(cleanText(item.body)));
 
   return (
     <article className="vault-meaning-card collection-documents" aria-label="Vault Documents">
@@ -125,7 +109,7 @@ export function CollectionDocuments({ collectionContent }: VaultMeaningProps) {
                 <span>Open / Read</span>
               </span>
             </summary>
-            {document.title === "Symbol Guide" ? (
+            {document.title === "Meaning Behind Your Crest" ? (
               <SymbolGuideDocument collectionContent={collectionContent} />
             ) : (
               <p>{document.body}</p>
@@ -143,7 +127,7 @@ function SymbolGuideDocument({ collectionContent }: { collectionContent: VaultCo
   }
 
   return (
-    <section className="collection-symbol-guide" aria-label="Symbol guide">
+    <section className="collection-symbol-guide" aria-label="Meaning behind your crest">
       {collectionContent.symbol_guide.map((symbol) => (
         <div className="collection-symbol-guide-item" key={`${symbol.symbol}-${symbol.meaning}`}>
           <strong>{cleanText(symbol.symbol) ?? "Symbol"}</strong>

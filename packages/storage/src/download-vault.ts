@@ -4,7 +4,11 @@ import type { StorageProviderAdapter } from "./types";
 
 export const DOWNLOAD_VAULT_DISCLAIMER =
   "Your collection is a personalized heritage-inspired symbolic keepsake and is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record.";
-const CUSTOMER_DE_SCOPED_DELIVERABLES = new Set(["transparent_crest_png"]);
+const CUSTOMER_DE_SCOPED_DELIVERABLES = new Set([
+  "transparent_crest_png",
+  "crest_variant_2_png",
+  "crest_variant_3_png"
+]);
 
 export type DownloadVaultErrorCode =
   | "download_token_invalid"
@@ -378,6 +382,19 @@ export async function createSignedAssetUrl(input: {
   });
 
   if (!asset) {
+    await recordDownloadEvent({
+      repository: input.repository,
+      token,
+      asset_id: input.asset_id,
+      event_type: "denied",
+      ip: input.ip,
+      user_agent: input.user_agent,
+      now: input.now
+    });
+    throw new DownloadVaultError("asset_not_linked_to_token");
+  }
+
+  if (!isCustomerFacingAsset(asset)) {
     await recordDownloadEvent({
       repository: input.repository,
       token,

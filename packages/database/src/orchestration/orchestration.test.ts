@@ -194,7 +194,9 @@ describe("DB-backed orchestration foundation", () => {
       expect(text).toContain("Legacy, Designed.");
       expect(text).not.toMatch(/House of Unknown|Unknown|undefined|null|raw json|debug|placeholder/i);
     }
-    expect(zipBody.toString("latin1")).toContain("How to use this archive");
+    expect(zipBody.toString("latin1")).toContain("Opening order");
+    expect(zipBody.toString("latin1")).toContain("Final Crest");
+    expect(zipBody.toString("latin1")).toContain("Meaning Behind Your Crest");
     expect(zipBody.toString("latin1")).toContain("Printing and keeping");
     expect(zipBody.toString("latin1")).toContain("Boundary statement");
     expect(zipBody.toString("latin1")).toContain("personalized symbolic keepsake");
@@ -203,21 +205,21 @@ describe("DB-backed orchestration foundation", () => {
     expect(zipEntries).toEqual(
       expect.arrayContaining([
         "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt",
-        "MyKinLegacy-Private-Legacy-Collection/01-Certificate/Private-Archive-Certificate.pdf",
-        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
-        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-02.png",
-        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-03.png",
+        "MyKinLegacy-Private-Legacy-Collection/01-Final-Crest/Final-Crest.png",
+        "MyKinLegacy-Private-Legacy-Collection/02-Heritage-Certificate/Heritage-Certificate.pdf",
         "MyKinLegacy-Private-Legacy-Collection/03-Family-Story/Family-Story.pdf",
-        "MyKinLegacy-Private-Legacy-Collection/04-Symbol-Guide/Symbol-Guide.pdf"
+        "MyKinLegacy-Private-Legacy-Collection/04-Meaning-Behind-Your-Crest/Meaning-Behind-Your-Crest.pdf"
       ])
     );
     expect(zipEntries.join("\n")).not.toContain("Transparent-Crest-Artwork");
+    expect(zipEntries.join("\n")).not.toContain("Crest-Artwork-02");
+    expect(zipEntries.join("\n")).not.toContain("Crest-Artwork-03");
     expect(result.assets.map((asset) => asset.file_name)).toEqual(
       expect.arrayContaining([
-        "Private-Archive-Certificate.pdf",
+        "Heritage-Certificate.pdf",
         "Family-Story.pdf",
-        "Symbol-Guide.pdf",
-        "Crest-Artwork-01.png",
+        "Meaning-Behind-Your-Crest.pdf",
+        "Final-Crest.png",
         "Complete-Collection-Archive.zip"
       ])
     );

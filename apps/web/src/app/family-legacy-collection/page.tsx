@@ -38,7 +38,7 @@ export default function FamilyLegacyCollectionPage() {
               />
               <div>
                 <span>Symbolic centerpiece</span>
-                <strong>Crest Artwork</strong>
+                <strong>Final Crest</strong>
               </div>
             </article>
             <article className="product-artifact-card">
@@ -49,7 +49,7 @@ export default function FamilyLegacyCollectionPage() {
                 alt=""
                 aria-hidden="true"
               />
-              <strong>Private Archive Certificate</strong>
+              <strong>Heritage Certificate</strong>
               <span>Personal keepsake</span>
             </article>
             <article className="product-artifact-card">
@@ -71,8 +71,8 @@ export default function FamilyLegacyCollectionPage() {
                 alt=""
                 aria-hidden="true"
               />
-              <strong>Symbol Guide</strong>
-              <span>Meaning notes</span>
+              <strong>Meaning Behind Your Crest</strong>
+              <span>Why this crest was created</span>
             </article>
             <article className="product-artifact-card product-artifact-wide">
               <Image
@@ -138,7 +138,7 @@ export default function FamilyLegacyCollectionPage() {
               alt=""
               aria-hidden="true"
             />
-            <span>Crest Artwork</span>
+            <span>Final Crest</span>
           </article>
           <article className="mock-certificate artifact-preview-card">
             <Image
@@ -148,7 +148,7 @@ export default function FamilyLegacyCollectionPage() {
               alt=""
               aria-hidden="true"
             />
-            <span>Private Archive Certificate</span>
+            <span>Heritage Certificate</span>
             <strong>Personal keepsake</strong>
           </article>
           <article className="mock-page artifact-preview-card">

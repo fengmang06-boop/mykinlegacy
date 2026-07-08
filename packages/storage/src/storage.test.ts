@@ -274,7 +274,7 @@ describe("zip and manifest helpers", () => {
       file_ext: "zip",
       mime_type: "application/zip",
       required_entries: [
-        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
+        "MyKinLegacy-Private-Legacy-Collection/01-Final-Crest/Final-Crest.png",
         "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt"
       ]
     });
@@ -288,16 +288,18 @@ describe("zip and manifest helpers", () => {
     });
     expect(entries[0]).toBe("MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt");
     expect(entries).toEqual(expect.arrayContaining([
-      "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
-      "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-02.png",
-      "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-03.png",
-      "MyKinLegacy-Private-Legacy-Collection/01-Certificate/Private-Archive-Certificate.pdf",
-      "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt"
+      "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt",
+      "MyKinLegacy-Private-Legacy-Collection/01-Final-Crest/Final-Crest.png",
+      "MyKinLegacy-Private-Legacy-Collection/02-Heritage-Certificate/Heritage-Certificate.pdf",
+      "MyKinLegacy-Private-Legacy-Collection/03-Family-Story/Family-Story.pdf",
+      "MyKinLegacy-Private-Legacy-Collection/04-Meaning-Behind-Your-Crest/Meaning-Behind-Your-Crest.pdf"
     ]));
     expect(entries.join("\n")).not.toContain("Transparent-Crest-Artwork");
+    expect(entries.join("\n")).not.toContain("Crest-Artwork-02");
+    expect(entries.join("\n")).not.toContain("Crest-Artwork-03");
     await expect(
       validateZipFile(zip.file_path, [
-        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
+        "MyKinLegacy-Private-Legacy-Collection/01-Final-Crest/Final-Crest.png",
         "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt"
       ])
     ).resolves.toMatchObject({ valid: true });
@@ -443,9 +445,23 @@ describe("download vault token security", () => {
       asset_id: "asset_transparent",
       deliverable_code: "transparent_crest_png",
       friendly_name: "Transparent Crest Artwork"
+    }, {
+      ...baseAsset,
+      asset_id: "asset_variant_2",
+      deliverable_code: "crest_variant_2_png",
+      friendly_name: "Internal Crest Variant 2"
+    }, {
+      ...baseAsset,
+      asset_id: "asset_variant_3",
+      deliverable_code: "crest_variant_3_png",
+      friendly_name: "Internal Crest Variant 3"
     });
     const created = await createDownloadToken(
-      { order_id: "order_1", order_number: "AH-1001", asset_ids: ["asset_1", "asset_transparent"] },
+      {
+        order_id: "order_1",
+        order_number: "AH-1001",
+        asset_ids: ["asset_1", "asset_transparent", "asset_variant_2", "asset_variant_3"]
+      },
       repository
     );
     const assets = await listDownloadAssets({
@@ -456,6 +472,8 @@ describe("download vault token security", () => {
     expect(assets).toHaveLength(1);
     expect(assets[0]).toMatchObject({ asset_id: "asset_1", available: true });
     expect(assets.map((asset) => asset.deliverable_code)).not.toContain("transparent_crest_png");
+    expect(assets.map((asset) => asset.deliverable_code)).not.toContain("crest_variant_2_png");
+    expect(assets.map((asset) => asset.deliverable_code)).not.toContain("crest_variant_3_png");
     expect(JSON.stringify(assets)).not.toContain("storage_key");
     expect(JSON.stringify(assets)).not.toContain("signed_url");
   });
@@ -611,12 +629,10 @@ describe("download vault token security", () => {
 
 async function createRequiredZipFiles(dir: string) {
   const paths = [
-    "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
-    "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-02.png",
-    "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-03.png",
-    "MyKinLegacy-Private-Legacy-Collection/01-Certificate/Private-Archive-Certificate.pdf",
+    "MyKinLegacy-Private-Legacy-Collection/01-Final-Crest/Final-Crest.png",
+    "MyKinLegacy-Private-Legacy-Collection/02-Heritage-Certificate/Heritage-Certificate.pdf",
     "MyKinLegacy-Private-Legacy-Collection/03-Family-Story/Family-Story.pdf",
-    "MyKinLegacy-Private-Legacy-Collection/04-Symbol-Guide/Symbol-Guide.pdf"
+    "MyKinLegacy-Private-Legacy-Collection/04-Meaning-Behind-Your-Crest/Meaning-Behind-Your-Crest.pdf"
   ];
   const files = [];
   for (const archivePath of paths) {
@@ -646,7 +662,7 @@ function createDownloadRepository() {
         asset_id: "asset_1",
         order_id: "order_1",
         deliverable_code: "crest_variant_1_png",
-        friendly_name: "Crest Variant 1",
+        friendly_name: "Final Crest",
         asset_type: "image",
         file_ext: "png",
         mime_type: "image/png",

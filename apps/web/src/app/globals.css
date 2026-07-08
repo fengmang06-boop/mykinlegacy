@@ -928,6 +928,11 @@ textarea {
   color: var(--cream);
 }
 
+.vault-summary strong {
+  display: block;
+  margin-top: 4px;
+}
+
 .vault-summary .vault-order-number {
   max-width: 100%;
   margin: 4px 0 0;
