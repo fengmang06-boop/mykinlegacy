@@ -14,17 +14,6 @@ import { PrivateVaultPreview } from "./vault-meaning";
 
 const demoArtifacts: DownloadAsset[] = [
   {
-    asset_id: "demo_collection_letter",
-    deliverable_code: "collection_letter",
-    friendly_name: "Collection Letter",
-    asset_type: "document",
-    file_ext: "pdf",
-    mime_type: "application/pdf",
-    size_bytes: 124000,
-    available: true,
-    status: "available_for_download"
-  },
-  {
     asset_id: "demo_crest_artwork",
     deliverable_code: "crest_artwork",
     friendly_name: "Crest Artwork",
@@ -94,18 +83,16 @@ const demoVault: DownloadVaultData = {
 };
 
 const artifactDescriptions: Record<string, string> = {
-  collection_letter: "A warm opening note that explains why the collection was prepared.",
   crest_artwork: "A symbolic family centerpiece shaped around values, story, and belonging.",
   crest_variant_1_png: "A symbolic family centerpiece shaped around values, story, and belonging.",
   crest_variant_2_png: "A second crest artwork option for family review.",
   crest_variant_3_png: "A third crest artwork option for family review.",
-  heritage_certificate_pdf: "A clean private archive document for gifting, printing, and preserving.",
+  heritage_certificate_pdf: "Start here: a clean private archive document for gifting, printing, and preserving.",
   family_story_pdf: "A written family narrative meant to be read, shared, and kept.",
-  symbol_explanation_pdf: "A guide to the symbols, colors, and motto in the collection.",
-  download_package_zip: "The complete private collection prepared for safekeeping."
+  symbol_explanation_pdf: "A guide to the symbols, colors, and family meaning in the collection.",
+  download_package_zip: "Final step: the complete private collection prepared for safekeeping."
 };
 const customerVisibleDeliverables = new Set([
-  "collection_letter",
   "crest_artwork",
   "crest_variant_1_png",
   "crest_variant_2_png",
@@ -218,15 +205,13 @@ export function DownloadVault({ token }: { token: string }) {
     .sort((a, b) => artifactOrder(a) - artifactOrder(b));
   const hasPlaceholderAssets = sortedAssets.some(isPlaceholderAsset);
   const hasMeaningContext = Boolean(vault?.meaning_profile || vault?.collection_content);
-  const firstPdfAsset = sortedAssets.find(
-    (asset) => asset.file_ext === "pdf" && asset.available && !isPlaceholderAsset(asset)
-  );
   const completeCollectionAsset = sortedAssets.find(
     (asset) =>
       asset.deliverable_code === "download_package_zip" &&
       asset.available &&
       !isPlaceholderAsset(asset)
   );
+  const reviewAssets = sortedAssets.filter((asset) => asset.deliverable_code !== "download_package_zip");
 
   async function downloadCompleteCollection() {
     if (!completeCollectionAsset) {
@@ -299,59 +284,15 @@ export function DownloadVault({ token }: { token: string }) {
         <section className="section-tight vault-artifact-section">
           <div className="section-heading-row">
             <div>
-              <p className="eyebrow">Private artifacts</p>
-              <h2>Your Collection Artifacts</h2>
+              <p className="eyebrow">Opening order</p>
+              <h2>Open Your Collection In This Order</h2>
             </div>
             {vault ? <span className="vault-status-pill">{vault.assets_ready ? "Vault ready" : "Preparing"}</span> : null}
           </div>
           <p className="lead">
-            Review each part of the collection, then save the complete private collection for family
-            keeping.
+            Begin with the welcome, then move through the certificate, artwork, story, and symbol
+            guide before saving the complete collection.
           </p>
-          <div className="vault-download-actions" aria-label="Primary vault downloads">
-            {isFounderDemo || !firstPdfAsset ? (
-              <button
-                className="secondary-button"
-                type="button"
-                onClick={() => (firstPdfAsset ? void download(firstPdfAsset) : undefined)}
-                disabled={!firstPdfAsset || downloadingAsset === firstPdfAsset.asset_id}
-              >
-                {firstPdfAsset && downloadingAsset === firstPdfAsset.asset_id
-                  ? "Preparing PDF..."
-                  : "Download PDF"}
-              </button>
-            ) : (
-              <a
-                className="secondary-button"
-                href={downloadUrl(firstPdfAsset)}
-                download={downloadFileName(firstPdfAsset)}
-                onClick={() => trackDownloadClick(firstPdfAsset)}
-              >
-                Download PDF
-              </a>
-            )}
-            {isFounderDemo || !completeCollectionAsset ? (
-              <button
-                className="button"
-                type="button"
-                onClick={() => void downloadCompleteCollection()}
-                disabled={!completeCollectionAsset || downloadingAsset === completeCollectionAsset.asset_id}
-              >
-                {completeCollectionAsset && downloadingAsset === completeCollectionAsset.asset_id
-                  ? "Preparing ZIP..."
-                  : "Download Collection ZIP"}
-              </button>
-            ) : (
-              <a
-                className="button"
-                href={downloadUrl(completeCollectionAsset)}
-                download={downloadFileName(completeCollectionAsset)}
-                onClick={() => trackDownloadClick(completeCollectionAsset)}
-              >
-                Download Collection ZIP
-              </a>
-            )}
-          </div>
           {hasPlaceholderAssets ? (
             <p className="notice placeholder-vault-notice">
               This internal sample order contains placeholder collection artifacts. Future real
@@ -359,11 +300,30 @@ export function DownloadVault({ token }: { token: string }) {
             </p>
           ) : null}
           <div className="vault-artifact-grid">
-            {sortedAssets.map((asset) => (
+            <article className="vault-artifact-card" key="welcome">
+              <span className="vault-artifact-icon pdf" aria-hidden="true" />
+              <div>
+                <h3>Welcome</h3>
+                <p className="muted">
+                  Start here. This short opening step explains the intended reading order for the
+                  private collection.
+                </p>
+              </div>
+              <div className="artifact-meta-row">
+                <span>START</span>
+                <span className="status-ready">Ready</span>
+              </div>
+              <div>
+                <button className="secondary-button" type="button" disabled>
+                  Begin Below
+                </button>
+              </div>
+            </article>
+            {reviewAssets.map((asset) => (
               <article className="vault-artifact-card" key={asset.asset_id}>
                 <span className={`vault-artifact-icon ${asset.file_ext}`} aria-hidden="true" />
                 <div>
-                  <h3>{asset.friendly_name}</h3>
+                  <h3>{displayArtifactName(asset)}</h3>
                   <p className="muted">
                     {artifactDescriptions[asset.deliverable_code] ?? "A private collection artifact."}
                   </p>
@@ -488,17 +448,22 @@ export function downloadFileName(asset: Pick<DownloadAsset, "friendly_name" | "f
 
 function artifactOrder(asset: DownloadAsset): number {
   const order: Record<string, number> = {
-    collection_letter: 1,
+    heritage_certificate_pdf: 1,
     crest_artwork: 2,
     crest_variant_1_png: 2,
     crest_variant_2_png: 3,
     crest_variant_3_png: 4,
-    heritage_certificate_pdf: 5,
-    family_story_pdf: 6,
-    symbol_explanation_pdf: 7,
+    family_story_pdf: 5,
+    symbol_explanation_pdf: 6,
     download_package_zip: 8
   };
   return order[asset.deliverable_code] ?? 50;
+}
+
+function displayArtifactName(asset: Pick<DownloadAsset, "deliverable_code" | "friendly_name">): string {
+  if (asset.deliverable_code === "heritage_certificate_pdf") return "Certificate";
+  if (asset.deliverable_code === "download_package_zip") return "Download Complete Collection";
+  return asset.friendly_name;
 }
 
 function downloadDemoCollection(asset: DownloadAsset): void {
@@ -509,13 +474,13 @@ function downloadDemoCollection(asset: DownloadAsset): void {
     "",
     artifactDescriptions[asset.deliverable_code] ?? "A private collection artifact.",
     "",
-    "Included in the complete Family Legacy Collection:",
-    "- Collection Letter",
+    "Open the Family Legacy Collection in this order:",
+    "- Welcome",
+    "- Certificate",
     "- Crest Artwork",
-    "- Private Archive Certificate",
     "- Family Story",
     "- Symbol Guide",
-    "- Complete Collection Archive",
+    "- Download Complete Collection",
     "",
     "This demo artifact proves the Founder can move from checkout to vault to collection access without admin, logs, or email."
   ].join("\n");

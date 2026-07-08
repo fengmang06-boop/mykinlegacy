@@ -274,8 +274,8 @@ describe("zip and manifest helpers", () => {
       file_ext: "zip",
       mime_type: "application/zip",
       required_entries: [
-        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
-        "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
+        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
+        "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt"
       ]
     });
 
@@ -286,18 +286,19 @@ describe("zip and manifest helpers", () => {
       zip_eocd_valid: true,
       zip_test_passed: true
     });
+    expect(entries[0]).toBe("MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt");
     expect(entries).toEqual(expect.arrayContaining([
-      "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
-      "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-02.png",
-      "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-03.png",
-      "MyKinLegacy-Private-Legacy-Collection/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf",
-      "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
+      "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
+      "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-02.png",
+      "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-03.png",
+      "MyKinLegacy-Private-Legacy-Collection/01-Certificate/Private-Archive-Certificate.pdf",
+      "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt"
     ]));
     expect(entries.join("\n")).not.toContain("Transparent-Crest-Artwork");
     await expect(
       validateZipFile(zip.file_path, [
-        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
-        "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
+        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
+        "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt"
       ])
     ).resolves.toMatchObject({ valid: true });
     await rm(dir, { recursive: true, force: true });
@@ -610,12 +611,12 @@ describe("download vault token security", () => {
 
 async function createRequiredZipFiles(dir: string) {
   const paths = [
-    "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
-    "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-02.png",
-    "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-03.png",
-    "MyKinLegacy-Private-Legacy-Collection/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf",
-    "MyKinLegacy-Private-Legacy-Collection/02-Family-Story/Family-Story.pdf",
-    "MyKinLegacy-Private-Legacy-Collection/03-Symbol-Guide/Symbol-Guide.pdf"
+    "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
+    "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-02.png",
+    "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-03.png",
+    "MyKinLegacy-Private-Legacy-Collection/01-Certificate/Private-Archive-Certificate.pdf",
+    "MyKinLegacy-Private-Legacy-Collection/03-Family-Story/Family-Story.pdf",
+    "MyKinLegacy-Private-Legacy-Collection/04-Symbol-Guide/Symbol-Guide.pdf"
   ];
   const files = [];
   for (const archivePath of paths) {

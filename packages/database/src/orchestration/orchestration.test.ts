@@ -198,18 +198,20 @@ describe("DB-backed orchestration foundation", () => {
     expect(zipBody.toString("latin1")).toContain("Printing and keeping");
     expect(zipBody.toString("latin1")).toContain("Boundary statement");
     expect(zipBody.toString("latin1")).toContain("personalized symbolic keepsake");
-    expect(listZipEntries(zipBody)).toEqual(
+    const zipEntries = listZipEntries(zipBody);
+    expect(zipEntries[0]).toBe("MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt");
+    expect(zipEntries).toEqual(
       expect.arrayContaining([
-        "MyKinLegacy-Private-Legacy-Collection/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf",
-        "MyKinLegacy-Private-Legacy-Collection/02-Family-Story/Family-Story.pdf",
-        "MyKinLegacy-Private-Legacy-Collection/03-Symbol-Guide/Symbol-Guide.pdf",
-        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-01.png",
-        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-02.png",
-        "MyKinLegacy-Private-Legacy-Collection/04-Crest-Artwork/Crest-Artwork-03.png",
-        "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt"
+        "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt",
+        "MyKinLegacy-Private-Legacy-Collection/01-Certificate/Private-Archive-Certificate.pdf",
+        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-01.png",
+        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-02.png",
+        "MyKinLegacy-Private-Legacy-Collection/02-Crest-Artwork/Crest-Artwork-03.png",
+        "MyKinLegacy-Private-Legacy-Collection/03-Family-Story/Family-Story.pdf",
+        "MyKinLegacy-Private-Legacy-Collection/04-Symbol-Guide/Symbol-Guide.pdf"
       ])
     );
-    expect(listZipEntries(zipBody).join("\n")).not.toContain("Transparent-Crest-Artwork");
+    expect(zipEntries.join("\n")).not.toContain("Transparent-Crest-Artwork");
     expect(result.assets.map((asset) => asset.file_name)).toEqual(
       expect.arrayContaining([
         "Private-Archive-Certificate.pdf",

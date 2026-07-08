@@ -26,11 +26,13 @@ export async function generateReadme(input: {
     "What is included",
     ...input.included_files.map((file) => `- ${file}`),
     "",
-    "How to use this archive",
-    "Open the Private Archive Certificate first when giving the collection as a gift. It is the clean keepsake entry point for the archive.",
-    "Read the Family Story slowly, preferably with the person receiving the collection or with close family nearby.",
-    "Use the Symbol Guide beside the crest artwork so the symbols feel connected to memory, values, and family meaning.",
-    "Keep the crest artwork with the documents. The image is strongest when the written meaning stays beside it.",
+    "Opening order",
+    "1. Welcome: begin here and understand how the private collection is arranged.",
+    "2. Certificate: open the keepsake document that introduces the collection.",
+    "3. Crest Artwork: view the family artwork before reading the longer story.",
+    "4. Family Story: read the emotional narrative slowly, preferably with close family nearby.",
+    "5. Symbol Guide: use this after the story to understand why the symbols were chosen.",
+    "6. Download Complete Collection: keep the full archive together for family preservation.",
     "",
     "Printing and keeping",
     "The PDF documents are intended for reading, printing, and private family preservation.",
@@ -59,13 +61,13 @@ export async function generateZipPackage(input: {
   }
 
   const entries = [
-    ...input.assets,
     {
-      archive_path: "MyKinLegacy-Private-Legacy-Collection/05-Private-Archive-Notes/Read-Me.txt",
+      archive_path: "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt",
       file_path: "",
       required: true,
       body: Buffer.from(input.readme_text)
-    }
+    },
+    ...input.assets.slice().sort((a, b) => a.archive_path.localeCompare(b.archive_path))
   ];
   const buffers: Array<{ name: string; body: Buffer }> = [];
   for (const entry of entries) {

@@ -608,11 +608,13 @@ async function createArtifactBody(input: {
   }
 
   if (input.deliverable_code === "download_package_zip") {
-    const sourceEntries = REQUIRED_DELIVERABLES.filter((code) => code !== "download_package_zip").map((code) => {
-      const artifact = input.generatedBodies.get(code);
-      if (!artifact) throw new Error(`zip_required_asset_missing:${code}`);
-      return { name: artifact.archive_path, body: artifact.body };
-    });
+    const sourceEntries = REQUIRED_DELIVERABLES.filter((code) => code !== "download_package_zip")
+      .map((code) => {
+        const artifact = input.generatedBodies.get(code);
+        if (!artifact) throw new Error(`zip_required_asset_missing:${code}`);
+        return { name: artifact.archive_path, body: artifact.body };
+      })
+      .sort((a, b) => a.name.localeCompare(b.name));
     const readme = await tools.generateReadme({
       package_title: `${input.context.house_name} Private Legacy Collection`,
       included_files: sourceEntries.map((entry) => entry.name),
@@ -625,11 +627,11 @@ async function createArtifactBody(input: {
       disclaimer: ARTIFACT_BOUNDARY_STATEMENT
     });
     const body = tools.buildZipBuffer([
-      ...sourceEntries,
       {
-        name: `${ZIP_ROOT}/05-Private-Archive-Notes/Read-Me.txt`,
+        name: `${ZIP_ROOT}/00-Welcome/Welcome.txt`,
         body: Buffer.from(readme)
-      }
+      },
+      ...sourceEntries
     ]);
     return {
       body,
@@ -1057,13 +1059,13 @@ function assertArtifactReady(deliverableCode: string, artifact: ArtifactBody): v
   if (artifact.file_ext === "zip") {
     const entries = tools.listZipEntries(artifact.body);
     const requiredEntries = [
-      `${ZIP_ROOT}/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf`,
-      `${ZIP_ROOT}/02-Family-Story/Family-Story.pdf`,
-      `${ZIP_ROOT}/03-Symbol-Guide/Symbol-Guide.pdf`,
-      `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-01.png`,
-      `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-02.png`,
-      `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-03.png`,
-      `${ZIP_ROOT}/05-Private-Archive-Notes/Read-Me.txt`
+      `${ZIP_ROOT}/00-Welcome/Welcome.txt`,
+      `${ZIP_ROOT}/01-Certificate/Private-Archive-Certificate.pdf`,
+      `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-01.png`,
+      `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-02.png`,
+      `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-03.png`,
+      `${ZIP_ROOT}/03-Family-Story/Family-Story.pdf`,
+      `${ZIP_ROOT}/04-Symbol-Guide/Symbol-Guide.pdf`
     ];
     if (
       artifact.body.subarray(0, 4).toString("hex") !== "504b0304" ||
@@ -1361,12 +1363,12 @@ function customerFileName(deliverableCode: string): string {
 
 function archivePathForDeliverable(deliverableCode: string): string {
   const paths: Record<string, string> = {
-    heritage_certificate_pdf: `${ZIP_ROOT}/01-Private-Archive-Certificate/Private-Archive-Certificate.pdf`,
-    family_story_pdf: `${ZIP_ROOT}/02-Family-Story/Family-Story.pdf`,
-    symbol_explanation_pdf: `${ZIP_ROOT}/03-Symbol-Guide/Symbol-Guide.pdf`,
-    crest_variant_1_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-01.png`,
-    crest_variant_2_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-02.png`,
-    crest_variant_3_png: `${ZIP_ROOT}/04-Crest-Artwork/Crest-Artwork-03.png`
+    heritage_certificate_pdf: `${ZIP_ROOT}/01-Certificate/Private-Archive-Certificate.pdf`,
+    crest_variant_1_png: `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-01.png`,
+    crest_variant_2_png: `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-02.png`,
+    crest_variant_3_png: `${ZIP_ROOT}/02-Crest-Artwork/Crest-Artwork-03.png`,
+    family_story_pdf: `${ZIP_ROOT}/03-Family-Story/Family-Story.pdf`,
+    symbol_explanation_pdf: `${ZIP_ROOT}/04-Symbol-Guide/Symbol-Guide.pdf`
   };
   return paths[deliverableCode] ?? `${ZIP_ROOT}/${customerFileName(deliverableCode)}`;
 }
