@@ -66,7 +66,8 @@ jobs:
           tar -czf /tmp/etsy-oauth-listings-w.tgz \
             -C .codex-etsy-ai-manager-sync-v1 \
             src/lib/integrations/etsy/scopes.ts \
-            src/lib/integrations/etsy/write-guard.ts
+            src/lib/integrations/etsy/write-guard.ts \
+            src/app/api/etsy/status/route.ts
           scp -i ~/.ssh/prod \
             -o BatchMode=yes \
             -o IdentitiesOnly=yes \
@@ -125,6 +126,8 @@ jobs:
           mkdir -p src/lib/integrations/etsy
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/scopes.ts" src/lib/integrations/etsy/scopes.ts
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/write-guard.ts" src/lib/integrations/etsy/write-guard.ts
+          mkdir -p src/app/api/etsy/status
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/app/api/etsy/status/route.ts" src/app/api/etsy/status/route.ts
 
           python3 - <<'PY'
           import os
@@ -218,6 +221,11 @@ jobs:
               text = text.replace(
                   '"<h2>Next Step</h2>",\n        "<p>Restart the dev server if needed, then run:</p>",\n        "<code>npm run etsy:sync:read-only</code>",',
                   '"<h2>Next Step</h2>",\n        "<p>The production server can now use the saved Etsy token for read-only sync.</p>",',
+              )
+          if 'ETSY_TOKEN_SCOPE' not in text:
+              text = text.replace(
+                  '      ETSY_TOKEN_EXPIRES_AT: expiresAt,\n      ETSY_READ_ONLY_MODE: "true"',
+                  '      ETSY_TOKEN_EXPIRES_AT: expiresAt,\n      ETSY_TOKEN_SCOPE: token.scope ?? "",\n      ETSY_READ_ONLY_MODE: "true"',
               )
           p.write_text(text)
           PY

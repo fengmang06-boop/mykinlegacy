@@ -26,6 +26,10 @@ export async function GET() {
       readyForReadOnlySync: env.readyForReadOnlySync,
       tokenPresent: env.tokenPresent,
       refreshTokenPresent: env.refreshTokenPresent,
+      tokenScope: process.env.ETSY_TOKEN_SCOPE ?? null,
+      hasListingsWriteScope: String(process.env.ETSY_TOKEN_SCOPE ?? "")
+        .split(/\s+/)
+        .includes("listings_w"),
       tokenExpired: env.tokenExpired,
       missingFields: env.missingFields,
       warnings: env.warnings
