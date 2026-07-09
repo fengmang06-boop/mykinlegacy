@@ -35,8 +35,6 @@ jobs:
           : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
           : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
           : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
-          : "${TEMP_ETSY_CLIENT_ID:?Missing TEMP_ETSY_CLIENT_ID}"
-          : "${TEMP_ETSY_CLIENT_SECRET:?Missing TEMP_ETSY_CLIENT_SECRET}"
           mkdir -p ~/.ssh
           chmod 700 ~/.ssh
           python3 - <<'PY'
@@ -80,17 +78,25 @@ jobs:
       - name: Configure production OAuth and token persistence
         shell: bash
         run: |
-          CLIENT_ID_B64="$(printf '%s' "$TEMP_ETSY_CLIENT_ID" | base64 -w0)"
-          CLIENT_SECRET_B64="$(printf '%s' "$TEMP_ETSY_CLIENT_SECRET" | base64 -w0)"
+          CLIENT_ID_B64=""
+          CLIENT_SECRET_B64=""
+          if [ -n "${TEMP_ETSY_CLIENT_ID:-}" ]; then
+            CLIENT_ID_B64="$(printf '%s' "$TEMP_ETSY_CLIENT_ID" | base64 -w0)"
+          fi
+          if [ -n "${TEMP_ETSY_CLIENT_SECRET:-}" ]; then
+            CLIENT_SECRET_B64="$(printf '%s' "$TEMP_ETSY_CLIENT_SECRET" | base64 -w0)"
+          fi
 
           ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
             "ETSY_CLIENT_ID_B64='$CLIENT_ID_B64' ETSY_CLIENT_SECRET_B64='$CLIENT_SECRET_B64' bash -s" <<'REMOTE'
           set -euo pipefail
 
-          export ETSY_CLIENT_ID="$(printf '%s' "$ETSY_CLIENT_ID_B64" | base64 -d)"
-          export ETSY_CLIENT_SECRET="$(printf '%s' "$ETSY_CLIENT_SECRET_B64" | base64 -d)"
-          : "${ETSY_CLIENT_ID:?}"
-          : "${ETSY_CLIENT_SECRET:?}"
+          if [ -n "${ETSY_CLIENT_ID_B64:-}" ]; then
+            export ETSY_CLIENT_ID="$(printf '%s' "$ETSY_CLIENT_ID_B64" | base64 -d)"
+          fi
+          if [ -n "${ETSY_CLIENT_SECRET_B64:-}" ]; then
+            export ETSY_CLIENT_SECRET="$(printf '%s' "$ETSY_CLIENT_SECRET_B64" | base64 -d)"
+          fi
 
           APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
           if command -v pm2 >/dev/null 2>&1; then
@@ -126,14 +132,16 @@ jobs:
 
           env_path = Path(".env.local")
           updates = {
-              "ETSY_CLIENT_ID": os.environ["ETSY_CLIENT_ID"],
-              "ETSY_CLIENT_SECRET": os.environ["ETSY_CLIENT_SECRET"],
               "ETSY_REDIRECT_URI": "https://tools.mensskull.com/api/etsy/callback",
               "BASE_URL": "https://tools.mensskull.com",
               "NEXT_PUBLIC_BASE_URL": "https://tools.mensskull.com",
               "NEXT_PUBLIC_SITE_URL": "https://tools.mensskull.com",
               "ETSY_READ_ONLY_MODE": "true",
           }
+          if os.environ.get("ETSY_CLIENT_ID"):
+              updates["ETSY_CLIENT_ID"] = os.environ["ETSY_CLIENT_ID"]
+          if os.environ.get("ETSY_CLIENT_SECRET"):
+              updates["ETSY_CLIENT_SECRET"] = os.environ["ETSY_CLIENT_SECRET"]
           lines = env_path.read_text().splitlines() if env_path.exists() else []
           kept = []
           for line in lines:
