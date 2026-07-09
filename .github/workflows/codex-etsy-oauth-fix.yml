@@ -26,6 +26,8 @@ jobs:
       TEMP_ETSY_CLIENT_ID: ${{ secrets.TEMP_ETSY_CLIENT_ID_CODEX }}
       TEMP_ETSY_CLIENT_SECRET: ${{ secrets.TEMP_ETSY_CLIENT_SECRET_CODEX }}
     steps:
+      - uses: actions/checkout@v4
+
       - name: Configure SSH
         shell: bash
         run: |
@@ -60,6 +62,21 @@ jobs:
           chmod 600 ~/.ssh/prod
           ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
 
+      - name: Upload OAuth scope and write guard files
+        shell: bash
+        run: |
+          tar -czf /tmp/etsy-oauth-listings-w.tgz \
+            -C .codex-etsy-ai-manager-sync-v1 \
+            src/lib/integrations/etsy/scopes.ts \
+            src/lib/integrations/etsy/write-guard.ts
+          scp -i ~/.ssh/prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" \
+            /tmp/etsy-oauth-listings-w.tgz \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-oauth-listings-w.tgz"
+
       - name: Configure production OAuth and token persistence
         shell: bash
         run: |
@@ -93,7 +110,15 @@ jobs:
 
           TS="$(date +%Y%m%d%H%M%S)"
           cp -a .env.local ".env.local.codex-backup-$TS" 2>/dev/null || true
+          cp -a src/lib/integrations/etsy/scopes.ts "src/lib/integrations/etsy/scopes.ts.codex-backup-$TS" 2>/dev/null || true
+          cp -a src/lib/integrations/etsy/write-guard.ts "src/lib/integrations/etsy/write-guard.ts.codex-backup-$TS" 2>/dev/null || true
           cp -a src/app/api/etsy/callback/route.ts "src/app/api/etsy/callback/route.ts.codex-backup-$TS"
+
+          mkdir -p "/tmp/etsy-oauth-listings-w-$TS"
+          tar -xzf /tmp/etsy-oauth-listings-w.tgz -C "/tmp/etsy-oauth-listings-w-$TS"
+          mkdir -p src/lib/integrations/etsy
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/scopes.ts" src/lib/integrations/etsy/scopes.ts
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/write-guard.ts" src/lib/integrations/etsy/write-guard.ts
 
           python3 - <<'PY'
           import os
@@ -207,8 +232,10 @@ jobs:
             if (u.host !== "www.etsy.com") throw new Error(`unexpected auth host ${u.host}`);
             if (u.searchParams.get("redirect_uri") !== "https://tools.mensskull.com/api/etsy/callback") throw new Error("redirect_uri mismatch");
             if (!u.searchParams.get("client_id")) throw new Error("missing client_id");
+            if (!String(u.searchParams.get("scope") || "").split(/\s+/).includes("listings_w")) throw new Error("missing listings_w scope");
             console.log("oauth_location=etsy");
             console.log("oauth_redirect_uri=ok");
+            console.log("oauth_scope_listings_w=ok");
           ' "$LOCATION"
           curl -k -sS -o /dev/null -w "mykinlegacy_home=%{http_code}\n" --max-time 20 https://mykinlegacy.com/
           REMOTE
