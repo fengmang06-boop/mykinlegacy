@@ -73,6 +73,7 @@ jobs:
             src/lib/integrations/etsy/write-guard.ts \
             src/app/api/etsy/callback/route.ts \
             src/app/api/etsy/low-signal/day1/dry-run/route.ts \
+            src/app/api/etsy/low-signal/day1/execute/route.ts \
             src/app/api/etsy/oauth/diagnostics/route.ts \
             src/app/api/etsy/status/route.ts
           scp -i ~/.ssh/prod \
@@ -142,6 +143,8 @@ jobs:
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/app/api/etsy/callback/route.ts" src/app/api/etsy/callback/route.ts
           mkdir -p src/app/api/etsy/low-signal/day1/dry-run
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/app/api/etsy/low-signal/day1/dry-run/route.ts" src/app/api/etsy/low-signal/day1/dry-run/route.ts
+          mkdir -p src/app/api/etsy/low-signal/day1/execute
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/app/api/etsy/low-signal/day1/execute/route.ts" src/app/api/etsy/low-signal/day1/execute/route.ts
           mkdir -p src/app/api/etsy/oauth/diagnostics
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/app/api/etsy/oauth/diagnostics/route.ts" src/app/api/etsy/oauth/diagnostics/route.ts
           mkdir -p src/app/api/etsy/status
