@@ -1,4 +1,4 @@
-name: Codex Etsy Sync v1 Deploy
+name: Codex Etsy Manager Deploy (No Sync)
 
 on:
   push:
@@ -65,7 +65,7 @@ jobs:
           tar -czf /tmp/etsy-sync-v1.tgz -C .codex-etsy-ai-manager-sync-v1 .
           scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" /tmp/etsy-sync-v1.tgz "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-sync-v1.tgz"
 
-      - name: Deploy, migrate, sync, and verify
+      - name: Deploy without Etsy sync and verify
         shell: bash
         run: |
           ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
@@ -152,7 +152,9 @@ jobs:
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/database-isolation.ts" src/lib/database-isolation.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/prisma.ts" src/lib/prisma.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/client.ts" src/lib/integrations/etsy/client.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/rate-limit.ts" src/lib/integrations/etsy/rate-limit.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/scopes.ts" src/lib/integrations/etsy/scopes.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/token-scopes.ts" src/lib/integrations/etsy/token-scopes.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/write-guard.ts" src/lib/integrations/etsy/write-guard.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/sync-read-only.ts" src/lib/integrations/etsy/sync-read-only.ts
           mkdir -p src/app/api/etsy/sync src/app/api/etsy/status src/app/etsy-connection
@@ -174,6 +176,32 @@ jobs:
           cp -a "/tmp/etsy-sync-v1-$TS/src/app/api/etsy/growth-plan/track/route.ts" src/app/api/etsy/growth-plan/track/route.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/etsy-growth-plan.ts" src/lib/etsy-growth-plan.ts
 
+          python3 - <<'PY'
+          from pathlib import Path
+
+          env_path = Path(".env.local")
+          updates = {
+              "ETSY_READ_ONLY_MODE": "true",
+              "ETSY_WRITE_APPROVED": "false",
+              "ETSY_FULL_SYNC_APPROVED": "false",
+              "ETSY_MIN_SYNC_INTERVAL_MINUTES": "360",
+              "ETSY_DAILY_RESERVE_PERCENT": "20",
+              "ETSY_DAILY_RESERVE_CALLS": "50",
+              "ETSY_RATE_LIMIT_PROBE_MINUTES": "60",
+              "ETSY_SYNC_LOCK_STALE_MINUTES": "120",
+              "ETSY_MAX_SYNC_ITEMS": "2500",
+          }
+          lines = env_path.read_text().splitlines() if env_path.exists() else []
+          kept = []
+          for line in lines:
+              key = line.split("=", 1)[0].strip() if "=" in line else ""
+              if key not in updates:
+                  kept.append(line)
+          kept.extend(f"{key}={value}" for key, value in updates.items())
+          env_path.write_text("\n".join(line for line in kept if line.strip()) + "\n")
+          env_path.chmod(0o600)
+          PY
+
           npx prisma db push --accept-data-loss
           npm run build
           pm2 restart mensskull-etsy-ai-manager --update-env
@@ -183,170 +211,10 @@ jobs:
           curl -k -sS -o /dev/null -w "tools_connection=%{http_code}\n" --max-time 30 https://tools.mensskull.com/etsy-connection
           curl -k -sS -o /tmp/etsy-status-before.json -w "etsy_status=%{http_code}\n" --max-time 30 https://tools.mensskull.com/api/etsy/status
 
-          echo "===== SYNC ====="
-          cat > .codex-run-sync.ts <<'TS'
-          import fs from "node:fs";
-          import { syncEtsyReadOnly } from "./src/lib/integrations/etsy/sync-read-only";
-          import { prisma } from "./src/lib/prisma";
-          function loadEnvFile(file: string) {
-            if (!fs.existsSync(file)) return;
-            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
-              const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
-              if (!match) continue;
-              const value = match[2].trim().replace(/^['"]|['"]$/g, "");
-              process.env[match[1]] = value;
-            }
-          }
-          async function main() {
-            loadEnvFile(".env");
-            loadEnvFile(".env.local");
-            const data = await syncEtsyReadOnly();
-            console.log("etsy_sync=local");
-            console.log(JSON.stringify({
-              ok: data.ok,
-              message: data.message,
-              listingsPulled: data.listingsPulled,
-              imagesPulled: data.imagesPulled,
-              inventoryPulled: data.inventoryPulled,
-              receiptsPulled: data.receiptsPulled,
-              transactionsPulled: data.transactionsPulled,
-              errorCount: Array.isArray(data.errors) ? data.errors.length : 0
-            }));
-            if (!data.listingsPulled) process.exitCode = 1;
-          }
-          main().finally(async () => prisma.$disconnect());
-          TS
-          npx tsx .codex-run-sync.ts
-          rm -f .codex-run-sync.ts
-
-          echo "===== STATUS AFTER ====="
-          curl -k -sS -o /tmp/etsy-status-after.json -w "etsy_status_after=%{http_code}\n" --max-time 30 https://tools.mensskull.com/api/etsy/status
-          node -e '
-            const fs = require("fs");
-            const data = JSON.parse(fs.readFileSync("/tmp/etsy-status-after.json", "utf8"));
-            console.log(JSON.stringify({
-              connected: data.connected,
-              shopName: data.shop && data.shop.name,
-              etsyShopId: data.shop && data.shop.etsyShopId,
-              counts: data.counts,
-              lastSyncStatus: data.lastSync && data.lastSync.status,
-              lastSyncMessage: data.lastSync && data.lastSync.message
-            }));
-          '
-
-          echo "===== AI ANALYSIS ====="
-          cat > .codex-run-ai.ts <<'TS'
-          import fs from "node:fs";
-          import { analyzeAllListings } from "./src/lib/etsy-ai/listing-intelligence";
-          import { prisma } from "./src/lib/prisma";
-          function loadEnvFile(file: string) {
-            if (!fs.existsSync(file)) return;
-            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
-              const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)\s*$/);
-              if (!match) continue;
-              const value = match[2].trim().replace(/^['"]|['"]$/g, "");
-              process.env[match[1]] = value;
-            }
-          }
-          async function main() {
-            loadEnvFile(".env");
-            loadEnvFile(".env.local");
-            const data = await analyzeAllListings({ retry: true });
-            console.log("etsy_ai_analyze=local");
-            console.log(JSON.stringify({
-              ok: data.ok,
-              analyzed: data.analyzed,
-              skipped: data.skipped,
-              totalReports: data.totalReports,
-              snapshotCount: data.snapshotCount,
-              optimizationQueue: data.optimizationQueue,
-              remaining: data.remaining,
-              errorCount: Array.isArray(data.errors) ? data.errors.length : 0
-            }));
-            if (!data.totalReports) process.exitCode = 1;
-          }
-          main().finally(async () => prisma.$disconnect());
-          TS
-          npx tsx .codex-run-ai.ts
-          rm -f .codex-run-ai.ts
-          curl -k -sS -o /tmp/etsy-ai-page.html -w "etsy_ai_page=%{http_code}\n" --max-time 30 https://tools.mensskull.com/etsy-ai
-          node -e '
-            const html = require("fs").readFileSync("/tmp/etsy-ai-page.html", "utf8");
-            console.log(JSON.stringify({
-              hasDashboard: html.includes("Etsy AI Intelligence"),
-              hasAverageSeo: html.includes("Average SEO Score"),
-              hasOpportunities: html.includes("Top 10 Opportunities")
-            }));
-          '
-
-          echo "===== GROWTH PLAN ====="
-          curl -k -sS -o /tmp/etsy-growth-track.json -w "etsy_growth_track=%{http_code}\n" --max-time 60 https://tools.mensskull.com/api/etsy/growth-plan/track
-          cat /tmp/etsy-growth-track.json
-          echo
-          curl -k -sS -o /tmp/etsy-growth-plan-page.html -w "etsy_growth_plan_page=%{http_code}\n" --max-time 60 https://tools.mensskull.com/etsy-growth-plan
-          node -e '
-            const html = require("fs").readFileSync("/tmp/etsy-growth-plan-page.html", "utf8");
-            console.log(JSON.stringify({
-              hasGrowthPlan: html.includes("Etsy Growth Plan"),
-              hasCustomSolidBrass: html.includes("Custom Solid Brass Car Emblem"),
-              hasDailyTracking: html.includes("Daily Tracking")
-            }));
-          '
-
-          echo "===== DB COUNTS ====="
-          node <<'NODE'
-          const { PrismaClient } = require("@prisma/client");
-          const prisma = new PrismaClient();
-          (async () => {
-            const [shops, listings, images, inventory, receipts, transactions, aiReports, snapshots, queueItems, growthPlans, growthBaselines, growthTrackings] = await Promise.all([
-              prisma.shop.count(),
-              prisma.listing.count(),
-              prisma.listingImage.count(),
-              prisma.listingInventory.count(),
-              prisma.etsyReceipt.count(),
-              prisma.etsyTransaction.count(),
-              prisma.listingAiReport.count(),
-              prisma.listingAiSnapshot.count(),
-              prisma.optimizationQueueItem.count({ where: { status: "pending" } }),
-              prisma.etsyGrowthPlan.count(),
-              prisma.etsyGrowthBaseline.count(),
-              prisma.etsyGrowthDailyTracking.count()
-            ]);
-            const avg = await prisma.listingAiReport.aggregate({ _avg: { seoScore: true, conversionScore: true, opportunityScore: true } });
-            const highPriority = await prisma.listingAiReport.findMany({
-              where: { overallPriority: { in: ["Critical", "High"] } },
-              include: { listing: true },
-              orderBy: [{ opportunityScore: "desc" }, { conversionScore: "asc" }],
-              take: 10
-            });
-            console.log(JSON.stringify({
-              shops,
-              listings,
-              images,
-              inventory,
-              receipts,
-              transactions,
-              aiReports,
-              snapshots,
-              queueItems,
-              growthPlans,
-              growthBaselines,
-              growthTrackings,
-              avgSeo: Math.round(avg._avg.seoScore || 0),
-              avgConversion: Math.round(avg._avg.conversionScore || 0),
-              avgOpportunity: Math.round(avg._avg.opportunityScore || 0),
-              highestPriorityListings: highPriority.map((report) => ({
-                title: report.listing.title,
-                priority: report.overallPriority,
-                risk: report.riskLevel,
-                seo: report.seoScore,
-                conversion: report.conversionScore,
-                opportunity: report.opportunityScore
-              }))
-            }));
-          })().finally(() => prisma.$disconnect());
-          NODE
-
+          echo "===== ETSY API SAFETY POLICY ====="
+          echo "deployment_triggers_sync=false"
+          echo "sync_mode=incremental"
+          echo "full_sync_approved=false"
           echo "===== MYKINLEGACY ====="
           curl -k -sS -o /dev/null -w "mykinlegacy_home=%{http_code}\n" --max-time 30 https://mykinlegacy.com/
           REMOTE

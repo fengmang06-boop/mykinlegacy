@@ -26,11 +26,19 @@ type SyncResult = {
   ok: boolean;
   message: string;
   listingsPulled: number;
+  listingsScanned: number;
+  listingsSkipped: number;
   imagesPulled: number;
   inventoryPulled: number;
   receiptsPulled: number;
   transactionsPulled: number;
   errors: string[];
+  skippedReason?: string;
+};
+
+type SyncOptions = {
+  forceFull?: boolean;
+  ignoreMinimumInterval?: boolean;
 };
 
 function parsePrice(price: EtsyListingSummary["price"]): number {
@@ -76,6 +84,39 @@ function readNumber(value: unknown): number | null {
     return Number.isFinite(parsed) ? parsed : null;
   }
   return null;
+}
+
+function listingVersion(value: unknown): number | null {
+  if (!value || typeof value !== "object") return null;
+  const record = value as Record<string, unknown>;
+  return readNumber(
+    record.updated_timestamp ?? record.last_modified_timestamp ?? record.last_modified_tsz ?? record.updated_at
+  );
+}
+
+function storedListingVersion(rawJson: string | null): number | null {
+  if (!rawJson) return null;
+  try {
+    return listingVersion(JSON.parse(rawJson));
+  } catch {
+    return null;
+  }
+}
+
+export function shouldRefreshEtsyListing(
+  remote: EtsyListingSummary,
+  storedRawJson: string | null,
+  forceFull = false
+): boolean {
+  if (forceFull) return true;
+  const remoteVersion = listingVersion(remote);
+  const localVersion = storedListingVersion(storedRawJson);
+  return remoteVersion === null || localVersion === null || remoteVersion !== localVersion;
+}
+
+function isQuotaStop(error: unknown): boolean {
+  const message = error instanceof Error ? error.message : String(error);
+  return /daily budget exhausted|bulk sync paused|daily rate limit reached/i.test(message);
 }
 
 function readPrice(value: unknown): { amount: number | null; currency: string | null } {
@@ -149,13 +190,15 @@ export async function getEtsySyncStatus() {
   };
 }
 
-export async function syncEtsyReadOnly(): Promise<SyncResult> {
+async function runEtsyReadOnlySync(options: SyncOptions = {}): Promise<SyncResult> {
   const env = validateEtsyClientEnv();
   if (!env.ok) {
     return {
       ok: false,
       message: env.errors.join(" "),
       listingsPulled: 0,
+      listingsScanned: 0,
+      listingsSkipped: 0,
       imagesPulled: 0,
       inventoryPulled: 0,
       receiptsPulled: 0,
@@ -167,11 +210,28 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
   const startedAt = new Date();
   const errors: string[] = [];
   let listingsPulled = 0;
+  let listingsScanned = 0;
+  let listingsSkipped = 0;
   let imagesPulled = 0;
   let inventoryPulled = 0;
   let receiptsPulled = 0;
   let transactionsPulled = 0;
   let shopId: string | undefined;
+  const fullSyncApproved = String(process.env.ETSY_FULL_SYNC_APPROVED ?? "false").toLowerCase() === "true";
+  if (options.forceFull && !fullSyncApproved) {
+    return {
+      ok: false,
+      message: "Full Etsy sync blocked because ETSY_FULL_SYNC_APPROVED is not true.",
+      listingsPulled: 0,
+      listingsScanned: 0,
+      listingsSkipped: 0,
+      imagesPulled: 0,
+      inventoryPulled: 0,
+      receiptsPulled: 0,
+      transactionsPulled: 0,
+      errors: ["Full Etsy sync requires explicit approval."]
+    };
+  }
 
   try {
     const refreshed = await refreshEtsyTokenIfNeeded(false);
@@ -183,9 +243,10 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
       });
     }
 
-    const connectedShop = await fetchConnectedShop();
+    const bulkOptions = { shopId: process.env.ETSY_SHOP_ID, requestClass: "bulk" as const };
+    const connectedShop = await fetchConnectedShop(bulkOptions);
     const etsyShopId = connectedShop.shopId;
-    const shopRaw = (await fetchShop({ shopId: connectedShop.shopId })) as Record<string, unknown>;
+    const shopRaw = (await fetchShop({ ...bulkOptions, shopId: connectedShop.shopId })) as Record<string, unknown>;
     const shop = await prisma.shop.upsert({
       where: { etsyShopId },
       update: {
@@ -222,13 +283,27 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
       }
     });
 
-    const listingResponse = await fetchShopListings({ shopId: connectedShop.shopId });
+    const listingResponse = await fetchShopListings({ ...bulkOptions, shopId: connectedShop.shopId });
     const rawListings = listingResponse.results ?? [];
+    const existingListings = await prisma.listing.findMany({
+      where: { shopId: shop.id },
+      select: { id: true, etsyListingId: true, rawJson: true }
+    });
+    const existingByEtsyId = new Map(existingListings.map((listing) => [listing.etsyListingId, listing]));
 
     for (const raw of rawListings) {
+      listingsScanned += 1;
       try {
-        const details = await fetchListingDetails(raw.listing_id);
-        const imageResponse = await fetchListingImages(raw.listing_id);
+        const etsyListingId = String(raw.listing_id);
+        const existing = existingByEtsyId.get(etsyListingId);
+        const changed = !existing || shouldRefreshEtsyListing(raw, existing.rawJson, options.forceFull);
+        if (!changed) {
+          listingsSkipped += 1;
+          continue;
+        }
+
+        const details = await fetchListingDetails(raw.listing_id, bulkOptions);
+        const imageResponse = await fetchListingImages(raw.listing_id, bulkOptions);
         const images =
           imageResponse.results?.map((image, index) => ({
             url: image.url_fullxfull ?? "",
@@ -284,7 +359,7 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
         imagesPulled += item.images?.length ?? 0;
 
         try {
-          const inventory = await fetchListingInventory(raw.listing_id);
+          const inventory = await fetchListingInventory(raw.listing_id, bulkOptions);
           const products = Array.isArray(inventory.products) ? inventory.products : [];
           const prices: number[] = [];
           let inventoryQuantity = 0;
@@ -400,11 +475,12 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
         listingsPulled += 1;
       } catch (error) {
         errors.push(`Listing ${raw.listing_id}: ${error instanceof Error ? error.message : String(error)}`);
+        if (isQuotaStop(error)) break;
       }
     }
 
     try {
-      const receiptResponse = await fetchReceipts({ shopId: connectedShop.shopId });
+      const receiptResponse = await fetchReceipts({ ...bulkOptions, shopId: connectedShop.shopId });
       const receipts = extractResults<Record<string, unknown>>(receiptResponse);
       for (const receipt of receipts) {
         const receiptId = String(receipt.receipt_id ?? "");
@@ -446,7 +522,7 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
     }
 
     try {
-      const transactionResponse = await fetchTransactions({ shopId: connectedShop.shopId });
+      const transactionResponse = await fetchTransactions({ ...bulkOptions, shopId: connectedShop.shopId });
       const transactions = extractResults<Record<string, unknown>>(transactionResponse);
       for (const transaction of transactions) {
         const transactionId = String(transaction.transaction_id ?? "");
@@ -485,9 +561,16 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
       errors.push(`Transactions: ${error instanceof Error ? error.message : String(error)}`);
     }
 
+    const [totalListings, totalImages, totalInventory, totalReceipts, totalTransactions] = await Promise.all([
+      prisma.listing.count(),
+      prisma.listingImage.count(),
+      prisma.listingInventory.count(),
+      prisma.etsyReceipt.count(),
+      prisma.etsyTransaction.count()
+    ]);
     const finishedAt = new Date();
     const status = errors.length ? "partial_success" : "success";
-    const message = `Etsy read-only sync pulled ${listingsPulled} listing(s), ${receiptsPulled} receipt(s), and ${transactionsPulled} transaction(s).`;
+    const message = `Etsy incremental read-only sync scanned ${listingsScanned} listing(s), refreshed ${listingsPulled}, skipped ${listingsSkipped} unchanged, and read ${receiptsPulled} receipt(s) plus ${transactionsPulled} transaction(s).`;
     await prisma.syncLog.create({
       data: {
         shopId,
@@ -513,11 +596,11 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
         status,
         message,
         error: errors.length ? toJson(errors) : null,
-        listingsCount: listingsPulled,
-        imagesCount: imagesPulled,
-        inventoryCount: inventoryPulled,
-        receiptsCount: receiptsPulled,
-        transactionsCount: transactionsPulled,
+        listingsCount: totalListings,
+        imagesCount: totalImages,
+        inventoryCount: totalInventory,
+        receiptsCount: totalReceipts,
+        transactionsCount: totalTransactions,
         lastFinishedAt: finishedAt
       },
       create: {
@@ -526,17 +609,28 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
         status,
         message,
         error: errors.length ? toJson(errors) : null,
-        listingsCount: listingsPulled,
-        imagesCount: imagesPulled,
-        inventoryCount: inventoryPulled,
-        receiptsCount: receiptsPulled,
-        transactionsCount: transactionsPulled,
+        listingsCount: totalListings,
+        imagesCount: totalImages,
+        inventoryCount: totalInventory,
+        receiptsCount: totalReceipts,
+        transactionsCount: totalTransactions,
         lastStartedAt: startedAt,
         lastFinishedAt: finishedAt
       }
     });
 
-    return { ok: errors.length === 0, message, listingsPulled, imagesPulled, inventoryPulled, receiptsPulled, transactionsPulled, errors };
+    return {
+      ok: errors.length === 0,
+      message,
+      listingsPulled,
+      listingsScanned,
+      listingsSkipped,
+      imagesPulled,
+      inventoryPulled,
+      receiptsPulled,
+      transactionsPulled,
+      errors
+    };
   } catch (error) {
     const finishedAt = new Date();
     const message = error instanceof Error ? error.message : String(error);
@@ -581,11 +675,89 @@ export async function syncEtsyReadOnly(): Promise<SyncResult> {
       ok: false,
       message,
       listingsPulled: 0,
+      listingsScanned,
+      listingsSkipped,
       imagesPulled: 0,
       inventoryPulled: 0,
       receiptsPulled: 0,
       transactionsPulled: 0,
       errors: [message]
     };
+  }
+}
+
+function skippedSyncResult(message: string, skippedReason: string): SyncResult {
+  return {
+    ok: true,
+    message,
+    listingsPulled: 0,
+    listingsScanned: 0,
+    listingsSkipped: 0,
+    imagesPulled: 0,
+    inventoryPulled: 0,
+    receiptsPulled: 0,
+    transactionsPulled: 0,
+    errors: [],
+    skippedReason
+  };
+}
+
+function acquireSyncLock(): (() => void) | null {
+  const lockPath = path.join(process.cwd(), "data", "etsy-sync.lock");
+  fs.mkdirSync(path.dirname(lockPath), { recursive: true });
+
+  try {
+    const stat = fs.statSync(lockPath);
+    const staleMinutes = Math.max(30, Number(process.env.ETSY_SYNC_LOCK_STALE_MINUTES ?? "120"));
+    if (Date.now() - stat.mtimeMs >= staleMinutes * 60_000) fs.unlinkSync(lockPath);
+  } catch {
+    // Missing locks are expected.
+  }
+
+  try {
+    const handle = fs.openSync(lockPath, "wx", 0o600);
+    fs.writeFileSync(handle, `${JSON.stringify({ pid: process.pid, startedAt: new Date().toISOString() })}\n`);
+    return () => {
+      try {
+        fs.closeSync(handle);
+      } catch {
+        // The process may already have released the descriptor.
+      }
+      try {
+        fs.unlinkSync(lockPath);
+      } catch {
+        // A stale lock cleanup is harmless.
+      }
+    };
+  } catch (error) {
+    if ((error as NodeJS.ErrnoException).code === "EEXIST") return null;
+    throw error;
+  }
+}
+
+export async function syncEtsyReadOnly(options: SyncOptions = {}): Promise<SyncResult> {
+  if (!options.ignoreMinimumInterval) {
+    const minimumMinutes = Math.max(60, Number(process.env.ETSY_MIN_SYNC_INTERVAL_MINUTES ?? "360"));
+    const lastSync = await prisma.syncLog.findFirst({
+      where: { source: "etsy_api", status: { in: ["success", "partial_success"] } },
+      orderBy: { finishedAt: "desc" }
+    });
+    if (lastSync?.finishedAt && Date.now() - lastSync.finishedAt.getTime() < minimumMinutes * 60_000) {
+      return skippedSyncResult(
+        `Etsy incremental sync skipped because the previous sync is inside the ${minimumMinutes}-minute safety interval.`,
+        "minimum_interval"
+      );
+    }
+  }
+
+  const release = acquireSyncLock();
+  if (!release) {
+    return skippedSyncResult("Etsy incremental sync skipped because another sync is already running.", "already_running");
+  }
+
+  try {
+    return await runEtsyReadOnlySync(options);
+  } finally {
+    release();
   }
 }

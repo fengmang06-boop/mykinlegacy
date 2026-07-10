@@ -10,5 +10,8 @@ export async function POST() {
 }
 
 export async function GET() {
-  return POST();
+  return NextResponse.json(
+    { error: "Etsy sync is never started by GET. Use an explicit POST request after reviewing API quota." },
+    { status: 405, headers: { Allow: "POST" } }
+  );
 }

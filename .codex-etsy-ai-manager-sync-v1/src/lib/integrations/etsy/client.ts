@@ -1,5 +1,11 @@
 import { assertNoEtsyWriteCapability, assertEtsyReadOnlyRequest, validateEtsyReadOnlyEnv } from "./read-only-guard";
 import { refreshAccessToken } from "./oauth";
+import {
+  assertEtsyRateBudget,
+  isDailyRateLimitResponse,
+  recordEtsyRateLimitHeaders,
+  type EtsyRequestClass
+} from "./rate-limit";
 
 const ETSY_API_BASE = "https://openapi.etsy.com/v3/application";
 const ETSY_MIN_REQUEST_INTERVAL_MS = 350;
@@ -13,9 +19,10 @@ type EtsyClientOptions = {
   clientId?: string;
   clientSecret?: string;
   shopId?: string;
+  requestClass?: EtsyRequestClass;
 };
 
-type EtsyAuthOptions = Omit<EtsyClientOptions, "shopId">;
+type EtsyAuthOptions = Omit<EtsyClientOptions, "shopId" | "requestClass">;
 
 export type EtsyListingSummary = {
   listing_id: number;
@@ -28,6 +35,9 @@ export type EtsyListingSummary = {
   materials?: string[];
   taxonomy_path?: string[];
   url?: string;
+  updated_timestamp?: number;
+  last_modified_timestamp?: number;
+  last_modified_tsz?: number;
 };
 
 export type EtsyTokenRefreshResult = {
@@ -114,7 +124,8 @@ export async function refreshEtsyTokenIfNeeded(force = false): Promise<EtsyToken
 async function requestEtsy<T>(path: string, init: RequestInit = {}, options?: EtsyClientOptions): Promise<T> {
   assertEtsyReadOnlyRequest(init.method ?? "GET");
   const config = readAuthOptions(options);
-  for (let attempt = 0; attempt < 5; attempt += 1) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    assertEtsyRateBudget(options?.requestClass ?? "interactive");
     await waitForEtsySlot();
     const response = await fetch(`${ETSY_API_BASE}${path}`, {
       ...init,
@@ -126,18 +137,26 @@ async function requestEtsy<T>(path: string, init: RequestInit = {}, options?: Et
         ...(init.headers ?? {})
       }
     });
+    recordEtsyRateLimitHeaders(response.headers, response.status, path);
 
     if (response.ok) {
       return (await response.json()) as T;
     }
 
+    const body = await response.text();
+    if (isDailyRateLimitResponse(response, body)) {
+      const exhaustedHeaders = new Headers(response.headers);
+      exhaustedHeaders.set("x-remaining-today", "0");
+      recordEtsyRateLimitHeaders(exhaustedHeaders, response.status, path);
+      throw new Error(`Etsy API daily rate limit reached: ${response.status} ${body}`);
+    }
+
     const retryable = response.status === 429 || response.status >= 500;
-    if (retryable && attempt < 4) {
+    if (retryable && attempt < 2) {
       await sleep(retryDelay(attempt, response));
       continue;
     }
 
-    const body = await response.text();
     throw new Error(`Etsy API request failed: ${response.status} ${body}`);
   }
 

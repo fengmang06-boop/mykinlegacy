@@ -1,5 +1,6 @@
 import { saveEnvValues } from "../../env-store";
 import { refreshEtsyTokenIfNeeded } from "./client";
+import { recordEtsyRateLimitHeaders } from "./rate-limit";
 
 const ETSY_SCOPES_URL = "https://openapi.etsy.com/v3/application/scopes";
 
@@ -42,7 +43,7 @@ export async function verifyEtsyTokenScopes(options?: {
   }
 
   async function requestScopes(token: string): Promise<Response> {
-    return fetch(ETSY_SCOPES_URL, {
+    const response = await fetch(ETSY_SCOPES_URL, {
       method: "POST",
       headers: {
         "x-api-key": clientSecret ? `${clientId}:${clientSecret}` : clientId,
@@ -52,6 +53,8 @@ export async function verifyEtsyTokenScopes(options?: {
       },
       body: new URLSearchParams({ token })
     });
+    recordEtsyRateLimitHeaders(response.headers, response.status, "/scopes");
+    return response;
   }
 
   if (!options?.accessToken) {
@@ -80,6 +83,11 @@ export async function verifyEtsyTokenScopes(options?: {
     }
   }
   const text = await response.text();
+  if (response.status === 429 && /daily rate limit/i.test(text)) {
+    const exhaustedHeaders = new Headers(response.headers);
+    exhaustedHeaders.set("x-remaining-today", "0");
+    recordEtsyRateLimitHeaders(exhaustedHeaders, response.status, "/scopes");
+  }
   let data: unknown = null;
   try {
     data = text ? JSON.parse(text) : null;
