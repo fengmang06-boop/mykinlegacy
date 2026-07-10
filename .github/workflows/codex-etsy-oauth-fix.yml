@@ -65,8 +65,12 @@ jobs:
         run: |
           tar -czf /tmp/etsy-oauth-listings-w.tgz \
             -C .codex-etsy-ai-manager-sync-v1 \
+            src/lib/env-store.ts \
             src/lib/integrations/etsy/scopes.ts \
+            src/lib/integrations/etsy/token-scopes.ts \
             src/lib/integrations/etsy/write-guard.ts \
+            src/app/api/etsy/callback/route.ts \
+            src/app/api/etsy/oauth/diagnostics/route.ts \
             src/app/api/etsy/status/route.ts
           scp -i ~/.ssh/prod \
             -o BatchMode=yes \
@@ -118,14 +122,23 @@ jobs:
           TS="$(date +%Y%m%d%H%M%S)"
           cp -a .env.local ".env.local.codex-backup-$TS" 2>/dev/null || true
           cp -a src/lib/integrations/etsy/scopes.ts "src/lib/integrations/etsy/scopes.ts.codex-backup-$TS" 2>/dev/null || true
+          cp -a src/lib/integrations/etsy/token-scopes.ts "src/lib/integrations/etsy/token-scopes.ts.codex-backup-$TS" 2>/dev/null || true
           cp -a src/lib/integrations/etsy/write-guard.ts "src/lib/integrations/etsy/write-guard.ts.codex-backup-$TS" 2>/dev/null || true
-          cp -a src/app/api/etsy/callback/route.ts "src/app/api/etsy/callback/route.ts.codex-backup-$TS"
+          cp -a src/app/api/etsy/callback/route.ts "src/app/api/etsy/callback/route.ts.codex-backup-$TS" 2>/dev/null || true
+          cp -a src/app/api/etsy/status/route.ts "src/app/api/etsy/status/route.ts.codex-backup-$TS" 2>/dev/null || true
 
           mkdir -p "/tmp/etsy-oauth-listings-w-$TS"
           tar -xzf /tmp/etsy-oauth-listings-w.tgz -C "/tmp/etsy-oauth-listings-w-$TS"
+          mkdir -p src/lib
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/env-store.ts" src/lib/env-store.ts
           mkdir -p src/lib/integrations/etsy
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/scopes.ts" src/lib/integrations/etsy/scopes.ts
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/token-scopes.ts" src/lib/integrations/etsy/token-scopes.ts
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/write-guard.ts" src/lib/integrations/etsy/write-guard.ts
+          mkdir -p src/app/api/etsy/callback
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/app/api/etsy/callback/route.ts" src/app/api/etsy/callback/route.ts
+          mkdir -p src/app/api/etsy/oauth/diagnostics
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/app/api/etsy/oauth/diagnostics/route.ts" src/app/api/etsy/oauth/diagnostics/route.ts
           mkdir -p src/app/api/etsy/status
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/app/api/etsy/status/route.ts" src/app/api/etsy/status/route.ts
 
@@ -158,76 +171,6 @@ jobs:
           kept.extend(f"{key}={quote(value)}" for key, value in updates.items())
           env_path.write_text("\n".join([line for line in kept if line.strip()]) + "\n")
           env_path.chmod(0o600)
-          PY
-
-          python3 - <<'PY'
-          from pathlib import Path
-
-          p = Path("src/app/api/etsy/callback/route.ts")
-          text = p.read_text()
-          if 'saveOAuthEnv' not in text:
-              text = text.replace(
-                  'import { cookies } from "next/headers";\n',
-                  'import fs from "node:fs";\nimport path from "node:path";\nimport { cookies } from "next/headers";\n',
-              )
-              text = text.replace(
-                  'import { prisma } from "@/lib/prisma";\n',
-                  'import { prisma } from "@/lib/prisma";\n\nexport const runtime = "nodejs";\n',
-              )
-              helper = r'''
-
-          function formatEnvValue(value: string): string {
-            if (value === "" || /[\s"#\\]/.test(value)) {
-              return JSON.stringify(value);
-            }
-            return value;
-          }
-
-          function saveOAuthEnv(values: Record<string, string>): string[] {
-            const envPath = path.join(process.cwd(), ".env.local");
-            const keys = new Set(Object.keys(values));
-            const existing = fs.existsSync(envPath) ? fs.readFileSync(envPath, "utf8").split(/\r?\n/) : [];
-            const kept = existing.filter((line) => {
-              const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=/);
-              return !match || !keys.has(match[1]);
-            });
-            const savedKeys = Object.keys(values).filter((key) => values[key] !== "");
-            const nextLines = kept
-              .filter((line) => line.trim() !== "")
-              .concat(savedKeys.map((key) => `${key}=${formatEnvValue(values[key])}`));
-            fs.writeFileSync(envPath, `${nextLines.join("\n")}\n`, { mode: 0o600 });
-            fs.chmodSync(envPath, 0o600);
-            Object.assign(process.env, Object.fromEntries(savedKeys.map((key) => [key, values[key]])));
-            return savedKeys;
-          }
-          '''
-              text = text.replace(
-                  'function escapeHtml(value: string): string {\n  return value\n    .replaceAll("&", "&amp;")\n    .replaceAll("<", "&lt;")\n    .replaceAll(">", "&gt;")\n    .replaceAll(\'"\', "&quot;");\n}\n',
-                  'function escapeHtml(value: string): string {\n  return value\n    .replaceAll("&", "&amp;")\n    .replaceAll("<", "&lt;")\n    .replaceAll(">", "&gt;")\n    .replaceAll(\'"\', "&quot;");\n}\n' + helper,
-              )
-              old = '    const envSnippet = [\n      connectedShop?.userId ? `ETSY_USER_ID=${connectedShop.userId}` : null,\n      connectedShop?.shopId ? `ETSY_SHOP_ID=${connectedShop.shopId}` : null,\n      `ETSY_ACCESS_TOKEN=${token.access_token}`,\n      `ETSY_REFRESH_TOKEN=${token.refresh_token ?? ""}`,\n      `ETSY_TOKEN_EXPIRES_AT=${expiresAt}`,\n      "ETSY_READ_ONLY_MODE=true"\n    ].filter(Boolean).join("\\n");\n'
-              new = '    const tokenEnv: Record<string, string> = {\n      ETSY_ACCESS_TOKEN: token.access_token,\n      ETSY_REFRESH_TOKEN: token.refresh_token ?? "",\n      ETSY_TOKEN_EXPIRES_AT: expiresAt,\n      ETSY_READ_ONLY_MODE: "true"\n    };\n    if (connectedShop?.userId) tokenEnv.ETSY_USER_ID = connectedShop.userId;\n    if (connectedShop?.shopId) tokenEnv.ETSY_SHOP_ID = connectedShop.shopId;\n    const savedEnvKeys = saveOAuthEnv(tokenEnv).join("\\n");\n'
-              if old not in text:
-                  raise SystemExit("callback token block not found")
-              text = text.replace(old, new)
-              text = text.replace(
-                  '<p class=\\"muted\\">Full tokens are not displayed as normal page text. They are only placed in the copy block below so you can move them into <code>.env.local</code>. Do not commit that file.</p>",',
-                  '<p class=\\"ok\\">Tokens saved to <code>.env.local</code> on the production server.</p>",',
-              )
-              text = text.replace(
-                  '"<h2>Copy Into .env.local</h2>",\n        `<pre>${escapeHtml(envSnippet)}</pre>`,',
-                  '"<h2>Saved Environment Keys</h2>",\n        `<pre>${escapeHtml(savedEnvKeys)}</pre>`,',
-              )
-              text = text.replace(
-                  '"<h2>Next Step</h2>",\n        "<p>Restart the dev server if needed, then run:</p>",\n        "<code>npm run etsy:sync:read-only</code>",',
-                  '"<h2>Next Step</h2>",\n        "<p>The production server can now use the saved Etsy token for read-only sync.</p>",',
-              )
-          if 'ETSY_TOKEN_SCOPE' not in text:
-              text = text.replace(
-                  '      ETSY_TOKEN_EXPIRES_AT: expiresAt,\n      ETSY_READ_ONLY_MODE: "true"',
-                  '      ETSY_TOKEN_EXPIRES_AT: expiresAt,\n      ETSY_TOKEN_SCOPE: token.scope ?? "",\n      ETSY_READ_ONLY_MODE: "true"',
-              )
-          p.write_text(text)
           PY
 
           npm run build

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { checkEtsyEnv } from "@/lib/integrations/etsy/env-check";
+import { parseStoredScopes } from "@/lib/integrations/etsy/token-scopes";
 import { getEtsySyncStatus } from "@/lib/integrations/etsy/sync-read-only";
 
 export const runtime = "nodejs";
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 
 export async function GET() {
   const [status, env] = await Promise.all([getEtsySyncStatus(), Promise.resolve(checkEtsyEnv())]);
+  const storedScopes = parseStoredScopes(process.env.ETSY_TOKEN_SCOPE);
   return NextResponse.json({
     connected: status.connected,
     shop: status.shop
@@ -27,9 +29,8 @@ export async function GET() {
       tokenPresent: env.tokenPresent,
       refreshTokenPresent: env.refreshTokenPresent,
       tokenScope: process.env.ETSY_TOKEN_SCOPE ?? null,
-      hasListingsWriteScope: String(process.env.ETSY_TOKEN_SCOPE ?? "")
-        .split(/\s+/)
-        .includes("listings_w"),
+      storedScopes,
+      hasListingsWriteScope: storedScopes.includes("listings_w"),
       tokenExpired: env.tokenExpired,
       missingFields: env.missingFields,
       warnings: env.warnings
