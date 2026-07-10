@@ -1,3 +1,6 @@
+import { saveEnvValues } from "../../env-store";
+import { refreshEtsyTokenIfNeeded } from "./client";
+
 const ETSY_SCOPES_URL = "https://openapi.etsy.com/v3/application/scopes";
 
 export type EtsyTokenScopesResult = {
@@ -27,7 +30,7 @@ export async function verifyEtsyTokenScopes(options?: {
   clientId?: string;
   clientSecret?: string;
 }): Promise<EtsyTokenScopesResult> {
-  const accessToken = options?.accessToken ?? process.env.ETSY_ACCESS_TOKEN ?? "";
+  let accessToken = options?.accessToken ?? process.env.ETSY_ACCESS_TOKEN ?? "";
   const clientId = options?.clientId ?? process.env.ETSY_CLIENT_ID ?? "";
   const clientSecret = options?.clientSecret ?? process.env.ETSY_CLIENT_SECRET ?? "";
 
@@ -38,16 +41,44 @@ export async function verifyEtsyTokenScopes(options?: {
     return { ok: false, scopes: [], status: 0, error: "Missing ETSY_CLIENT_ID.", rawShape: "unknown" };
   }
 
-  const response = await fetch(ETSY_SCOPES_URL, {
-    method: "POST",
-    headers: {
-      "x-api-key": clientSecret ? `${clientId}:${clientSecret}` : clientId,
-      Authorization: `Bearer ${accessToken}`,
-      Accept: "application/json",
-      "Content-Type": "application/x-www-form-urlencoded"
-    },
-    body: new URLSearchParams({ token: accessToken })
-  });
+  async function requestScopes(token: string): Promise<Response> {
+    return fetch(ETSY_SCOPES_URL, {
+      method: "POST",
+      headers: {
+        "x-api-key": clientSecret ? `${clientId}:${clientSecret}` : clientId,
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/x-www-form-urlencoded"
+      },
+      body: new URLSearchParams({ token })
+    });
+  }
+
+  if (!options?.accessToken) {
+    const refreshed = await refreshEtsyTokenIfNeeded(false);
+    if (refreshed) {
+      accessToken = refreshed.accessToken;
+      saveEnvValues({
+        ETSY_ACCESS_TOKEN: refreshed.accessToken,
+        ETSY_REFRESH_TOKEN: refreshed.refreshToken,
+        ETSY_TOKEN_EXPIRES_AT: refreshed.expiresAt
+      });
+    }
+  }
+
+  let response = await requestScopes(accessToken);
+  if (response.status === 401 && !options?.accessToken) {
+    const refreshed = await refreshEtsyTokenIfNeeded(true);
+    if (refreshed) {
+      accessToken = refreshed.accessToken;
+      saveEnvValues({
+        ETSY_ACCESS_TOKEN: refreshed.accessToken,
+        ETSY_REFRESH_TOKEN: refreshed.refreshToken,
+        ETSY_TOKEN_EXPIRES_AT: refreshed.expiresAt
+      });
+      response = await requestScopes(accessToken);
+    }
+  }
   const text = await response.text();
   let data: unknown = null;
   try {
