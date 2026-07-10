@@ -1,5 +1,7 @@
 name: Codex Etsy OAuth Fix
 
+# Deploys OAuth scope/status diagnostics only; it does not call Etsy listing write endpoints.
+
 on:
   push:
     branches:
