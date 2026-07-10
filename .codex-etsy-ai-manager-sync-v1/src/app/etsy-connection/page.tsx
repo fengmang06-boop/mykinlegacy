@@ -1,6 +1,5 @@
 import { AlertTriangle, CheckCircle2, Database, ShieldCheck } from "lucide-react";
 import { checkEtsyEnv } from "@/lib/integrations/etsy/env-check";
-import { fetchConnectedShop } from "@/lib/integrations/etsy/client";
 import { getEtsySyncStatus } from "@/lib/integrations/etsy/sync-read-only";
 import { SyncButton } from "./SyncButton";
 
@@ -19,22 +18,13 @@ function formatDate(value: Date | string | null | undefined): string {
 export default async function EtsyConnectionPage() {
   const env = checkEtsyEnv();
   const syncStatus = await getEtsySyncStatus();
-  let connectedShop: { userId: string; shopId: string; shopName: string } | null = syncStatus.shop?.etsyShopId
+  const connectedShop: { userId: string; shopId: string; shopName: string } | null = syncStatus.shop?.etsyShopId
     ? { userId: process.env.ETSY_USER_ID ?? "Unknown", shopId: syncStatus.shop.etsyShopId, shopName: syncStatus.shop.name }
     : null;
-  let connectedShopError: string | null = null;
-
-  if (env.readyForReadOnlySync) {
-    try {
-      connectedShop = await fetchConnectedShop();
-    } catch (error) {
-      connectedShopError = error instanceof Error ? error.message : String(error);
-    }
-  }
 
   const connected = Boolean(connectedShop);
   const lastSync = syncStatus.lastSync;
-  const warnings = [...env.warnings, ...(connectedShopError ? [connectedShopError] : [])];
+  const warnings = env.warnings;
 
   return (
     <>
