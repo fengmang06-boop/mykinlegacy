@@ -15,12 +15,15 @@ const PAGE_HEIGHT = 792;
 const COLOR = {
   charcoal: [0.055, 0.052, 0.046] as const,
   charcoalSoft: [0.105, 0.094, 0.078] as const,
+  charcoalWarm: [0.145, 0.125, 0.092] as const,
   ivory: [0.965, 0.94, 0.87] as const,
   ivorySoft: [0.995, 0.985, 0.945] as const,
+  parchment: [0.92, 0.865, 0.735] as const,
   gold: [0.74, 0.56, 0.27] as const,
   goldSoft: [0.58, 0.43, 0.21] as const,
   ink: [0.12, 0.105, 0.086] as const,
-  muted: [0.34, 0.30, 0.25] as const
+  muted: [0.34, 0.30, 0.25] as const,
+  mist: [0.84, 0.79, 0.67] as const
 };
 
 interface PdfImage {
@@ -29,18 +32,22 @@ interface PdfImage {
   data: Buffer;
 }
 
+interface PdfSection {
+  heading: string;
+  body: string;
+}
+
 interface PdfModel {
-  brand: string;
-  tagline: string;
+  deliverableCode: PdfGenerationInput["deliverable_code"];
   title: string;
-  preparedFor: string;
-  opening: string;
-  bodyLines: string[];
+  familyName: string;
+  bodyText: string;
+  fields: Map<string, string>;
+  sections: PdfSection[];
 }
 
 export async function generateHeritagePdf(input: PdfGenerationInput): Promise<PdfGenerationOutput> {
-  const text = buildCustomerPdfText(input);
-  const pdf = buildSimplePdf(text);
+  const pdf = buildPublicationPdf(input);
 
   await mkdir(dirname(input.output_file_path), { recursive: true });
   await writeFile(input.output_file_path, pdf);
@@ -55,38 +62,21 @@ export async function generateHeritagePdf(input: PdfGenerationInput): Promise<Pd
   };
 }
 
-function buildCustomerPdfText(input: PdfGenerationInput): string {
-  return [
-    "MyKinLegacy",
-    "Legacy, Designed.",
-    input.title,
-    "",
-    `Prepared for ${input.house_name}`,
-    documentOpening(input.deliverable_code),
-    "",
-    normalizeBodyText(sanitizeOfficialClaims(input.body_text), input.title),
-    "",
-    "Important Note",
-    GLOBAL_PDF_DISCLAIMER
-  ]
-    .filter((line) => line !== "")
-    .join("\n");
-}
-
-function documentOpening(deliverableCode: PdfGenerationInput["deliverable_code"]): string {
-  if (deliverableCode === "heritage_certificate_pdf") {
-    return "A clean private archive document for family recognition, gifting, printing, and keeping.";
-  }
-  if (deliverableCode === "family_story_pdf") {
-    return "A warm archive companion, written to be read slowly and kept with the family collection.";
-  }
-  return "A guide to the symbols chosen for this family, written so the artwork can be understood and remembered.";
-}
-
 export function buildSimplePdf(text: string): Buffer {
-  const model = parsePdfModel(text);
+  return buildPublicationPdf({
+    deliverable_code: inferDeliverableCode(text),
+    title: inferTitle(text),
+    house_name: inferFamilyName(text),
+    body_text: text,
+    disclaimer: GLOBAL_PDF_DISCLAIMER,
+    output_file_path: ""
+  });
+}
+
+function buildPublicationPdf(input: PdfGenerationInput): Buffer {
+  const model = parsePdfModel(input);
   const image = loadApprovedCrestImage();
-  const pageContents = buildPremiumPageContents(model, image);
+  const pageContents = buildPublicationPages(model, image);
   const bodyFontObjectId = 3;
   const headingFontObjectId = 4;
   const utilityFontObjectId = 5;
@@ -118,7 +108,7 @@ export function buildSimplePdf(text: string): Buffer {
     );
   }
 
-  let body = `%PDF-1.4\n% pdf_layout_version=${PDF_LAYOUT_VERSION}\n% MyKinLegacy premium archive PDF with approved crest artwork when available\n`;
+  let body = `%PDF-1.4\n% pdf_layout_version=${PDF_LAYOUT_VERSION}\n% MyKinLegacy three-book reading experience with approved crest artwork when available\n`;
   const offsets = [0];
 
   objects.forEach((object, index) => {
@@ -135,154 +125,387 @@ export function buildSimplePdf(text: string): Buffer {
   return Buffer.from(body, "binary");
 }
 
-function parsePdfModel(text: string): PdfModel {
-  const lines = text.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
-  const brand = lines[0] ?? "MyKinLegacy";
-  const tagline = lines[1] ?? "Legacy, Designed.";
-  const title = lines[2] ?? "Private Archive Document";
-  const preparedFor = lines.find((line) => line.startsWith("Prepared for ")) ?? "Prepared for your family";
-  const preparedIndex = lines.indexOf(preparedFor);
-  const opening = preparedIndex >= 0 ? lines[preparedIndex + 1] ?? "" : "";
-  const bodyStart = opening ? preparedIndex + 2 : Math.max(3, preparedIndex + 1);
-  return {
-    brand,
-    tagline,
-    title,
-    preparedFor,
-    opening,
-    bodyLines: lines.slice(bodyStart).slice(0, 720)
-  };
+function buildPublicationPages(model: PdfModel, image: PdfImage | null): string[] {
+  if (model.deliverableCode === "heritage_certificate_pdf") return buildCertificatePages(model, image);
+  if (model.deliverableCode === "family_story_pdf") return buildStorybookPages(model, image);
+  return buildMeaningGuidePages(model, image);
 }
 
-function buildPremiumPageContents(model: PdfModel, image: PdfImage | null): string[] {
-  const pages = [buildCoverPage(model, image)];
-  const wrappedLines = model.bodyLines.flatMap((line) => wrapLine(line, line === "Important Note" ? 52 : 82));
-  let pageNumber = 2;
-  let cursor = 0;
-  while (cursor < wrappedLines.length) {
-    const result = buildBodyPage(model, wrappedLines.slice(cursor), pageNumber);
-    pages.push(result.content);
-    cursor += result.linesConsumed;
-    pageNumber += 1;
-  }
-  if (wrappedLines.length === 0) {
-    pages.push(buildBodyPage(model, ["This private archive document has been prepared for the family collection."], pageNumber).content);
-  }
-  return pages;
+function buildCertificatePages(model: PdfModel, image: PdfImage | null): string[] {
+  return [buildCertificateMainPage(model, image), buildCertificateKeepsakeNote(model)];
 }
 
-function buildCoverPage(model: PdfModel, image: PdfImage | null): string {
+function buildCertificateMainPage(model: PdfModel, image: PdfImage | null): string {
+  const collectionName = field(model, "Collection Name", `${model.familyName} Legacy Collection`);
+  const recipient = field(model, "Presented To", field(model, "Recipient", model.familyName));
+  const occasion = field(model, "Occasion", "A private family occasion");
+  const date = field(model, "Date", "Recorded at the time this collection was prepared");
+  const archiveNumber = field(model, "Archive Number", "Private archive record");
+  const statement = sectionBody(model, "Ceremony Statement", 0) || model.sections.at(-1)?.body || ceremonialFallback(model);
   const commands: string[] = [
-    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
-    rectCommand(38, 46, 536, 700, COLOR.ivorySoft),
-    strokeRectCommand(38, 46, 536, 700, COLOR.goldSoft, 1.1),
-    rectCommand(56, 456, 500, 232, COLOR.charcoal),
-    strokeRectCommand(56, 456, 500, 232, COLOR.gold, 1.35),
-    strokeRectCommand(66, 466, 480, 212, COLOR.goldSoft, 0.55),
-    textCommand(78, 646, model.brand, "F2", 18, COLOR.gold),
-    textCommand(78, 626, model.tagline, "F3", 9, COLOR.ivory),
-    textCommand(78, 585, model.title, "F2", 25, COLOR.ivory),
-    textCommand(78, 553, model.preparedFor, "F3", 12, COLOR.gold),
-    textCommand(78, 515, "Private Legacy Collection", "F2", 13, COLOR.ivory),
-    textCommand(78, 497, "Private Archive / clean keepsake document", "F3", 9.5, COLOR.ivory),
-    rectCommand(76, 386, 460, 46, COLOR.ivory),
-    strokeRectCommand(76, 386, 460, 46, COLOR.goldSoft, 0.8),
-    ...wrappedTextCommands(model.opening, 94, 414, 68, "F1", 11, 15, COLOR.ink),
-    textCommand(76, 334, "Inside this document", "F2", 13, COLOR.ink),
-    strokeLineCommand(76, 324, 536, 324, COLOR.goldSoft, 0.65),
-    ...wrappedTextCommands(
-      "A title page and focused sections shaped for this document's specific role in the collection.",
-      76,
-      300,
-      75,
-      "F1",
-      10.6,
-      15,
-      COLOR.ink
-    ),
-    textCommand(76, 96, "Prepared by MyKinLegacy.", "F3", 8.5, COLOR.muted),
-    textCommand(410, 96, "MyKinLegacy", "F2", 9.5, COLOR.goldSoft)
+    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.parchment),
+    rectCommand(46, 46, 520, 700, COLOR.ivorySoft),
+    strokeRectCommand(46, 46, 520, 700, COLOR.gold, 1.3),
+    strokeRectCommand(58, 58, 496, 676, COLOR.goldSoft, 0.65),
+    textCommand(74, 714, "MyKinLegacy", "F2", 15, COLOR.goldSoft),
+    textCommand(430, 714, "Heritage Certificate", "F3", 9, COLOR.muted),
+    centeredTextCommand(306, 664, "HERITAGE CERTIFICATE", "F2", 24, COLOR.ink),
+    centeredTextCommand(306, 638, "Collection Name", "F3", 9.5, COLOR.muted),
+    centeredTextCommand(306, 626, collectionName, "F1", 15, COLOR.goldSoft),
+    textCommand(94, 418, "Presented To", "F3", 11, COLOR.muted),
+    centeredTextCommand(306, 386, recipient, "F2", 25, COLOR.ink),
+    strokeLineCommand(134, 368, 478, 368, COLOR.goldSoft, 0.8),
+    textCommand(94, 338, "Created For", "F3", 10, COLOR.muted),
+    textCommand(180, 338, occasion, "F1", 12.5, COLOR.ink),
+    textCommand(94, 314, "Date", "F3", 10, COLOR.muted),
+    textCommand(180, 314, date, "F1", 12.5, COLOR.ink),
+    rectCommand(86, 180, 440, 104, COLOR.ivory),
+    strokeRectCommand(86, 180, 440, 104, COLOR.goldSoft, 0.55),
+    ...wrappedTextCommands(statement, 110, 254, 70, "F1", 12.7, 18, COLOR.ink, 5),
+    strokeLineCommand(98, 120, 278, 120, COLOR.goldSoft, 0.7),
+    textCommand(112, 102, "Signature", "F3", 9.5, COLOR.muted),
+    textCommand(112, 134, "MyKinLegacy Legacy Curator", "F1", 12, COLOR.ink),
+    strokeCircleCommand(438, 122, 40, COLOR.goldSoft, 1),
+    centeredTextCommand(438, 130, "MyKinLegacy", "F2", 8.5, COLOR.goldSoft),
+    centeredTextCommand(438, 116, "Official Seal", "F3", 8, COLOR.muted),
+    textCommand(88, 76, `Archive Number: ${archiveNumber}`, "F3", 9.5, COLOR.muted)
   ];
 
   if (image) {
-    commands.push(
-      "q",
-      "0.08 0.075 0.065 rg",
-      "366 506 132 132 re f",
-      "0.74 0.56 0.27 RG",
-      "0.8 w",
-      "366 506 132 132 re S",
-      `132 0 0 132 366 506 cm`,
-      "/Im1 Do",
-      "Q",
-      textCommand(372, 488, "Approved crest artwork", "F3", 8, COLOR.ivory)
-    );
+    commands.push(drawImageCommand(246, 462, 120, 120));
+    commands.push(centeredTextCommand(306, 448, "Final Crest", "F3", 8.5, COLOR.muted));
   } else {
-    commands.push(
-      strokeRectCommand(366, 506, 132, 132, COLOR.gold, 0.8),
-      textCommand(392, 574, "Final Crest", "F2", 11, COLOR.gold),
-      textCommand(392, 558, "linked when", "F3", 8, COLOR.ivory),
-      textCommand(398, 546, "available", "F3", 8, COLOR.ivory)
-    );
+    commands.push(strokeRectCommand(246, 462, 120, 120, COLOR.goldSoft, 0.7));
+    commands.push(centeredTextCommand(306, 518, "Final Crest", "F2", 13, COLOR.goldSoft));
   }
 
   return commands.join("\n");
 }
 
-function buildBodyPage(model: PdfModel, lines: string[], pageNumber: number): { content: string; linesConsumed: number } {
-  const commands: string[] = [
+function buildCertificateKeepsakeNote(model: PdfModel): string {
+  const archiveNumber = field(model, "Archive Number", "Private archive record");
+  const commands = [
     rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
-    rectCommand(42, 716, 528, 38, COLOR.charcoal),
-    textCommand(58, 739, "MyKinLegacy", "F2", 11, COLOR.gold),
-    textCommand(58, 724, model.title, "F3", 8.5, COLOR.ivory),
-    textCommand(498, 733, `Page ${pageNumber}`, "F3", 8.5, COLOR.ivory),
-    strokeRectCommand(42, 54, 528, 700, COLOR.goldSoft, 0.8)
+    strokeRectCommand(54, 70, 504, 652, COLOR.goldSoft, 0.8),
+    textCommand(78, 680, "Authentication and Keepsake Note", "F2", 18, COLOR.ink),
+    strokeLineCommand(78, 662, 534, 662, COLOR.goldSoft, 0.65),
+    ...paragraphBlock(
+      "This certificate records the private collection prepared for the recipient named on page one. It is intended to be printed, framed, gifted, or kept with the complete family legacy collection.",
+      82,
+      614,
+      73,
+      12.4,
+      18,
+      COLOR.ink,
+      5
+    ),
+    textCommand(82, 474, "Archive Number", "F2", 12, COLOR.goldSoft),
+    textCommand(82, 452, archiveNumber, "F1", 12, COLOR.ink),
+    rectCommand(82, 330, 448, 76, COLOR.ivorySoft),
+    strokeRectCommand(82, 330, 448, 76, COLOR.goldSoft, 0.5),
+    ...wrappedTextCommands(
+      "This page is not a story, symbol guide, or usage instruction. It exists only to support the frameable certificate as a private keepsake record.",
+      104,
+      376,
+      68,
+      "F1",
+      11.5,
+      17,
+      COLOR.ink,
+      4
+    ),
+    textCommand(82, 114, "Prepared by MyKinLegacy", "F3", 9.5, COLOR.muted)
   ];
-  let y = 676;
-  let consumed = 0;
-  let cardOpen = false;
-
-  for (const line of lines) {
-    const clean = line.trim();
-    if (!clean) {
-      y -= 8;
-      consumed += 1;
-      continue;
-    }
-    const isSection = isSectionHeading(clean);
-    const needed = isSection ? 34 : 16;
-    if (y - needed < 92) break;
-
-    if (isSection) {
-      if (cardOpen) y -= 8;
-      commands.push(rectCommand(58, y - 22, 496, 34, COLOR.ivorySoft));
-      commands.push(strokeRectCommand(58, y - 22, 496, 34, COLOR.goldSoft, 0.5));
-      commands.push(textCommand(76, y - 2, clean, "F2", 12.2, COLOR.ink));
-      y -= 42;
-      cardOpen = true;
-    } else {
-      const cardHeight = Math.max(22, line.length > 72 ? 32 : 24);
-      commands.push(rectCommand(66, y - cardHeight + 6, 480, cardHeight, COLOR.ivorySoft));
-      commands.push(textCommand(82, y - 8, clean, "F1", 10.6, COLOR.ink));
-      y -= cardHeight + 5;
-      cardOpen = true;
-    }
-    consumed += 1;
-  }
-
-  commands.push(
-    strokeLineCommand(58, 76, 554, 76, COLOR.goldSoft, 0.55),
-    textCommand(58, 60, "Private Legacy Collection", "F3", 8.2, COLOR.muted),
-    textCommand(438, 60, "Legacy, Designed.", "F3", 8.2, COLOR.muted)
-  );
-  return { content: commands.join("\n"), linesConsumed: Math.max(1, consumed) };
+  return commands.join("\n");
 }
 
-function isSectionHeading(value: string): boolean {
-  return (
-    value === "Important Note" ||
-    (/^[A-Z][A-Za-z /&-]{2,58}$/.test(value) && !value.endsWith(".") && value.split(/\s+/).length <= 6)
+function buildStorybookPages(model: PdfModel, image: PdfImage | null): string[] {
+  const ordered = [
+    { heading: "Dedication", fallback: dedicationFallback(model) },
+    { heading: "The Beginning", fallback: beginningFallback(model) },
+    { heading: "Life and Contribution", fallback: contributionFallback(model) },
+    { heading: "A Memory", fallback: memoryFallback(model) },
+    { heading: "Family Values", fallback: valuesFallback(model) },
+    { heading: "What Lives On", fallback: livesOnFallback(model) },
+    { heading: "Closing Letter", fallback: closingLetterFallback(model) }
+  ];
+  const pages = [buildStoryCover(model, image)];
+  ordered.forEach((item, index) => {
+    const body = sectionBody(model, item.heading, index) || item.fallback;
+    pages.push(buildStoryChapterPage(model, item.heading, body, index + 1, image));
+  });
+  return pages;
+}
+
+function buildStoryCover(model: PdfModel, image: PdfImage | null): string {
+  const commands: string[] = [
+    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.charcoal),
+    rectCommand(44, 54, 524, 684, COLOR.charcoalSoft),
+    strokeRectCommand(44, 54, 524, 684, COLOR.goldSoft, 1),
+    textCommand(76, 694, "MyKinLegacy", "F2", 14, COLOR.gold),
+    textCommand(76, 670, "Family Story", "F3", 10, COLOR.ivory),
+    centeredTextCommand(306, 568, model.familyName, "F2", 27, COLOR.ivory),
+    centeredTextCommand(306, 538, "A private story prepared for the people who carry it forward.", "F1", 12, COLOR.mist),
+    strokeLineCommand(152, 506, 460, 506, COLOR.goldSoft, 0.7),
+    ...paragraphBlock(openingStorySentence(model), 134, 450, 55, 13.5, 20, COLOR.ivory, 5),
+    textCommand(76, 108, "Read slowly. Keep close.", "F3", 10, COLOR.gold)
+  ];
+
+  if (image) {
+    commands.push(drawImageCommand(236, 216, 140, 140));
+  } else {
+    commands.push(strokeRectCommand(236, 216, 140, 140, COLOR.goldSoft, 0.7));
+  }
+
+  return commands.join("\n");
+}
+
+function buildStoryChapterPage(
+  _model: PdfModel,
+  heading: string,
+  body: string,
+  chapterNumber: number,
+  image: PdfImage | null
+): string {
+  const isMemory = heading === "A Memory";
+  const commands: string[] = [
+    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
+    rectCommand(52, 64, 508, 660, isMemory ? COLOR.parchment : COLOR.ivorySoft),
+    strokeRectCommand(52, 64, 508, 660, COLOR.goldSoft, 0.65),
+    textCommand(76, 688, `0${chapterNumber}`, "F2", 13, COLOR.goldSoft),
+    textCommand(124, 688, heading, "F2", 20, COLOR.ink),
+    strokeLineCommand(76, 660, 528, 660, COLOR.goldSoft, 0.55)
+  ];
+
+  if (image && (chapterNumber === 1 || chapterNumber === 7)) {
+    commands.push(drawImageCommand(424, 530, 84, 84));
+  }
+
+  const maxLines = heading === "Closing Letter" ? 17 : 19;
+  commands.push(
+    ...paragraphBlock(body, 92, 610, heading === "A Memory" ? 58 : 64, 12.7, 19, COLOR.ink, maxLines)
   );
+  if (isMemory) {
+    commands.push(rectCommand(92, 154, 428, 72, COLOR.ivorySoft));
+    commands.push(strokeRectCommand(92, 154, 428, 72, COLOR.goldSoft, 0.45));
+    commands.push(
+      ...wrappedTextCommands(
+        "The emotional center of this story is not a symbol. It is the lived memory that made the collection worth preparing.",
+        114,
+        196,
+        62,
+        "F1",
+        11,
+        16,
+        COLOR.ink,
+        4
+      )
+    );
+  }
+  commands.push(textCommand(76, 92, "Family Story", "F3", 8.5, COLOR.muted));
+  return commands.join("\n");
+}
+
+function buildMeaningGuidePages(model: PdfModel, image: PdfImage | null): string[] {
+  const symbols = symbolSections(model);
+  const primary = symbols[0] ?? { heading: "Primary Symbol", body: sectionBody(model, "Primary Symbol", 0) || "The central symbol gives the crest its main emotional direction." };
+  const secondary = symbols[1] ?? { heading: "Secondary Symbol", body: sectionBody(model, "Secondary Symbol", 1) || "The supporting symbol adds context without competing with the main idea." };
+  const supporting = symbols[2] ?? { heading: "Supporting Symbol", body: sectionBody(model, "Supporting Symbol", 2) || "The quiet supporting detail helps the crest feel complete and personal." };
+  return [
+    buildMeaningCover(model, image),
+    buildMeaningOverview(model, image),
+    buildMeaningSymbolPage(model, "Primary Symbol", primary.heading, primary.body, image, 1),
+    buildMeaningSymbolPage(model, "Secondary Symbol", secondary.heading, secondary.body, image, 2),
+    buildMeaningSymbolPage(model, "Supporting Symbol", supporting.heading, supporting.body, image, 3),
+    buildMeaningTextPage(model, "Composition", sectionBody(model, "Composition", 3) || compositionFallback(model), image),
+    buildMeaningTextPage(model, "Color and Atmosphere", sectionBody(model, "Color and Atmosphere", 4) || colorFallback(model), image),
+    buildMeaningTextPage(model, "Closing Interpretation", sectionBody(model, "Closing Interpretation", 5) || meaningClosingFallback(model), image)
+  ];
+}
+
+function buildMeaningCover(model: PdfModel, image: PdfImage | null): string {
+  const commands = [
+    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.charcoal),
+    rectCommand(38, 46, 536, 700, COLOR.charcoalSoft),
+    strokeRectCommand(38, 46, 536, 700, COLOR.goldSoft, 1),
+    textCommand(70, 704, "MyKinLegacy", "F2", 14, COLOR.gold),
+    textCommand(70, 678, "Meaning Behind Your Crest", "F2", 24, COLOR.ivory),
+    textCommand(70, 648, model.familyName, "F1", 13, COLOR.mist),
+    ...paragraphBlock(
+      "A visual guide to the finished crest: what leads the design, what supports it, and why the final artwork belongs to this family.",
+      70,
+      604,
+      58,
+      12,
+      18,
+      COLOR.ivory,
+      5
+    )
+  ];
+  if (image) commands.push(drawImageCommand(190, 212, 232, 232));
+  else commands.push(strokeRectCommand(190, 212, 232, 232, COLOR.goldSoft, 0.9));
+  commands.push(textCommand(70, 100, "Illustrated crest guide", "F3", 9, COLOR.gold));
+  return commands.join("\n");
+}
+
+function buildMeaningOverview(model: PdfModel, image: PdfImage | null): string {
+  const commands = [
+    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
+    textCommand(62, 704, "Full Crest Overview", "F2", 22, COLOR.ink),
+    strokeLineCommand(62, 682, 550, 682, COLOR.goldSoft, 0.65),
+    ...paragraphBlock(
+      sectionBody(model, "Full Crest Overview", 0) ||
+        "The crest is arranged as a finished keepsake, not a collection of separate icons. The central image carries the main meaning while the frame, branches, and atmosphere help it feel protected and complete.",
+      62,
+      636,
+      68,
+      12.2,
+      18,
+      COLOR.ink,
+      7
+    ),
+    rectCommand(84, 166, 444, 310, COLOR.charcoal),
+    strokeRectCommand(84, 166, 444, 310, COLOR.goldSoft, 0.8)
+  ];
+  if (image) commands.push(drawImageCommand(188, 206, 236, 236));
+  commands.push(textCommand(62, 92, "Begin with the whole crest before reading individual symbols.", "F3", 9, COLOR.muted));
+  return commands.join("\n");
+}
+
+function buildMeaningSymbolPage(
+  _model: PdfModel,
+  role: string,
+  symbolName: string,
+  body: string,
+  image: PdfImage | null,
+  detailIndex: number
+): string {
+  const commands = [
+    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
+    rectCommand(42, 54, 528, 684, COLOR.ivorySoft),
+    strokeRectCommand(42, 54, 528, 684, COLOR.goldSoft, 0.65),
+    textCommand(70, 700, role, "F3", 10.5, COLOR.goldSoft),
+    textCommand(70, 668, titleCase(symbolName), "F2", 24, COLOR.ink),
+    rectCommand(70, 332, 230, 250, COLOR.charcoal),
+    strokeRectCommand(70, 332, 230, 250, COLOR.goldSoft, 0.7),
+    textCommand(330, 548, "Why this detail matters", "F2", 13, COLOR.ink),
+    ...paragraphBlock(body, 330, 514, 31, 11.4, 17, COLOR.ink, 12),
+    textCommand(70, 102, "The symbol is explained only in relation to this crest and this family.", "F3", 8.5, COLOR.muted)
+  ];
+  if (image) {
+    const size = detailIndex === 1 ? 184 : 164;
+    const x = detailIndex === 1 ? 93 : 103;
+    const y = detailIndex === 3 ? 370 : 382;
+    commands.push(drawImageCommand(x, y, size, size));
+  }
+  return commands.join("\n");
+}
+
+function buildMeaningTextPage(_model: PdfModel, heading: string, body: string, image: PdfImage | null): string {
+  const commands = [
+    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
+    textCommand(62, 704, heading, "F2", 22, COLOR.ink),
+    strokeLineCommand(62, 680, 550, 680, COLOR.goldSoft, 0.65),
+    rectCommand(62, 478, 488, 132, COLOR.charcoalWarm),
+    strokeRectCommand(62, 478, 488, 132, COLOR.goldSoft, 0.6),
+    textCommand(92, 558, "Visual reading", "F2", 13, COLOR.gold),
+    ...wrappedTextCommands("Read the crest as one finished object: shape, symbol, material, and atmosphere working together.", 92, 532, 61, "F1", 11.5, 17, COLOR.ivory, 4),
+    ...paragraphBlock(body, 82, 420, 72, 12.2, 18, COLOR.ink, 13)
+  ];
+  if (image) commands.push(drawImageCommand(424, 516, 74, 74));
+  commands.push(textCommand(62, 88, "Meaning Behind Your Crest", "F3", 8.5, COLOR.muted));
+  return commands.join("\n");
+}
+
+function parsePdfModel(input: PdfGenerationInput): PdfModel {
+  const bodyText = normalizeBodyText(sanitizeOfficialClaims(input.body_text), input.title);
+  const fields = parseFields(bodyText);
+  const familyName =
+    fieldFromMap(fields, "Presented To") ||
+    fieldFromMap(fields, "Recipient") ||
+    cleanDisplayName(input.house_name) ||
+    "Your Family Legacy";
+  return {
+    deliverableCode: input.deliverable_code,
+    title: input.title,
+    familyName,
+    bodyText,
+    fields,
+    sections: parseSections(bodyText)
+  };
+}
+
+function parseFields(text: string): Map<string, string> {
+  const fields = new Map<string, string>();
+  for (const line of text.split(/\r?\n/)) {
+    const match = /^([A-Za-z][A-Za-z /&-]{2,42}):\s*(.+)$/.exec(line.trim());
+    if (match?.[1] && match[2]) fields.set(match[1].trim(), match[2].trim());
+  }
+  return fields;
+}
+
+function parseSections(text: string): PdfSection[] {
+  const sections: PdfSection[] = [];
+  let current: PdfSection | null = null;
+  for (const rawLine of text.split(/\r?\n/)) {
+    const line = rawLine.trim();
+    if (!line) continue;
+    if (isSectionHeading(line)) {
+      if (current) sections.push(current);
+      current = { heading: line, body: "" };
+      continue;
+    }
+    if (!current) current = { heading: "Opening", body: "" };
+    current.body = [current.body, line].filter(Boolean).join(" ");
+  }
+  if (current) sections.push(current);
+  return sections;
+}
+
+function inferDeliverableCode(text: string): PdfGenerationInput["deliverable_code"] {
+  if (/Meaning Behind Your Crest|Primary Symbol|Full Crest Overview/i.test(text)) return "symbol_explanation_pdf";
+  if (/Family Story|Dedication|Closing Letter/i.test(text)) return "family_story_pdf";
+  return "heritage_certificate_pdf";
+}
+
+function inferTitle(text: string): string {
+  if (/Meaning Behind Your Crest/i.test(text)) return "Meaning Behind Your Crest";
+  if (/Family Story/i.test(text)) return "Family Story";
+  return "Heritage Certificate";
+}
+
+function inferFamilyName(text: string): string {
+  const match = /(?:Presented To|Recipient|Prepared for):\s*([^\n]+)/i.exec(text);
+  return cleanDisplayName(match?.[1]) ?? "Your Family Legacy";
+}
+
+function field(model: PdfModel, key: string, fallback: string): string {
+  return fieldFromMap(model.fields, key) ?? fallback;
+}
+
+function fieldFromMap(fields: Map<string, string>, key: string): string | null {
+  for (const [fieldKey, value] of fields.entries()) {
+    if (fieldKey.toLowerCase() === key.toLowerCase()) return value;
+  }
+  return null;
+}
+
+function sectionBody(model: PdfModel, heading: string, fallbackIndex: number): string {
+  const direct = model.sections.find((section) => section.heading.toLowerCase() === heading.toLowerCase())?.body;
+  if (direct) return direct;
+  return model.sections[fallbackIndex]?.body ?? "";
+}
+
+function symbolSections(model: PdfModel): PdfSection[] {
+  return model.sections.filter(
+    (section) =>
+      !/^(Opening|Full Crest Overview|Composition|Color and Atmosphere|Closing Interpretation)$/i.test(section.heading) &&
+      !/^([A-Za-z /&-]+):/.test(section.heading)
+  );
+}
+
+function drawImageCommand(x: number, y: number, width: number, height = width): string {
+  return ["q", `${width} 0 0 ${height} ${x} ${y} cm`, "/Im1 Do", "Q"].join("\n");
 }
 
 function rectCommand(
@@ -317,6 +540,11 @@ function strokeLineCommand(
   return `${color.join(" ")} RG ${strokeWidth} w ${x1} ${y1} m ${x2} ${y2} l S`;
 }
 
+function strokeCircleCommand(x: number, y: number, radius: number, color: readonly [number, number, number], strokeWidth: number): string {
+  const c = radius * 0.5523;
+  return `${color.join(" ")} RG ${strokeWidth} w ${x + radius} ${y} m ${x + radius} ${y + c} ${x + c} ${y + radius} ${x} ${y + radius} c ${x - c} ${y + radius} ${x - radius} ${y + c} ${x - radius} ${y} c ${x - radius} ${y - c} ${x - c} ${y - radius} ${x} ${y - radius} c ${x + c} ${y - radius} ${x + radius} ${y - c} ${x + radius} ${y} c S`;
+}
+
 function textCommand(
   x: number,
   y: number,
@@ -328,6 +556,18 @@ function textCommand(
   return ["BT", `/${font} ${size} Tf`, `${color.join(" ")} rg`, `${x} ${y} Td`, `(${escapePdfText(value)}) Tj`, "ET"].join("\n");
 }
 
+function centeredTextCommand(
+  x: number,
+  y: number,
+  value: string,
+  font: "F1" | "F2" | "F3",
+  size: number,
+  color: readonly [number, number, number]
+): string {
+  const approxWidth = value.length * size * 0.265;
+  return textCommand(x - approxWidth, y, value, font, size, color);
+}
+
 function wrappedTextCommands(
   value: string,
   x: number,
@@ -336,11 +576,38 @@ function wrappedTextCommands(
   font: "F1" | "F2" | "F3",
   size: number,
   leading: number,
-  color: readonly [number, number, number]
+  color: readonly [number, number, number],
+  maxLines = 4
 ): string[] {
   return wrapLine(value, width)
-    .slice(0, 4)
+    .slice(0, maxLines)
     .map((line, index) => textCommand(x, y - index * leading, line, font, size, color));
+}
+
+function paragraphBlock(
+  value: string,
+  x: number,
+  y: number,
+  width: number,
+  size: number,
+  leading: number,
+  color: readonly [number, number, number],
+  maxLines: number
+): string[] {
+  const paragraphs = value.split(/\n{2,}/).map((part) => part.trim()).filter(Boolean);
+  const commands: string[] = [];
+  let cursorY = y;
+  let rendered = 0;
+  for (const paragraph of paragraphs.length > 0 ? paragraphs : [value]) {
+    for (const line of wrapLine(paragraph, width)) {
+      if (rendered >= maxLines) return commands;
+      commands.push(textCommand(x, cursorY, line, "F1", size, color));
+      cursorY -= leading;
+      rendered += 1;
+    }
+    cursorY -= Math.round(leading * 0.45);
+  }
+  return commands;
 }
 
 export function sanitizeOfficialClaims(text: string): string {
@@ -374,6 +641,71 @@ function normalizeBodyText(text: string, title: string): string {
   }
   const bodyLines = boundaryIndex >= 0 ? lines.slice(0, boundaryIndex) : lines;
   return bodyLines.join("\n").trim();
+}
+
+function isSectionHeading(value: string): boolean {
+  return /^[A-Z][A-Za-z /&-]{2,58}$/.test(value) && !value.endsWith(".") && value.split(/\s+/).length <= 7;
+}
+
+function cleanDisplayName(value?: string | null): string | null {
+  const cleaned = value?.trim().replace(/\s+/g, " ");
+  if (!cleaned || /^(unknown|null|undefined|n\/a|none)$/i.test(cleaned) || /\bHouse of Unknown\b/i.test(cleaned)) return null;
+  return cleaned.slice(0, 90);
+}
+
+function ceremonialFallback(model: PdfModel): string {
+  return `This certificate presents ${model.familyName} as a private family keepsake, prepared with care to mark the meaning of this collection.`;
+}
+
+function openingStorySentence(model: PdfModel): string {
+  return `This story begins with ${model.familyName}, and with the quiet evidence of love, effort, memory, and continuity that made the collection worth preparing.`;
+}
+
+function dedicationFallback(model: PdfModel): string {
+  return `For ${model.familyName}, this story is offered as a private expression of gratitude. It is meant to be read as a keepsake, not as a record of status or invented history.`;
+}
+
+function beginningFallback(_model: PdfModel): string {
+  return `Every family story begins in ordinary moments: showing up, building a home, carrying responsibility, keeping faith, and making room for the people who come next.`;
+}
+
+function contributionFallback(model: PdfModel): string {
+  return `${model.familyName} is recognized through the kind of contribution that is often felt before it is named. The value of the story lives in daily care, steady choices, and the example left for others.`;
+}
+
+function memoryFallback(_model: PdfModel): string {
+  return `The memory at the center of this collection is the feeling of being held by a family life that mattered. It gives the story its warmth and keeps the collection personal.`;
+}
+
+function valuesFallback(_model: PdfModel): string {
+  return `The values in this story are not slogans. They are qualities made visible through action: protection, love, resilience, integrity, faithfulness, and hope carried in practical ways.`;
+}
+
+function livesOnFallback(_model: PdfModel): string {
+  return `What lives on is not a perfect history. It is the shape of care that family members can recognize, remember, and carry forward with dignity.`;
+}
+
+function closingLetterFallback(model: PdfModel): string {
+  return `May this collection remind ${model.familyName} that legacy is not only what is recorded. It is what is remembered, practiced, and passed on with love.`;
+}
+
+function compositionFallback(model: PdfModel): string {
+  return `The crest uses a clear center, a protective frame, and quiet supporting details so the artwork feels focused rather than crowded. Each element is meant to serve ${model.familyName}, not compete for attention.`;
+}
+
+function colorFallback(_model: PdfModel): string {
+  return "The black and antique gold atmosphere gives the crest a private archive feeling: warm, dignified, printable, and suitable for a family keepsake.";
+}
+
+function meaningClosingFallback(model: PdfModel): string {
+  return `The finished crest belongs to ${model.familyName} because the visual choices are tied to evidence, meaning, and emotional purpose rather than decoration alone.`;
+}
+
+function titleCase(value: string): string {
+  return value
+    .split(/\s+/)
+    .map((part) => (part ? `${part[0]?.toUpperCase()}${part.slice(1).toLowerCase()}` : part))
+    .join(" ");
 }
 
 function loadApprovedCrestImage(): PdfImage | null {

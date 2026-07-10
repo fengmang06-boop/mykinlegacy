@@ -473,6 +473,8 @@ interface PngPromptMetadata {
 interface ArtifactContext {
   order_number: string;
   house_name: string;
+  recipient: string | null;
+  occasion: string | null;
   motto: string | null;
   themes: Array<{ theme: string; evidence: string | null }>;
   symbols: Array<{
@@ -1167,7 +1169,7 @@ function contentQualityFailures(
   if (/\b(pdf\.pdf|png\.png)\b/i.test(sourceText)) failures.push("bad_file_name");
   if (/[{[]\s*"[^"]+"\s*:/s.test(sourceText)) failures.push("raw_json_detected");
   const minimumLength: Record<string, number> = {
-    heritage_certificate_pdf: 420,
+    heritage_certificate_pdf: 340,
     family_story_pdf: 700,
     symbol_explanation_pdf: 700
   };
@@ -1177,7 +1179,7 @@ function contentQualityFailures(
   if (deliverableCode === "heritage_certificate_pdf") {
     const required = [
       "Collection Name",
-      "Recipient",
+      "Presented To",
       "Crest",
       "Archive Number",
       "Date",
@@ -1188,23 +1190,25 @@ function contentQualityFailures(
     for (const label of required) {
       if (!sourceText.includes(label)) failures.push(`missing_certificate_field:${label.replaceAll(" ", "_").toLowerCase()}`);
     }
-    if (/^(Core meaning:|Why this symbol was chosen:|Family Story|Reading Order|Printing Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents)$/im.test(sourceText)) {
+    if (/^(Core meaning:|Why this symbol was chosen:|Family Story|Reading Order|Printing Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents|Primary Symbol|Full Crest Overview)$/im.test(sourceText)) {
       failures.push("certificate_scope_leak");
     }
   }
   if (deliverableCode === "family_story_pdf") {
-    if (!sourceText.includes("Family Story")) failures.push("story_missing");
+    for (const label of ["Dedication", "The Beginning", "A Memory", "Family Values", "What Lives On", "Closing Letter"]) {
+      if (!sourceText.includes(label)) failures.push(`story_missing:${label.replaceAll(" ", "_").toLowerCase()}`);
+    }
     if (!/\b(memory|legacy|meaning|family)\b/i.test(sourceText)) failures.push("story_emotion_missing");
-    if (/^(Core meaning:|Why this symbol was chosen:|Official Seal|Reading Order|Printing Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents)$/im.test(sourceText)) {
+    if (/^(Core meaning:|Why this symbol was chosen:|Official Seal|Reading Order|Printing Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents|Primary Symbol|Full Crest Overview|Archive Number)$/im.test(sourceText)) {
       failures.push("story_scope_leak");
     }
   }
   if (deliverableCode === "symbol_explanation_pdf") {
-    if (!sourceText.includes("Meaning:")) failures.push("symbol_meaning_missing");
-    if (!sourceText.includes("Why chosen:")) failures.push("symbol_why_chosen_missing");
-    if (!sourceText.includes("Emotional role:")) failures.push("symbol_emotional_role_missing");
-    if (!sourceText.includes("Relationship to family:")) failures.push("symbol_family_relationship_missing");
-    if (/^(Family Story|Official Seal|Reading Order|Printing Guidance|Storage Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents)$/im.test(sourceText)) {
+    for (const label of ["Full Crest Overview", "Primary Symbol", "Composition", "Color and Atmosphere", "Closing Interpretation"]) {
+      if (!sourceText.includes(label)) failures.push(`symbol_guide_missing:${label.replaceAll(" ", "_").toLowerCase()}`);
+    }
+    if (/\b(Meaning:|Why chosen:|Emotional role:|Relationship to family:)\b/i.test(sourceText)) failures.push("dictionary_symbol_blocks");
+    if (/^(Family Story|Official Seal|Reading Order|Printing Guidance|Storage Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents|Archive Number)$/im.test(sourceText)) {
       failures.push("symbol_guide_scope_leak");
     }
   }
@@ -1262,6 +1266,8 @@ function createArtifactContext(input: {
   return {
     order_number: input.order.order_number,
     house_name: houseName,
+    recipient: cleanDisplayName(stringOrNull(recordValue(customerInputs, "recipient"))),
+    occasion: cleanDisplayName(stringOrNull(recordValue(customerInputs, "occasion"))),
     motto: stringOrNull(recordValue(houseDna, "motto")),
     themes: recordArray<Record<string, unknown>>(profile, "meaning_themes").map((theme) => ({
       theme: stringOrNull(recordValue(theme, "theme")) ?? "family meaning",
@@ -1277,76 +1283,76 @@ function createArtifactContext(input: {
 
 function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext): string {
   if (deliverableCode === "heritage_certificate_pdf") {
-    return pdfDocumentText({
-      title: "Heritage Certificate",
-      subtitle: "A ceremonial record of this private legacy collection.",
-      context,
-      sections: [
-        ["Collection Record", certificateRecordText(context)],
-        ["Signature and Seal", "Signature: MyKinLegacy Legacy Curator\nOfficial Seal: MyKinLegacy private archive seal"],
-        ["Ceremony Statement", ceremonyStatement(context)]
-      ]
-    });
+    return certificatePublicationText(context);
   }
 
   if (deliverableCode === "family_story_pdf") {
-    return pdfDocumentText({
-      title: "Family Story",
-      subtitle: "An emotional reflection on why this family matters.",
-      context,
-      sections: [
-        ["Story", context.collection_content?.family_story ?? storyFallback(context)],
-        ["Memory and Legacy", familyMemoryText(context)],
-        ["Personal Meaning", context.collection_content?.collection_letter ?? personalMeaningFallback(context)],
-        ["Legacy Reflection", closingStoryReflection(context)]
-      ]
-    });
+    return familyStoryPublicationText(context);
   }
 
-  return pdfDocumentText({
-    title: "Meaning Behind Your Crest",
-    subtitle: "A clear explanation of why this crest was created.",
-    context,
-    sections: symbolGuideSections(context)
-  });
+  return meaningGuidePublicationText(context);
 }
 
-function pdfDocumentText(input: {
-  title: string;
-  subtitle: string;
-  context: ArtifactContext;
-  sections: Array<[string, string]>;
-}): string {
-  const expandedSections = input.sections.flatMap(([heading, body]) => [
-    heading,
-    body,
-    ""
-  ]);
+function certificatePublicationText(context: ArtifactContext): string {
+  const collectionName = context.collection_content?.collection_name ?? `${context.house_name} Legacy Collection`;
   return [
     "MyKinLegacy",
     "Legacy, Designed.",
-    input.title,
-    input.subtitle,
-    `Prepared for: ${input.context.house_name}`,
-    input.context.motto ? `Motto: ${input.context.motto}` : "",
+    "Heritage Certificate",
     "",
-    ...expandedSections
+    `Collection Name: ${collectionName}`,
+    `Presented To: ${context.recipient ?? context.house_name}`,
+    context.occasion ? `Occasion: ${context.occasion}` : "Occasion: Private family gift",
+    "Crest: Final crest artwork prepared for this collection.",
+    `Archive Number: ${context.order_number}`,
+    "Date: Recorded at the time this collection was prepared.",
+    "Signature: MyKinLegacy Legacy Curator",
+    "Official Seal: MyKinLegacy keepsake seal",
+    "",
+    "Ceremony Statement",
+    ceremonyStatement(context),
+    "",
+    "Keepsake Note",
+    "This certificate is intended to stand on its own as the ceremonial record of the collection. It is brief by design so it can be printed, framed, gifted, and kept without requiring the reader to continue into a longer document."
   ]
     .filter((line) => line !== "")
     .join("\n");
 }
 
 function ceremonyStatement(context: ArtifactContext): string {
-  return `${context.house_name} is recognized through this private collection with care, dignity, and gratitude. This certificate names the collection and marks the moment it was prepared as a keepsake for the recipient.`;
+  const recipient = context.recipient ?? context.house_name;
+  const occasion = context.occasion ? ` for ${context.occasion}` : "";
+  return `${recipient} is presented with this private family legacy collection${occasion}, prepared with care, dignity, and gratitude. It marks a meaningful moment and names the finished crest as a keepsake for the family to hold.`;
 }
 
-function certificateRecordText(context: ArtifactContext): string {
+function familyStoryPublicationText(context: ArtifactContext): string {
+  const story = context.collection_content?.family_story ?? storyFallback(context);
+  const memory = context.collection_content?.collection_letter ?? familyMemoryText(context);
   return [
-    `Collection Name: ${context.collection_content?.collection_name ?? `${context.house_name} Private Legacy Collection`}`,
-    `Recipient: ${context.house_name}`,
-    "Crest: Classic shield legacy crest artwork prepared for this collection.",
-    `Archive Number: ${context.order_number}`,
-    "Date: Recorded at the time this collection was prepared."
+    "MyKinLegacy",
+    "Legacy, Designed.",
+    "Family Story",
+    "",
+    "Dedication",
+    dedicationText(context),
+    "",
+    "The Beginning",
+    beginningText(context, story),
+    "",
+    "Life and Contribution",
+    contributionText(context, story),
+    "",
+    "A Memory",
+    memoryText(context, memory),
+    "",
+    "Family Values",
+    valuesStoryText(context),
+    "",
+    "What Lives On",
+    closingStoryReflection(context),
+    "",
+    "Closing Letter",
+    closingLetterText(context)
   ].join("\n");
 }
 
@@ -1357,8 +1363,31 @@ function storyFallback(context: ArtifactContext): string {
   )}. This collection gathers those qualities into a private keepsake so the family can see its values reflected with warmth and care.`;
 }
 
-function personalMeaningFallback(context: ArtifactContext): string {
-  return `To ${context.house_name},\n\nThis collection was prepared to recognize what ordinary gifts often cannot hold: the values, symbols, and memories that make a family feel like itself.\n\nWith care,\nMyKinLegacy`;
+function dedicationText(context: ArtifactContext): string {
+  const recipient = context.recipient ?? context.house_name;
+  const occasion = context.occasion ? ` for ${context.occasion}` : "";
+  return `For ${recipient}${occasion}, this story is offered with gratitude. It begins with what the family has already lived: care shown in practical ways, values carried through time, and memories worth holding close.`;
+}
+
+function beginningText(context: ArtifactContext, story: string): string {
+  const cleanStory = firstSentences(story, 2);
+  return cleanStory || `${context.house_name} begins here not as a formal record, but as a story of people whose ordinary choices created lasting meaning for the family.`;
+}
+
+function contributionText(context: ArtifactContext, story: string): string {
+  const themes = naturalList(context.themes.map((theme) => theme.theme), "love, service, and continuity");
+  return `${context.house_name} is recognized through ${themes}. ${firstSentences(story, 1)} The contribution is not measured by titles or ceremony, but by the way those qualities shaped family life.`;
+}
+
+function memoryText(context: ArtifactContext, memory: string): string {
+  return firstSentences(memory, 4) || familyMemoryText(context);
+}
+
+function valuesStoryText(context: ArtifactContext): string {
+  const themes = context.themes
+    .map((theme) => (theme.evidence ? `${theme.theme} through ${theme.evidence}` : theme.theme))
+    .slice(0, 4);
+  return `The values in this story are not abstract. They appear as ${naturalList(themes, "care, continuity, and hope")}. They matter because the family can recognize them in lived experience rather than in empty ceremony.`;
 }
 
 function familyMemoryText(context: ArtifactContext): string {
@@ -1376,22 +1405,81 @@ function closingStoryReflection(context: ArtifactContext): string {
   return `The story of ${context.house_name} is not valuable because it tries to sound grand. It is valuable because it gives language to care, memory, sacrifice, and continuity that the family may already recognize. The collection should leave the recipient feeling seen, thanked, and gently connected to what the family hopes to carry forward.`;
 }
 
-function symbolGuideSections(context: ArtifactContext): Array<[string, string]> {
-  return context.symbols.map((symbol) => [
-    titleCase(symbol.symbol),
-    [
-      `Meaning: ${symbol.meaning ?? "A chosen family symbol"}.`,
-      `Why chosen: ${symbol.why_chosen ?? symbol.rationale ?? "It supports the collection's core family meaning."}`,
-      `Emotional role: ${
-        symbol.emotional_relevance ??
-        "It gives the recipient a visible reminder of the family's values, memory, and continuity."
-      }`,
-      `Relationship to family: ${
-        symbol.customer_input_basis ??
-        "It reflects the family interview details through a careful symbolic interpretation."
-      }`
-    ].join("\n")
-  ]);
+function closingLetterText(context: ArtifactContext): string {
+  const recipient = context.recipient ?? context.house_name;
+  return `May ${recipient} receive this story as a quiet thank-you: for what has been lived, what has been given, and what can still be carried forward with hope.`;
+}
+
+function meaningGuidePublicationText(context: ArtifactContext): string {
+  const symbols = context.symbols.slice(0, 3);
+  const primary = symbols[0] ?? fallbackSymbol("tree", "continuity and family roots");
+  const secondary = symbols[1] ?? fallbackSymbol("shield", "protection and care");
+  const supporting = symbols[2] ?? fallbackSymbol("laurel", "honor and gratitude");
+  return [
+    "MyKinLegacy",
+    "Legacy, Designed.",
+    "Meaning Behind Your Crest",
+    "",
+    "Full Crest Overview",
+    `${context.house_name} is represented by a finished crest, not by separate decorative icons. The design begins with ${titleCase(primary.symbol)} as the leading idea, then uses ${titleCase(secondary.symbol)} and ${titleCase(supporting.symbol)} to support the emotional reading without crowding the artwork.`,
+    "",
+    "Primary Symbol",
+    symbolInterpretation(primary, context),
+    "",
+    "Secondary Symbol",
+    symbolInterpretation(secondary, context),
+    "",
+    "Supporting Symbol",
+    symbolInterpretation(supporting, context),
+    "",
+    "Composition",
+    compositionText(symbols),
+    "",
+    "Color and Atmosphere",
+    "The black and antique gold palette gives the crest a private archive feeling. It is intended to feel warm, dignified, printable, and suitable for a family keepsake rather than a loud graphic.",
+    "",
+    "Closing Interpretation",
+    `The finished crest belongs to ${context.recipient ?? context.house_name} because the symbols are tied to family evidence, emotional tone, and the occasion that brought the collection into being.`
+  ].join("\n");
+}
+
+function fallbackSymbol(symbol: string, meaning: string): ArtifactContext["symbols"][number] {
+  return {
+    symbol,
+    meaning,
+    rationale: `It supports ${meaning}.`,
+    why_chosen: `It supports ${meaning}.`,
+    customer_input_basis: "It reflects the family meaning gathered from the intake.",
+    visual_role: "supporting visual detail",
+    artifact_role: "meaning guide element",
+    emotional_relevance: meaning
+  };
+}
+
+function symbolInterpretation(symbol: ArtifactContext["symbols"][number], context: ArtifactContext): string {
+  const chosen = trimSentence(symbol.why_chosen ?? symbol.rationale ?? `It supports the main meaning of ${context.house_name}.`);
+  const emotional = trimSentence(symbol.emotional_relevance ?? symbol.meaning ?? "family meaning");
+  const basis = trimSentence(symbol.customer_input_basis ?? "the family details provided for this collection");
+  return `${titleCase(symbol.symbol)} was included because ${chosen}. In this crest, it carries ${emotional}. It connects back to ${basis}.`;
+}
+
+function trimSentence(value: string): string {
+  return value.trim().replace(/\s+/g, " ").replace(/[.!?]+$/g, "");
+}
+
+function compositionText(symbols: ArtifactContext["symbols"]): string {
+  const names = symbols.map((symbol) => titleCase(symbol.symbol));
+  return `The composition keeps ${naturalList(names, "the chosen symbols")} in a clear hierarchy. One idea leads, the others support it, and the frame holds the design together so the crest feels complete rather than assembled from unrelated parts.`;
+}
+
+function firstSentences(value: string, count: number): string {
+  return value
+    .replace(/\s+/g, " ")
+    .split(/(?<=[.!?])\s+/)
+    .filter(Boolean)
+    .slice(0, count)
+    .join(" ")
+    .trim();
 }
 
 function customerFileName(deliverableCode: string): string {

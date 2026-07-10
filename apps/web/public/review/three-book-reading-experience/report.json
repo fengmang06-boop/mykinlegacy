@@ -1,0 +1,89 @@
+{
+  "generatedAt": "2026-07-10T09:16:15.316Z",
+  "sample": {
+    "recipient": "Dad",
+    "occasion": "Retirement",
+    "archiveNumber": "AHL-REVIEW-THREE-BOOK-01"
+  },
+  "publications": [
+    {
+      "key": "certificate",
+      "title": "Heritage Certificate",
+      "fileName": "Heritage-Certificate.pdf",
+      "path": "sample-package/Heritage-Certificate.pdf",
+      "pageCount": 2,
+      "sizeBytes": 135207,
+      "screenshots": [
+        "screenshots/certificate-page-1.png",
+        "screenshots/certificate-page-2.png"
+      ]
+    },
+    {
+      "key": "family-story",
+      "title": "Family Story",
+      "fileName": "Family-Story.pdf",
+      "path": "sample-package/Family-Story.pdf",
+      "pageCount": 8,
+      "sizeBytes": 139827,
+      "screenshots": [
+        "screenshots/family-story-page-1.png",
+        "screenshots/family-story-page-2.png",
+        "screenshots/family-story-page-3.png",
+        "screenshots/family-story-page-4.png",
+        "screenshots/family-story-page-5.png",
+        "screenshots/family-story-page-6.png",
+        "screenshots/family-story-page-7.png",
+        "screenshots/family-story-page-8.png"
+      ]
+    },
+    {
+      "key": "meaning-guide",
+      "title": "Meaning Behind Your Crest",
+      "fileName": "Meaning-Behind-Your-Crest.pdf",
+      "path": "sample-package/Meaning-Behind-Your-Crest.pdf",
+      "pageCount": 8,
+      "sizeBytes": 141230,
+      "screenshots": [
+        "screenshots/meaning-guide-page-1.png",
+        "screenshots/meaning-guide-page-2.png",
+        "screenshots/meaning-guide-page-3.png",
+        "screenshots/meaning-guide-page-4.png",
+        "screenshots/meaning-guide-page-5.png",
+        "screenshots/meaning-guide-page-6.png",
+        "screenshots/meaning-guide-page-7.png",
+        "screenshots/meaning-guide-page-8.png"
+      ]
+    }
+  ],
+  "duplicateContentScan": {
+    "repeatedParagraphs": [],
+    "scannedParagraphs": 17
+  },
+  "forbiddenPhraseScan": {
+    "Inside this document": false,
+    "Private Archive / clean keepsake document": false,
+    "generic filler": false,
+    "AI-generated": false,
+    "internal beta": false,
+    "alpha": false,
+    "official coat of arms": false,
+    "certified genealogical": false
+  },
+  "overflowClippingResult": {
+    "status": "pass",
+    "method": "All PDF pages rendered to screenshots; no empty screenshot files were produced.",
+    "screenshotCount": 18
+  },
+  "zip": {
+    "path": "sample-package/Complete-Collection-Archive.zip",
+    "sizeBytes": 3709991,
+    "entries": [
+      "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt",
+      "MyKinLegacy-Private-Legacy-Collection/01-Final-Crest/Final-Crest.png",
+      "MyKinLegacy-Private-Legacy-Collection/02-Heritage-Certificate/Heritage-Certificate.pdf",
+      "MyKinLegacy-Private-Legacy-Collection/03-Family-Story/Family-Story.pdf",
+      "MyKinLegacy-Private-Legacy-Collection/04-Meaning-Behind-Your-Crest/Meaning-Behind-Your-Crest.pdf"
+    ]
+  },
+  "founderBetaVerdict": "PASS"
+}
