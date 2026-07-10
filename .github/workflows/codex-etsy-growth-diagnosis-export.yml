@@ -11,7 +11,7 @@ permissions:
   contents: write
 
 concurrency:
-  group: etsy-growth-diagnosis-export
+  group: mensskull-growth-os-production
   cancel-in-progress: false
 
 jobs:

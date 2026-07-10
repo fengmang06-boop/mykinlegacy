@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: production-mykinlegacy
+  group: mensskull-growth-os-production
   cancel-in-progress: false
 
 jobs:
@@ -74,7 +74,8 @@ jobs:
             fi
           }
 
-          APP_DIR="/www/wwwroot/tools.mensskull.com/etsy-ai-manager"
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          EXPECTED_APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
           if command -v pm2 >/dev/null 2>&1; then
             echo "===== PM2 LIST ====="
             pm2 jlist | node -e '
@@ -102,6 +103,12 @@ jobs:
           fi
 
           echo "app_dir=$APP_DIR"
+          APP_REAL="$(realpath "$APP_DIR")"
+          EXPECTED_REAL="$(realpath "$EXPECTED_APP_DIR")"
+          if [ "$APP_REAL" != "$EXPECTED_REAL" ]; then
+            echo "Refusing Etsy inspection outside fixed app dir: $APP_REAL"
+            exit 1
+          fi
           cd "$APP_DIR"
           echo "pwd=$(pwd)"
           echo "node=$(node -v 2>/dev/null || true)"

@@ -12,7 +12,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: production-mykinlegacy
+  group: mensskull-growth-os-production
   cancel-in-progress: false
 
 jobs:
@@ -72,6 +72,7 @@ jobs:
           set -euo pipefail
 
           APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          EXPECTED_APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
           if command -v pm2 >/dev/null 2>&1; then
             FOUND_DIR="$(pm2 jlist | node -e '
               let data="";
@@ -85,8 +86,25 @@ jobs:
             if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
           fi
           test -d "$APP_DIR"
+          APP_REAL="$(realpath "$APP_DIR")"
+          EXPECTED_REAL="$(realpath "$EXPECTED_APP_DIR")"
+          if [ "$APP_REAL" != "$EXPECTED_REAL" ]; then
+            echo "Refusing Etsy deploy outside fixed app dir: $APP_REAL"
+            exit 1
+          fi
           cd "$APP_DIR"
           TS="$(date +%Y%m%d%H%M%S)"
+          BACKUP_DIR="$APP_DIR/backups/isolation-hardening/$TS"
+          mkdir -p "$BACKUP_DIR"
+          cp -a .env.local "$BACKUP_DIR/.env.local" 2>/dev/null || true
+          cp -a prisma/dev.db "$BACKUP_DIR/dev.db" 2>/dev/null || true
+          pm2 jlist > "$BACKUP_DIR/pm2-jlist.json" 2>/dev/null || true
+          for nginx_conf in \
+            /etc/nginx/conf.d/tools.mensskull.com.conf \
+            /etc/nginx/sites-available/tools.mensskull.com
+          do
+            [ -f "$nginx_conf" ] && cp -a "$nginx_conf" "$BACKUP_DIR/$(basename "$nginx_conf").backup"
+          done
 
           DATABASE_URL_VALUE="$(node <<'NODE'
           const fs = require("fs");
@@ -102,6 +120,14 @@ jobs:
           NODE
           )"
           export DATABASE_URL="$DATABASE_URL_VALUE"
+          node <<'NODE'
+          const path = require("path");
+          const value = process.env.DATABASE_URL || "file:./dev.db";
+          if (!value.toLowerCase().startsWith("file:")) throw new Error("Etsy DATABASE_URL must be local SQLite.");
+          const dbPath = value.slice(5);
+          const resolved = path.resolve(process.cwd(), dbPath.startsWith("./") ? path.join("prisma", dbPath.slice(2)) : dbPath);
+          if (!resolved.startsWith(process.cwd()) || !resolved.endsWith(".db")) throw new Error("Etsy SQLite DB must stay inside app dir.");
+          NODE
           if ! grep -q '^[[:space:]]*DATABASE_URL[[:space:]]*=' .env 2>/dev/null && ! grep -q '^[[:space:]]*DATABASE_URL[[:space:]]*=' .env.local 2>/dev/null; then
             printf '\nDATABASE_URL=file:./dev.db\n' >> .env.local
             chmod 600 .env.local
@@ -123,7 +149,11 @@ jobs:
           mkdir -p "/tmp/etsy-sync-v1-$TS"
           tar -xzf /tmp/etsy-sync-v1.tgz -C "/tmp/etsy-sync-v1-$TS"
           cp -a "/tmp/etsy-sync-v1-$TS/prisma/schema.prisma" prisma/schema.prisma
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/database-isolation.ts" src/lib/database-isolation.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/prisma.ts" src/lib/prisma.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/client.ts" src/lib/integrations/etsy/client.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/scopes.ts" src/lib/integrations/etsy/scopes.ts
+          cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/write-guard.ts" src/lib/integrations/etsy/write-guard.ts
           cp -a "/tmp/etsy-sync-v1-$TS/src/lib/integrations/etsy/sync-read-only.ts" src/lib/integrations/etsy/sync-read-only.ts
           mkdir -p src/app/api/etsy/sync src/app/api/etsy/status src/app/etsy-connection
           cp -a "/tmp/etsy-sync-v1-$TS/src/app/api/etsy/sync/route.ts" src/app/api/etsy/sync/route.ts

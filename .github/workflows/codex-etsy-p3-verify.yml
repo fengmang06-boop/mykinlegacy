@@ -11,7 +11,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: etsy-p3-verify
+  group: mensskull-growth-os-production
   cancel-in-progress: false
 
 jobs:

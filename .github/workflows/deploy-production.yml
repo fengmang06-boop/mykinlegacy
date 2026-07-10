@@ -11,7 +11,7 @@ permissions:
   packages: write
 
 concurrency:
-  group: production-mykinlegacy
+  group: mykinlegacy-production
   cancel-in-progress: false
 
 jobs:

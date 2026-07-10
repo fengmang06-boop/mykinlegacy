@@ -13,7 +13,7 @@ permissions:
   contents: read
 
 concurrency:
-  group: production-mykinlegacy
+  group: mensskull-growth-os-production
   cancel-in-progress: false
 
 jobs:
@@ -68,6 +68,8 @@ jobs:
           tar -czf /tmp/etsy-oauth-listings-w.tgz \
             -C .codex-etsy-ai-manager-sync-v1 \
             src/lib/env-store.ts \
+            src/lib/database-isolation.ts \
+            src/lib/prisma.ts \
             src/lib/integrations/etsy/scopes.ts \
             src/lib/integrations/etsy/token-scopes.ts \
             src/lib/integrations/etsy/write-guard.ts \
@@ -108,6 +110,7 @@ jobs:
           fi
 
           APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          EXPECTED_APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
           if command -v pm2 >/dev/null 2>&1; then
             FOUND_DIR="$(pm2 jlist | node -e '
               let data="";
@@ -121,10 +124,44 @@ jobs:
             if [ -n "${FOUND_DIR:-}" ] && [ -d "$FOUND_DIR" ]; then APP_DIR="$FOUND_DIR"; fi
           fi
           test -d "$APP_DIR"
+          APP_REAL="$(realpath "$APP_DIR")"
+          EXPECTED_REAL="$(realpath "$EXPECTED_APP_DIR")"
+          if [ "$APP_REAL" != "$EXPECTED_REAL" ]; then
+            echo "Refusing Etsy deploy outside fixed app dir: $APP_REAL"
+            exit 1
+          fi
           cd "$APP_DIR"
 
           TS="$(date +%Y%m%d%H%M%S)"
+          BACKUP_DIR="$APP_DIR/backups/isolation-hardening/$TS"
+          mkdir -p "$BACKUP_DIR"
           cp -a .env.local ".env.local.codex-backup-$TS" 2>/dev/null || true
+          cp -a .env.local "$BACKUP_DIR/.env.local" 2>/dev/null || true
+          cp -a prisma/dev.db "$BACKUP_DIR/dev.db" 2>/dev/null || true
+          pm2 jlist > "$BACKUP_DIR/pm2-jlist.json" 2>/dev/null || true
+          for nginx_conf in \
+            /etc/nginx/conf.d/tools.mensskull.com.conf \
+            /etc/nginx/sites-available/tools.mensskull.com
+          do
+            [ -f "$nginx_conf" ] && cp -a "$nginx_conf" "$BACKUP_DIR/$(basename "$nginx_conf").backup"
+          done
+          node <<'NODE'
+          const fs = require("fs");
+          const path = require("path");
+          let value = process.env.DATABASE_URL || "";
+          for (const file of [".env", ".env.local"]) {
+            if (!fs.existsSync(file)) continue;
+            for (const line of fs.readFileSync(file, "utf8").split(/\r?\n/)) {
+              const match = line.match(/^\s*DATABASE_URL\s*=\s*(.*)\s*$/);
+              if (match) value = match[1].trim().replace(/^['"]|['"]$/g, "");
+            }
+          }
+          if (!value) value = "file:./dev.db";
+          if (!value.toLowerCase().startsWith("file:")) throw new Error("Etsy DATABASE_URL must be local SQLite.");
+          const dbPath = value.slice(5);
+          const resolved = path.resolve(process.cwd(), dbPath.startsWith("./") ? path.join("prisma", dbPath.slice(2)) : dbPath);
+          if (!resolved.startsWith(process.cwd()) || !resolved.endsWith(".db")) throw new Error("Etsy SQLite DB must stay inside app dir.");
+          NODE
           cp -a src/lib/integrations/etsy/scopes.ts "src/lib/integrations/etsy/scopes.ts.codex-backup-$TS" 2>/dev/null || true
           cp -a src/lib/integrations/etsy/token-scopes.ts "src/lib/integrations/etsy/token-scopes.ts.codex-backup-$TS" 2>/dev/null || true
           cp -a src/lib/integrations/etsy/write-guard.ts "src/lib/integrations/etsy/write-guard.ts.codex-backup-$TS" 2>/dev/null || true
@@ -135,6 +172,8 @@ jobs:
           tar -xzf /tmp/etsy-oauth-listings-w.tgz -C "/tmp/etsy-oauth-listings-w-$TS"
           mkdir -p src/lib
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/env-store.ts" src/lib/env-store.ts
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/database-isolation.ts" src/lib/database-isolation.ts
+          cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/prisma.ts" src/lib/prisma.ts
           mkdir -p src/lib/integrations/etsy
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/scopes.ts" src/lib/integrations/etsy/scopes.ts
           cp -a "/tmp/etsy-oauth-listings-w-$TS/src/lib/integrations/etsy/token-scopes.ts" src/lib/integrations/etsy/token-scopes.ts
@@ -161,6 +200,7 @@ jobs:
               "NEXT_PUBLIC_BASE_URL": "https://tools.mensskull.com",
               "NEXT_PUBLIC_SITE_URL": "https://tools.mensskull.com",
               "ETSY_READ_ONLY_MODE": "true",
+              "ETSY_WRITE_APPROVED": "false",
           }
           if os.environ.get("ETSY_CLIENT_ID"):
               updates["ETSY_CLIENT_ID"] = os.environ["ETSY_CLIENT_ID"]

@@ -354,11 +354,14 @@ For simple recovery:
 
 ## Production Operation Concurrency
 
-Production workflows use this concurrency group:
+Production workflows use separate concurrency groups:
 
 ```text
-production-mykinlegacy
+mykinlegacy-production
+mensskull-growth-os-production
 ```
+
+MyKinLegacy workflows must not restart the MENSSKULL PM2 process. MENSSKULL Etsy / Growth OS workflows must not rebuild or restart MyKinLegacy Docker services.
 
 Behavior:
 
