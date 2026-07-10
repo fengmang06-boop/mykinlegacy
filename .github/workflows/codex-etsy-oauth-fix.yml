@@ -1,6 +1,6 @@
 name: Codex Etsy OAuth Fix
 
-# Deploys OAuth scope/status diagnostics only; it does not call Etsy listing write endpoints.
+# Deploys OAuth scope/status diagnostics and explicitly approved Day 1 guarded execution endpoints.
 
 on:
   push:
