@@ -278,8 +278,18 @@ export async function POST() {
     for (const change of FINAL_CHANGES) {
       const baseline = await readBaseline(change.listingId);
       baselines.set(change.listingId, baseline);
-      const nextDescription = buildDescription(baseline.description, change.descriptionOpening);
       const validation = validateChange(change);
+      if (!validation.passed || !rollbackReady(baseline)) {
+        return NextResponse.json({ error: "Execution refused: validation or rollback baseline failed.", change, validation, baseline }, { status: 409 });
+      }
+    }
+
+    process.env.ETSY_READ_ONLY_MODE = "false";
+    process.env.ETSY_WRITE_APPROVED = "true";
+
+    for (const change of FINAL_CHANGES) {
+      const baseline = baselines.get(change.listingId) ?? (await readBaseline(change.listingId));
+      const nextDescription = buildDescription(baseline.description, change.descriptionOpening);
       assertEtsyListingWriteGuard({
         approval: {
           founderApproved: true,
@@ -301,17 +311,6 @@ export async function POST() {
         listingsEditedToday: results.length,
         maxListingsPerDay: 3
       });
-      if (!validation.passed || !rollbackReady(baseline)) {
-        return NextResponse.json({ error: "Execution refused: validation or rollback baseline failed.", change, validation, baseline }, { status: 409 });
-      }
-    }
-
-    process.env.ETSY_READ_ONLY_MODE = "false";
-    process.env.ETSY_WRITE_APPROVED = "true";
-
-    for (const change of FINAL_CHANGES) {
-      const baseline = baselines.get(change.listingId) ?? (await readBaseline(change.listingId));
-      const nextDescription = buildDescription(baseline.description, change.descriptionOpening);
       const body = new URLSearchParams({
         title: change.title,
         description: nextDescription,
