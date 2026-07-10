@@ -6,17 +6,17 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "AI Family Crest Generator | MyKinLegacy",
   description:
-    "Generate a private AI family crest-inspired package with crest variants, symbolic meaning, story PDFs, and secure digital delivery.",
+    "Create a private family legacy collection with one final crest, symbolic meaning, story, and secure digital delivery.",
   path: "/ai-family-crest-generator"
 });
 
 export default function AiFamilyCrestGeneratorPage() {
   return (
     <SeoLandingPage
-      eyebrow="AI family crest generator"
-      title="Symbolic crest artwork for your family story"
+      eyebrow="Family legacy collection"
+      title="A symbolic final crest for your family story"
       description="MyKinLegacy turns guided family details into a private heritage-inspired digital collection prepared for download, printing, and gifting."
-      highlights={["AI crest variants", "Server-rendered PDF text", "No public gallery by default"]}
+      highlights={["One Final Crest", "Private archive documents", "No public gallery by default"]}
       faq={[
         {
           question: "Does the AI write text inside the crest image?",

@@ -54,7 +54,13 @@ interface PackageDeliverableRecord {
   };
 }
 
-const CUSTOMER_DE_SCOPED_DELIVERABLES = new Set(["transparent_crest_png"]);
+const CUSTOMER_DELIVERABLE_CODES = new Set([
+  "crest_variant_1_png",
+  "heritage_certificate_pdf",
+  "family_story_pdf",
+  "symbol_explanation_pdf",
+  "download_package_zip"
+]);
 
 @Injectable()
 export class ProductsService {
@@ -132,7 +138,7 @@ function serializeProduct(product: ProductRecord) {
       generation_config: customerSafeGenerationConfig(productPackage.generationConfigJson),
       metadata: productPackage.metadataJson,
       deliverables: productPackage.packageDeliverables
-        .filter((deliverable) => !CUSTOMER_DE_SCOPED_DELIVERABLES.has(deliverable.deliverableCode))
+        .filter((deliverable) => CUSTOMER_DELIVERABLE_CODES.has(deliverable.deliverableCode))
         .map((deliverable) => ({
           deliverable_code: deliverable.deliverableCode,
           deliverable_type: deliverable.deliverableType.code,

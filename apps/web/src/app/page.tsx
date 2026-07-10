@@ -17,8 +17,8 @@ export const metadata: Metadata = publicMetadata({
 
 const heroArtifacts = [
   [
-    "House Identity",
-    "A private interpretation of what your family stands for.",
+    "Final Crest",
+    "One finished crest artwork prepared for the person you want to honor.",
     `${finalHomepageAsset}/02_homepage/hero/hero-house-identity.webp`
   ],
   [
@@ -78,8 +78,8 @@ const occasions = [
 
 const receives = [
   [
-    "House Identity",
-    "The emotional center of the collection: values, story, tone, and symbolic direction.",
+    "Final Crest",
+    "One finished crest artwork shaped around the recipient, occasion, and family meaning.",
     `${finalHomepageAsset}/04_homepage/features/feature-house-identity.webp`
   ],
   [
@@ -99,12 +99,12 @@ const receives = [
   ],
   [
     "Private Collection Vault",
-    "A protected delivery space for receiving and preserving the finished collection.",
+    "A protected delivery space for receiving the finished collection.",
     `${finalHomepageAsset}/04_homepage/features/feature-private-vault.webp`
   ],
   [
-    "Recognition Cards",
-    "Small shareable moments that make the collection easier to show family.",
+    "Complete Collection",
+    "A single archive containing the finished crest and keepsake documents in reading order.",
     `${finalHomepageAsset}/04_homepage/features/feature-recognition-cards.webp`
   ]
 ] as const;
@@ -205,6 +205,9 @@ export default function HomePage() {
               </Link>
               <Link className="home-button home-button-secondary" href="/family-legacy-collection">
                 View Collections
+              </Link>
+              <Link className="home-button home-button-secondary" href="/real-examples">
+                See Real Examples
               </Link>
             </div>
             <div className="home-hero-trust" aria-label="Trust highlights">

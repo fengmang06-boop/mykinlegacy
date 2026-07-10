@@ -84,6 +84,7 @@ export function CreateStart() {
               alt=""
               aria-hidden="true"
               priority
+              unoptimized
             />
             <div>
               <span>Their legacy begins</span>
@@ -130,6 +131,7 @@ export function CreateStart() {
                 height={360}
                 alt=""
                 aria-hidden="true"
+                unoptimized
               />
               <strong>Collection Preview</strong>
               <span>Your answers help shape a private keepsake for someone your family loves.</span>
@@ -142,6 +144,7 @@ export function CreateStart() {
                   height={130}
                   alt=""
                   aria-hidden="true"
+                  unoptimized
                 />
                 Archive Certificate
               </span>
@@ -152,6 +155,7 @@ export function CreateStart() {
                   height={130}
                   alt=""
                   aria-hidden="true"
+                  unoptimized
                 />
                 Story
               </span>
@@ -162,6 +166,7 @@ export function CreateStart() {
                   height={130}
                   alt=""
                   aria-hidden="true"
+                  unoptimized
                 />
                 Vault
               </span>

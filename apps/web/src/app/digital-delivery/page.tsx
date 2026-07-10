@@ -19,7 +19,7 @@ export default function DigitalDeliveryPage() {
       sections={[
         {
           title: "What is delivered",
-          body: "The Founder Beta package includes three approved crest-inspired PNG files, a symbol guide PDF, a private archive certificate PDF, a family story PDF, and a ZIP archive."
+          body: "Each Family Legacy Collection includes one Final Crest, one Heritage Certificate, one Family Story, one Meaning Behind Your Crest document, and one Complete Collection archive."
         },
         {
           title: "Download Vault",

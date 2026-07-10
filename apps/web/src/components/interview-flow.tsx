@@ -189,6 +189,7 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
               alt=""
               aria-hidden="true"
               priority
+              unoptimized
             />
             <div>
               <span>Step {stepIndex + 1}</span>
@@ -255,6 +256,7 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
                 height={360}
                 alt=""
                 aria-hidden="true"
+                unoptimized
               />
               <strong>Collection Preview</strong>
               <span>

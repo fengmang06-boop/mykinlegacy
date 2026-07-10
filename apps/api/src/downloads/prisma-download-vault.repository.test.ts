@@ -21,7 +21,7 @@ describe("PrismaDownloadVaultRepository", () => {
       expect.objectContaining({
         asset_id: "asset_1",
         deliverable_code: "download_package_zip",
-        friendly_name: "Complete Collection Archive",
+        friendly_name: "Complete Collection",
         public_url: null
       })
     ]);

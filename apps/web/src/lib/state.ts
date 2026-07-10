@@ -82,7 +82,7 @@ export function friendlyGenerationMessage(input: {
     return "Your collection is taking longer than expected. Support can help check the status.";
   }
   if (input.payment_status === "paid") {
-    return "Your House Identity is being forged.";
+    return "Your private collection is being prepared.";
   }
   return "We are waiting for payment confirmation.";
 }

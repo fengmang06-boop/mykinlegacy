@@ -11,16 +11,21 @@ describe("ProductsService", () => {
     expect(result.products[0]?.product_code).toBe("family_legacy_collection");
   });
 
-  it("returns premium package and 7 customer-facing deliverables", async () => {
+  it("returns premium package and 5 customer-facing deliverables", async () => {
     const service = new ProductsService(createPrismaServiceMock());
     const result = await service.getProduct("family_legacy_collection");
 
     expect(result.packages[0]?.package_code).toBe("premium");
     expect(result.packages[0]?.price_cents).toBe(4900);
-    expect(result.packages[0]?.deliverables).toHaveLength(7);
-    expect(result.packages[0]?.deliverables.map((deliverable) => deliverable.deliverable_code)).not.toContain(
-      "transparent_crest_png"
-    );
+    expect(result.packages[0]?.deliverables).toHaveLength(5);
+    expect(result.packages[0]?.deliverables.map((deliverable) => deliverable.deliverable_code)).toEqual([
+      "crest_variant_1_png",
+      "heritage_certificate_pdf",
+      "family_story_pdf",
+      "symbol_explanation_pdf",
+      "download_package_zip"
+    ]);
+    expect(JSON.stringify(result)).not.toMatch(/crest_variant_2_png|crest_variant_3_png|transparent_crest_png/);
   });
 
   it("removes AI-generated wording from customer-facing product payload", async () => {

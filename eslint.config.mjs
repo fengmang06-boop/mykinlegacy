@@ -9,6 +9,7 @@ export default [
       "**/dist/**",
       "**/.next/**",
       "**/coverage/**",
+      "**/artifacts/**",
       "**/generated/**",
       "**/next-env.d.ts"
     ]

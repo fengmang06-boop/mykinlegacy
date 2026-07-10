@@ -170,9 +170,9 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
           <ArtifactVisibilityPanel artifacts={artifacts} />
           <ul>
             <li>Your payment is confirmed.</li>
-            <li>Your House Identity is being prepared.</li>
-            <li>We are creating your crest variants.</li>
-            <li>We are preparing your story and private archive certificate.</li>
+            <li>Your private collection is being prepared.</li>
+            <li>We are preparing your Final Crest.</li>
+            <li>We are preparing your story and Heritage Certificate.</li>
             <li>We are packaging your private vault files.</li>
           </ul>
           {showSupport ? (

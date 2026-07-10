@@ -7,7 +7,7 @@ const includedItems = [
   "Heritage Certificate",
   "Family Story",
   "Meaning Behind Your Crest",
-  "Private Vault Access"
+  "Complete Collection"
 ];
 
 interface VaultMeaningProps {
@@ -123,7 +123,7 @@ export function CollectionDocuments({ collectionContent }: VaultMeaningProps) {
 
 function SymbolGuideDocument({ collectionContent }: { collectionContent: VaultCollectionContent }) {
   if (!collectionContent.symbol_guide?.length) {
-    return <p>The symbol guide will appear here when symbols are attached to the collection.</p>;
+    return <p>The meaning notes will appear here when symbols are attached to the collection.</p>;
   }
 
   return (

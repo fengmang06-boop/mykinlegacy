@@ -205,7 +205,7 @@ function throwValidation(message: string, affectedField: string): never {
   throw new ApiException({
     errorCode: "validation_error",
     message,
-    userMessage: "Please check the House Identity details.",
+    userMessage: "Please check the collection details.",
     affectedField
   });
 }

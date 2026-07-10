@@ -313,12 +313,10 @@ function collectionContentSummary(content: Record<string, unknown>): Record<stri
 function friendlyDeliverableName(code: string): string {
   const names: Record<string, string> = {
     crest_variant_1_png: "Final Crest",
-    crest_variant_2_png: "Internal Crest Variant 2",
-    crest_variant_3_png: "Internal Crest Variant 3",
     symbol_explanation_pdf: "Meaning Behind Your Crest",
     heritage_certificate_pdf: "Heritage Certificate",
     family_story_pdf: "Family Story",
-    download_package_zip: "Complete Collection Archive"
+    download_package_zip: "Complete Collection"
   };
   return (
     names[code] ??

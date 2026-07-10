@@ -24,7 +24,7 @@ export default function FamilyCrestGeneratorPage() {
         },
         {
           question: "What files are delivered?",
-          answer: "Three approved crest artwork PNGs, private archive PDFs, a family story, a symbol guide, and a ZIP archive."
+          answer: "One Final Crest, one Heritage Certificate, one Family Story, one Meaning Behind Your Crest document, and one Complete Collection archive."
         },
         {
           question: "Can I use this as a gift?",

@@ -60,7 +60,7 @@ const demoArtifacts: DownloadAsset[] = [
   {
     asset_id: "demo_complete_collection",
     deliverable_code: "download_package_zip",
-    friendly_name: "Complete Collection Archive",
+    friendly_name: "Complete Collection",
     asset_type: "archive",
     file_ext: "zip",
     mime_type: "application/zip",
