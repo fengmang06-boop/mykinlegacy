@@ -1,6 +1,6 @@
 name: Codex Etsy OAuth Fix
 
-# Deploys OAuth refresh/scope diagnostics plus guarded, read-only Low-Signal tracking and dry-run endpoints.
+# Deploys OAuth diagnostics plus guarded Low-Signal dry-run, approved execution, and tracking endpoints.
 # The scope check refreshes an expired access token before asking Etsy for verified permissions.
 
 on:

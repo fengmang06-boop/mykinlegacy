@@ -55,7 +55,12 @@ function splitOpening(description: string) {
 }
 
 function normalize(value: string) {
-  return value.replace(/\r\n/g, "\n").trim();
+  return value
+    .replace(/\r\n/g, "\n")
+    .replace(/&#39;|&apos;/g, "'")
+    .replace(/&quot;/g, '"')
+    .replace(/&amp;/g, "&")
+    .trim();
 }
 
 function numberValue(value: unknown): number {
@@ -145,6 +150,32 @@ function forbiddenSnapshot(baseline: Awaited<ReturnType<typeof readBaseline>>) {
   });
 }
 
+function alreadyApplied(baseline: Awaited<ReturnType<typeof readBaseline>>, change: (typeof FINAL_CHANGES)[number]) {
+  const { rest } = splitOpening(baseline.description);
+  const expectedDescription = rest ? `${change.descriptionOpening}\n\n${rest}` : change.descriptionOpening;
+  return baseline.title === change.title &&
+    JSON.stringify(baseline.tags) === JSON.stringify(change.tags) &&
+    normalize(baseline.description) === normalize(expectedDescription);
+}
+
+function loadOriginalRollbackBaselines(outDir: string) {
+  const files = fs.readdirSync(outDir).filter((name) => /^day2-dry-run-.*\.json$/.test(name)).sort().reverse();
+  for (const file of files) {
+    const report = JSON.parse(fs.readFileSync(path.join(outDir, file), "utf8")) as {
+      listings?: Array<{ listingId: number; exactFieldDiff?: { title?: { before?: string; after?: string } }; rollbackBaseline?: unknown; rollbackDataReady?: boolean }>;
+    };
+    if (report.listings?.length === 3 && report.listings.every((listing) =>
+      listing.rollbackDataReady && listing.exactFieldDiff?.title?.before !== listing.exactFieldDiff?.title?.after
+    )) {
+      return {
+        source: path.join(outDir, file),
+        baselines: new Map(report.listings.map((listing) => [listing.listingId, listing.rollbackBaseline]))
+      };
+    }
+  }
+  throw new Error("Original approved Day 2 rollback baselines could not be located.");
+}
+
 async function patchListing(shopId: string, listingId: number, body: URLSearchParams) {
   const clientId = process.env.ETSY_CLIENT_ID ?? "";
   const clientSecret = process.env.ETSY_CLIENT_SECRET ?? "";
@@ -177,6 +208,7 @@ function trackingCsv(executedAt: string) {
 export async function POST() {
   const executedAt = new Date().toISOString();
   const results: Array<Record<string, unknown>> = [];
+  const outDir = path.join(process.cwd(), "exports", "low-signal-breakthrough");
   try {
     if (!isReadOnlyMode() || isEtsyWriteApprovalFlagEnabled()) {
       return NextResponse.json({ error: "Execution must start with read-only=true and write-approved=false." }, { status: 409 });
@@ -187,6 +219,7 @@ export async function POST() {
     }
     const transactions = await fetchTransactions(undefined, { maxItems: 5000 });
     const transactionRows = (transactions.results ?? []) as Array<Record<string, unknown>>;
+    const originalRollbacks = loadOriginalRollbackBaselines(outDir);
     const baselines = new Map<number, Awaited<ReturnType<typeof readBaseline>>>();
     for (const change of FINAL_CHANGES) {
       const baseline = await readBaseline(change.listingId);
@@ -199,20 +232,34 @@ export async function POST() {
     process.env.ETSY_READ_ONLY_MODE = "false";
     process.env.ETSY_WRITE_APPROVED = "true";
     const shopId = await resolveEtsyShopId();
+    const previouslyAppliedCount = FINAL_CHANGES.filter((change) => alreadyApplied(baselines.get(change.listingId)!, change)).length;
 
     for (const change of FINAL_CHANGES) {
       const before = baselines.get(change.listingId)!;
       const { rest } = splitOpening(before.description);
       const expectedDescription = rest ? `${change.descriptionOpening}\n\n${rest}` : change.descriptionOpening;
+      const originalRollback = originalRollbacks.baselines.get(change.listingId);
+      if (!originalRollback) throw new Error(`Original rollback baseline missing for ${change.product}.`);
+      if (alreadyApplied(before, change)) {
+        results.push({
+          listingId: change.listingId, product: change.product, status: "skipped-already-verified", verified: true,
+          verification: { titleExact: true, tagsExact: true, descriptionExact: true, forbiddenFieldsUnchanged: true },
+          rollbackBaselineReady: true, rollbackBaseline: originalRollback, rollbackSource: originalRollbacks.source,
+          trackingBaseline: { views: before.views, favorites: before.favorites, ...transactionMetrics(transactionRows, change.listingId) },
+          after: { title: before.title, tags: before.tags, descriptionOpening: splitOpening(before.description).opening, lastUpdatedTime: before.last_updated_timestamp }
+        });
+        continue;
+      }
       assertEtsyListingWriteGuard({
         approval: { founderApproved: true, csoApproved: true, approvalReference: "Founder approved Day 2 exact dry-run diffs on 2026-07-11" },
         dryRunDiffReviewed: true,
-        rollbackBaseline: before,
+        rollbackBaseline: originalRollback,
         diffs: [{ listingId: change.listingId, fields: {
           title: { before: before.title, after: change.title }, tags: { before: before.tags, after: change.tags },
           descriptionOpening: { before: splitOpening(before.description).opening, after: change.descriptionOpening }
         }}],
-        listingsEditedToday: results.length, maxListingsPerDay: 3
+        listingsEditedToday: previouslyAppliedCount + results.filter((result) => result.status === "written").length,
+        maxListingsPerDay: 3
       });
       await patchListing(shopId, change.listingId, new URLSearchParams({
         title: change.title, tags: change.tags.join(","), description: expectedDescription
@@ -226,15 +273,14 @@ export async function POST() {
       };
       const verified = Object.values(verification).every(Boolean);
       results.push({
-        listingId: change.listingId, product: change.product, verified, verification,
-        rollbackBaselineReady: true, rollbackBaseline: before,
+        listingId: change.listingId, product: change.product, status: "written", verified, verification,
+        rollbackBaselineReady: true, rollbackBaseline: originalRollback, rollbackSource: originalRollbacks.source,
         trackingBaseline: { views: before.views, favorites: before.favorites, ...transactionMetrics(transactionRows, change.listingId) },
         after: { title: after.title, tags: after.tags, descriptionOpening: splitOpening(after.description).opening, lastUpdatedTime: after.last_updated_timestamp }
       });
       if (!verified) throw new Error(`Verification failed for ${change.product}; execution stopped.`);
     }
 
-    const outDir = path.join(process.cwd(), "exports", "low-signal-breakthrough");
     fs.mkdirSync(outDir, { recursive: true });
     const stamp = executedAt.replace(/[:.]/g, "-");
     const reportPath = path.join(outDir, `day2-execution-${stamp}.json`);
@@ -243,7 +289,10 @@ export async function POST() {
     fs.writeFileSync(trackingPath, trackingCsv(executedAt));
     return NextResponse.json({ executedAt, allSuccessful: true, results, reportPath, trackingPath });
   } catch (error) {
-    return NextResponse.json({ executedAt, allSuccessful: false, error: error instanceof Error ? error.message : String(error), results }, { status: 500 });
+    fs.mkdirSync(outDir, { recursive: true });
+    const failurePath = path.join(outDir, `day2-execution-failed-${executedAt.replace(/[:.]/g, "-")}.json`);
+    fs.writeFileSync(failurePath, JSON.stringify({ executedAt, allSuccessful: false, error: error instanceof Error ? error.message : String(error), results }, null, 2));
+    return NextResponse.json({ executedAt, allSuccessful: false, error: error instanceof Error ? error.message : String(error), results, failurePath }, { status: 500 });
   } finally {
     process.env.ETSY_READ_ONLY_MODE = "true";
     process.env.ETSY_WRITE_APPROVED = "false";
