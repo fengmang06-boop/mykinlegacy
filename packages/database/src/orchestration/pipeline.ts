@@ -1571,6 +1571,7 @@ function meaningInputFromOrder(input: {
     recordObject(orderInput?.input_json, "house_dna"),
     orderInput?.normalized_input_json
   );
+  const storedCustomerInputs = recordObject(orderInput?.input_json, "customer_inputs");
   const values = stringArray(recordValue(houseDna, "family_values"));
   const symbols = [
     ...stringArray(recordValue(houseDna, "symbols")),
@@ -1579,10 +1580,15 @@ function meaningInputFromOrder(input: {
   ];
   const colors = colorArray(recordValue(houseDna, "colors"));
   return {
-    recipient: stringOrNull(recordValue(input.payload, "recipient")),
-    occasion: stringOrNull(recordValue(input.payload, "occasion")),
+    recipient: stringOrNull(recordValue(input.payload, "recipient"))
+      ?? stringOrNull(recordValue(storedCustomerInputs, "recipient")),
+    occasion: stringOrNull(recordValue(input.payload, "occasion"))
+      ?? stringOrNull(recordValue(storedCustomerInputs, "occasion")),
     values,
-    memories: stringArray(recordValue(input.payload, "family_memories")),
+    memories: firstNonEmptyStringArray(
+      recordValue(input.payload, "family_memories"),
+      recordValue(storedCustomerInputs, "family_memories")
+    ),
     preferred_tone: [
       ...stringArray(recordValue(houseDna, "emotional_tone")),
       stringOrNull(recordValue(houseDna, "visual_style"))
@@ -1801,6 +1807,14 @@ function stringArray(value: unknown): string[] {
   return Array.isArray(value)
     ? value.filter((item): item is string => typeof item === "string" && item.trim().length > 0)
     : [];
+}
+
+function firstNonEmptyStringArray(...values: unknown[]): string[] {
+  for (const value of values) {
+    const strings = stringArray(value);
+    if (strings.length > 0) return strings;
+  }
+  return [];
 }
 
 function colorArray(value: unknown): string[] {

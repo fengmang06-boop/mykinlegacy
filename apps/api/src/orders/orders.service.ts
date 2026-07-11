@@ -35,6 +35,7 @@ type OrdersClient = {
     findUnique: (args: unknown) => Promise<OrderCustomerPiiRecord | null>;
   };
   houseIdentityVersion: { findUnique: (args: unknown) => Promise<HouseIdentityVersionRecord | null> };
+  houseInterview: { findUnique: (args: unknown) => Promise<HouseInterviewRecord | null> };
   consentRecord: {
     create: (args: unknown) => Promise<unknown>;
     findFirst: (args: unknown) => Promise<ConsentRecord | null>;
@@ -72,6 +73,12 @@ interface HouseIdentityVersionRecord {
   id: string;
   houseId: string;
   houseDnaSnapshotJson: unknown;
+}
+
+interface HouseInterviewRecord {
+  id: string;
+  houseId: string | null;
+  answersJson: unknown;
 }
 
 interface ConsentRecord {
@@ -159,6 +166,17 @@ export class OrdersService {
     const encryptedCustomerEmail = this.encryptCustomerEmailOrThrow(customerEmail, customerEmailHash);
     const product = await this.findProductWithPackage(productCode, packageCode);
     const identityVersion = await this.findIdentityVersion(identityVersionId, houseId);
+    const interview = await this.prisma.houseInterview.findUnique({ where: { id: interviewId } });
+    if (!interview || (interview.houseId !== null && interview.houseId !== houseId)) {
+      throw new ApiException({
+        errorCode: "interview_not_found",
+        message: `Interview not found for order: ${interviewId}`,
+        userMessage: "The guided interview could not be found.",
+        status: HttpStatus.NOT_FOUND,
+        affectedField: "interview_id"
+      });
+    }
+    const customerInputs = customerInputsFromInterview(interview.answersJson);
     const productPackage = product.packages[0];
     if (!productPackage) {
       throwPackageNotFound(packageCode);
@@ -229,7 +247,8 @@ export class OrdersService {
             source: "confirmed_house_identity_version",
             house_id: houseId,
             identity_version_id: identityVersion.id,
-            house_dna: identityVersion.houseDnaSnapshotJson
+            house_dna: identityVersion.houseDnaSnapshotJson,
+            customer_inputs: customerInputs
           },
           normalizedInputJson: identityVersion.houseDnaSnapshotJson,
           locale: "en-US",
@@ -925,6 +944,43 @@ function stringArray(value: unknown): string[] {
 
 function stringOrNull(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value : null;
+}
+
+function customerInputsFromInterview(answersJson: unknown): {
+  recipient: string | null;
+  occasion: string | null;
+  family_memories: string[];
+} {
+  const answers = Array.isArray(answersJson) ? answersJson.filter(isRecord) : [];
+  const answerFor = (stepCode: string) =>
+    answers.find((answer) => stringOrNull(answer.step_code) === stepCode);
+  const rawAnswerFor = (stepCode: string) => recordObject(answerFor(stepCode), "raw_answer");
+  const selectedFor = (stepCode: string) => stringArray(rawAnswerFor(stepCode).selected_options);
+  const freeTextFor = (stepCode: string) => stringOrNull(rawAnswerFor(stepCode).free_text);
+
+  const relationship = selectedFor("name_your_house")[0] ?? null;
+  const recipient = freeTextFor("name_your_house") ?? recipientLabel(relationship);
+  const occasion = selectedFor("where_story_begins")[0] ?? freeTextFor("where_story_begins");
+  const memory = freeTextFor("where_story_begins");
+
+  return {
+    recipient,
+    occasion,
+    family_memories: memory && memory !== occasion ? [memory] : []
+  };
+}
+
+function recipientLabel(value: string | null): string | null {
+  if (!value) return null;
+  const labels: Record<string, string> = {
+    "My father": "Father",
+    "My mother": "Mother",
+    "My parents": "My Parents",
+    "A grandparent": "Grandparent",
+    "A couple": "The Couple",
+    "Our whole family": "Our Family"
+  };
+  return labels[value] ?? value;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

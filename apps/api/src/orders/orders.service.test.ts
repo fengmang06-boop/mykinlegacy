@@ -46,6 +46,17 @@ describe("OrdersService", () => {
         .toString("utf8")
         .startsWith("enc:v1:")
     ).toBe(true);
+    expect(prismaService.__state.orderInputRows[0]).toMatchObject({
+      inputJson: {
+        customer_inputs: {
+          recipient: "Michael Johnson",
+          occasion: "Retirement",
+          family_memories: [
+            "He worked for 35 years to support and protect his family, and taught his children through example."
+          ]
+        }
+      }
+    });
     delete process.env.CUSTOMER_PII_ENCRYPTION_KEY;
   });
 
@@ -376,7 +387,10 @@ function validOrderBody() {
 }
 
 function createPrismaServiceMock(options: { piiReadBackMissing?: boolean } = {}): PrismaService & {
-  __state: { orderCustomerPiiRows: Array<Record<string, unknown>> };
+  __state: {
+    orderCustomerPiiRows: Array<Record<string, unknown>>;
+    orderInputRows: Array<Record<string, unknown>>;
+  };
 } {
   const product = {
     id: "01H00000000000000000000010",
@@ -404,11 +418,19 @@ function createPrismaServiceMock(options: { piiReadBackMissing?: boolean } = {})
       house_id: "01H00000000000000000000001"
     }
   };
-  const state = { orderCustomerPiiRows: [] as Array<Record<string, unknown>> };
+  const state = {
+    orderCustomerPiiRows: [] as Array<Record<string, unknown>>,
+    orderInputRows: [] as Array<Record<string, unknown>>
+  };
   const transactionClient = {
     order: { create: async () => order },
     orderItem: { create: async () => ({}) },
-    orderInput: { create: async () => ({}) },
+    orderInput: {
+      create: async (args: { data: Record<string, unknown> }) => {
+        state.orderInputRows.push(args.data);
+        return args.data;
+      }
+    },
     orderCustomerPii: {
       create: async (args: { data: Record<string, unknown> }) => {
         state.orderCustomerPiiRows.push(args.data);
@@ -440,12 +462,35 @@ function createPrismaServiceMock(options: { piiReadBackMissing?: boolean } = {})
           }
         })
       },
+      houseInterview: {
+        findUnique: async () => ({
+          id: "01H00000000000000000000000",
+          houseId: "01H00000000000000000000001",
+          answersJson: [
+            {
+              step_code: "name_your_house",
+              raw_answer: { selected_options: ["My father"], free_text: "Michael Johnson" }
+            },
+            {
+              step_code: "where_story_begins",
+              raw_answer: {
+                selected_options: ["Retirement"],
+                free_text:
+                  "He worked for 35 years to support and protect his family, and taught his children through example."
+              }
+            }
+          ]
+        })
+      },
       consentRecord: { create: async () => ({}) },
       $transaction: async <T>(handler: (client: typeof transactionClient) => Promise<T>) =>
         handler(transactionClient)
     }
   } as unknown as PrismaService & {
-    __state: { orderCustomerPiiRows: Array<Record<string, unknown>> };
+    __state: {
+      orderCustomerPiiRows: Array<Record<string, unknown>>;
+      orderInputRows: Array<Record<string, unknown>>;
+    };
   };
 }
 

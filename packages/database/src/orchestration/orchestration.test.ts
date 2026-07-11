@@ -385,6 +385,43 @@ describe("DB-backed orchestration foundation", () => {
     }
   }, 15_000);
 
+  it("carries the confirmed interview personalization snapshot into production PDFs", async () => {
+    const repository = createRepository();
+    const order = repository.orders.get("order_1");
+    const orderInput = order?.order_inputs?.[0];
+    if (!order || !orderInput) throw new Error("missing_order_input");
+    orderInput.input_json = {
+      ...(orderInput.input_json as Record<string, unknown>),
+      customer_inputs: {
+        recipient: "Michael Johnson",
+        occasion: "Retirement",
+        family_memories: [
+          "He worked for 35 years to support and protect his family, rarely spoke about sacrifice, and taught his children through example."
+        ]
+      }
+    };
+    const outbox = repository.outboxEvents.get("outbox_1");
+    if (!outbox) throw new Error("missing_outbox");
+    const { manifest } = await processOrderPaidOutbox({ outboxEvent: outbox, repository, now });
+    expect(JSON.stringify(manifest.optional_assets)).toContain("Michael Johnson");
+    expect(JSON.stringify(manifest.optional_assets)).toContain("Retirement");
+    expect(JSON.stringify(manifest.optional_assets)).toContain("rarely spoke about sacrifice");
+
+    const result = await runManifestDrivenGeneration({ manifest_id: manifest.id, repository, now });
+    const certificate = result.assets.find((asset) => asset.deliverable_code === "heritage_certificate_pdf");
+    const story = result.assets.find((asset) => asset.deliverable_code === "family_story_pdf");
+    const meaning = result.assets.find((asset) => asset.deliverable_code === "symbol_explanation_pdf");
+    if (!certificate || !story || !meaning) throw new Error("expected_pdf_assets_missing");
+
+    const certificateText = (await readStoredAsset(certificate)).toString("latin1");
+    const storyText = (await readStoredAsset(story)).toString("latin1");
+    const meaningText = (await readStoredAsset(meaning)).toString("latin1");
+    expect(certificateText).toContain("Michael Johnson");
+    expect(certificateText).toContain("Retirement");
+    expect(storyText).toContain("Michael Johnson");
+    expect(meaningText).toContain("Michael Johnson");
+  }, 15_000);
+
   it("applies LRE text to one allowlisted order without changing PNG generation", async () => {
     const originalAllowlist = process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST;
     process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST = "AHL-20260629-ORCH";
