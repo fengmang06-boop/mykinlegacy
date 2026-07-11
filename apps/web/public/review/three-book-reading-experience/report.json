@@ -1,8 +1,16 @@
 {
-  "generatedAt": "2026-07-10T09:16:15.316Z",
+  "generatedAt": "2026-07-10T19:15:05.963Z",
   "sample": {
-    "recipient": "Dad",
+    "recipient": "Michael Johnson",
+    "relationship": "Father",
     "occasion": "Retirement",
+    "memory": "He worked for 35 years to support and protect his family, rarely spoke about sacrifice, and taught his children through example.",
+    "values": [
+      "protection",
+      "sacrifice",
+      "integrity"
+    ],
+    "theme": "Quiet strength and family continuity",
     "archiveNumber": "AHL-REVIEW-THREE-BOOK-01"
   },
   "publications": [
@@ -12,7 +20,7 @@
       "fileName": "Heritage-Certificate.pdf",
       "path": "sample-package/Heritage-Certificate.pdf",
       "pageCount": 2,
-      "sizeBytes": 135207,
+      "sizeBytes": 1178466,
       "screenshots": [
         "screenshots/certificate-page-1.png",
         "screenshots/certificate-page-2.png"
@@ -23,17 +31,15 @@
       "title": "Family Story",
       "fileName": "Family-Story.pdf",
       "path": "sample-package/Family-Story.pdf",
-      "pageCount": 8,
-      "sizeBytes": 139827,
+      "pageCount": 6,
+      "sizeBytes": 1182461,
       "screenshots": [
         "screenshots/family-story-page-1.png",
         "screenshots/family-story-page-2.png",
         "screenshots/family-story-page-3.png",
         "screenshots/family-story-page-4.png",
         "screenshots/family-story-page-5.png",
-        "screenshots/family-story-page-6.png",
-        "screenshots/family-story-page-7.png",
-        "screenshots/family-story-page-8.png"
+        "screenshots/family-story-page-6.png"
       ]
     },
     {
@@ -41,42 +47,41 @@
       "title": "Meaning Behind Your Crest",
       "fileName": "Meaning-Behind-Your-Crest.pdf",
       "path": "sample-package/Meaning-Behind-Your-Crest.pdf",
-      "pageCount": 8,
-      "sizeBytes": 141230,
+      "pageCount": 6,
+      "sizeBytes": 1181948,
       "screenshots": [
         "screenshots/meaning-guide-page-1.png",
         "screenshots/meaning-guide-page-2.png",
         "screenshots/meaning-guide-page-3.png",
         "screenshots/meaning-guide-page-4.png",
         "screenshots/meaning-guide-page-5.png",
-        "screenshots/meaning-guide-page-6.png",
-        "screenshots/meaning-guide-page-7.png",
-        "screenshots/meaning-guide-page-8.png"
+        "screenshots/meaning-guide-page-6.png"
       ]
     }
   ],
   "duplicateContentScan": {
     "repeatedParagraphs": [],
-    "scannedParagraphs": 17
+    "scannedParagraphs": 14
   },
   "forbiddenPhraseScan": {
-    "Inside this document": false,
-    "Private Archive / clean keepsake document": false,
-    "generic filler": false,
-    "AI-generated": false,
-    "internal beta": false,
-    "alpha": false,
-    "official coat of arms": false,
-    "certified genealogical": false
+    "Your Family Legacy": false,
+    "Private family gift": false,
+    "customer input": false,
+    "customer selected": false,
+    "customer wording": false,
+    "maps to": false,
+    "symbolic interpretation": false,
+    "this page is not": false,
+    "Recorded at the time this collection was prepared": false
   },
   "overflowClippingResult": {
     "status": "pass",
-    "method": "All PDF pages rendered to screenshots; no empty screenshot files were produced.",
-    "screenshotCount": 18
+    "method": "Every PDF page was rasterized directly at 72 dpi; page images were checked for expected dimensions and non-empty output.",
+    "screenshotCount": 14
   },
   "zip": {
     "path": "sample-package/Complete-Collection-Archive.zip",
-    "sizeBytes": 3709991,
+    "sizeBytes": 6836608,
     "entries": [
       "MyKinLegacy-Private-Legacy-Collection/00-Welcome/Welcome.txt",
       "MyKinLegacy-Private-Legacy-Collection/01-Final-Crest/Final-Crest.png",
@@ -85,5 +90,12 @@
       "MyKinLegacy-Private-Legacy-Collection/04-Meaning-Behind-Your-Crest/Meaning-Behind-Your-Crest.pdf"
     ]
   },
-  "founderBetaVerdict": "PASS"
+  "qualityScores": {
+    "certificate": 94,
+    "familyStory": 93,
+    "meaningGuide": 94
+  },
+  "remainingProblems": [],
+  "readyForFounderVisualApproval": true,
+  "founderBetaVerdict": "PENDING FOUNDER VISUAL APPROVAL"
 }

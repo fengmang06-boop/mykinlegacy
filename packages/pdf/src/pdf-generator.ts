@@ -15,7 +15,6 @@ const PAGE_HEIGHT = 792;
 const COLOR = {
   charcoal: [0.055, 0.052, 0.046] as const,
   charcoalSoft: [0.105, 0.094, 0.078] as const,
-  charcoalWarm: [0.145, 0.125, 0.092] as const,
   ivory: [0.965, 0.94, 0.87] as const,
   ivorySoft: [0.995, 0.985, 0.945] as const,
   parchment: [0.92, 0.865, 0.735] as const,
@@ -30,6 +29,15 @@ interface PdfImage {
   width: number;
   height: number;
   data: Buffer;
+}
+
+interface PdfArtwork {
+  full: PdfImage;
+  shield: PdfImage;
+  tree: PdfImage;
+  knot: PdfImage;
+  keyStar: PdfImage;
+  laurel: PdfImage;
 }
 
 interface PdfSection {
@@ -75,15 +83,26 @@ export function buildSimplePdf(text: string): Buffer {
 
 function buildPublicationPdf(input: PdfGenerationInput): Buffer {
   const model = parsePdfModel(input);
-  const image = loadApprovedCrestImage();
-  const pageContents = buildPublicationPages(model, image);
+  const artwork = loadApprovedCrestArtwork();
+  const pageContents = buildPublicationPages(model, artwork);
   const bodyFontObjectId = 3;
   const headingFontObjectId = 4;
   const utilityFontObjectId = 5;
-  const imageObjectId = image ? 6 : null;
-  const firstPageObjectId = image ? 7 : 6;
+  const imageEntries: Array<[string, PdfImage]> = artwork
+    ? [
+        ["Im1", artwork.full],
+        ["Im2", artwork.shield],
+        ["Im3", artwork.tree],
+        ["Im4", artwork.knot],
+        ["Im5", artwork.keyStar],
+        ["Im6", artwork.laurel]
+      ]
+    : [];
+  const firstPageObjectId = 6 + imageEntries.length;
   const pageObjectIds = pageContents.map((_, index) => firstPageObjectId + index * 2);
-  const resourceXObject = imageObjectId ? `/XObject << /Im1 ${imageObjectId} 0 R >> ` : "";
+  const resourceXObject = imageEntries.length
+    ? `/XObject << ${imageEntries.map(([name], index) => `/${name} ${6 + index} 0 R`).join(" ")} >> `
+    : "";
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
     `<< /Type /Pages /Kids [${pageObjectIds.map((id) => `${id} 0 R`).join(" ")}] /Count ${pageContents.length} >>`,
@@ -92,7 +111,7 @@ function buildPublicationPdf(input: PdfGenerationInput): Buffer {
     "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
   ];
 
-  if (image && imageObjectId) {
+  for (const [, image] of imageEntries) {
     objects.push(
       `<< /Type /XObject /Subtype /Image /Width ${image.width} /Height ${image.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /FlateDecode /Length ${image.data.length} >>\nstream\n${image.data.toString("binary")}\nendstream`
     );
@@ -125,10 +144,10 @@ function buildPublicationPdf(input: PdfGenerationInput): Buffer {
   return Buffer.from(body, "binary");
 }
 
-function buildPublicationPages(model: PdfModel, image: PdfImage | null): string[] {
-  if (model.deliverableCode === "heritage_certificate_pdf") return buildCertificatePages(model, image);
-  if (model.deliverableCode === "family_story_pdf") return buildStorybookPages(model, image);
-  return buildMeaningGuidePages(model, image);
+function buildPublicationPages(model: PdfModel, artwork: PdfArtwork | null): string[] {
+  if (model.deliverableCode === "heritage_certificate_pdf") return buildCertificatePages(model, artwork?.full ?? null);
+  if (model.deliverableCode === "family_story_pdf") return buildStorybookPages(model, artwork?.full ?? null);
+  return buildMeaningGuidePages(model, artwork);
 }
 
 function buildCertificatePages(model: PdfModel, image: PdfImage | null): string[] {
@@ -136,11 +155,10 @@ function buildCertificatePages(model: PdfModel, image: PdfImage | null): string[
 }
 
 function buildCertificateMainPage(model: PdfModel, image: PdfImage | null): string {
-  const collectionName = field(model, "Collection Name", `${model.familyName} Legacy Collection`);
   const recipient = field(model, "Presented To", field(model, "Recipient", model.familyName));
-  const occasion = field(model, "Occasion", "A private family occasion");
-  const date = field(model, "Date", "Recorded at the time this collection was prepared");
-  const archiveNumber = field(model, "Archive Number", "Private archive record");
+  const occasion = field(model, "Created For", field(model, "Occasion", "A family milestone"));
+  const date = field(model, "Date", formatDisplayDate(new Date()));
+  const archiveNumber = field(model, "Archive Number", "Archive record pending");
   const statement = sectionBody(model, "Ceremony Statement", 0) || model.sections.at(-1)?.body || ceremonialFallback(model);
   const commands: string[] = [
     rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.parchment),
@@ -149,34 +167,32 @@ function buildCertificateMainPage(model: PdfModel, image: PdfImage | null): stri
     strokeRectCommand(58, 58, 496, 676, COLOR.goldSoft, 0.65),
     textCommand(74, 714, "MyKinLegacy", "F2", 15, COLOR.goldSoft),
     textCommand(430, 714, "Heritage Certificate", "F3", 9, COLOR.muted),
-    centeredTextCommand(306, 664, "HERITAGE CERTIFICATE", "F2", 24, COLOR.ink),
-    centeredTextCommand(306, 638, "Collection Name", "F3", 9.5, COLOR.muted),
-    centeredTextCommand(306, 626, collectionName, "F1", 15, COLOR.goldSoft),
-    textCommand(94, 418, "Presented To", "F3", 11, COLOR.muted),
-    centeredTextCommand(306, 386, recipient, "F2", 25, COLOR.ink),
-    strokeLineCommand(134, 368, 478, 368, COLOR.goldSoft, 0.8),
-    textCommand(94, 338, "Created For", "F3", 10, COLOR.muted),
-    textCommand(180, 338, occasion, "F1", 12.5, COLOR.ink),
-    textCommand(94, 314, "Date", "F3", 10, COLOR.muted),
-    textCommand(180, 314, date, "F1", 12.5, COLOR.ink),
-    rectCommand(86, 180, 440, 104, COLOR.ivory),
-    strokeRectCommand(86, 180, 440, 104, COLOR.goldSoft, 0.55),
-    ...wrappedTextCommands(statement, 110, 254, 70, "F1", 12.7, 18, COLOR.ink, 5),
-    strokeLineCommand(98, 120, 278, 120, COLOR.goldSoft, 0.7),
-    textCommand(112, 102, "Signature", "F3", 9.5, COLOR.muted),
-    textCommand(112, 134, "MyKinLegacy Legacy Curator", "F1", 12, COLOR.ink),
-    strokeCircleCommand(438, 122, 40, COLOR.goldSoft, 1),
-    centeredTextCommand(438, 130, "MyKinLegacy", "F2", 8.5, COLOR.goldSoft),
-    centeredTextCommand(438, 116, "Official Seal", "F3", 8, COLOR.muted),
+    centeredTextCommand(306, 670, "HERITAGE CERTIFICATE", "F2", 25, COLOR.ink),
+    centeredTextCommand(306, 642, "A FAMILY KEEPSAKE", "F3", 9.5, COLOR.goldSoft),
+    centeredTextCommand(306, 406, "PRESENTED TO", "F3", 10, COLOR.muted),
+    centeredTextCommand(306, 374, recipient, "F2", 27, COLOR.ink),
+    strokeLineCommand(132, 356, 480, 356, COLOR.goldSoft, 0.8),
+    textCommand(100, 326, "Created For", "F3", 9.5, COLOR.muted),
+    textCommand(100, 306, occasion, "F1", 12.5, COLOR.ink),
+    textCommand(376, 326, "Date", "F3", 9.5, COLOR.muted),
+    textCommand(376, 306, date, "F1", 12.5, COLOR.ink),
+    rectCommand(86, 184, 440, 100, COLOR.ivory),
+    strokeRectCommand(86, 184, 440, 100, COLOR.goldSoft, 0.55),
+    ...wrappedTextCommands(statement, 110, 258, 70, "F1", 11.4, 15.5, COLOR.ink, 5),
+    strokeLineCommand(96, 120, 286, 120, COLOR.goldSoft, 0.7),
+    textCommand(112, 100, "MyKinLegacy Legacy Curator", "F3", 9, COLOR.muted),
+    fillCircleCommand(446, 126, 42, COLOR.goldSoft),
+    strokeCircleCommand(446, 126, 35, COLOR.ivorySoft, 0.9),
+    centeredTextCommand(446, 132, "MKL", "F2", 15, COLOR.ivorySoft),
+    centeredTextCommand(446, 114, "MYKINLEGACY", "F3", 6.5, COLOR.ivorySoft),
     textCommand(88, 76, `Archive Number: ${archiveNumber}`, "F3", 9.5, COLOR.muted)
   ];
 
   if (image) {
-    commands.push(drawImageCommand(246, 462, 120, 120));
-    commands.push(centeredTextCommand(306, 448, "Final Crest", "F3", 8.5, COLOR.muted));
+    commands.push(drawImageCommand(211, 438, 190, 190));
   } else {
-    commands.push(strokeRectCommand(246, 462, 120, 120, COLOR.goldSoft, 0.7));
-    commands.push(centeredTextCommand(306, 518, "Final Crest", "F2", 13, COLOR.goldSoft));
+    commands.push(strokeRectCommand(211, 438, 190, 190, COLOR.goldSoft, 0.7));
+    commands.push(centeredTextCommand(306, 526, "Final Crest", "F2", 13, COLOR.goldSoft));
   }
 
   return commands.join("\n");
@@ -187,10 +203,10 @@ function buildCertificateKeepsakeNote(model: PdfModel): string {
   const commands = [
     rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
     strokeRectCommand(54, 70, 504, 652, COLOR.goldSoft, 0.8),
-    textCommand(78, 680, "Authentication and Keepsake Note", "F2", 18, COLOR.ink),
+    textCommand(78, 680, "Archive Authentication", "F2", 18, COLOR.ink),
     strokeLineCommand(78, 662, 534, 662, COLOR.goldSoft, 0.65),
     ...paragraphBlock(
-      "This certificate records the private collection prepared for the recipient named on page one. It is intended to be printed, framed, gifted, or kept with the complete family legacy collection.",
+      "This certificate is recorded by MyKinLegacy under the archive number below and belongs with the keepsake prepared for the recipient named on page one.",
       82,
       614,
       73,
@@ -201,40 +217,58 @@ function buildCertificateKeepsakeNote(model: PdfModel): string {
     ),
     textCommand(82, 474, "Archive Number", "F2", 12, COLOR.goldSoft),
     textCommand(82, 452, archiveNumber, "F1", 12, COLOR.ink),
-    rectCommand(82, 330, 448, 76, COLOR.ivorySoft),
-    strokeRectCommand(82, 330, 448, 76, COLOR.goldSoft, 0.5),
+    textCommand(82, 378, "Keepsake Note", "F2", 12, COLOR.goldSoft),
     ...wrappedTextCommands(
-      "This page is not a story, symbol guide, or usage instruction. It exists only to support the frameable certificate as a private keepsake record.",
-      104,
-      376,
-      68,
+      "May it remain with the crest and the family story as a lasting record of the life and values honored here.",
+      82,
+      350,
+      72,
       "F1",
-      11.5,
-      17,
+      11.8,
+      18,
       COLOR.ink,
       4
     ),
-    textCommand(82, 114, "Prepared by MyKinLegacy", "F3", 9.5, COLOR.muted)
+    fillCircleCommand(306, 196, 34, COLOR.goldSoft),
+    centeredTextCommand(306, 190, "MKL", "F2", 13, COLOR.ivorySoft),
+    centeredTextCommand(306, 114, "MyKinLegacy", "F3", 9.5, COLOR.muted)
   ];
   return commands.join("\n");
 }
 
 function buildStorybookPages(model: PdfModel, image: PdfImage | null): string[] {
   const ordered = [
-    { heading: "Dedication", fallback: dedicationFallback(model) },
-    { heading: "The Beginning", fallback: beginningFallback(model) },
-    { heading: "Life and Contribution", fallback: contributionFallback(model) },
-    { heading: "A Memory", fallback: memoryFallback(model) },
-    { heading: "Family Values", fallback: valuesFallback(model) },
-    { heading: "What Lives On", fallback: livesOnFallback(model) },
-    { heading: "Closing Letter", fallback: closingLetterFallback(model) }
+    storyChapter(model, ["Dedication"], "Dedication", dedicationFallback(model)),
+    storyChapter(
+      model,
+      ["Thirty-Five Years of Quiet Strength", "A Life of Quiet Strength", "Life and Contribution", "The Beginning"],
+      "A Life of Quiet Strength",
+      contributionFallback(model)
+    ),
+    storyChapter(
+      model,
+      ["What He Gave His Family", "What She Gave Her Family", "What They Gave Their Family", "What the Family Received", "A Memory", "Family Values"],
+      "What the Family Received",
+      memoryFallback(model)
+    ),
+    storyChapter(
+      model,
+      ["What His Children Carry Forward", "What Her Children Carry Forward", "What Their Family Carries Forward", "What the Family Carries Forward", "What Lives On"],
+      "What the Family Carries Forward",
+      livesOnFallback(model)
+    ),
+    storyChapter(model, ["Closing Letter"], "Closing Letter", closingLetterFallback(model))
   ];
   const pages = [buildStoryCover(model, image)];
   ordered.forEach((item, index) => {
-    const body = sectionBody(model, item.heading, index) || item.fallback;
-    pages.push(buildStoryChapterPage(model, item.heading, body, index + 1, image));
+    pages.push(buildStoryChapterPage(model, item.heading, item.body, index + 1, image));
   });
   return pages;
+}
+
+function storyChapter(model: PdfModel, candidates: string[], fallbackHeading: string, fallbackBody: string): PdfSection {
+  const section = model.sections.find((item) => candidates.some((candidate) => candidate.toLowerCase() === item.heading.toLowerCase()));
+  return section?.body ? section : { heading: fallbackHeading, body: fallbackBody };
 }
 
 function buildStoryCover(model: PdfModel, image: PdfImage | null): string {
@@ -244,11 +278,11 @@ function buildStoryCover(model: PdfModel, image: PdfImage | null): string {
     strokeRectCommand(44, 54, 524, 684, COLOR.goldSoft, 1),
     textCommand(76, 694, "MyKinLegacy", "F2", 14, COLOR.gold),
     textCommand(76, 670, "Family Story", "F3", 10, COLOR.ivory),
-    centeredTextCommand(306, 568, model.familyName, "F2", 27, COLOR.ivory),
-    centeredTextCommand(306, 538, "A private story prepared for the people who carry it forward.", "F1", 12, COLOR.mist),
+    centeredTextCommand(306, 568, `A Story for ${model.familyName}`, "F2", 25, COLOR.ivory),
+    centeredTextCommand(306, 538, "Quiet strength, remembered with gratitude.", "F1", 12, COLOR.mist),
     strokeLineCommand(152, 506, 460, 506, COLOR.goldSoft, 0.7),
     ...paragraphBlock(openingStorySentence(model), 134, 450, 55, 13.5, 20, COLOR.ivory, 5),
-    textCommand(76, 108, "Read slowly. Keep close.", "F3", 10, COLOR.gold)
+    textCommand(76, 108, "For the family who learned from his example.", "F3", 10, COLOR.gold)
   ];
 
   if (image) {
@@ -267,59 +301,55 @@ function buildStoryChapterPage(
   chapterNumber: number,
   image: PdfImage | null
 ): string {
-  const isMemory = heading === "A Memory";
+  const isMemory = /Years of Quiet Strength|A Life of Quiet Strength/i.test(heading);
+  const pageFill = chapterNumber === 1 ? COLOR.ivorySoft : chapterNumber === 2 ? COLOR.parchment : chapterNumber === 5 ? COLOR.charcoalSoft : COLOR.ivory;
+  const textColor = chapterNumber === 5 ? COLOR.ivory : COLOR.ink;
+  const mutedColor = chapterNumber === 5 ? COLOR.mist : COLOR.muted;
   const commands: string[] = [
-    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
-    rectCommand(52, 64, 508, 660, isMemory ? COLOR.parchment : COLOR.ivorySoft),
+    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, chapterNumber === 5 ? COLOR.charcoal : COLOR.ivory),
+    rectCommand(52, 64, 508, 660, pageFill),
     strokeRectCommand(52, 64, 508, 660, COLOR.goldSoft, 0.65),
     textCommand(76, 688, `0${chapterNumber}`, "F2", 13, COLOR.goldSoft),
-    textCommand(124, 688, heading, "F2", 20, COLOR.ink),
+    textCommand(124, 688, heading, "F2", heading.length > 30 ? 17 : 20, textColor),
     strokeLineCommand(76, 660, 528, 660, COLOR.goldSoft, 0.55)
   ];
 
-  if (image && (chapterNumber === 1 || chapterNumber === 7)) {
+  if (image && (chapterNumber === 1 || chapterNumber === 5)) {
     commands.push(drawImageCommand(424, 530, 84, 84));
   }
 
-  const maxLines = heading === "Closing Letter" ? 17 : 19;
-  commands.push(
-    ...paragraphBlock(body, 92, 610, heading === "A Memory" ? 58 : 64, 12.7, 19, COLOR.ink, maxLines)
-  );
   if (isMemory) {
-    commands.push(rectCommand(92, 154, 428, 72, COLOR.ivorySoft));
-    commands.push(strokeRectCommand(92, 154, 428, 72, COLOR.goldSoft, 0.45));
-    commands.push(
-      ...wrappedTextCommands(
-        "The emotional center of this story is not a symbol. It is the lived memory that made the collection worth preparing.",
-        114,
-        196,
-        62,
-        "F1",
-        11,
-        16,
-        COLOR.ink,
-        4
-      )
-    );
+    commands.push(textCommand(92, 606, "THIRTY-FIVE YEARS", "F2", 11, COLOR.goldSoft));
+    commands.push(textCommand(92, 580, "One quiet promise, kept every day.", "F1", 16, COLOR.ink));
+    commands.push(strokeLineCommand(92, 558, 470, 558, COLOR.goldSoft, 0.55));
   }
-  commands.push(textCommand(76, 92, "Family Story", "F3", 8.5, COLOR.muted));
+  const maxLines = heading === "Closing Letter" ? 18 : 20;
+  commands.push(
+    ...paragraphBlock(body, 92, isMemory ? 518 : 610, 64, 12.7, 19, textColor, maxLines)
+  );
+  commands.push(textCommand(76, 92, "Family Story", "F3", 8.5, mutedColor));
   return commands.join("\n");
 }
 
-function buildMeaningGuidePages(model: PdfModel, image: PdfImage | null): string[] {
-  const symbols = symbolSections(model);
-  const primary = symbols[0] ?? { heading: "Primary Symbol", body: sectionBody(model, "Primary Symbol", 0) || "The central symbol gives the crest its main emotional direction." };
-  const secondary = symbols[1] ?? { heading: "Secondary Symbol", body: sectionBody(model, "Secondary Symbol", 1) || "The supporting symbol adds context without competing with the main idea." };
-  const supporting = symbols[2] ?? { heading: "Supporting Symbol", body: sectionBody(model, "Supporting Symbol", 2) || "The quiet supporting detail helps the crest feel complete and personal." };
+function buildMeaningGuidePages(model: PdfModel, artwork: PdfArtwork | null): string[] {
+  const details = [
+    { heading: "The Shield", imageName: "Im2", fallback: shieldMeaningFallback(model) },
+    { heading: "The Tree", imageName: "Im3", fallback: treeMeaningFallback(model) },
+    { heading: "The Knot", imageName: "Im4", fallback: knotMeaningFallback(model) },
+    { heading: "The Key and Guiding Star", imageName: "Im5", fallback: keyStarMeaningFallback(model) },
+    { heading: "The Laurel Frame", imageName: "Im6", fallback: laurelMeaningFallback(model) }
+  ];
   return [
-    buildMeaningCover(model, image),
-    buildMeaningOverview(model, image),
-    buildMeaningSymbolPage(model, "Primary Symbol", primary.heading, primary.body, image, 1),
-    buildMeaningSymbolPage(model, "Secondary Symbol", secondary.heading, secondary.body, image, 2),
-    buildMeaningSymbolPage(model, "Supporting Symbol", supporting.heading, supporting.body, image, 3),
-    buildMeaningTextPage(model, "Composition", sectionBody(model, "Composition", 3) || compositionFallback(model), image),
-    buildMeaningTextPage(model, "Color and Atmosphere", sectionBody(model, "Color and Atmosphere", 4) || colorFallback(model), image),
-    buildMeaningTextPage(model, "Closing Interpretation", sectionBody(model, "Closing Interpretation", 5) || meaningClosingFallback(model), image)
+    buildMeaningCover(model, artwork?.full ?? null),
+    ...details.map((detail, index) =>
+      buildMeaningDetailPage(
+        detail.heading,
+        sectionBody(model, detail.heading, index) || detail.fallback,
+        detail.imageName,
+        artwork !== null,
+        index
+      )
+    )
   ];
 }
 
@@ -332,7 +362,7 @@ function buildMeaningCover(model: PdfModel, image: PdfImage | null): string {
     textCommand(70, 678, "Meaning Behind Your Crest", "F2", 24, COLOR.ivory),
     textCommand(70, 648, model.familyName, "F1", 13, COLOR.mist),
     ...paragraphBlock(
-      "A visual guide to the finished crest: what leads the design, what supports it, and why the final artwork belongs to this family.",
+      `An illustrated guide to the details that honor ${model.familyName}: protection, integrity, sacrifice, and the strength carried forward through family.`,
       70,
       604,
       58,
@@ -344,76 +374,39 @@ function buildMeaningCover(model: PdfModel, image: PdfImage | null): string {
   ];
   if (image) commands.push(drawImageCommand(190, 212, 232, 232));
   else commands.push(strokeRectCommand(190, 212, 232, 232, COLOR.goldSoft, 0.9));
-  commands.push(textCommand(70, 100, "Illustrated crest guide", "F3", 9, COLOR.gold));
+  commands.push(textCommand(70, 100, "Five details. One life honored.", "F3", 9, COLOR.gold));
   return commands.join("\n");
 }
 
-function buildMeaningOverview(model: PdfModel, image: PdfImage | null): string {
-  const commands = [
-    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
-    textCommand(62, 704, "Full Crest Overview", "F2", 22, COLOR.ink),
-    strokeLineCommand(62, 682, 550, 682, COLOR.goldSoft, 0.65),
-    ...paragraphBlock(
-      sectionBody(model, "Full Crest Overview", 0) ||
-        "The crest is arranged as a finished keepsake, not a collection of separate icons. The central image carries the main meaning while the frame, branches, and atmosphere help it feel protected and complete.",
-      62,
-      636,
-      68,
-      12.2,
-      18,
-      COLOR.ink,
-      7
-    ),
-    rectCommand(84, 166, 444, 310, COLOR.charcoal),
-    strokeRectCommand(84, 166, 444, 310, COLOR.goldSoft, 0.8)
-  ];
-  if (image) commands.push(drawImageCommand(188, 206, 236, 236));
-  commands.push(textCommand(62, 92, "Begin with the whole crest before reading individual symbols.", "F3", 9, COLOR.muted));
-  return commands.join("\n");
-}
-
-function buildMeaningSymbolPage(
-  _model: PdfModel,
-  role: string,
-  symbolName: string,
+function buildMeaningDetailPage(
+  heading: string,
   body: string,
-  image: PdfImage | null,
+  imageName: string,
+  hasArtwork: boolean,
   detailIndex: number
 ): string {
+  const imageLayouts = [
+    { x: 154, y: 360, width: 304, height: 270 },
+    { x: 146, y: 362, width: 320, height: 260 },
+    { x: 136, y: 378, width: 340, height: 225 },
+    { x: 112, y: 396, width: 388, height: 178 },
+    { x: 108, y: 370, width: 396, height: 238 }
+  ];
+  const layout = imageLayouts[detailIndex] ?? imageLayouts[0];
   const commands = [
     rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
     rectCommand(42, 54, 528, 684, COLOR.ivorySoft),
     strokeRectCommand(42, 54, 528, 684, COLOR.goldSoft, 0.65),
-    textCommand(70, 700, role, "F3", 10.5, COLOR.goldSoft),
-    textCommand(70, 668, titleCase(symbolName), "F2", 24, COLOR.ink),
-    rectCommand(70, 332, 230, 250, COLOR.charcoal),
-    strokeRectCommand(70, 332, 230, 250, COLOR.goldSoft, 0.7),
-    textCommand(330, 548, "Why this detail matters", "F2", 13, COLOR.ink),
-    ...paragraphBlock(body, 330, 514, 31, 11.4, 17, COLOR.ink, 12),
-    textCommand(70, 102, "The symbol is explained only in relation to this crest and this family.", "F3", 8.5, COLOR.muted)
+    textCommand(70, 700, `DETAIL 0${detailIndex + 1}`, "F3", 10, COLOR.goldSoft),
+    textCommand(70, 664, heading, "F2", heading.length > 22 ? 21 : 25, COLOR.ink),
+    rectCommand(76, 334, 460, 306, COLOR.charcoal),
+    strokeRectCommand(76, 334, 460, 306, COLOR.goldSoft, 0.7),
+    ...paragraphBlock(body, 88, 286, 70, 12.2, 18, COLOR.ink, 10),
+    textCommand(70, 92, "Meaning Behind Your Crest", "F3", 8.5, COLOR.muted)
   ];
-  if (image) {
-    const size = detailIndex === 1 ? 184 : 164;
-    const x = detailIndex === 1 ? 93 : 103;
-    const y = detailIndex === 3 ? 370 : 382;
-    commands.push(drawImageCommand(x, y, size, size));
+  if (hasArtwork && layout) {
+    commands.push(drawImageCommand(layout.x, layout.y, layout.width, layout.height, imageName));
   }
-  return commands.join("\n");
-}
-
-function buildMeaningTextPage(_model: PdfModel, heading: string, body: string, image: PdfImage | null): string {
-  const commands = [
-    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
-    textCommand(62, 704, heading, "F2", 22, COLOR.ink),
-    strokeLineCommand(62, 680, 550, 680, COLOR.goldSoft, 0.65),
-    rectCommand(62, 478, 488, 132, COLOR.charcoalWarm),
-    strokeRectCommand(62, 478, 488, 132, COLOR.goldSoft, 0.6),
-    textCommand(92, 558, "Visual reading", "F2", 13, COLOR.gold),
-    ...wrappedTextCommands("Read the crest as one finished object: shape, symbol, material, and atmosphere working together.", 92, 532, 61, "F1", 11.5, 17, COLOR.ivory, 4),
-    ...paragraphBlock(body, 82, 420, 72, 12.2, 18, COLOR.ink, 13)
-  ];
-  if (image) commands.push(drawImageCommand(424, 516, 74, 74));
-  commands.push(textCommand(62, 88, "Meaning Behind Your Crest", "F3", 8.5, COLOR.muted));
   return commands.join("\n");
 }
 
@@ -424,7 +417,7 @@ function parsePdfModel(input: PdfGenerationInput): PdfModel {
     fieldFromMap(fields, "Presented To") ||
     fieldFromMap(fields, "Recipient") ||
     cleanDisplayName(input.house_name) ||
-    "Your Family Legacy";
+    "Family Keepsake";
   return {
     deliverableCode: input.deliverable_code,
     title: input.title,
@@ -463,7 +456,8 @@ function parseSections(text: string): PdfSection[] {
 }
 
 function inferDeliverableCode(text: string): PdfGenerationInput["deliverable_code"] {
-  if (/Meaning Behind Your Crest|Primary Symbol|Full Crest Overview/i.test(text)) return "symbol_explanation_pdf";
+  if (/Heritage Certificate|Presented To:/i.test(text)) return "heritage_certificate_pdf";
+  if (/Meaning Behind Your Crest|The Shield|The Tree|The Knot/i.test(text)) return "symbol_explanation_pdf";
   if (/Family Story|Dedication|Closing Letter/i.test(text)) return "family_story_pdf";
   return "heritage_certificate_pdf";
 }
@@ -476,7 +470,7 @@ function inferTitle(text: string): string {
 
 function inferFamilyName(text: string): string {
   const match = /(?:Presented To|Recipient|Prepared for):\s*([^\n]+)/i.exec(text);
-  return cleanDisplayName(match?.[1]) ?? "Your Family Legacy";
+  return cleanDisplayName(match?.[1]) ?? "Family Keepsake";
 }
 
 function field(model: PdfModel, key: string, fallback: string): string {
@@ -496,16 +490,8 @@ function sectionBody(model: PdfModel, heading: string, fallbackIndex: number): s
   return model.sections[fallbackIndex]?.body ?? "";
 }
 
-function symbolSections(model: PdfModel): PdfSection[] {
-  return model.sections.filter(
-    (section) =>
-      !/^(Opening|Full Crest Overview|Composition|Color and Atmosphere|Closing Interpretation)$/i.test(section.heading) &&
-      !/^([A-Za-z /&-]+):/.test(section.heading)
-  );
-}
-
-function drawImageCommand(x: number, y: number, width: number, height = width): string {
-  return ["q", `${width} 0 0 ${height} ${x} ${y} cm`, "/Im1 Do", "Q"].join("\n");
+function drawImageCommand(x: number, y: number, width: number, height = width, imageName = "Im1"): string {
+  return ["q", `${width} 0 0 ${height} ${x} ${y} cm`, `/${imageName} Do`, "Q"].join("\n");
 }
 
 function rectCommand(
@@ -543,6 +529,11 @@ function strokeLineCommand(
 function strokeCircleCommand(x: number, y: number, radius: number, color: readonly [number, number, number], strokeWidth: number): string {
   const c = radius * 0.5523;
   return `${color.join(" ")} RG ${strokeWidth} w ${x + radius} ${y} m ${x + radius} ${y + c} ${x + c} ${y + radius} ${x} ${y + radius} c ${x - c} ${y + radius} ${x - radius} ${y + c} ${x - radius} ${y} c ${x - radius} ${y - c} ${x - c} ${y - radius} ${x} ${y - radius} c ${x + c} ${y - radius} ${x + radius} ${y - c} ${x + radius} ${y} c S`;
+}
+
+function fillCircleCommand(x: number, y: number, radius: number, color: readonly [number, number, number]): string {
+  const c = radius * 0.5523;
+  return `${color.join(" ")} rg ${x + radius} ${y} m ${x + radius} ${y + c} ${x + c} ${y + radius} ${x} ${y + radius} c ${x - c} ${y + radius} ${x - radius} ${y + c} ${x - radius} ${y} c ${x - radius} ${y - c} ${x - c} ${y - radius} ${x} ${y - radius} c ${x + c} ${y - radius} ${x + radius} ${y - c} ${x + radius} ${y} c f`;
 }
 
 function textCommand(
@@ -654,19 +645,15 @@ function cleanDisplayName(value?: string | null): string | null {
 }
 
 function ceremonialFallback(model: PdfModel): string {
-  return `This certificate presents ${model.familyName} as a private family keepsake, prepared with care to mark the meaning of this collection.`;
+  return `Presented to ${model.familyName} in recognition of a life shaped by protection, integrity, and quiet sacrifice for family.`;
 }
 
 function openingStorySentence(model: PdfModel): string {
-  return `This story begins with ${model.familyName}, and with the quiet evidence of love, effort, memory, and continuity that made the collection worth preparing.`;
+  return `${model.familyName} gave strength a quiet form: steady work, kept promises, and an example his family could trust.`;
 }
 
 function dedicationFallback(model: PdfModel): string {
   return `For ${model.familyName}, this story is offered as a private expression of gratitude. It is meant to be read as a keepsake, not as a record of status or invented history.`;
-}
-
-function beginningFallback(_model: PdfModel): string {
-  return `Every family story begins in ordinary moments: showing up, building a home, carrying responsibility, keeping faith, and making room for the people who come next.`;
 }
 
 function contributionFallback(model: PdfModel): string {
@@ -677,10 +664,6 @@ function memoryFallback(_model: PdfModel): string {
   return `The memory at the center of this collection is the feeling of being held by a family life that mattered. It gives the story its warmth and keeps the collection personal.`;
 }
 
-function valuesFallback(_model: PdfModel): string {
-  return `The values in this story are not slogans. They are qualities made visible through action: protection, love, resilience, integrity, faithfulness, and hope carried in practical ways.`;
-}
-
 function livesOnFallback(_model: PdfModel): string {
   return `What lives on is not a perfect history. It is the shape of care that family members can recognize, remember, and carry forward with dignity.`;
 }
@@ -689,30 +672,43 @@ function closingLetterFallback(model: PdfModel): string {
   return `May this collection remind ${model.familyName} that legacy is not only what is recorded. It is what is remembered, practiced, and passed on with love.`;
 }
 
-function compositionFallback(model: PdfModel): string {
-  return `The crest uses a clear center, a protective frame, and quiet supporting details so the artwork feels focused rather than crowded. Each element is meant to serve ${model.familyName}, not compete for attention.`;
+function shieldMeaningFallback(model: PdfModel): string {
+  return `The shield reflects the protection ${model.familyName} gave through years of dependable work. Its strength is calm rather than aggressive: a boundary around the people he loved, built through responsibility, practical care, and the decision to place family security before personal recognition.`;
 }
 
-function colorFallback(_model: PdfModel): string {
-  return "The black and antique gold atmosphere gives the crest a private archive feeling: warm, dignified, printable, and suitable for a family keepsake.";
+function treeMeaningFallback(model: PdfModel): string {
+  return `The tree represents the family life ${model.familyName} helped sustain. Its trunk suggests integrity under pressure, while its branches show the people and possibilities that grew from his effort. The image turns thirty-five years of work into something living: shelter, continuity, and a future made steadier by his example.`;
 }
 
-function meaningClosingFallback(model: PdfModel): string {
-  return `The finished crest belongs to ${model.familyName} because the visual choices are tied to evidence, meaning, and emotional purpose rather than decoration alone.`;
+function knotMeaningFallback(model: PdfModel): string {
+  return `The knot at the roots gives sacrifice a visible form. Its interwoven lines acknowledge that work, duty, love, and family life were never separate for ${model.familyName}. He rarely spoke about what he gave up; the knot honors those choices without making them grander than the quiet truth.`;
 }
 
-function titleCase(value: string): string {
-  return value
-    .split(/\s+/)
-    .map((part) => (part ? `${part[0]?.toUpperCase()}${part.slice(1).toLowerCase()}` : part))
-    .join(" ");
+function keyStarMeaningFallback(model: PdfModel): string {
+  return `The key and guiding star speak to what ${model.familyName} opened for his children and how he led them. The key suggests opportunity earned through steady labor. The star reflects guidance offered through conduct rather than speeches: a clear example of integrity that remains useful long after retirement.`;
 }
 
-function loadApprovedCrestImage(): PdfImage | null {
+function laurelMeaningFallback(model: PdfModel): string {
+  return `The laurel frame marks retirement with gratitude, not status. Its branches surround the crest as recognition for endurance, service, and work completed with dignity. For ${model.familyName}, it is a quiet thank-you from the family: the years were noticed, the sacrifices mattered, and the example will continue.`;
+}
+
+function formatDisplayDate(value: Date): string {
+  return value.toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
+}
+
+function loadApprovedCrestArtwork(): PdfArtwork | null {
   for (const filePath of approvedCrestCandidates()) {
     try {
       if (!existsSync(filePath)) continue;
-      return pngToPdfImage(readFileSync(filePath), 260);
+      const decoded = decodePng(readFileSync(filePath));
+      return {
+        full: rgbToPdfImage(decoded.rgb, decoded.width, decoded.height, 420),
+        shield: cropPdfImage(decoded, { x: 210, y: 160, width: 840, height: 850 }, 420),
+        tree: cropPdfImage(decoded, { x: 320, y: 205, width: 620, height: 560 }, 420),
+        knot: cropPdfImage(decoded, { x: 350, y: 635, width: 560, height: 350 }, 420),
+        keyStar: cropPdfImage(decoded, { x: 290, y: 500, width: 650, height: 290 }, 420),
+        laurel: cropPdfImage(decoded, { x: 75, y: 315, width: 1100, height: 650 }, 420)
+      };
     } catch {
       continue;
     }
@@ -734,14 +730,31 @@ function approvedCrestCandidates(): string[] {
   ];
 }
 
-function pngToPdfImage(buffer: Buffer, maxDimension: number): PdfImage {
-  const decoded = decodePng(buffer);
-  const resized = downsampleRgb(decoded.rgb, decoded.width, decoded.height, maxDimension);
+function rgbToPdfImage(rgb: Buffer, width: number, height: number, maxDimension: number): PdfImage {
+  const resized = downsampleRgb(rgb, width, height, maxDimension);
   return {
     width: resized.width,
     height: resized.height,
     data: deflateSync(resized.rgb)
   };
+}
+
+function cropPdfImage(
+  decoded: { width: number; height: number; rgb: Buffer },
+  crop: { x: number; y: number; width: number; height: number },
+  maxDimension: number
+): PdfImage {
+  const x = Math.max(0, Math.min(decoded.width - 1, crop.x));
+  const y = Math.max(0, Math.min(decoded.height - 1, crop.y));
+  const width = Math.max(1, Math.min(crop.width, decoded.width - x));
+  const height = Math.max(1, Math.min(crop.height, decoded.height - y));
+  const rgb = Buffer.alloc(width * height * 3);
+  for (let row = 0; row < height; row += 1) {
+    const sourceStart = ((y + row) * decoded.width + x) * 3;
+    const targetStart = row * width * 3;
+    decoded.rgb.copy(rgb, targetStart, sourceStart, sourceStart + width * 3);
+  }
+  return rgbToPdfImage(rgb, width, height, maxDimension);
 }
 
 function decodePng(buffer: Buffer): { width: number; height: number; rgb: Buffer } {

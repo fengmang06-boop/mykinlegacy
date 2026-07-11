@@ -6,7 +6,7 @@ import { describe, expect, it } from "vitest";
 
 import { GLOBAL_PDF_DISCLAIMER, generateHeritagePdf } from "./index";
 
-const FORBIDDEN_SHARED_LANGUAGE = /Inside this document|Private Archive \/ clean keepsake document|Important Note|personalized symbolic keepsake|certified genealogical|internal beta|alpha/i;
+const FORBIDDEN_SHARED_LANGUAGE = /Your Family Legacy|Private family gift|customer input|customer selected|customer wording|maps to|symbolic interpretation|this page is not|Recorded at the time this collection was prepared|Inside this document|internal beta|alpha/i;
 
 describe("PDF generation foundation", () => {
   it("generates a frameable certificate with no story or guide content", async () => {
@@ -14,26 +14,30 @@ describe("PDF generation foundation", () => {
       deliverable_code: "heritage_certificate_pdf",
       title: "Heritage Certificate",
       body_text: [
-        "Collection Name: House Alder Legacy Collection",
-        "Presented To: Father",
-        "Occasion: Retirement",
-        "Crest: Final crest artwork prepared for this collection.",
+        "Presented To: Michael Johnson",
+        "Created For: Retirement",
+        "Crest: Final Crest",
         "Archive Number: AHL-TEST-01",
-        "Date: July 10, 2026",
+        "Date: July 11, 2026",
         "Signature: MyKinLegacy Legacy Curator",
-        "Official Seal: MyKinLegacy keepsake seal",
+        "Brand Seal: MyKinLegacy",
         "",
         "Ceremony Statement",
-        "Father is presented with this private family legacy collection for retirement, prepared with care, dignity, and gratitude."
+        "Presented in recognition of thirty-five years of quiet strength. Michael Johnson protected his family through steady work, lived with integrity, and carried sacrifice without asking for praise.",
+        "Archive Authentication",
+        "This certificate is recorded by MyKinLegacy under archive number AHL-TEST-01.",
+        "Keepsake Note",
+        "May it remain with the crest and family story as a lasting record of the life and values honored here."
       ].join("\n")
     });
 
     expect(pdfText).toContain("pdf_layout_version=premium_v4");
     expect(pdfText).toContain("/Subtype /Image");
     expect(pdfText).toContain("HERITAGE CERTIFICATE");
-    expect(pdfText).toContain("Presented To");
+    expect(pdfText).toContain("PRESENTED TO");
     expect(pdfText).toContain("Archive Number");
-    expect(pdfText).toContain("Official Seal");
+    expect(pdfText).toContain("MKL");
+    expect(pdfText).not.toContain("Official Seal");
     expect(pdfText).not.toContain("Family Story");
     expect(pdfText).not.toContain("Primary Symbol");
     expect(pdfText).not.toMatch(FORBIDDEN_SHARED_LANGUAGE);
@@ -46,34 +50,29 @@ describe("PDF generation foundation", () => {
       title: "Family Story",
       body_text: [
         "Dedication",
-        "For Mother on her 60th birthday, this story is offered with gratitude.",
-        "The Beginning",
-        "The family remembers a home held together with patience, kindness, and strength.",
-        "Life and Contribution",
-        "Her contribution was steady and practical, shown through daily care rather than ceremony.",
-        "A Memory",
-        "The emotional center is the memory of being welcomed, fed, listened to, and protected.",
-        "Family Values",
-        "Love, kindness, and strength appear through lived experience.",
-        "What Lives On",
-        "What lives on is the feeling of being gathered together.",
+        "For Michael Johnson, with gratitude at retirement. This story honors the years in which responsibility became care and integrity was taught through example.",
+        "Thirty-Five Years of Quiet Strength",
+        "For thirty-five years, Michael worked to support and protect his family. He rarely spoke about sacrifice; he simply carried it in the choices he made every day.",
+        "What He Gave His Family",
+        "His family received security, patience, and a standard of integrity that never required a speech. The memory of his steady work is the emotional center of this story.",
+        "What His Children Carry Forward",
+        "His children carry forward the habit of keeping promises, protecting one another, and doing what is right when nobody is watching.",
         "Closing Letter",
-        "May this story remind the family that love can become a legacy."
+        "Michael, your work mattered, your sacrifices were seen, and your example has already become part of the family."
       ].join("\n")
     });
 
     expect(pdfText).toContain("Family Story");
     expect(pdfText).toContain("Dedication");
-    expect(pdfText).toContain("The Beginning");
-    expect(pdfText).toContain("A Memory");
+    expect(pdfText).toContain("Thirty-Five Years of Quiet Strength");
+    expect(pdfText).toContain("What He Gave His Family");
     expect(pdfText).toContain("Closing Letter");
     expect(pdfText).not.toContain("Official Seal");
     expect(pdfText).not.toContain("Meaning:");
     expect(pdfText).not.toContain("Relationship to family:");
     expect(pdfText).not.toMatch(FORBIDDEN_SHARED_LANGUAGE);
     const pages = pdfText.match(/\/Type \/Page\b/g) ?? [];
-    expect(pages.length).toBeGreaterThanOrEqual(5);
-    expect(pages.length).toBeLessThanOrEqual(8);
+    expect(pages).toHaveLength(6);
   });
 
   it("generates a visual meaning guide without dictionary blocks or story repetition", async () => {
@@ -81,37 +80,33 @@ describe("PDF generation foundation", () => {
       deliverable_code: "symbol_explanation_pdf",
       title: "Meaning Behind Your Crest",
       body_text: [
-        "Full Crest Overview",
-        "The crest is read as one finished object, with the tree leading the design.",
-        "Primary Symbol",
-        "Tree was chosen because it carries continuity, roots, and family unity.",
-        "Secondary Symbol",
-        "Shield supports the design by giving the crest a protected frame.",
-        "Supporting Symbol",
-        "Laurel adds gratitude and quiet honor without pretending status.",
-        "Composition",
-        "One idea leads, two ideas support, and the frame keeps the crest calm.",
-        "Color and Atmosphere",
-        "The black and antique gold palette gives the crest a private archive feeling.",
-        "Closing Interpretation",
-        "The finished crest belongs to the recipient because the symbols are earned by evidence."
+        "The Shield",
+        "The shield reflects the protection Michael Johnson gave through years of dependable work. Its strength is calm rather than aggressive: a boundary around the people he loved, built through responsibility, practical care, and the decision to place family security before personal recognition.",
+        "The Tree",
+        "The tree represents the family life Michael Johnson helped sustain. Its trunk suggests integrity under pressure, while its branches show the people and possibilities that grew from his effort. The image turns thirty-five years of work into something living: shelter, continuity, and a future made steadier by his example.",
+        "The Knot",
+        "The knot at the roots gives sacrifice a visible form. Its interwoven lines acknowledge that work, duty, love, and family life were never separate for Michael Johnson. He rarely spoke about what he gave up; the knot honors those choices without making them grander than the quiet truth.",
+        "The Key and Guiding Star",
+        "The key and guiding star speak to what Michael Johnson opened for his children and how he led them. The key suggests opportunity earned through steady labor. The star reflects guidance offered through conduct rather than speeches: a clear example of integrity that remains useful long after retirement.",
+        "The Laurel Frame",
+        "The laurel frame marks retirement with gratitude, not status. Its branches surround the crest as recognition for endurance, service, and work completed with dignity. For Michael Johnson, it is a quiet thank-you from the family: the years were noticed, the sacrifices mattered, and the example will continue."
       ].join("\n")
     });
 
     expect(pdfText).toContain("Meaning Behind Your Crest");
-    expect(pdfText).toContain("Full Crest Overview");
-    expect(pdfText).toContain("Primary Symbol");
-    expect(pdfText).toContain("Composition");
-    expect(pdfText).toContain("Color and Atmosphere");
-    expect(pdfText).toContain("Closing Interpretation");
+    expect(pdfText).toContain("The Shield");
+    expect(pdfText).toContain("The Tree");
+    expect(pdfText).toContain("The Knot");
+    expect(pdfText).toContain("The Key and Guiding Star");
+    expect(pdfText).toContain("The Laurel Frame");
+    expect(pdfText).not.toContain("Primary Symbol");
     expect(pdfText).not.toContain("Meaning:");
     expect(pdfText).not.toContain("Why chosen:");
     expect(pdfText).not.toContain("Emotional role:");
     expect(pdfText).not.toContain("Official Seal");
     expect(pdfText).not.toMatch(FORBIDDEN_SHARED_LANGUAGE);
     const pages = pdfText.match(/\/Type \/Page\b/g) ?? [];
-    expect(pages.length).toBeGreaterThanOrEqual(6);
-    expect(pages.length).toBeLessThanOrEqual(8);
+    expect(pages).toHaveLength(6);
   });
 });
 

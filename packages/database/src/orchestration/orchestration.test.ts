@@ -134,15 +134,16 @@ describe("DB-backed orchestration foundation", () => {
     expect(pdfBody.toString("latin1")).toContain("House of Alder");
     expect(pdfBody.toString("latin1")).toContain("Family Story");
     expect(pdfBody.toString("latin1")).toContain("Dedication");
-    expect(pdfBody.toString("latin1")).toContain("The Beginning");
-    expect(pdfBody.toString("latin1")).toContain("A Memory");
+    expect(pdfBody.toString("latin1")).toContain("A Life of Quiet Strength");
+    expect(pdfBody.toString("latin1")).toContain("What the Family Received");
+    expect(pdfBody.toString("latin1")).toContain("What the Family Carries Forward");
     expect(pdfBody.toString("latin1")).toContain("Closing Letter");
+    expect(pdfBody.toString("latin1").match(/\/Type \/Page\b/g) ?? []).toHaveLength(6);
     expect(pdfBody.toString("latin1")).not.toContain("personalized symbolic keepsake");
-    expect(certificateText).toContain("Collection Name");
-    expect(certificateText).toContain("Presented To");
-    expect(certificateText).toContain("Crest");
+    expect(certificateText).toContain("PRESENTED TO");
     expect(certificateText).toContain("Archive Number");
-    expect(certificateText).toContain("Official Seal");
+    expect(certificateText).toContain("MKL");
+    expect(certificateText).not.toContain("Official Seal");
     expect(certificateText).not.toContain("Meaning:");
     expect(certificateText).not.toContain("Family Story");
     expect(certificateText.match(/\/Type \/Page\b/g) ?? []).toHaveLength(2);
@@ -155,13 +156,13 @@ describe("DB-backed orchestration foundation", () => {
     expect(symbolGuidePdfBody.subarray(0, 4).toString()).toBe("%PDF");
     expect(symbolGuidePdfBody.byteLength).toBeGreaterThan(10 * 1024);
     expect(symbolGuideText).toContain("pdf_layout_version=premium_v4");
-    expect(symbolGuideText).toContain("Full Crest Overview");
-    expect(symbolGuideText).toContain("Primary Symbol");
-    expect(symbolGuideText).toContain("Secondary Symbol");
-    expect(symbolGuideText).toContain("Supporting Symbol");
-    expect(symbolGuideText).toContain("Composition");
-    expect(symbolGuideText).toContain("Color and Atmosphere");
-    expect(symbolGuideText).toContain("Closing Interpretation");
+    expect(symbolGuideText).toContain("The Shield");
+    expect(symbolGuideText).toContain("The Tree");
+    expect(symbolGuideText).toContain("The Knot");
+    expect(symbolGuideText).toContain("The Key and Guiding Star");
+    expect(symbolGuideText).toContain("The Laurel Frame");
+    expect(symbolGuideText).not.toContain("Primary Symbol");
+    expect(symbolGuideText.match(/\/Type \/Page\b/g) ?? []).toHaveLength(6);
     expect(symbolGuideText).not.toContain("Meaning:");
     expect(symbolGuideText).not.toContain("Why chosen:");
     expect(symbolGuideText).not.toContain("Emotional role:");
@@ -379,7 +380,7 @@ describe("DB-backed orchestration foundation", () => {
     expect(pdfAssets).toHaveLength(3);
     for (const asset of pdfAssets) {
       const text = (await readStoredAsset(asset)).toString("latin1");
-      expect(text).toContain("Your Family Legacy");
+      expect(text).toContain("Family Keepsake");
       expect(text).not.toMatch(/\bHouse of Unknown\b|\bUnknown\b/);
     }
   }, 15_000);
@@ -422,8 +423,8 @@ describe("DB-backed orchestration foundation", () => {
       const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
       const zipText = (await readStoredAsset(zipAsset)).toString("latin1");
 
-      expect(certificateText).toContain("HERITAGE CERTIFICATE");
-      expect(certificateText).toContain("Presented To");
+      expect(certificateText).toContain("Heritage Certificate");
+      expect(certificateText).toContain("PRESENTED TO");
       expect(certificateText).not.toContain("personal in authority");
       expect(familyStoryText).toContain("Nothing here asks the family to believe invented history");
       expect(zipText).toContain("This archive includes an LRE text pass");
