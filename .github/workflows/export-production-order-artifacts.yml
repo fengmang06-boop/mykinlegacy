@@ -1,0 +1,173 @@
+name: Export Production Order Artifacts
+
+on:
+  workflow_dispatch:
+    inputs:
+      order_number:
+        description: "Production test order number"
+        required: true
+        type: string
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-mykinlegacy
+  cancel-in-progress: false
+
+jobs:
+  export:
+    name: Export one production test package
+    runs-on: ubuntu-latest
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+      ORDER_NUMBER: ${{ inputs.order_number }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Validate inputs and production secrets
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          : "${PROD_PROJECT_DIR:?Missing PROD_PROJECT_DIR}"
+          if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
+            echo "Invalid ORDER_NUMBER" >&2
+            exit 1
+          fi
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64
+          import os
+          from pathlib import Path
+
+          raw_key = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw_key.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              decoded = base64.b64decode(raw_key).decode("utf-8")
+              key = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "mykinlegacy_prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Export package from private production storage
+        shell: bash
+        run: |
+          mkdir -p export
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'bash -s' -- "$PROD_PROJECT_DIR" "$ORDER_NUMBER" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          PROJECT_DIR="$1"
+          ORDER_NUMBER="$2"
+          cd "$PROJECT_DIR"
+          docker exec -i mykinlegacy_worker node - "$ORDER_NUMBER" <<'NODE'
+          const { mkdir, rm, writeFile } = require("node:fs/promises");
+          const path = require("node:path");
+          const { createRequire } = require("node:module");
+          const { PrismaClient } = require("./packages/database/generated/client");
+
+          const workerRequire = createRequire(path.join(process.cwd(), "apps/worker/package.json"));
+          const { LocalPrivateStorageAdapter } = workerRequire("@ai-heritage/storage");
+          const orderNumber = process.argv[2];
+          const outputDir = `/tmp/mykinlegacy-export-${orderNumber}`;
+          const wanted = new Set([
+            "crest_variant_1_png",
+            "heritage_certificate_pdf",
+            "family_story_pdf",
+            "symbol_explanation_pdf",
+            "download_package_zip"
+          ]);
+          const prisma = new PrismaClient();
+          const storage = new LocalPrivateStorageAdapter();
+
+          async function main() {
+            const order = await prisma.order.findUnique({
+              where: { orderNumber },
+              include: { assets: { include: { deliverableType: true }, orderBy: { createdAt: "desc" } } }
+            });
+            if (!order) throw new Error("order_not_found");
+            await rm(outputDir, { recursive: true, force: true });
+            await mkdir(outputDir, { recursive: true });
+            const exported = [];
+            const seen = new Set();
+            for (const asset of order.assets) {
+              const code = asset.deliverableType?.code ?? asset.deliverableTypeId;
+              if (!wanted.has(code) || seen.has(code) || asset.status !== "available") continue;
+              const body = await storage.getObject({
+                storage_provider: asset.storageProvider,
+                storage_bucket: asset.storageBucket,
+                storage_key: asset.storageKey
+              });
+              const fileName = asset.fileName || `${code}.${asset.fileExt}`;
+              await writeFile(path.join(outputDir, fileName), body);
+              exported.push({ deliverable_code: code, file_name: fileName, size_bytes: body.byteLength });
+              seen.add(code);
+            }
+            const missing = [...wanted].filter((code) => !seen.has(code));
+            if (missing.length > 0) throw new Error(`required_artifacts_missing:${missing.join(",")}`);
+            await writeFile(path.join(outputDir, "manifest.json"), JSON.stringify({
+              order_number: orderNumber,
+              exported_at: new Date().toISOString(),
+              artifacts: exported
+            }, null, 2));
+          }
+
+          main()
+            .catch((error) => {
+              console.error(error.message);
+              process.exitCode = 1;
+            })
+            .finally(async () => prisma.$disconnect());
+          NODE
+          rm -rf "/tmp/mykinlegacy-export-${ORDER_NUMBER}"
+          docker cp "mykinlegacy_worker:/tmp/mykinlegacy-export-${ORDER_NUMBER}" "/tmp/mykinlegacy-export-${ORDER_NUMBER}"
+          tar -C /tmp -czf "/tmp/mykinlegacy-export-${ORDER_NUMBER}.tar.gz" "mykinlegacy-export-${ORDER_NUMBER}"
+          REMOTE_SCRIPT
+
+          scp -i ~/.ssh/mykinlegacy_prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/mykinlegacy-export-${ORDER_NUMBER}.tar.gz" \
+            "export/mykinlegacy-export-${ORDER_NUMBER}.tar.gz"
+
+      - name: Upload production test package
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-order-${{ inputs.order_number }}
+          path: export/mykinlegacy-export-${{ inputs.order_number }}.tar.gz
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Remove remote export
+        if: always()
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            "rm -rf '/tmp/mykinlegacy-export-${ORDER_NUMBER}' '/tmp/mykinlegacy-export-${ORDER_NUMBER}.tar.gz'" || true
