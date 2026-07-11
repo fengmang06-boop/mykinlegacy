@@ -103,7 +103,15 @@ jobs:
           async function main() {
             const order = await prisma.order.findUnique({
               where: { orderNumber },
-              include: { assets: { include: { deliverableType: true }, orderBy: { createdAt: "desc" } } }
+              include: {
+                assets: {
+                  include: {
+                    deliverableType: true,
+                    assetDeliverableLinks: { include: { packageDeliverable: true } }
+                  },
+                  orderBy: { createdAt: "desc" }
+                }
+              }
             });
             if (!order) throw new Error("order_not_found");
             await rm(outputDir, { recursive: true, force: true });
@@ -111,7 +119,10 @@ jobs:
             const exported = [];
             const seen = new Set();
             for (const asset of order.assets) {
-              const code = asset.deliverableType?.code ?? asset.deliverableTypeId;
+              const linkedCode = asset.assetDeliverableLinks
+                .map((link) => link.packageDeliverable?.deliverableCode)
+                .find((code) => code && wanted.has(code));
+              const code = linkedCode ?? asset.deliverableType?.code ?? asset.deliverableTypeId;
               if (!wanted.has(code) || seen.has(code) || asset.status !== "available") continue;
               const body = await storage.getObject({
                 storage_provider: asset.storageProvider,
