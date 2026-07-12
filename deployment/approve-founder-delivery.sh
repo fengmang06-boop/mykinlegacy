@@ -46,21 +46,32 @@ const orderNumber = process.argv[2];
 })().finally(() => prisma.$disconnect());
 NODE
 
-bash "$SCRIPT_DIR/send-test-vault-email.sh" "$ORDER_NUMBER"
-
 docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$COMPOSE_FILE" exec -T worker node - "$ORDER_NUMBER" <<'NODE'
 const { PrismaClient } = require("./packages/database/generated/client");
 const prisma = new PrismaClient();
 const orderNumber = process.argv[2];
 
+const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, milliseconds));
+
 (async () => {
-  const order = await prisma.order.findUnique({
-    where: { orderNumber },
-    include: { emailLogs: { orderBy: { createdAt: "desc" }, take: 1 } }
-  });
+  let order = null;
+  for (let attempt = 1; attempt <= 30; attempt += 1) {
+    order = await prisma.order.findUnique({
+      where: { orderNumber },
+      include: {
+        emailLogs: {
+          where: { provider: "resend", status: "sent", providerMessageId: { not: null } },
+          orderBy: { createdAt: "desc" },
+          take: 1
+        }
+      }
+    });
+    if (order?.emailLogs[0]?.providerMessageId) break;
+    await sleep(2000);
+  }
   if (!order) throw new Error("order_not_found");
   const latestEmail = order.emailLogs[0];
-  if (!latestEmail || latestEmail.status !== "sent") throw new Error("delivery_email_not_sent");
+  if (!latestEmail?.providerMessageId) throw new Error("delivery_email_provider_acceptance_not_confirmed");
   await prisma.order.update({
     where: { id: order.id },
     data: {
@@ -74,9 +85,12 @@ const orderNumber = process.argv[2];
     order_number: orderNumber,
     founder_delivery: "released",
     email_provider: latestEmail.provider,
-    email_status: latestEmail.status
+    email_status: latestEmail.status,
+    provider_message_id: latestEmail.providerMessageId
   }));
 })().finally(() => prisma.$disconnect());
 NODE
+
+bash "$SCRIPT_DIR/inspect-resend-message.sh" "$ORDER_NUMBER"
 
 echo "FOUNDER_DELIVERY_APPROVAL_COMPLETE order=$ORDER_NUMBER"

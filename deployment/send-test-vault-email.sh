@@ -39,7 +39,7 @@ echo
 compose exec -T worker node - "$ORDER_NUMBER" <<'NODE'
 const { createHash, randomBytes } = require("node:crypto");
 const { PrismaClient } = require("./packages/database/generated/client");
-const emailModule = require("@ai-heritage/email");
+const emailModule = require("./packages/email/dist/index.js");
 const { resolveDeliveryRecipient, sendVaultReadyEmail } = require("./apps/worker/dist/vault-delivery.js");
 
 const orderNumber = process.argv[2];

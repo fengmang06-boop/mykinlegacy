@@ -237,6 +237,9 @@ case "$ACTION" in
     else
       echo "inspect-email-delivery.sh not available"
     fi
+    if [ -f "$SCRIPT_DIR/inspect-resend-message.sh" ]; then
+      bash "$SCRIPT_DIR/inspect-resend-message.sh" "$ORDER_NUMBER"
+    fi
     ;;
 
   repair_order_artifacts)
