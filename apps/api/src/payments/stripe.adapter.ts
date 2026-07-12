@@ -11,11 +11,11 @@ export const MYKINLEGACY_CHECKOUT_BRANDING = {
   font_family: "lora",
   logo: {
     type: "url",
-    url: "https://mykinlegacy.com/assets/final-homepage/01_brand/logo-primary.webp"
+    url: "https://mykinlegacy.com/assets/final-homepage/01_brand/stripe-logo.png"
   },
   icon: {
     type: "url",
-    url: "https://mykinlegacy.com/assets/final-homepage/01_brand/logo-mark.webp"
+    url: "https://mykinlegacy.com/assets/final-homepage/01_brand/stripe-icon.png"
   }
 } satisfies Stripe.Checkout.SessionCreateParams.BrandingSettings;
 

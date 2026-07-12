@@ -20,6 +20,8 @@ describe("Stripe Checkout branding", () => {
   it("uses public HTTPS brand assets without secrets", () => {
     expect(MYKINLEGACY_CHECKOUT_BRANDING.logo.url).toMatch(/^https:\/\/mykinlegacy\.com\//);
     expect(MYKINLEGACY_CHECKOUT_BRANDING.icon.url).toMatch(/^https:\/\/mykinlegacy\.com\//);
+    expect(MYKINLEGACY_CHECKOUT_BRANDING.logo.url).toMatch(/\.png$/);
+    expect(MYKINLEGACY_CHECKOUT_BRANDING.icon.url).toMatch(/\.png$/);
     expect(JSON.stringify(MYKINLEGACY_CHECKOUT_BRANDING)).not.toMatch(/sk_|whsec_|token/i);
   });
 });
