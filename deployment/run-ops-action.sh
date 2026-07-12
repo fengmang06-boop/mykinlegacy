@@ -52,6 +52,19 @@ compose() {
   docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$SCRIPT_DIR/docker-compose.yml" "$@"
 }
 
+health_check_with_retry() {
+  local attempt
+  for attempt in $(seq 1 12); do
+    if bash "$SCRIPT_DIR/health-check.sh"; then
+      return 0
+    fi
+    echo "Health check attempt ${attempt}/12 did not pass; waiting for services to settle."
+    sleep 5
+  done
+  echo "FAIL health check did not pass after restart retries"
+  return 1
+}
+
 set_env_var() {
   local key="$1"
   local value="$2"
@@ -189,7 +202,7 @@ case "$ACTION" in
     set_env_var "CHECKOUT_ENABLED" "false"
     export_last_successful_image
     compose up -d --no-build --force-recreate api
-    bash "$SCRIPT_DIR/health-check.sh"
+    health_check_with_retry
     echo "OPS_PAUSE_CHECKOUT_COMPLETE checkout_enabled=false"
     ;;
 
@@ -204,7 +217,7 @@ case "$ACTION" in
     fi
     export_last_successful_image
     compose up -d --no-build --force-recreate api worker web
-    bash "$SCRIPT_DIR/health-check.sh"
+    health_check_with_retry
     echo "OPS_RESUME_CHECKOUT_COMPLETE checkout_enabled=true founder_review_required=true order_limit=25"
     ;;
 
