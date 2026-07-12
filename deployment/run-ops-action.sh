@@ -221,6 +221,10 @@ case "$ACTION" in
     echo "OPS_RESUME_CHECKOUT_COMPLETE checkout_enabled=true founder_review_required=true order_limit=25"
     ;;
 
+  verify_stripe_checkout_branding)
+    bash "$SCRIPT_DIR/verify-stripe-checkout-branding.sh"
+    ;;
+
   inspect_order)
     require_order_number
     bash "$SCRIPT_DIR/inspect-artifacts.sh" "$ORDER_NUMBER"
@@ -315,7 +319,7 @@ case "$ACTION" in
 
   *)
     echo "FAIL unsupported action: ${ACTION}"
-    echo "Supported actions: health_check, restart_nginx, restart_services, docker_ps, nginx_logs, api_logs, web_logs, worker_logs, pause_checkout, resume_checkout, inspect_order, repair_order_artifacts, verify_download_binaries, founder_final_order_verification, approve_founder_delivery, ai_image_bridge_order_test, safe_deploy"
+    echo "Supported actions: health_check, restart_nginx, restart_services, docker_ps, nginx_logs, api_logs, web_logs, worker_logs, pause_checkout, resume_checkout, verify_stripe_checkout_branding, inspect_order, repair_order_artifacts, verify_download_binaries, founder_final_order_verification, approve_founder_delivery, ai_image_bridge_order_test, safe_deploy"
     exit 1
     ;;
 esac

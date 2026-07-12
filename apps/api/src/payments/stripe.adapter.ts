@@ -1,6 +1,24 @@
 import { Injectable } from "@nestjs/common";
 import Stripe from "stripe";
 
+export const STRIPE_CHECKOUT_API_VERSION = "2026-06-24.dahlia" as const;
+
+export const MYKINLEGACY_CHECKOUT_BRANDING = {
+  display_name: "MyKinLegacy",
+  background_color: "#0B0A08",
+  button_color: "#C9A24A",
+  border_style: "rounded",
+  font_family: "lora",
+  logo: {
+    type: "url",
+    url: "https://mykinlegacy.com/assets/final-homepage/01_brand/logo-primary.webp"
+  },
+  icon: {
+    type: "url",
+    url: "https://mykinlegacy.com/assets/final-homepage/01_brand/logo-mark.webp"
+  }
+} satisfies Stripe.Checkout.SessionCreateParams.BrandingSettings;
+
 export interface CreateCheckoutSessionInput {
   orderNumber: string;
   amountCents: number;
@@ -23,9 +41,7 @@ export class StripeAdapter {
 
   constructor() {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY ?? "sk_test_replace_me", {
-      apiVersion: process.env.STRIPE_API_VERSION
-        ? (process.env.STRIPE_API_VERSION as never)
-        : undefined
+      apiVersion: STRIPE_CHECKOUT_API_VERSION
     });
   }
 
@@ -36,6 +52,7 @@ export class StripeAdapter {
       success_url: input.successUrl,
       cancel_url: input.cancelUrl,
       metadata: input.metadata,
+      branding_settings: MYKINLEGACY_CHECKOUT_BRANDING,
       line_items: [
         {
           quantity: 1,

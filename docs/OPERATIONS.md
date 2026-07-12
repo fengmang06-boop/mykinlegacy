@@ -578,6 +578,8 @@ production lock and do not rebuild images or pull code.
 - `approve_founder_delivery`: requires an order number. It validates production downloads, marks
   the Founder review approved, creates a fresh vault link, sends the delivery email, and completes
   the order. It never prints the raw email or vault token.
+- `verify_stripe_checkout_branding`: creates one unpaid Checkout Session through the deployed API
+  adapter while public checkout remains paused. Use its URL only for visual branding verification.
 
 The internal live report is `/admin/founder-edition?token=[redacted]`. It shows aggregate visits,
 funnel starts, paid orders, delivery activity, refunds, P0 failures, review holds, and remaining

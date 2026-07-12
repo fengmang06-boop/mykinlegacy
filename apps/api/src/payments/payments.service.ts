@@ -82,7 +82,10 @@ export class PaymentsService {
     }
 
     const amountCents = Number(order.totalCents);
-    const productName = orderItem.product.translations[0]?.name ?? orderItem.product.code;
+    const baseProductName = orderItem.product.translations[0]?.name ?? orderItem.product.code;
+    const productName = baseProductName.startsWith("MyKinLegacy ")
+      ? baseProductName
+      : `MyKinLegacy ${baseProductName}`;
     const session = await this.stripeAdapter.createCheckoutSession({
       orderNumber: order.orderNumber,
       amountCents,

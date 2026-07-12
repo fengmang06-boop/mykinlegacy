@@ -61,7 +61,11 @@ describe("PaymentsService", () => {
 
     const result = await service.createStripeCheckoutSession(validCheckoutBody(), "key-1");
 
-    expect(stripeCalls[0]).toMatchObject({ amountCents: 4900, currency: "USD" });
+    expect(stripeCalls[0]).toMatchObject({
+      amountCents: 4900,
+      currency: "USD",
+      productName: "MyKinLegacy Family Legacy Collection"
+    });
     expect(result.checkout_session_id).toBe("cs_test_123");
   });
 
