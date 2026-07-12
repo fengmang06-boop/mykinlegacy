@@ -149,7 +149,8 @@ case "$ACTION" in
   restart_nginx)
     echo "===== RESTART NGINX ====="
     echo "mode=lightweight no_git_pull=yes no_build=yes"
-    compose up -d --no-build nginx
+    export_last_successful_image
+    compose up -d --no-build --no-deps --force-recreate nginx
     bash "$SCRIPT_DIR/health-check.sh"
     echo "OPS_RESTART_NGINX_COMPLETE"
     ;;
@@ -157,6 +158,7 @@ case "$ACTION" in
   restart_services)
     echo "===== RESTART SERVICES ====="
     echo "mode=lightweight no_git_pull=yes no_build=yes"
+    export_last_successful_image
     compose up -d --no-build
     bash "$SCRIPT_DIR/health-check.sh"
     echo "OPS_RESTART_SERVICES_COMPLETE"
@@ -217,6 +219,7 @@ case "$ACTION" in
     fi
     export_last_successful_image
     compose up -d --no-build --force-recreate api worker web
+    compose up -d --no-build --no-deps --force-recreate nginx
     health_check_with_retry
     echo "OPS_RESUME_CHECKOUT_COMPLETE checkout_enabled=true founder_review_required=true order_limit=25"
     ;;
