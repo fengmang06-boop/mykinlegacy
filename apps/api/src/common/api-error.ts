@@ -12,6 +12,8 @@ export type ApiErrorCode =
   | "identity_version_conflict"
   | "idempotency_conflict"
   | "payment_webhook_invalid"
+  | "checkout_paused"
+  | "founder_edition_full"
   | "download_token_invalid"
   | "download_token_expired"
   | "download_token_revoked"

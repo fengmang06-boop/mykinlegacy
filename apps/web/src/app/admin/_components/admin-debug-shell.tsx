@@ -9,11 +9,12 @@ export function AdminDebugShell({
   children
 }: {
   access: AdminAccess;
-  active: "orders" | "email-logs" | "download-tokens";
+  active: "founder-edition" | "orders" | "email-logs" | "download-tokens";
   children: ReactNode;
 }) {
   const tokenParam = access.token ? `?token=${encodeURIComponent(access.token)}` : "";
   const links = [
+    { key: "founder-edition", label: "Founder Edition", href: `/admin/founder-edition${tokenParam}` },
     { key: "orders", label: "Orders", href: `/admin/orders${tokenParam}` },
     { key: "email-logs", label: "Email Logs", href: `/admin/email-logs${tokenParam}` },
     { key: "download-tokens", label: "Download Tokens", href: `/admin/download-tokens${tokenParam}` }

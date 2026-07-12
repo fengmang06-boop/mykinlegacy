@@ -641,6 +641,108 @@ describe("worker app foundation", () => {
       })
     );
   });
+
+  it("holds generated Founder Edition delivery until Founder approval", async () => {
+    process.env.FOUNDER_REVIEW_REQUIRED = "true";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule({
+      orderMetadataJson: { founder_edition: true, founder_review_status: "pending" }
+    });
+    const app = createWorkerApp({
+      config: {
+        redisUrl: "redis://localhost:6379",
+        concurrency: 1,
+        pollIntervalMs: 60_000,
+        enableOutboxDispatcher: false,
+        environment: "test",
+        recoveryScanEnabled: false,
+        recoveryScanIntervalMs: 300_000,
+        cleanupDestructiveEnabled: false,
+        stuckOrderThresholdMinutes: 30
+      },
+      queueModule,
+      databaseModule,
+      aiModule: createMockAiModule(),
+      storageModule: createMockStorageModule(),
+      pdfModule: createMockPdfModule(),
+      emailModule: createMockEmailModule()
+    });
+    try {
+      const worker = queueModule.createdWorkers.find(
+        (candidate) => candidate.queueName === "payment-confirmation"
+      );
+      if (!worker) throw new Error("payment_worker_missing");
+      await worker.run({
+        data: {
+          job_id: "job_founder_hold",
+          job_name: "payment_confirmed_placeholder",
+          queue_name: "payment-confirmation",
+          correlation_id: "corr_founder_hold",
+          order_id: "order_1",
+          order_number: "AHL-FOUNDER-HOLD",
+          manifest_id: null,
+          identity_version_id: null,
+          attempt: 0,
+          max_attempts: 3,
+          idempotency_key: "outbox:evt_founder_hold",
+          created_at: "2026-07-12T00:00:00.000Z",
+          payload: {
+            outbox_event_id: "evt_founder_hold",
+            event_type: "order.paid",
+            aggregate_type: "order",
+            aggregate_id: "order_1",
+            event_payload: {
+              order_id: "order_1",
+              order_number: "AHL-FOUNDER-HOLD",
+              order_item_id: "item_1"
+            }
+          }
+        },
+        attemptsMade: 0
+      });
+      expect(databaseModule.state.sentDeliveryInput).toBeNull();
+      expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+        expect.objectContaining({ message: "FOUNDER_REVIEW_HOLD_CREATED" })
+      );
+      expect(databaseModule.state.orderUpdates).toContainEqual(
+        expect.objectContaining({ order_status: "processing", fulfillment_status: "generating" })
+      );
+    } finally {
+      await app.shutdown();
+      delete process.env.FOUNDER_REVIEW_REQUIRED;
+    }
+  });
+
+  it("does not recover a Founder Edition order before Founder approval", async () => {
+    process.env.FOUNDER_REVIEW_REQUIRED = "true";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule({
+      completedMissingEmailOrders: [
+        buildVaultReadyOrder({
+          id: "order_founder_pending",
+          orderNumber: "AHL-FOUNDER-PENDING",
+          metadataJson: { founder_edition: true, founder_review_status: "pending" }
+        })
+      ]
+    });
+    try {
+      const result = await recoverCompletedOrdersMissingDeliveryEmail({
+        queueModule,
+        databaseModule: databaseModule as never,
+        orchestrationRepository: {},
+        emailModule: createMockEmailModule()
+      });
+      expect(result).toEqual({ scanned: 1, recovered: 0, failed: 0 });
+      expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "EMAIL_TRIGGER_SKIPPED_REASON",
+          extra: expect.objectContaining({ reason: "founder_review_pending" })
+        })
+      );
+    } finally {
+      delete process.env.FOUNDER_REVIEW_REQUIRED;
+    }
+  });
 });
 
 function createMockQueueModule() {
@@ -765,12 +867,14 @@ function buildVaultReadyOrder(input: {
   orderNumber: string;
   fulfillmentStatus?: string;
   emailLogs?: unknown[];
+  metadataJson?: Record<string, unknown>;
 }) {
   return {
     id: input.id,
     orderNumber: input.orderNumber,
     paymentStatus: "paid",
     fulfillmentStatus: input.fulfillmentStatus ?? "completed",
+    metadataJson: input.metadataJson ?? {},
     downloadTokens: [
       {
         id: `${input.id}_download_token_old`,
@@ -782,7 +886,11 @@ function buildVaultReadyOrder(input: {
   };
 }
 
-function createMockDatabaseModule(options: { stuckOrders?: unknown[]; completedMissingEmailOrders?: unknown[] } = {}) {
+function createMockDatabaseModule(options: {
+  stuckOrders?: unknown[];
+  completedMissingEmailOrders?: unknown[];
+  orderMetadataJson?: Record<string, unknown>;
+} = {}) {
   currentDatabaseModuleState = {
     sentDeliveryInput: null,
     emailLogs: [] as unknown[],
@@ -804,6 +912,7 @@ function createMockDatabaseModule(options: { stuckOrders?: unknown[]; completedM
         create: vi.fn(async (args: { data: unknown }) => args.data)
       },
       order: {
+        findUnique: vi.fn(async () => ({ metadataJson: options.orderMetadataJson ?? {} })),
         findMany: vi.fn(async (args: unknown) => {
           const where = (args as { where?: Record<string, unknown> }).where ?? {};
           if (where.downloadTokens) {

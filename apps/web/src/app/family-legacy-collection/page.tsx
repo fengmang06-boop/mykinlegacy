@@ -89,12 +89,16 @@ export default function FamilyLegacyCollectionPage() {
             </article>
           </div>
           <div className="product-panel">
-            <p className="eyebrow">Meaningful family keepsake</p>
+            <p className="eyebrow">Founder Edition · Limited Early Access</p>
             <h1>Family Legacy Collection</h1>
             <p className="lead">
               The Family Legacy Collection is a private digital keepsake designed for parents,
               grandparents, and families who deserve something more meaningful than another ordinary
               gift.
+            </p>
+            <p className="notice">
+              Limited to the first 25 orders. Personalized digital delivery only, normally within
+              two business days after Founder review.
             </p>
             <ProductDetails />
           </div>
@@ -113,7 +117,7 @@ export default function FamilyLegacyCollectionPage() {
           </article>
           <article>
             <h3>Digital Delivery</h3>
-            <p>Delivered through your private vault for gifting and personal keeping.</p>
+            <p>Founder reviewed and delivered through your private vault. No physical shipping.</p>
           </article>
           <article>
             <h3>Clear Boundaries</h3>

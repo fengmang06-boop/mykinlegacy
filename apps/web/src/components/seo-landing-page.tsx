@@ -56,13 +56,13 @@ export function SeoLandingPage({
           <div className="delivery-mockup" aria-label={`${BRAND_NAME} collection preview`}>
             <article className="mockup-item featured">
               <span className="mini-crest" aria-hidden="true" />
-              <strong>Symbolic Crest</strong>
-              <span>Three PNG artwork variants</span>
+              <strong>Final Crest</strong>
+              <span>One personalized finished artwork</span>
             </article>
             <article className="mockup-item">
               <span className="mini-certificate" aria-hidden="true" />
-              <strong>Certificate</strong>
-              <span>Printable PDF</span>
+              <strong>Heritage Certificate</strong>
+              <span>Frameable keepsake PDF</span>
             </article>
             <article className="mockup-item">
               <span className="mini-story" aria-hidden="true" />
@@ -72,8 +72,8 @@ export function SeoLandingPage({
             <article className="mockup-item wide">
               <span className="mini-vault" aria-hidden="true" />
               <div>
-                <strong>Download Vault</strong>
-                <span>Token-protected private file delivery</span>
+                <strong>Private Vault</strong>
+                <span>Complete Collection archive delivery</span>
               </div>
             </article>
           </div>

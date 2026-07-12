@@ -102,6 +102,7 @@ interface QueueModule {
 }
 
 type OrderRecoveryDelegate = {
+  findUnique(args: unknown): Promise<unknown | null>;
   findMany(args: unknown): Promise<unknown[]>;
 };
 
@@ -619,6 +620,39 @@ async function fulfillOrderPaidOutbox(input: {
   const orderId = requireStringField(input.outboxEvent.payload_json, "order_id");
   const orderNumber =
     input.orderNumberFallback ?? requireStringField(input.outboxEvent.payload_json, "order_number");
+  const orderRow = await input.databaseModule.prisma.order.findUnique({
+    where: { id: orderId },
+    select: { metadataJson: true }
+  });
+  if (founderReviewPending(orderRow)) {
+    input.queueModule.writeWorkerLog({
+      level: "info",
+      message: "FOUNDER_REVIEW_HOLD_CREATED",
+      queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+      extra: {
+        order_id: orderId,
+        order_number: orderNumber,
+        download_token_id: generationResult.download_token_id,
+        email_delivery_status: "founder_review_pending",
+        raw_token_omitted: true
+      }
+    });
+    await updateOrderDeliveryStatus({
+      orchestrationRepository: input.orchestrationRepository,
+      orderId,
+      orderStatus: "processing",
+      fulfillmentStatus: "generating",
+      completedAt: null
+    });
+    return {
+      manifest_id: manifestResult.manifest.id,
+      generation_job_id: manifestResult.generation_job_id,
+      created: manifestResult.created,
+      download_token_id: generationResult.download_token_id,
+      email_delivery_status: "founder_review_pending",
+      email_recipient_source: null
+    };
+  }
   input.queueModule.writeWorkerLog({
     level: "info",
     message: "EMAIL_TRIGGER_CONDITION_MET",
@@ -867,6 +901,9 @@ export async function recoverCompletedOrdersMissingDeliveryEmail(input: {
 }
 
 function getEmailRecoveryExclusionReason(orderRow: unknown): string | null {
+  if (founderReviewPending(orderRow)) {
+    return "founder_review_pending";
+  }
   const emailLogs = recordArray(orderRow, "emailLogs");
   const hasSuccessfulResend = emailLogs.some(
     (log) => recordValue(log, "provider") === "resend" && recordValue(log, "status") === "sent"
@@ -876,6 +913,12 @@ function getEmailRecoveryExclusionReason(orderRow: unknown): string | null {
   }
 
   return null;
+}
+
+function founderReviewPending(orderRow: unknown): boolean {
+  if (process.env.FOUNDER_REVIEW_REQUIRED?.trim().toLowerCase() !== "true") return false;
+  const metadata = recordObject(orderRow, "metadataJson");
+  return metadata.founder_edition === true && metadata.founder_review_status !== "approved";
 }
 
 async function createFreshVaultTokenFromExistingVault(input: {

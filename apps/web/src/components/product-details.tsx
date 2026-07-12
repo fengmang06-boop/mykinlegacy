@@ -8,19 +8,18 @@ import { formatMoneyFromCents } from "../lib/format";
 import { trackEvent } from "../lib/analytics";
 
 const collectionArtifacts = [
-  "Private family collection",
-  "Recognition letter",
-  "Symbolic crest artwork",
-  "Private archive certificate",
-  "Family story",
-  "Symbol guide",
+  "One personalized Final Crest",
+  "One Heritage Certificate",
+  "One Family Story",
+  "One Meaning Behind Your Crest",
+  "One Complete Collection archive",
   "Secure private vault"
 ];
 
 const confidenceNotes = [
   "Prepared as a private digital collection.",
-  "You can review the collection before final delivery.",
-  "Delivered for gifting, sharing, and personal keeping."
+  "Founder reviewed before final delivery.",
+  "Normally delivered within two business days."
 ];
 
 export function ProductDetails() {
@@ -118,7 +117,7 @@ export function ProductDetails() {
         <div className="summary-list">
           <div className="summary-row">
             <strong>Delivery</strong>
-            <span>Private Collection Vault</span>
+            <span>Founder-reviewed Private Collection Vault, normally within two business days</span>
           </div>
           <div className="summary-row">
             <strong>Checkout</strong>
@@ -127,6 +126,10 @@ export function ProductDetails() {
           <div className="summary-row">
             <strong>Use</strong>
             <span>Receive, print, gift, and keep</span>
+          </div>
+          <div className="summary-row">
+            <strong>Support</strong>
+            <span>Correction and refund requests are reviewed under the published policies</span>
           </div>
         </div>
       </div>

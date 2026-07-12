@@ -566,3 +566,24 @@ Use rollback only for a known healthy commit. Rollback does not automatically re
 - Always run `bash deployment/status.sh` after a failed deploy.
 - Treat `DEPLOYMENT_SUCCESS` as the only deploy success signal.
 - Treat `DEPLOYMENT_FAILED` as a stop-and-diagnose signal.
+
+## Founder Edition Launch Controls
+
+Use the **MyKinLegacy Production Ops** workflow for launch controls. These actions use the
+production lock and do not rebuild images or pull code.
+
+- `pause_checkout`: sets `CHECKOUT_ENABLED=false`, restarts API only, and runs health checks.
+- `resume_checkout`: enables checkout with Founder Edition, a 25-paid-order limit, and mandatory
+  Founder review. It restarts API, Worker, and Web, then runs health checks.
+- `approve_founder_delivery`: requires an order number. It validates production downloads, marks
+  the Founder review approved, creates a fresh vault link, sends the delivery email, and completes
+  the order. It never prints the raw email or vault token.
+
+The internal live report is `/admin/founder-edition?token=[redacted]`. It shows aggregate visits,
+funnel starts, paid orders, delivery activity, refunds, P0 failures, review holds, and remaining
+Founder Edition slots. Refund **requests** that have not become refund records remain a manual item
+in the Founder operations board.
+
+Keep checkout paused whenever the legal operating seller, Stripe merchant display, support
+coverage, or Founder review availability is unresolved. `resume_checkout` is an explicit launch
+decision, not a deployment step.

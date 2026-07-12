@@ -87,6 +87,24 @@ export interface AdminDownloadTokenSummary {
   download_count: number;
 }
 
+export interface FounderEditionDashboard {
+  checkout_enabled: boolean;
+  review_required: boolean;
+  order_limit: number;
+  paid_orders: number;
+  remaining_slots: number;
+  tracked_visitors: number;
+  real_examples_visits: number;
+  questionnaire_starts: number;
+  checkout_starts: number;
+  successful_deliveries: number;
+  vault_opens: number;
+  downloads: number;
+  refunds: number;
+  p0_issues: number;
+  pending_founder_reviews: number;
+}
+
 export function getAdminAccess(searchParams: SearchParams): AdminAccess {
   const configuredToken = process.env.ADMIN_ACCESS_TOKEN?.trim();
   const providedToken = stringParam(searchParams.token);
@@ -223,6 +241,78 @@ export async function getRecentDownloadTokens(): Promise<AdminDownloadTokenSumma
   }));
 }
 
+export async function getFounderEditionDashboard(): Promise<FounderEditionDashboard> {
+  const startAt = validDate(process.env.FOUNDER_EDITION_START_AT) ?? new Date("2026-07-01T00:00:00.000Z");
+  const orderLimit = positiveInteger(process.env.FOUNDER_EDITION_ORDER_LIMIT, 25);
+  const [orders, auditLogs, vaultOpens, downloads, refunds] = await Promise.all([
+    prisma.order.findMany({
+      where: { createdAt: { gte: startAt } },
+      select: {
+        paymentStatus: true,
+        orderStatus: true,
+        fulfillmentStatus: true,
+        metadataJson: true,
+        emailLogs: { select: { provider: true, status: true } },
+        downloadTokens: { select: { status: true } }
+      }
+    }),
+    prisma.auditLog.findMany({
+      where: { entityType: "conversion_funnel", createdAt: { gte: startAt } },
+      select: { action: true, ipHash: true, metadataJson: true }
+    }),
+    prisma.downloadEvent.count({ where: { eventType: "page_view", createdAt: { gte: startAt } } }),
+    prisma.downloadEvent.count({ where: { eventType: "file_download", createdAt: { gte: startAt } } }),
+    prisma.refund.count({ where: { createdAt: { gte: startAt } } })
+  ]);
+
+  const founderOrders = orders.filter(
+    (order) => objectFromJson(order.metadataJson).founder_edition === true
+  );
+  const paidOrders = founderOrders.filter((order) => order.paymentStatus === "paid");
+  const successfulDeliveries = paidOrders.filter(
+    (order) =>
+      order.orderStatus === "completed" &&
+      order.fulfillmentStatus === "completed" &&
+      order.downloadTokens.some((token) => token.status === "active") &&
+      order.emailLogs.some((log) => log.provider === "resend" && log.status === "sent")
+  ).length;
+  const pendingFounderReviews = founderOrders.filter(
+    (order) => objectFromJson(order.metadataJson).founder_review_status === "pending"
+  ).length;
+  const p0Issues = paidOrders.filter(
+    (order) => order.orderStatus === "failed" || order.fulfillmentStatus === "failed"
+  ).length;
+  const eventCount = (action: string, stepName?: string) =>
+    auditLogs.filter((log) => {
+      if (log.action !== action) return false;
+      if (!stepName) return true;
+      return stringValue(objectFromJson(log.metadataJson).step_name) === stepName;
+    }).length;
+  const visitorKeys = new Set(
+    auditLogs
+      .filter((log) => log.action === "funnel_step_viewed")
+      .map((log, index) => log.ipHash ?? `anonymous-${index}`)
+  );
+
+  return {
+    checkout_enabled: process.env.CHECKOUT_ENABLED?.trim().toLowerCase() !== "false",
+    review_required: process.env.FOUNDER_REVIEW_REQUIRED?.trim().toLowerCase() === "true",
+    order_limit: orderLimit,
+    paid_orders: paidOrders.length,
+    remaining_slots: Math.max(0, orderLimit - paidOrders.length),
+    tracked_visitors: visitorKeys.size,
+    real_examples_visits: eventCount("funnel_step_viewed", "real_examples"),
+    questionnaire_starts: eventCount("funnel_step_viewed", "create_page"),
+    checkout_starts: eventCount("checkout_started"),
+    successful_deliveries: successfulDeliveries,
+    vault_opens: vaultOpens,
+    downloads,
+    refunds,
+    p0_issues: p0Issues,
+    pending_founder_reviews: pendingFounderReviews
+  };
+}
+
 export function emailProviderSummary() {
   const provider = process.env.EMAIL_PROVIDER ?? "unset";
   const normalized = provider.toLowerCase();
@@ -280,6 +370,17 @@ function objectFromJson(value: unknown): Record<string, unknown> {
 
 function stringValue(value: unknown): string | null {
   return typeof value === "string" ? value : null;
+}
+
+function positiveInteger(value: string | undefined, fallback: number): number {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function validDate(value: string | undefined): Date | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
 function maskHash(value: string): string {

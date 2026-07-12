@@ -30,9 +30,9 @@ const testDir = dirname(fileURLToPath(import.meta.url));
 describe("customer frontend flow", () => {
   it("landing page renders CTA and disclaimer", () => {
     const html = renderToStaticMarkup(<HomePage />);
-    expect(html).toContain(
-      "A meaningful family keepsake for the parents who already have everything."
-    );
+    expect(html).toContain("A personalized family legacy gift for someone you love.");
+    expect(html).toContain("Limited to");
+    expect(html).toContain("25 Founder Edition orders");
     expect(html).toContain("Create Your Legacy");
     expect(html).toContain("View Collections");
     expect(html).toContain("not an official coat of arms");

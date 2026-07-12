@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 
-import { ApiClient, type OrderStatus, type ProductDetail } from "../lib/api-client";
+import { ApiClient, ApiClientError, type OrderStatus, type ProductDetail } from "../lib/api-client";
 import { trackEvent, trackFunnelStepViewed } from "../lib/analytics";
 import { formatMoneyFromCents } from "../lib/format";
 
@@ -27,10 +27,11 @@ const consentLabels: Record<(typeof REQUIRED_CONSENTS)[number], string> = {
 };
 
 const collectionArtifacts = [
-  "Final crest artwork",
-  "Heritage certificate",
-  "Family story",
-  "Meaning behind your crest",
+  "One personalized Final Crest",
+  "One Heritage Certificate",
+  "One Family Story",
+  "One Meaning Behind Your Crest",
+  "One Complete Collection archive",
   "Secure private vault"
 ];
 
@@ -164,8 +165,12 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
       trackEvent("checkout_started", { order_number: orderNumber }, { durationMs, stepName: "checkout" });
       trackEvent("funnel_step_completed", { step_name: "checkout", order_number: orderNumber }, { durationMs, stepName: "checkout" });
       window.location.assign(session.checkout_url);
-    } catch {
-      setError("Stripe checkout could not be created. Please retry.");
+    } catch (checkoutError) {
+      setError(
+        checkoutError instanceof ApiClientError
+          ? checkoutError.message
+          : "Stripe checkout could not be created. Please retry."
+      );
       setState("idle");
     }
   }
@@ -205,11 +210,12 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
     <section className="journey-shell">
       <div className="section checkout-layout">
         <div className="journey-card">
-          <p className="eyebrow">Private vault checkout</p>
+          <p className="eyebrow">Founder Edition · Limited Early Access</p>
           <h1>Reserve and prepare their Family Legacy Collection</h1>
           <p className="lead">
-            Confirm the digital keepsake, accept the private delivery terms, and continue to secure
-            Stripe checkout.
+            Confirm the personalized digital collection, accept the private delivery terms, and
+            continue to secure Stripe checkout. Each Early Access order is reviewed before final
+            delivery and is normally delivered within two business days.
           </p>
           {error ? <p className="error">{error}</p> : null}
           <div className="grid">
@@ -223,7 +229,8 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
               </p>
               <p className="muted">Delivery email is stored securely with your private order.</p>
               <p className="notice">
-                Prepared as a private digital collection for gifting and personal keeping.
+                Digital delivery only. No physical product is shipped. Corrections and refund
+                eligibility are reviewed under the published support and refund policies.
               </p>
             </section>
             <section className="card">

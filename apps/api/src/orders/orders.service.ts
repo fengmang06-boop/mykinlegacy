@@ -207,7 +207,8 @@ export class OrdersService {
           metadataJson: {
             interview_id: interviewId,
             house_id: houseId,
-            identity_version_id: identityVersionId
+            identity_version_id: identityVersionId,
+            ...(founderEditionMetadata())
           },
           createdAt: timestamp,
           updatedAt: timestamp
@@ -944,6 +945,15 @@ function stringArray(value: unknown): string[] {
 
 function stringOrNull(value: unknown): string | null {
   return typeof value === "string" && value.trim() ? value : null;
+}
+
+function founderEditionMetadata(): Record<string, unknown> {
+  if (process.env.FOUNDER_EDITION_ENABLED?.trim().toLowerCase() !== "true") return {};
+  return {
+    founder_edition: true,
+    founder_edition_launch: "early_access_v1",
+    founder_review_status: process.env.FOUNDER_REVIEW_REQUIRED === "true" ? "pending" : "not_required"
+  };
 }
 
 function customerInputsFromInterview(answersJson: unknown): {

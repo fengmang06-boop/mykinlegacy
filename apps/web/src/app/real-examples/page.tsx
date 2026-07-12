@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { FunnelStepTracker } from "../../components/funnel-tracker";
 import { ShowcaseGallery } from "../../components/showcase-gallery";
 import { publicMetadata } from "../../lib/seo";
 
@@ -14,6 +15,7 @@ export const metadata: Metadata = publicMetadata({
 export default function RealExamplesPage() {
   return (
     <main className="premium-page showcase-page">
+      <FunnelStepTracker stepName="real_examples" metadata={{ page: "/real-examples" }} />
       <section className="premium-hero showcase-hero">
         <div className="section">
           <p className="eyebrow">Real Example Collections</p>

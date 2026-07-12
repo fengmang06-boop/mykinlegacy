@@ -22,12 +22,20 @@ export default function DigitalDeliveryPage() {
           body: "Each Family Legacy Collection includes one Final Crest, one Heritage Certificate, one Family Story, one Meaning Behind Your Crest document, and one Complete Collection archive."
         },
         {
+          title: "Founder Edition timing",
+          body: "Founder Edition collections are normally reviewed and delivered within two business days after payment. If clarification or recovery is needed, support will contact the buyer or provide a status update."
+        },
+        {
           title: "Download Vault",
           body: "Customers receive token-protected vault access. Tokens can expire, be revoked, or be reissued by support after review."
         },
         {
           title: "Email delivery",
           body: "Delivery email contains a vault link, not signed asset URLs. Email logs do not store raw download tokens."
+        },
+        {
+          title: "Corrections",
+          body: "Support reviews incorrect recipient details, occasion details, missing files, broken files, and delivery defects. Requests for a different subjective design are reviewed individually and are not promised as unlimited revisions."
         },
         {
           title: "No shipping",

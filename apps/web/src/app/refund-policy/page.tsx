@@ -15,7 +15,7 @@ export default function RefundPolicyPage() {
     <PolicyPage
       eyebrow="Refund policy"
       title="Refund Policy"
-      intro="This refund policy explains how personalized digital goods are reviewed after purchase."
+      intro="Founder Edition orders are personalized digital goods. Support reviews cancellation, correction, and refund requests individually under the terms below."
       sections={[
         {
           title: "Before generation",
@@ -28,6 +28,10 @@ export default function RefundPolicyPage() {
         {
           title: "Failed generation",
           body: "If required assets cannot be generated or delivered after retries, support may offer regeneration, replacement files, or refund review."
+        },
+        {
+          title: "Corrections and satisfaction review",
+          body: "Incorrect recipient or occasion details, missing files, broken files, and delivery defects are eligible for correction review. Subjective redesign requests are considered individually and do not include unlimited revisions."
         },
         {
           title: "How to request review",

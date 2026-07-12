@@ -10,7 +10,10 @@ import { StripeAdapter } from "./stripe.adapter";
 import type { PaymentOrderRecord } from "./payment-types";
 
 type PaymentsClient = {
-  order: { findUnique: (args: unknown) => Promise<PaymentOrderRecord | null> };
+  order: {
+    findUnique: (args: unknown) => Promise<PaymentOrderRecord | null>;
+    findMany: (args: unknown) => Promise<Array<{ metadataJson: unknown }>>;
+  };
   paymentIntent: {
     upsert: (args: unknown) => Promise<{ id: string; providerIntentId: string }>;
   };
@@ -37,6 +40,7 @@ export class PaymentsService {
   }
 
   private async createStripeCheckoutSessionUnsafe(body: unknown) {
+    assertCheckoutOpen();
     const data = requireDataEnvelope(body);
     rejectFields(data, ["amount", "amount_cents", "price", "price_cents", "currency"]);
     const orderNumber = requireString(data, "order_number");
@@ -65,6 +69,7 @@ export class PaymentsService {
       });
     }
     assertOrderCanCheckout(order);
+    await this.assertFounderEditionCapacity(order);
 
     const orderItem = order.orderItems[0];
     if (!orderItem) {
@@ -101,6 +106,34 @@ export class PaymentsService {
       checkout_url: session.url,
       expires_at: session.expiresAt.toISOString()
     };
+  }
+
+  private async assertFounderEditionCapacity(order: PaymentOrderRecord) {
+    const metadata = recordValue(order.metadataJson);
+    if (metadata.founder_edition !== true) return;
+
+    const limit = positiveInteger(process.env.FOUNDER_EDITION_ORDER_LIMIT, 25);
+    const launchStart = validDate(process.env.FOUNDER_EDITION_START_AT);
+    const paidOrders = await this.prisma.order.findMany({
+      where: {
+        paymentStatus: "paid",
+        ...(launchStart ? { createdAt: { gte: launchStart } } : {})
+      },
+      select: { metadataJson: true }
+    });
+    const founderEditionPaid = paidOrders.filter(
+      (candidate) => recordValue(candidate.metadataJson).founder_edition === true
+    ).length;
+
+    if (founderEditionPaid >= limit) {
+      throw new ApiException({
+        errorCode: "founder_edition_full",
+        message: `Founder Edition order limit reached: ${founderEditionPaid}/${limit}.`,
+        userMessage: "Founder Edition is currently full. Please contact support for availability.",
+        status: HttpStatus.CONFLICT,
+        affectedField: "order_number"
+      });
+    }
   }
 
   private async upsertPaymentIntent(
@@ -143,6 +176,34 @@ export class PaymentsService {
       }
     });
   }
+}
+
+export function assertCheckoutOpen(): void {
+  if (process.env.CHECKOUT_ENABLED?.trim().toLowerCase() === "false") {
+    throw new ApiException({
+      errorCode: "checkout_paused",
+      message: "Checkout is paused by the operational kill switch.",
+      userMessage: "Checkout is temporarily paused. Please contact support for availability.",
+      status: HttpStatus.SERVICE_UNAVAILABLE
+    });
+  }
+}
+
+function recordValue(value: unknown): Record<string, unknown> {
+  return value && typeof value === "object" && !Array.isArray(value)
+    ? (value as Record<string, unknown>)
+    : {};
+}
+
+function positiveInteger(value: string | undefined, fallback: number): number {
+  const parsed = Number.parseInt(value ?? "", 10);
+  return Number.isInteger(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function validDate(value: string | undefined): Date | null {
+  if (!value) return null;
+  const parsed = new Date(value);
+  return Number.isNaN(parsed.getTime()) ? null : parsed;
 }
 
 export function assertOrderCanCheckout(order: PaymentOrderRecord): void {

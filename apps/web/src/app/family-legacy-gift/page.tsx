@@ -6,7 +6,7 @@ import { publicMetadata } from "../../lib/seo";
 export const metadata: Metadata = publicMetadata({
   title: "Family Legacy Gift | MyKinLegacy",
   description:
-    "Design a private family legacy gift with symbolic crest artwork, family story, private archive certificate, and digital delivery.",
+    "Create a private family legacy gift with one Final Crest, Heritage Certificate, Family Story, Meaning Behind Your Crest, and private digital delivery.",
   path: "/family-legacy-gift"
 });
 
@@ -16,7 +16,7 @@ export default function FamilyLegacyGiftPage() {
       eyebrow="Family legacy gift"
       title="Turn family values into a lasting digital legacy gift"
       description="Capture surname, origins, values, symbols, and motto language in a private Family Legacy Collection."
-      highlights={["Family values captured", "Legacy story PDF", "Private archive certificate"]}
+      highlights={["One personalized Final Crest", "Family Story", "Heritage Certificate"]}
       faq={[
         {
           question: "Who is this for?",

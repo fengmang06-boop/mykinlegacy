@@ -119,13 +119,13 @@ const steps = [
   [
     "2",
     "We Create",
-    "We shape values, culture, symbols, and story into a private collection.",
+    "We shape values, culture, symbols, and story into one private digital collection.",
     `${finalHomepageAsset}/05_homepage/steps/step-02-we-create.webp`
   ],
   [
     "3",
-    "Review",
-    "See the direction before the collection becomes final.",
+    "Founder Review",
+    "Each Early Access collection is checked before its private delivery is released.",
     `${finalHomepageAsset}/05_homepage/steps/step-03-review.webp`
   ],
   [
@@ -193,11 +193,12 @@ export default function HomePage() {
       <section className="home-hero">
         <div className="home-shell home-hero-grid">
           <div className="home-hero-copy">
-            <p className="home-eyebrow">Private family legacy collection</p>
-            <h1>A meaningful family keepsake for the parents who already have everything.</h1>
+            <p className="home-eyebrow">Founder Edition · Limited Early Access</p>
+            <h1>A personalized family legacy gift for someone you love.</h1>
             <p className="home-hero-subtext">
-              Turn your family&apos;s values, culture, and symbols into a private legacy collection
-              your parents can enjoy, share, and pass down.
+              One Final Crest, three keepsake publications, and a Complete Collection archive,
+              prepared from the family details you share and reviewed before delivery. Limited to
+              the first 25 Founder Edition orders.
             </p>
             <div className="home-cta-row">
               <Link className="home-button home-button-primary" href="/create">
@@ -213,7 +214,7 @@ export default function HomePage() {
             <div className="home-hero-trust" aria-label="Trust highlights">
               <span>Private by default</span>
               <span>Symbolic keepsake</span>
-              <span>Gift-ready collection</span>
+              <span>Founder reviewed</span>
             </div>
           </div>
 
@@ -376,7 +377,11 @@ export default function HomePage() {
         <div className="home-shell home-final-inner">
           <p className="home-eyebrow">Begin with confidence</p>
           <h2>Begin a Legacy Worth Keeping</h2>
-          <p>Your satisfaction is our promise. Love it, or we&apos;ll make it right.</p>
+          <p>
+            Founder Edition is a personalized digital collection, normally delivered within two
+            business days after payment and review. Support will review delivery defects,
+            incorrect recipient details, and refund eligibility under our published policy.
+          </p>
           <Link className="home-button home-button-primary" href="/create">
             Start Your Legacy Journey
           </Link>
@@ -400,6 +405,17 @@ export default function HomePage() {
               <strong>
                 Yes. It is designed for parents, grandparents, and meaningful family moments.
               </strong>
+            </div>
+            <div>
+              <span>When will it be delivered?</span>
+              <strong>
+                Founder Edition collections are normally reviewed and delivered within two
+                business days after payment.
+              </strong>
+            </div>
+            <div>
+              <span>Is anything shipped?</span>
+              <strong>No. This is a personalized digital collection with no physical delivery.</strong>
             </div>
           </div>
         </div>

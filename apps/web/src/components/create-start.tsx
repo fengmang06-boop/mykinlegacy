@@ -146,7 +146,7 @@ export function CreateStart() {
                   aria-hidden="true"
                   unoptimized
                 />
-                Archive Certificate
+                Heritage Certificate
               </span>
               <span>
                 <Image

@@ -88,6 +88,33 @@ describe("PaymentsService", () => {
     expect(JSON.stringify(result)).not.toContain("sk_test");
     expect(JSON.stringify(result)).not.toContain("whsec");
   });
+
+  it("blocks checkout when the operational kill switch is paused", async () => {
+    process.env.CHECKOUT_ENABLED = "false";
+    try {
+      const service = createService({});
+      await expect(service.createStripeCheckoutSession(validCheckoutBody(), "key-1")).rejects.toMatchObject({
+        errorCode: "checkout_paused"
+      });
+    } finally {
+      delete process.env.CHECKOUT_ENABLED;
+    }
+  });
+
+  it("blocks the 26th paid Founder Edition checkout", async () => {
+    const service = createService({
+      orderMetadata: { founder_edition: true },
+      paidFounderEditionCount: 25
+    });
+    process.env.FOUNDER_EDITION_ORDER_LIMIT = "25";
+    try {
+      await expect(service.createStripeCheckoutSession(validCheckoutBody(), "key-1")).rejects.toMatchObject({
+        errorCode: "founder_edition_full"
+      });
+    } finally {
+      delete process.env.FOUNDER_EDITION_ORDER_LIMIT;
+    }
+  });
 });
 
 function validCheckoutBody() {
@@ -105,6 +132,8 @@ function createService(options: {
   consentComplete?: boolean;
   stripeCalls?: unknown[];
   paymentIntentWrites?: unknown[];
+  orderMetadata?: Record<string, unknown>;
+  paidFounderEditionCount?: number;
 }) {
   const orderExists = options.orderExists ?? true;
   const consentComplete = options.consentComplete ?? true;
@@ -117,7 +146,7 @@ function createService(options: {
         fulfillmentStatus: "not_started",
         totalCents: 4900n,
         currency: "USD",
-        metadataJson: {},
+        metadataJson: options.orderMetadata ?? {},
         orderItems: [
           {
             id: "01H00000000000000000000002",
@@ -145,7 +174,13 @@ function createService(options: {
 
   const prismaService = {
     db: {
-      order: { findUnique: async () => order },
+      order: {
+        findUnique: async () => order,
+        findMany: async () =>
+          Array.from({ length: options.paidFounderEditionCount ?? 0 }, () => ({
+            metadataJson: { founder_edition: true }
+          }))
+      },
       paymentIntent: {
         upsert: async (args: unknown) => {
           options.paymentIntentWrites?.push((args as { create: unknown }).create ? args : (args as { data: unknown }).data);

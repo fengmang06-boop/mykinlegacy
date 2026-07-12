@@ -184,6 +184,30 @@ case "$ACTION" in
     echo "OPS_WORKER_LOGS_COMPLETE"
     ;;
 
+  pause_checkout)
+    echo "===== PAUSE CHECKOUT ====="
+    set_env_var "CHECKOUT_ENABLED" "false"
+    export_last_successful_image
+    compose up -d --no-build --force-recreate api
+    bash "$SCRIPT_DIR/health-check.sh"
+    echo "OPS_PAUSE_CHECKOUT_COMPLETE checkout_enabled=false"
+    ;;
+
+  resume_checkout)
+    echo "===== RESUME CHECKOUT ====="
+    set_env_var "CHECKOUT_ENABLED" "true"
+    set_env_var "FOUNDER_EDITION_ENABLED" "true"
+    set_env_var "FOUNDER_EDITION_ORDER_LIMIT" "25"
+    set_env_var "FOUNDER_REVIEW_REQUIRED" "true"
+    if ! grep -Eq '^FOUNDER_EDITION_START_AT=.+$' "$ENV_FILE"; then
+      set_env_var "FOUNDER_EDITION_START_AT" "$(date -u '+%Y-%m-%dT%H:%M:%SZ')"
+    fi
+    export_last_successful_image
+    compose up -d --no-build --force-recreate api worker web
+    bash "$SCRIPT_DIR/health-check.sh"
+    echo "OPS_RESUME_CHECKOUT_COMPLETE checkout_enabled=true founder_review_required=true order_limit=25"
+    ;;
+
   inspect_order)
     require_order_number
     bash "$SCRIPT_DIR/inspect-artifacts.sh" "$ORDER_NUMBER"
@@ -220,6 +244,11 @@ case "$ACTION" in
   founder_final_order_verification)
     require_order_number
     bash "$SCRIPT_DIR/founder-final-order-verification.sh" "$ORDER_NUMBER"
+    ;;
+
+  approve_founder_delivery)
+    require_order_number
+    bash "$SCRIPT_DIR/approve-founder-delivery.sh" "$ORDER_NUMBER"
     ;;
 
   ai_image_bridge_order_test)
@@ -273,7 +302,7 @@ case "$ACTION" in
 
   *)
     echo "FAIL unsupported action: ${ACTION}"
-    echo "Supported actions: health_check, restart_nginx, restart_services, docker_ps, nginx_logs, api_logs, web_logs, worker_logs, inspect_order, repair_order_artifacts, verify_download_binaries, founder_final_order_verification, ai_image_bridge_order_test, safe_deploy"
+    echo "Supported actions: health_check, restart_nginx, restart_services, docker_ps, nginx_logs, api_logs, web_logs, worker_logs, pause_checkout, resume_checkout, inspect_order, repair_order_artifacts, verify_download_binaries, founder_final_order_verification, approve_founder_delivery, ai_image_bridge_order_test, safe_deploy"
     exit 1
     ;;
 esac
