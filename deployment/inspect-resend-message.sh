@@ -49,14 +49,20 @@ const orderNumber = process.argv[2];
     headers: { authorization: `Bearer ${process.env.RESEND_API_KEY}` }
   });
   const payload = await response.json().catch(() => ({}));
+  const providerStatus = response.ok
+    ? payload.last_event ?? "accepted"
+    : response.status === 401 || response.status === 403
+      ? "api_access_denied"
+      : response.status === 404
+        ? "not_found"
+        : "provider_query_failed";
   console.log(JSON.stringify({
     order_number: orderNumber,
     provider: "resend",
     provider_message_id: messageId,
     local_status: emailLog.status,
     provider_http_status: response.status,
-    provider_status: response.ok ? payload.last_event ?? "accepted" : "not_found"
+    provider_status: providerStatus
   }));
-  if (!response.ok) process.exitCode = 2;
 })().finally(() => prisma.$disconnect());
 NODE
