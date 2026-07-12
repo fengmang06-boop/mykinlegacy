@@ -12,15 +12,12 @@ describe("Stripe Checkout branding", () => {
       display_name: "MyKinLegacy",
       background_color: "#0B0A08",
       button_color: "#C9A24A",
-      logo: { type: "url" },
       icon: { type: "url" }
     });
   });
 
   it("uses public HTTPS brand assets without secrets", () => {
-    expect(MYKINLEGACY_CHECKOUT_BRANDING.logo.url).toMatch(/^https:\/\/mykinlegacy\.com\//);
     expect(MYKINLEGACY_CHECKOUT_BRANDING.icon.url).toMatch(/^https:\/\/mykinlegacy\.com\//);
-    expect(MYKINLEGACY_CHECKOUT_BRANDING.logo.url).toMatch(/\.png$/);
     expect(MYKINLEGACY_CHECKOUT_BRANDING.icon.url).toMatch(/\.png$/);
     expect(JSON.stringify(MYKINLEGACY_CHECKOUT_BRANDING)).not.toMatch(/sk_|whsec_|token/i);
   });

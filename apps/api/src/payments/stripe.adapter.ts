@@ -9,10 +9,6 @@ export const MYKINLEGACY_CHECKOUT_BRANDING = {
   button_color: "#C9A24A",
   border_style: "rounded",
   font_family: "lora",
-  logo: {
-    type: "url",
-    url: "https://mykinlegacy.com/assets/final-homepage/01_brand/stripe-logo.png"
-  },
   icon: {
     type: "url",
     url: "https://mykinlegacy.com/assets/final-homepage/01_brand/stripe-icon.png"
