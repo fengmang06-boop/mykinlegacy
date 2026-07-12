@@ -72,6 +72,15 @@ const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
   if (!order) throw new Error("order_not_found");
   const latestEmail = order.emailLogs[0];
   if (!latestEmail?.providerMessageId) throw new Error("delivery_email_provider_acceptance_not_confirmed");
+  const payload = latestEmail.payloadJson && typeof latestEmail.payloadJson === "object" && !Array.isArray(latestEmail.payloadJson)
+    ? latestEmail.payloadJson
+    : {};
+  const deliveryTokenId = typeof payload.download_token_id === "string" ? payload.download_token_id : null;
+  if (!deliveryTokenId) throw new Error("delivery_email_token_reference_missing");
+  const revokedTokens = await prisma.downloadToken.updateMany({
+    where: { orderId: order.id, status: "active", id: { not: deliveryTokenId } },
+    data: { status: "revoked", revokedAt: new Date() }
+  });
   await prisma.order.update({
     where: { id: order.id },
     data: {
@@ -86,7 +95,9 @@ const sleep = (milliseconds) => new Promise((resolve) => setTimeout(resolve, mil
     founder_delivery: "released",
     email_provider: latestEmail.provider,
     email_status: latestEmail.status,
-    provider_message_id: latestEmail.providerMessageId
+    provider_message_id: latestEmail.providerMessageId,
+    delivery_token_id: deliveryTokenId,
+    redundant_active_tokens_revoked: revokedTokens.count
   }));
 })().finally(() => prisma.$disconnect());
 NODE
