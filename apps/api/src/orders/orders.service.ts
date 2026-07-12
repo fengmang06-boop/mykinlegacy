@@ -131,6 +131,7 @@ interface OrderArtifactRecord {
 
 type CustomerDeliveryStatus =
   | "preparing"
+  | "pending_founder_review"
   | "vault_ready"
   | "email_delivery_attention"
   | "artifact_generation_failed"
@@ -301,10 +302,21 @@ export class OrdersService {
     }
 
     if (this.orchestrationRepository) {
-      return getOrderGenerationSummary({
+      const summary = await getOrderGenerationSummary({
         order_id: order.id,
         repository: this.orchestrationRepository
       });
+      if (founderReviewIsPending(order.metadataJson)) {
+        return {
+          ...summary,
+          customer_delivery_status: "pending_founder_review" as const,
+          customer_delivery_message: customerDeliveryMessage("pending_founder_review"),
+          download_ready: false,
+          download_vault_available: false,
+          friendly_progress_status: "pending_founder_review" as const
+        };
+      }
+      return summary;
     }
 
     return {
@@ -568,7 +580,8 @@ export class OrdersService {
         },
         manifest: null,
         assets: [] as OrderArtifactRecord[],
-        downloadToken: null as { id: string; status: string } | null
+        downloadToken: null as { id: string; status: string } | null,
+        founderReviewPending: founderReviewIsPending(order.metadataJson)
       };
     }
 
@@ -595,7 +608,8 @@ export class OrdersService {
       order: orchestrationOrder,
       manifest,
       assets,
-      downloadToken
+      downloadToken,
+      founderReviewPending: founderReviewIsPending(order.metadataJson)
     };
   }
 }
@@ -615,6 +629,7 @@ function buildArtifactResponse(context: {
   } | null;
   assets: OrderArtifactRecord[];
   downloadToken: { id: string; status: string } | null;
+  founderReviewPending: boolean;
 }) {
   const expectedArtifacts = expectedArtifactEntries(context.manifest?.expected_assets ?? []);
   const actualArtifacts = context.assets.map(mapOrderArtifact);
@@ -639,7 +654,8 @@ function buildArtifactResponse(context: {
     manifest_status: context.manifest?.manifest_status ?? null,
     failed_assets_count: context.manifest?.failed_assets.length ?? 0,
     vault_ready: vaultReady,
-    artifacts_downloadable: complete
+    artifacts_downloadable: complete,
+    founder_review_pending: context.founderReviewPending
   });
 
   return {
@@ -649,10 +665,10 @@ function buildArtifactResponse(context: {
     fulfillment_status: context.order.fulfillment_status,
     manifest_status: context.manifest?.manifest_status ?? null,
     customer_delivery_status: customerDeliveryStatus,
-    status: complete ? "ready" : customerDeliveryStatus,
+    status: customerDeliveryStatus === "pending_founder_review" ? customerDeliveryStatus : complete ? "ready" : customerDeliveryStatus,
     message: customerDeliveryMessage(customerDeliveryStatus),
-    download_ready: vaultReady && complete,
-    vault_ready: vaultReady && complete,
+    download_ready: !context.founderReviewPending && vaultReady && complete,
+    vault_ready: !context.founderReviewPending && vaultReady && complete,
     artifacts: actualArtifacts,
     missing_artifacts: missingArtifacts,
     access: {
@@ -836,8 +852,10 @@ function customerDeliveryStatusFor(input: {
   failed_assets_count: number;
   vault_ready: boolean;
   artifacts_downloadable: boolean;
+  founder_review_pending?: boolean;
 }): CustomerDeliveryStatus {
   if (input.payment_status !== "paid") return "preparing";
+  if (input.founder_review_pending) return "pending_founder_review";
   if (input.vault_ready && input.artifacts_downloadable) {
     return input.fulfillment_status === "failed" ? "email_delivery_attention" : "vault_ready";
   }
@@ -855,12 +873,19 @@ function customerDeliveryStatusFor(input: {
 function customerDeliveryMessage(status: CustomerDeliveryStatus): string {
   const messages: Record<CustomerDeliveryStatus, string> = {
     preparing: "Preparing your collection.",
+    pending_founder_review: "Your collection is awaiting Founder review before private delivery.",
     vault_ready: "Your private vault is ready.",
     email_delivery_attention: "Vault ready. Delivery email needs attention.",
     artifact_generation_failed: "Collection preparation failed.",
     failed: "We need to review your order."
   };
   return messages[status];
+}
+
+function founderReviewIsPending(metadataJson: unknown): boolean {
+  if (process.env.FOUNDER_REVIEW_REQUIRED?.trim().toLowerCase() !== "true") return false;
+  if (!isRecord(metadataJson)) return false;
+  return metadataJson.founder_edition === true && metadataJson.founder_review_status !== "approved";
 }
 
 function meaningProfileSummary(optionalAssets: unknown[] | undefined) {

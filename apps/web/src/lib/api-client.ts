@@ -59,6 +59,7 @@ export interface OrderStatus {
 
 export type CustomerDeliveryStatus =
   | "preparing"
+  | "pending_founder_review"
   | "vault_ready"
   | "email_delivery_attention"
   | "artifact_generation_failed"

@@ -505,6 +505,20 @@ export async function recoverStuckPaidOrders(input: {
   const result = { scanned: orders.length, recovered: 0, failed: 0 };
 
   for (const orderRow of orders) {
+    if (founderReviewPending(orderRow)) {
+      input.queueModule.writeWorkerLog({
+        level: "info",
+        message: "stuck_paid_order_skipped",
+        queue_name: input.queueModule.QUEUE_NAMES.paymentConfirmation,
+        extra: {
+          order_id: recordString(orderRow, "id"),
+          order_number: recordString(orderRow, "orderNumber"),
+          reason: "founder_review_pending",
+          raw_token_omitted: true
+        }
+      });
+      continue;
+    }
     try {
       const outboxEvent = await findOrCreateOrderPaidOutbox(input.databaseModule.prisma, orderRow, now);
       await fulfillOrderPaidOutbox({

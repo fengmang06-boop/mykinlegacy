@@ -86,7 +86,22 @@ export async function sendDeliveryEmailJob(
     },
     idempotency_key: `delivery_ready:${input.order_id}:${input.download_token_id}`
   });
-  const status = mapProviderStatus(output.status);
+  const productionMock =
+    process.env.NODE_ENV?.trim().toLowerCase() === "production" &&
+    dependencies.provider.provider_code === "mock";
+  const providerAccepted =
+    output.status === "sent" &&
+    typeof output.provider_message_id === "string" &&
+    output.provider_message_id.trim().length > 0 &&
+    !productionMock;
+  const status = providerAccepted ? "sent" : mapProviderStatus(output.status === "sent" ? "failed" : output.status);
+  const errorMessage = productionMock
+    ? "production_mock_email_forbidden"
+    : output.status === "sent" && !providerAccepted
+      ? "email_provider_acceptance_not_confirmed"
+      : status === "failed"
+        ? "email_delivery_failed"
+        : null;
   const log = await dependencies.emailLogRepository.createEmailLog({
     id: emailLogId,
     order_id: input.order_id,
@@ -95,7 +110,7 @@ export async function sendDeliveryEmailJob(
     provider_message_id: output.provider_message_id,
     recipient_email_hash: hashEmailAddress(input.recipient_email),
     status,
-    error_message: status === "failed" ? "email_delivery_failed" : null,
+    error_message: errorMessage,
     payload_json: {
       ...rendered.sanitized_payload,
       download_token_id: input.download_token_id,
@@ -106,7 +121,7 @@ export async function sendDeliveryEmailJob(
       recipient_override_active: input.delivery_test_mode === true && input.recipient_source === "test_recipient"
     },
     created_at: createdAt,
-    sent_at: output.sent_at
+    sent_at: status === "sent" ? output.sent_at : null
   });
 
   return {

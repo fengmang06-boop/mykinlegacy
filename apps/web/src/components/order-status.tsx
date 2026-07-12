@@ -233,7 +233,13 @@ function deliveryStatusCopy(status: string): DeliveryCopy {
       heading: "Your vault is ready",
       shortStatus: "Ready",
       panelTitle: "Vault Ready",
-      panelBody: "Your private vault link has been created and sent through the configured delivery channel."
+      panelBody: "Your private vault is ready for secure access."
+    },
+    pending_founder_review: {
+      heading: "Your collection is awaiting Founder review",
+      shortStatus: "Pending Founder Review",
+      panelTitle: "Founder Review",
+      panelBody: "Your collection is being reviewed before the private delivery email and vault access are released."
     },
     email_delivery_attention: {
       heading: "Your vault is ready",

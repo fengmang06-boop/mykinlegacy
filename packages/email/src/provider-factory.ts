@@ -8,6 +8,9 @@ export function createEmailProviderFromEnv(
 ): EmailProviderAdapter {
   const provider = normalizeEmailProviderCode(env.EMAIL_PROVIDER);
   if (provider === "mock" || provider === "log") {
+    if (env.NODE_ENV?.trim().toLowerCase() === "production") {
+      throw new Error("production_email_provider_must_be_real");
+    }
     return new MockEmailProvider("success");
   }
   if (provider === "resend") {
@@ -22,6 +25,9 @@ export function createEmailProviderFromEnv(
   }
   if (provider === "ses") {
     return new DisabledEmailProvider("ses");
+  }
+  if (env.NODE_ENV?.trim().toLowerCase() === "production") {
+    throw new Error("production_email_provider_must_be_real");
   }
   return new MockEmailProvider("success");
 }

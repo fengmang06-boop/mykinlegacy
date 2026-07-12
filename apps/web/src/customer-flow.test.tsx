@@ -357,6 +357,9 @@ describe("customer frontend flow", () => {
     expect(componentSource).not.toContain("<h2>Fulfillment</h2>");
     expect(stateSource).toContain("email_delivery_attention");
     expect(stateSource).toContain("your collection is not blocked");
+    expect(componentSource).toContain("Pending Founder Review");
+    expect(componentSource).not.toContain("sent through the configured delivery channel");
+    expect(stateSource).toContain("pending_founder_review");
   });
 
   it("payment cancel page renders a branded checkout recovery path", async () => {

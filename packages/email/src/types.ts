@@ -11,7 +11,7 @@ export interface SendEmailInput {
 }
 
 export interface SendEmailOutput {
-  provider_message_id: string;
+  provider_message_id: string | null;
   status: EmailSendStatus;
   sent_at: Date | null;
   raw_provider_response_json?: Record<string, unknown>;

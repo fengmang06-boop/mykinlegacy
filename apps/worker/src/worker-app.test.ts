@@ -265,6 +265,45 @@ describe("worker app foundation", () => {
     delete process.env.EMAIL_TEST_RECIPIENT;
   });
 
+  it("does not repeatedly recover or create tokens for a Founder order awaiting review", async () => {
+    process.env.FOUNDER_REVIEW_REQUIRED = "true";
+    const queueModule = createMockQueueModule();
+    const databaseModule = createMockDatabaseModule({
+      stuckOrders: [
+        {
+          id: "order_founder_pending",
+          orderNumber: "AHL-FOUNDER-PENDING",
+          paymentStatus: "paid",
+          fulfillmentStatus: "generating",
+          metadataJson: { founder_edition: true, founder_review_status: "pending" },
+          orderItems: [{ id: "item_founder_pending" }]
+        }
+      ]
+    });
+
+    try {
+      const result = await recoverStuckPaidOrders({
+        queueModule,
+        databaseModule: databaseModule as never,
+        orchestrationRepository: {},
+        emailModule: createMockEmailModule()
+      });
+
+      expect(result).toEqual({ scanned: 1, recovered: 0, failed: 0 });
+      expect(databaseModule.processOrderPaidOutbox).not.toHaveBeenCalled();
+      expect(databaseModule.runManifestDrivenGeneration).not.toHaveBeenCalled();
+      expect(databaseModule.state.downloadTokens).toHaveLength(0);
+      expect(queueModule.writeWorkerLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: "stuck_paid_order_skipped",
+          extra: expect.objectContaining({ reason: "founder_review_pending" })
+        })
+      );
+    } finally {
+      delete process.env.FOUNDER_REVIEW_REQUIRED;
+    }
+  });
+
   it("does not silently complete paid order fulfillment when delivery email fails", async () => {
     process.env.EMAIL_DELIVERY_TEST_MODE = "true";
     process.env.EMAIL_TEST_RECIPIENT = "founder-test@example.com";

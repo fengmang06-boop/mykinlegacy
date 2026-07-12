@@ -165,6 +165,51 @@ describe("mock email provider and delivery rendering", () => {
     expect(emailLogRepository.logs[0]?.error_message).toBe("email_delivery_failed");
   });
 
+  it("does not mark provider acceptance as sent without a real provider message id", async () => {
+    const emailLogRepository = new InMemoryEmailLogRepository();
+    const result = await sendDeliveryEmailJob(
+      {
+        order_id: "order_1",
+        order_number: "AH-1001",
+        download_token_id: "download_token_1",
+        raw_token_for_internal_delivery_only: "raw_token_once",
+        recipient_email: "customer@example.com",
+        expires_at: "2026-07-29T00:00:00.000Z",
+        app_web_url: "https://example.com"
+      },
+      {
+        provider: {
+          provider_code: "resend",
+          validateConfig: () => ({ valid: true, errors: [] }),
+          sendEmail: async () => ({
+            provider_message_id: null,
+            status: "sent",
+            sent_at: new Date(),
+            raw_provider_response_json: {}
+          })
+        },
+        emailLogRepository
+      }
+    );
+
+    expect(result.status).toBe("failed");
+    expect(emailLogRepository.logs[0]).toMatchObject({
+      status: "failed",
+      provider_message_id: null,
+      error_message: "email_provider_acceptance_not_confirmed",
+      sent_at: null
+    });
+  });
+
+  it("rejects mock delivery providers in production", () => {
+    expect(() =>
+      createEmailProviderFromEnv({ NODE_ENV: "production", EMAIL_PROVIDER: "mock" })
+    ).toThrow("production_email_provider_must_be_real");
+    expect(() =>
+      createEmailProviderFromEnv({ NODE_ENV: "production", EMAIL_PROVIDER: "log" })
+    ).toThrow("production_email_provider_must_be_real");
+  });
+
   it("creates configurable provider from environment without hardcoded secrets", () => {
     expect(createEmailProviderFromEnv({ EMAIL_PROVIDER: "log" }).provider_code).toBe("mock");
     expect(createEmailProviderFromEnv({ EMAIL_PROVIDER: ' "log" ' }).provider_code).toBe("mock");

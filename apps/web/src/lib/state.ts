@@ -48,6 +48,7 @@ export type DownloadState =
 
 export type CustomerDeliveryStatus =
   | "preparing"
+  | "pending_founder_review"
   | "vault_ready"
   | "email_delivery_attention"
   | "artifact_generation_failed"
@@ -60,6 +61,9 @@ export function friendlyGenerationMessage(input: {
   customer_delivery_status?: CustomerDeliveryStatus | string;
   elapsed_minutes?: number;
 }): string {
+  if (input.customer_delivery_status === "pending_founder_review") {
+    return "Your collection is awaiting Founder review before private delivery.";
+  }
   if (input.customer_delivery_status === "vault_ready") {
     return "Your private vault is ready.";
   }

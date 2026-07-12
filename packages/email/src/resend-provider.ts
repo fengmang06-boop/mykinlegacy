@@ -15,7 +15,7 @@ export class ResendEmailProvider implements EmailProviderAdapter {
     const validation = this.validateConfig();
     if (!validation.valid) {
       return {
-        provider_message_id: "resend_not_configured",
+        provider_message_id: null,
         status: "failed",
         sent_at: null,
         raw_provider_response_json: { errors: validation.errors }
@@ -41,19 +41,30 @@ export class ResendEmailProvider implements EmailProviderAdapter {
     const payload = (await response.json().catch(() => ({}))) as Record<string, unknown>;
     if (!response.ok) {
       return {
-        provider_message_id: stringField(payload.id) ?? "resend_failed",
+        provider_message_id: stringField(payload.id),
         status: "failed",
         sent_at: null,
         raw_provider_response_json: sanitizedProviderPayload(payload)
       };
     }
 
-    return {
-      provider_message_id: stringField(payload.id) ?? "resend_sent",
-      status: "sent",
-      sent_at: new Date(),
-      raw_provider_response_json: sanitizedProviderPayload(payload)
-    };
+    const providerMessageId = stringField(payload.id);
+    return providerMessageId
+      ? {
+          provider_message_id: providerMessageId,
+          status: "sent",
+          sent_at: new Date(),
+          raw_provider_response_json: sanitizedProviderPayload(payload)
+        }
+      : {
+          provider_message_id: null,
+          status: "failed",
+          sent_at: null,
+          raw_provider_response_json: {
+            ...sanitizedProviderPayload(payload),
+            error: "provider_message_id_missing"
+          }
+        };
   }
 
   validateConfig(): { valid: boolean; errors: string[] } {

@@ -202,6 +202,35 @@ describe("OrdersService", () => {
     expect(JSON.stringify(result)).not.toContain("raw-token");
   });
 
+  it("keeps Founder Edition delivery private while review is pending", async () => {
+    process.env.FOUNDER_REVIEW_REQUIRED = "true";
+    const service = new OrdersService(
+      createPrismaServiceMock({
+        metadataJson: { founder_edition: true, founder_review_status: "pending" }
+      }),
+      createOrchestrationRepository()
+    );
+
+    try {
+      const status = await service.getOrder("AHL-20260629-TEST");
+      const artifacts = await service.getArtifacts("AHL-20260629-TEST");
+
+      expect(status).toMatchObject({
+        customer_delivery_status: "pending_founder_review",
+        download_ready: false,
+        download_vault_available: false
+      });
+      expect(artifacts).toMatchObject({
+        customer_delivery_status: "pending_founder_review",
+        status: "pending_founder_review",
+        download_ready: false,
+        vault_ready: false
+      });
+    } finally {
+      delete process.env.FOUNDER_REVIEW_REQUIRED;
+    }
+  });
+
   it("returns Generation in progress fallback when artifacts are missing", async () => {
     const service = new OrdersService(
       createPrismaServiceMock(),
@@ -386,7 +415,10 @@ function validOrderBody() {
   };
 }
 
-function createPrismaServiceMock(options: { piiReadBackMissing?: boolean } = {}): PrismaService & {
+function createPrismaServiceMock(options: {
+  piiReadBackMissing?: boolean;
+  metadataJson?: Record<string, unknown>;
+} = {}): PrismaService & {
   __state: {
     orderCustomerPiiRows: Array<Record<string, unknown>>;
     orderInputRows: Array<Record<string, unknown>>;
@@ -414,7 +446,7 @@ function createPrismaServiceMock(options: { piiReadBackMissing?: boolean } = {})
     fulfillmentStatus: "not_started",
     totalCents: 4900n,
     currency: "USD",
-    metadataJson: {
+    metadataJson: options.metadataJson ?? {
       house_id: "01H00000000000000000000001"
     }
   };
