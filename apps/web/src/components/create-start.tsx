@@ -97,7 +97,7 @@ export function CreateStart() {
         <div className="section interview-layout">
           <div className="journey-card">
             <p className="eyebrow">Private gift journey</p>
-            <h1>Begin their Family Legacy Collection</h1>
+            <h2>Begin their Family Legacy Collection</h2>
             <p className="lead">
               Answer a few focused questions so the collection can reflect who it is for, what they
               mean to your family, and what should be remembered.

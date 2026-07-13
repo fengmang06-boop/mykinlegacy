@@ -9,6 +9,8 @@ export default function robots(): MetadataRoute.Robots {
       allow: [
         "/",
         "/family-legacy-collection",
+        "/real-examples",
+        "/gifts",
         "/family-crest-generator",
         "/ai-family-crest-generator",
         "/heritage-gift",
@@ -28,7 +30,8 @@ export default function robots(): MetadataRoute.Robots {
         "/order-status",
         "/download",
         "/admin",
-        "/api"
+        "/api",
+        "/review"
       ]
     },
     sitemap: `${SITE_URL}/sitemap.xml`,

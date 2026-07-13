@@ -3,7 +3,14 @@ import { Cinzel, Cormorant_Garamond, Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-import { BRAND_NAME, PRODUCT_NAME, SITE_URL, SUPPORT_EMAIL } from "../lib/seo";
+import {
+  absoluteUrl,
+  BRAND_NAME,
+  DEFAULT_SOCIAL_IMAGE,
+  PRODUCT_NAME,
+  SITE_URL,
+  SUPPORT_EMAIL
+} from "../lib/seo";
 
 import "./globals.css";
 
@@ -44,14 +51,24 @@ export const metadata: Metadata = {
       "Meaningful private family keepsakes for parents, grandparents, and families who deserve more than another ordinary gift.",
     url: SITE_URL,
     siteName: BRAND_NAME,
-    type: "website"
+    type: "website",
+    images: [
+      {
+        url: absoluteUrl(DEFAULT_SOCIAL_IMAGE),
+        alt: `${BRAND_NAME} ${PRODUCT_NAME}`
+      }
+    ]
   },
   twitter: {
     card: "summary_large_image",
     title: BRAND_NAME,
     description:
-      "Meaningful private family keepsakes for parents, grandparents, and families who deserve more than another ordinary gift."
-  }
+      "Meaningful private family keepsakes for parents, grandparents, and families who deserve more than another ordinary gift.",
+    images: [absoluteUrl(DEFAULT_SOCIAL_IMAGE)]
+  },
+  verification: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION
+    ? { google: process.env.NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION }
+    : undefined
 };
 
 function BrandMark() {
@@ -82,7 +99,19 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
     "@type": "Organization",
     name: BRAND_NAME,
     url: SITE_URL,
-    email: SUPPORT_EMAIL
+    email: SUPPORT_EMAIL,
+    logo: absoluteUrl("/assets/final-homepage/01_brand/logo-mark.webp")
+  };
+  const websiteJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    name: BRAND_NAME,
+    url: SITE_URL,
+    publisher: {
+      "@type": "Organization",
+      name: BRAND_NAME,
+      url: SITE_URL
+    }
   };
 
   return (
@@ -91,6 +120,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
         <header className="site-header">
           <nav className="nav" aria-label="Primary navigation">
@@ -103,6 +136,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             </Link>
             <div className="nav-links">
               <Link href="/family-legacy-collection">Collection</Link>
+              <Link href="/real-examples">Examples</Link>
               <Link href="/#how-it-works">How It Works</Link>
               <Link href="/#gift-ideas">Gift Ideas</Link>
               <Link href="/#faq">FAQ</Link>
@@ -129,6 +163,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
               personal keeping; not official arms or genealogy claims.
             </p>
             <div className="footer-links">
+              <Link href="/family-legacy-collection">Collection</Link>
+              <Link href="/real-examples">Real Examples</Link>
+              <Link href="/gifts/father-retirement">Gift Ideas</Link>
+              <Link href="/support">Support</Link>
               <Link href="/privacy">Privacy</Link>
               <Link href="/terms">Terms</Link>
               <Link href="/refund-policy">Refund Policy</Link>

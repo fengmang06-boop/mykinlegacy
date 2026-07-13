@@ -3,18 +3,49 @@ import Link from "next/link";
 
 import { FunnelStepTracker } from "../../components/funnel-tracker";
 import { ShowcaseGallery } from "../../components/showcase-gallery";
-import { publicMetadata } from "../../lib/seo";
+import { StructuredData } from "../../components/structured-data";
+import { showcaseCollections } from "../../lib/showcase-collections";
+import { publicMetadata, SITE_URL } from "../../lib/seo";
 
 export const metadata: Metadata = publicMetadata({
   title: "Real Example Collections | MyKinLegacy",
   description:
     "Browse real example MyKinLegacy family legacy collections for fathers, mothers, grandparents, weddings, retirements, Christmas, and meaningful family gifts.",
-  path: "/real-examples"
+  path: "/real-examples",
+  image: showcaseCollections[0]?.crestSrc
 });
 
 export default function RealExamplesPage() {
+  const itemListJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: "MyKinLegacy Real Example Collections",
+    numberOfItems: showcaseCollections.length,
+    itemListElement: showcaseCollections.map((collection, index) => ({
+      "@type": "ListItem",
+      position: index + 1,
+      url: `${SITE_URL}/real-examples/${collection.id}`,
+      name: collection.title,
+      image: `${SITE_URL}${collection.crestSrc}`
+    }))
+  };
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: SITE_URL },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: "Real Example Collections",
+        item: `${SITE_URL}/real-examples`
+      }
+    ]
+  };
+
   return (
     <main className="premium-page showcase-page">
+      <StructuredData data={[itemListJsonLd, breadcrumbJsonLd]} />
       <FunnelStepTracker stepName="real_examples" metadata={{ page: "/real-examples" }} />
       <section className="premium-hero showcase-hero">
         <div className="section">
@@ -49,6 +80,23 @@ export default function RealExamplesPage() {
             </p>
           </div>
           <ShowcaseGallery />
+        </div>
+      </section>
+
+      <section className="premium-section gift-section-ivory">
+        <div className="section">
+          <p className="eyebrow">Shop by family moment</p>
+          <h2>Find examples and guidance for the occasion you are honoring.</h2>
+          <div className="gift-related-links">
+            <Link href="/gifts/father-retirement">Retirement gift for father</Link>
+            <Link href="/gifts/fathers-day">Father&apos;s Day gift</Link>
+            <Link href="/gifts/mother-birthday">Birthday gift for mother</Link>
+            <Link href="/gifts/grandparents">Gifts for grandparents</Link>
+            <Link href="/gifts/wedding">Wedding legacy gift</Link>
+            <Link href="/gifts/anniversary">Anniversary keepsake</Link>
+            <Link href="/gifts/christmas-family">Christmas family gift</Link>
+            <Link href="/gifts/family-reunion">Family reunion gift</Link>
+          </div>
         </div>
       </section>
     </main>

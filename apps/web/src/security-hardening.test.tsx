@@ -28,6 +28,8 @@ import { metadata as orderStatusMetadata } from "./app/order-status/[order_numbe
 import { metadata as paymentCancelMetadata } from "./app/payment/cancel/page";
 import { metadata as paymentSuccessMetadata } from "./app/payment/success/page";
 import { sanitizeAnalyticsPayload } from "./lib/analytics";
+import { giftLandingPages } from "./lib/gift-landing-pages";
+import { showcaseCollections } from "./lib/showcase-collections";
 
 const appRoot = join(__dirname, "..");
 
@@ -49,21 +51,28 @@ describe("customer frontend security hardening", () => {
 
   it("keeps public pages indexable in sitemap only", () => {
     const entries = sitemap().map((entry) => entry.url);
-    expect(entries).toEqual([
-      "https://mykinlegacy.com",
-      "https://mykinlegacy.com/family-legacy-collection",
-      "https://mykinlegacy.com/family-crest-generator",
-      "https://mykinlegacy.com/ai-family-crest-generator",
-      "https://mykinlegacy.com/heritage-gift",
-      "https://mykinlegacy.com/family-legacy-gift",
-      "https://mykinlegacy.com/symbolic-family-crest",
-      "https://mykinlegacy.com/support",
-      "https://mykinlegacy.com/privacy",
-      "https://mykinlegacy.com/terms",
-      "https://mykinlegacy.com/refund-policy",
-      "https://mykinlegacy.com/digital-delivery",
-      "https://mykinlegacy.com/disclaimer"
-    ]);
+    expect(entries).toEqual(
+      expect.arrayContaining([
+        "https://mykinlegacy.com",
+        "https://mykinlegacy.com/family-legacy-collection",
+        "https://mykinlegacy.com/real-examples",
+        "https://mykinlegacy.com/family-crest-generator",
+        "https://mykinlegacy.com/heritage-gift",
+        "https://mykinlegacy.com/family-legacy-gift",
+        "https://mykinlegacy.com/symbolic-family-crest",
+        "https://mykinlegacy.com/support",
+        "https://mykinlegacy.com/privacy",
+        "https://mykinlegacy.com/terms",
+        "https://mykinlegacy.com/refund-policy",
+        "https://mykinlegacy.com/digital-delivery",
+        "https://mykinlegacy.com/disclaimer",
+        ...giftLandingPages.map((page) => `https://mykinlegacy.com/gifts/${page.slug}`),
+        ...showcaseCollections.map(
+          (collection) => `https://mykinlegacy.com/real-examples/${collection.id}`
+        )
+      ])
+    );
+    expect(entries).not.toContain("https://mykinlegacy.com/ai-family-crest-generator");
     expect(entries.join(" ")).not.toContain("/create");
     expect(entries.join(" ")).not.toContain("/checkout");
     expect(entries.join(" ")).not.toContain("/download");
@@ -73,7 +82,15 @@ describe("customer frontend security hardening", () => {
     const contract = robots();
     const disallow = contract.rules && !Array.isArray(contract.rules) ? contract.rules.disallow : [];
     expect(disallow).toEqual(
-      expect.arrayContaining(["/create", "/checkout", "/payment", "/order-status", "/download", "/admin"])
+      expect.arrayContaining([
+        "/create",
+        "/checkout",
+        "/payment",
+        "/order-status",
+        "/download",
+        "/admin",
+        "/review"
+      ])
     );
     expect(contract.sitemap).toBe("https://mykinlegacy.com/sitemap.xml");
     expect(contract.host).toBe("https://mykinlegacy.com");

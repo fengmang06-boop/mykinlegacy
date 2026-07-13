@@ -4,14 +4,15 @@ import Link from "next/link";
 import React from "react";
 
 import { FunnelStepTracker } from "../components/funnel-tracker";
+import { StructuredData } from "../components/structured-data";
 import { publicMetadata } from "../lib/seo";
 
 const finalHomepageAsset = "/assets/final-homepage";
 
 export const metadata: Metadata = publicMetadata({
-  title: "MyKinLegacy | Meaningful Family Keepsake for Parents",
+  title: "Personalized Family Gift & Legacy Keepsake | MyKinLegacy",
   description:
-    "Create a meaningful family keepsake for parents who already have everything, with a private legacy collection made for gifting and personal keeping.",
+    "Create a personalized family gift with one Final Crest, frameable certificate, Family Story, and private legacy collection for someone you love.",
   path: "/"
 });
 
@@ -37,43 +38,65 @@ const occasions = [
   [
     "Father's Day",
     "For the father who never asks for much.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-fathers-day.webp`
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-fathers-day.webp`,
+    "/gifts/fathers-day"
   ],
   [
     "Birthday",
     "For a gift that says more than another object.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-birthday.webp`
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-birthday.webp`,
+    "/gifts/mother-birthday"
   ],
   [
     "Anniversary",
     "For honoring the family two people built together.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-anniversary.webp`
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-anniversary.webp`,
+    "/gifts/anniversary"
   ],
   [
     "Christmas",
     "For the family moment everyone remembers.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-christmas.webp`
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-christmas.webp`,
+    "/gifts/christmas-family"
   ],
   [
     "Retirement",
     "For a life of work, care, and quiet legacy.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-retirement.webp`
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-retirement.webp`,
+    "/gifts/father-retirement"
   ],
   [
     "Thanksgiving",
     "For gathering around the story that holds everyone.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-thanksgiving.webp`
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-thanksgiving.webp`,
+    "/gifts/family-reunion"
   ],
   [
     "New Baby",
     "For welcoming a child into a living family story.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-new-baby.webp`
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-new-baby.webp`,
+    "/real-examples/10-new-baby"
   ],
   [
     "Graduation",
     "For sending someone forward with roots.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-graduation.webp`
+    `${finalHomepageAsset}/03_homepage/occasions/occasion-graduation.webp`,
+    "/real-examples/08-graduation"
   ]
+] as const;
+
+const homeFaq = [
+  ["Is this an official coat of arms?", "No. It is a personalized heritage-inspired symbolic keepsake."],
+  ["Is the collection private?", "Yes. It is private by default and made for personal family keeping."],
+  [
+    "Can I give it as a gift?",
+    "Yes. It is designed for parents, grandparents, and meaningful family moments."
+  ],
+  [
+    "When will it be delivered?",
+    "Founder Edition collections are normally reviewed and delivered within two business days after payment."
+  ],
+  ["Is anything shipped?", "No. This is a personalized digital collection with no physical delivery."]
 ] as const;
 
 const receives = [
@@ -187,8 +210,19 @@ function HomeAsset({
 }
 
 export default function HomePage() {
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: homeFaq.map(([question, answer]) => ({
+      "@type": "Question",
+      name: question,
+      acceptedAnswer: { "@type": "Answer", text: answer }
+    }))
+  };
+
   return (
     <main className="home-premium">
+      <StructuredData data={faqJsonLd} />
       <FunnelStepTracker stepName="landing_page" metadata={{ page: "/" }} />
       <section className="home-hero">
         <div className="home-shell home-hero-grid">
@@ -232,8 +266,7 @@ export default function HomePage() {
                 src={`${finalHomepageAsset}/02_homepage/hero/hero-main-crest.webp`}
                 width={900}
                 height={620}
-                alt=""
-                aria-hidden="true"
+                alt="Personalized Family Legacy Collection with a final crest and keepsake documents"
                 priority
               />
               <div className="home-hero-visual-caption">
@@ -267,12 +300,12 @@ export default function HomePage() {
             </p>
           </div>
           <div className="home-card-grid home-occasion-grid">
-            {occasions.map(([title, description, icon]) => (
-              <article className="home-card home-occasion-card" key={title}>
+            {occasions.map(([title, description, icon, href]) => (
+              <Link className="home-card home-occasion-card" href={href} key={title}>
                 <HomeAsset className="home-card-visual" src={icon} size={220} />
                 <h3>{title}</h3>
                 <p>{description}</p>
-              </article>
+              </Link>
             ))}
           </div>
         </div>
@@ -393,31 +426,12 @@ export default function HomePage() {
         <div className="home-shell">
           <h2>FAQ</h2>
           <div className="home-faq-list">
-            <div>
-              <span>Is this an official coat of arms?</span>
-              <strong>No. It is a personalized heritage-inspired symbolic keepsake.</strong>
-            </div>
-            <div>
-              <span>Is the collection private?</span>
-              <strong>Yes. It is private by default and made for personal family keeping.</strong>
-            </div>
-            <div>
-              <span>Can I give it as a gift?</span>
-              <strong>
-                Yes. It is designed for parents, grandparents, and meaningful family moments.
-              </strong>
-            </div>
-            <div>
-              <span>When will it be delivered?</span>
-              <strong>
-                Founder Edition collections are normally reviewed and delivered within two
-                business days after payment.
-              </strong>
-            </div>
-            <div>
-              <span>Is anything shipped?</span>
-              <strong>No. This is a personalized digital collection with no physical delivery.</strong>
-            </div>
+            {homeFaq.map(([question, answer]) => (
+              <div key={question}>
+                <span>{question}</span>
+                <strong>{answer}</strong>
+              </div>
+            ))}
           </div>
         </div>
       </section>

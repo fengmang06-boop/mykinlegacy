@@ -3,12 +3,16 @@ import type { Metadata } from "next";
 import { SeoLandingPage } from "../../components/seo-landing-page";
 import { publicMetadata } from "../../lib/seo";
 
-export const metadata: Metadata = publicMetadata({
-  title: "AI Family Crest Generator | MyKinLegacy",
-  description:
-    "Create a private family legacy collection with one final crest, symbolic meaning, story, and secure digital delivery.",
-  path: "/ai-family-crest-generator"
-});
+export const metadata: Metadata = {
+  ...publicMetadata({
+    title: "AI Family Crest Generator | MyKinLegacy",
+    description:
+      "Create a private family legacy collection with one final crest, symbolic meaning, story, and secure digital delivery.",
+    path: "/ai-family-crest-generator"
+  }),
+  robots: { index: false, follow: true },
+  alternates: { canonical: "https://mykinlegacy.com/symbolic-family-crest" }
+};
 
 export default function AiFamilyCrestGeneratorPage() {
   return (
