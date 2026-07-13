@@ -15,7 +15,9 @@ describe("PDF generation foundation", () => {
       title: "Heritage Certificate",
       body_text: [
         "Presented To: Michael Johnson",
+        "Relationship: My father",
         "Created For: Retirement",
+        "Family Values: Protection, Integrity, and Sacrifice",
         "Crest: Final Crest",
         "Archive Number: AHL-TEST-01",
         "Date: July 11, 2026",
@@ -31,17 +33,17 @@ describe("PDF generation foundation", () => {
       ].join("\n")
     });
 
-    expect(pdfText).toContain("pdf_layout_version=premium_v4");
+    expect(pdfText).toContain("pdf_layout_version=premium_v5_frameable");
     expect(pdfText).toContain("/Subtype /Image");
-    expect(pdfText).toContain("HERITAGE CERTIFICATE");
+    expect(pdfText).toContain("FAMILY LEGACY CERTIFICATE");
     expect(pdfText).toContain("PRESENTED TO");
-    expect(pdfText).toContain("Archive Number");
+    expect(pdfText).toContain("ARCHIVE NUMBER");
     expect(pdfText).toContain("MKL");
     expect(pdfText).not.toContain("Official Seal");
     expect(pdfText).not.toContain("Family Story");
     expect(pdfText).not.toContain("Primary Symbol");
     expect(pdfText).not.toMatch(FORBIDDEN_SHARED_LANGUAGE);
-    expect(pdfText.match(/\/Type \/Page\b/g) ?? []).toHaveLength(2);
+    expect(pdfText.match(/\/Type \/Page\b/g) ?? []).toHaveLength(1);
   });
 
   it("generates a distinct family storybook without certificate or symbol-guide labels", async () => {
@@ -73,6 +75,31 @@ describe("PDF generation foundation", () => {
     expect(pdfText).not.toMatch(FORBIDDEN_SHARED_LANGUAGE);
     const pages = pdfText.match(/\/Type \/Page\b/g) ?? [];
     expect(pages).toHaveLength(6);
+  });
+
+  it("uses relationship and occasion fields for safe publication fallbacks", async () => {
+    const commonFields = [
+      "Recipient: Elena Johnson",
+      "Relationship: My mother",
+      "Occasion: Christmas",
+      "Family Values: Love, Kindness, and Strength"
+    ];
+    const story = await generateTextFor({
+      deliverable_code: "family_story_pdf",
+      title: "Family Story",
+      body_text: ["Family Story", ...commonFields].join("\n")
+    });
+    const meaning = await generateTextFor({
+      deliverable_code: "symbol_explanation_pdf",
+      title: "Meaning Behind Your Crest",
+      body_text: ["Meaning Behind Your Crest", ...commonFields].join("\n")
+    });
+    const combined = `${story}\n${meaning}`;
+
+    expect(combined).toContain("Christmas");
+    expect(combined).toContain("For the family shaped by her example.");
+    expect(combined).not.toContain("his example");
+    expect(combined).not.toContain("after retirement");
   });
 
   it("generates a visual meaning guide without dictionary blocks or story repetition", async () => {

@@ -32,7 +32,7 @@ const CUSTOMER_PACKAGE_DELIVERABLES = [
 
 const MIN_CUSTOMER_ARTIFACT_BYTES = 10 * 1024;
 const ARTIFACT_BUCKET = "private-assets";
-const PDF_LAYOUT_VERSION = "premium_v4";
+const PDF_LAYOUT_VERSION = "premium_v5_frameable";
 const ZIP_ROOT = "MyKinLegacy-Private-Legacy-Collection";
 const ARTIFACT_BOUNDARY_STATEMENT =
   "This is a personalized symbolic keepsake. It is not a legal heraldic grant, noble title claim, or certified genealogical record.";
@@ -470,11 +470,14 @@ interface PngPromptMetadata {
   bridge_error?: string | null;
 }
 
-interface ArtifactContext {
+export interface ArtifactContext {
   order_number: string;
   house_name: string;
   recipient: string | null;
+  relationship: string | null;
   occasion: string | null;
+  values: string[];
+  memories: string[];
   motto: string | null;
   themes: Array<{ theme: string; evidence: string | null }>;
   symbols: Array<{
@@ -603,7 +606,7 @@ async function createArtifactBody(input: {
   }
 
   if (input.deliverable_code.endsWith("_pdf")) {
-    const sourceText = pdfTextForDeliverable(input.deliverable_code, input.context);
+    const sourceText = buildCustomerPublicationText(input.deliverable_code, input.context);
     assertContentQuality(input.deliverable_code, sourceText, input.context);
     const body = tools.buildSimplePdf(sourceText);
     return {
@@ -672,8 +675,8 @@ function generateCustomerPackageReadme(input: {
     "",
     "Opening order",
     "1. Welcome: begin here and understand how the private collection is arranged.",
-    "2. Final Crest: view the finished crest artwork before reading the longer story.",
-    "3. Heritage Certificate: open the keepsake document that introduces the collection.",
+    "2. Family Legacy Certificate: begin with the primary frameable keepsake prepared for the recipient.",
+    "3. Final Crest: view the standalone artwork at the center of the certificate.",
     "4. Family Story: read the emotional narrative slowly, preferably with close family nearby.",
     "5. Meaning Behind Your Crest: use this after the story to understand why this crest was created.",
     "",
@@ -1201,8 +1204,8 @@ function contentQualityFailures(
     for (const label of ["Dedication", "Closing Letter"]) {
       if (!sourceText.includes(label)) failures.push(`story_missing:${label.replaceAll(" ", "_").toLowerCase()}`);
     }
-    if (!/Years of Quiet Strength|A Life of Quiet Strength/i.test(sourceText)) failures.push("story_missing:life_contribution");
-    if (!/What (?:He|She|They|the Family) Gave|What the Family Received/i.test(sourceText)) failures.push("story_missing:family_contribution");
+    if (!/Years of Quiet Strength|A Life (?:of|Held|Worth)|The Care at the Heart|A Family Story Beginning/i.test(sourceText)) failures.push("story_missing:life_contribution");
+    if (!/What (?:He|She|They|the Family|.+?) Gave(?: the Family)?|What the Family Received/i.test(sourceText)) failures.push("story_missing:family_contribution");
     if (!/Carr(?:y|ies) Forward/i.test(sourceText)) failures.push("story_missing:carry_forward");
     if (!/\b(memory|legacy|meaning|family)\b/i.test(sourceText)) failures.push("story_emotion_missing");
     if (/^(Core meaning:|Why this symbol was chosen:|Official Seal|Reading Order|Printing Guidance|Preservation Note|Preservation and Sharing Note|ZIP contents|Primary Symbol|Full Crest Overview|Archive Number)$/im.test(sourceText)) {
@@ -1278,7 +1281,10 @@ function createArtifactContext(input: {
     order_number: input.order.order_number,
     house_name: houseName,
     recipient: cleanDisplayName(stringOrNull(recordValue(customerInputs, "recipient"))),
+    relationship: cleanDisplayName(stringOrNull(recordValue(customerInputs, "relationship"))),
     occasion: cleanDisplayName(stringOrNull(recordValue(customerInputs, "occasion"))),
+    values: stringArray(recordValue(customerInputs, "values")),
+    memories: stringArray(recordValue(customerInputs, "memories")),
     motto: stringOrNull(recordValue(houseDna, "motto")),
     themes: recordArray<Record<string, unknown>>(profile, "meaning_themes").map((theme) => ({
       theme: stringOrNull(recordValue(theme, "theme")) ?? "family meaning",
@@ -1292,7 +1298,7 @@ function createArtifactContext(input: {
   };
 }
 
-function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext): string {
+export function buildCustomerPublicationText(deliverableCode: string, context: ArtifactContext): string {
   if (deliverableCode === "heritage_certificate_pdf") {
     return certificatePublicationText(context);
   }
@@ -1307,12 +1313,16 @@ function pdfTextForDeliverable(deliverableCode: string, context: ArtifactContext
 function certificatePublicationText(context: ArtifactContext): string {
   const recipient = context.recipient ?? context.house_name;
   const occasion = context.occasion ?? "A family milestone";
+  const values = publicationValues(context);
   return [
     "MyKinLegacy",
-    "Heritage Certificate",
+    "Family Legacy Certificate",
     "",
     `Presented To: ${recipient}`,
+    context.relationship ? `Relationship: ${context.relationship}` : "",
     `Created For: ${occasion}`,
+    `Family Values: ${naturalList(values, "Love, unity, and legacy")}`,
+    context.memories[0] ? `Personal Memory: ${context.memories[0]}` : "",
     "Crest: Final Crest",
     `Archive Number: ${context.order_number}`,
     `Date: ${formatPublicationDate(new Date())}`,
@@ -1334,63 +1344,140 @@ function certificatePublicationText(context: ArtifactContext): string {
 
 function ceremonyStatement(context: ArtifactContext): string {
   const recipient = context.recipient ?? context.house_name;
-  const values = naturalList(context.themes.map((theme) => theme.theme).slice(0, 3), "protection, integrity, and sacrifice");
-  return `Presented in recognition of ${recipient}, whose quiet strength gave the family safety, example, and continuity. This crest honors ${values}: qualities lived through steady choices, faithful work, and care that asked for no praise.`;
+  const occasion = context.occasion ?? "this family milestone";
+  const values = naturalList(publicationValues(context), "love, unity, and legacy").toLowerCase();
+  const memory = recipientCenteredMemory(context);
+  const memorySentence = memory ? ` ${memory}` : "";
+  return `Presented to ${recipient} for ${occasion}, in recognition of ${values}.${memorySentence} May this certificate preserve the example and care honored by this family.`;
 }
 
 function familyStoryPublicationText(context: ArtifactContext): string {
   const recipient = context.recipient ?? context.house_name;
   const occasion = context.occasion ?? "this family milestone";
-  const story = firstSentences(context.collection_content?.family_story ?? "", 4);
-  const memory = firstSentences(context.collection_content?.collection_letter ?? story, 4);
-  const lifeHeading = /\b35\b|thirty-five/i.test(`${story} ${memory}`)
-    ? "Thirty-Five Years of Quiet Strength"
-    : "A Life of Quiet Strength";
+  const voice = recipientVoice(context.relationship, recipient);
+  const values = naturalList(publicationValues(context), "love, unity, and legacy").toLowerCase();
+  const memory = recipientCenteredMemory(context);
+  const collectionStory = firstSentences(context.collection_content?.family_story ?? "", 4);
+  const lifeHeading = storyLifeHeading(context, memory);
   return [
     "MyKinLegacy",
     "Family Story",
     `Recipient: ${recipient}`,
+    context.relationship ? `Relationship: ${context.relationship}` : "",
     `Occasion: ${occasion}`,
     "",
     "Dedication",
-    `For ${recipient}, with gratitude at ${occasion}. This story honors the years in which responsibility became care, difficult choices became protection, and integrity was taught through the way life was lived. It is offered by a family that noticed more than was ever said aloud.`,
+    dedicationForOccasion(recipient, occasion, values),
     "",
     lifeHeading,
-    story || `${recipient} built trust through consistency. Year after year, work was carried as a promise to keep the family secure, even when the cost was private and the effort went unmentioned. The lasting achievement is not simply time served, but the calm strength his family learned to depend on.`,
+    memory || collectionStory || `${recipient} shaped family life through everyday choices that made care visible. ${capitalize(voice.subject)} offered ${voice.possessive} strengths without asking for recognition, and the family learned what ${values} looked like in practice.`,
     "",
-    "What the Family Received",
-    memory || `${recipient} rarely spoke about sacrifice. Instead, the family saw it in early starts, responsibilities carried to completion, and the habit of placing their needs before comfort or recognition. That memory gives the story its center: love expressed through protection, patience, and work that made home feel secure.`,
+    `What ${recipient} Gave the Family`,
+    `${recipient}'s contribution lives in the security, warmth, and example the family received. ${capitalize(voice.possessive)} values were not abstract promises; they appeared in decisions, habits, and the way other people were made to feel seen and supported.`,
     "",
     "What the Family Carries Forward",
-    `Protection, integrity, and sacrifice now belong to the family as lived examples rather than abstract values. They remain in the way promises are kept, younger generations are guided, and strength is offered without display. What ${recipient} gave continues whenever his children choose the same steady care for one another.`,
+    `${capitalize(values)} now belong to the family as lived examples. What ${recipient} gave continues whenever the people shaped by ${voice.possessive} life keep promises, care for one another, and pass the same steadiness to the next generation.`,
     "",
     "Closing Letter",
-    `Dear ${recipient}, may retirement bring the time and peace that years of service made possible. Your work mattered, your sacrifices were seen, and your example has already become part of the family. What you protected now carries your integrity forward with gratitude and love.`
-  ].join("\n");
+    closingLetterForOccasion(recipient, occasion, values)
+  ].filter(Boolean).join("\n");
 }
 
 function meaningGuidePublicationText(context: ArtifactContext): string {
   const recipient = context.recipient ?? context.house_name;
   const occasion = context.occasion ?? "this family milestone";
+  const voice = recipientVoice(context.relationship, recipient);
+  const values = naturalList(publicationValues(context), "love, unity, and legacy").toLowerCase();
   return [
     "MyKinLegacy",
     "Meaning Behind Your Crest",
     "",
     "The Shield",
-    `The shield reflects the protection ${recipient} gave through years of dependable work. Its strength is calm rather than aggressive: a boundary around the people he loved, built through responsibility, practical care, and the decision to place family security before personal recognition.`,
+    `The shield gives visible form to the care ${recipient} has placed around family. It is protective without being aggressive: a steady boundary shaped by ${values}. For ${occasion}, it recognizes the way ${voice.possessive} presence has helped others feel secure, supported, and able to move forward with confidence.`,
     "",
     "The Tree",
-    `The tree represents the family life ${recipient} helped sustain. Its trunk suggests integrity under pressure, while its branches show the people and possibilities that grew from his effort. The image turns years of work into something living: shelter, continuity, and a future made steadier by his example.`,
+    `The tree represents the family life ${recipient} has helped nurture. Its trunk suggests character held steady, while its branches show the relationships and possibilities that grew around ${voice.object}. For this collection, the tree turns ${values} into a living image of shelter, continuity, and a future strengthened by ${voice.possessive} example.`,
     "",
     "The Knot",
-    `The knot at the roots gives sacrifice a visible form. Its interwoven lines acknowledge that work, duty, love, and family life were never separate for ${recipient}. He rarely spoke about what he gave up; the knot honors those choices without making them grander than the quiet truth.`,
+    `The knot at the roots represents bonds formed through shared life rather than ceremony alone. Its interwoven lines acknowledge that duty, affection, memory, and family are connected in ${recipient}'s story. It honors the choices that held people together and gives ${occasion.toLowerCase()} a symbol of continuity that feels personal rather than formal.`,
     "",
     "The Key and Guiding Star",
-    `The key and guiding star speak to what ${recipient} opened for his children and how he led them. The key suggests opportunity earned through steady labor. The star reflects guidance offered through conduct rather than speeches: a clear example of integrity that remains useful long after ${occasion.toLowerCase()}.`,
+    `The key and guiding star speak to what ${recipient} has opened for others and how ${voice.subject} has offered direction. The key suggests trust, opportunity, and a home that can be entered with confidence. The star reflects guidance through example, keeping ${voice.possessive} influence present beyond ${occasion.toLowerCase()} and into the family's next chapter.`,
     "",
     "The Laurel Frame",
-    `The laurel frame marks ${occasion.toLowerCase()} with gratitude, not status. Its branches surround the crest as recognition for endurance, service, and work completed with dignity. For ${recipient}, it is a quiet thank-you from the family: the years were noticed, the sacrifices mattered, and the example will continue.`
+    `The laurel frame marks ${occasion.toLowerCase()} with gratitude, not status. Its branches hold the crest together as a quiet recognition of ${values}. For ${recipient}, the laurel is the family's way of saying that ${voice.possessive} presence matters, ${voice.possessive} contribution is remembered, and the meaning represented here will continue.`
   ].join("\n");
+}
+
+interface RecipientVoice {
+  subject: "he" | "she" | "they";
+  object: "him" | "her" | "them";
+  possessive: "his" | "her" | "their";
+}
+
+function recipientVoice(relationship: string | null, recipient: string): RecipientVoice {
+  const evidence = `${relationship ?? ""} ${recipient}`.toLowerCase();
+  if (/\b(mother|grandmother|wife|daughter|sister|aunt|woman|female)\b/.test(evidence)) {
+    return { subject: "she", object: "her", possessive: "her" };
+  }
+  if (/\b(father|grandfather|husband|son|brother|uncle|man|male)\b/.test(evidence)) {
+    return { subject: "he", object: "him", possessive: "his" };
+  }
+  return { subject: "they", object: "them", possessive: "their" };
+}
+
+function publicationValues(context: ArtifactContext): string[] {
+  const direct = context.values.map(titleWords).filter(Boolean);
+  if (direct.length > 0) return direct.slice(0, 3);
+  return context.themes.map((theme) => titleWords(theme.theme)).filter(Boolean).slice(0, 3);
+}
+
+function recipientCenteredMemory(context: ArtifactContext): string | null {
+  const recipient = context.recipient ?? context.house_name;
+  const memory = firstSentences(context.memories[0] ?? "", 3);
+  if (!memory) return null;
+  return memory.replace(/^(?:he|she|they)\b/i, recipient);
+}
+
+function storyLifeHeading(context: ArtifactContext, memory: string | null): string {
+  const occasion = context.occasion ?? "";
+  if (/retirement/i.test(occasion) && /\b35\b|thirty-five/i.test(memory ?? "")) return "Thirty-Five Years of Quiet Strength";
+  if (/retirement/i.test(occasion)) return "A Life of Steady Contribution";
+  if (/christmas/i.test(occasion)) return "The Care at the Heart of Christmas";
+  if (/wedding|anniversary/i.test(occasion)) return "A Family Story Beginning Together";
+  if (/birthday/i.test(occasion)) return "A Life Worth Celebrating";
+  return "A Life Held in Gratitude";
+}
+
+function dedicationForOccasion(recipient: string, occasion: string, values: string): string {
+  if (/christmas/i.test(occasion)) {
+    return `For ${recipient}, at Christmas, with gratitude for the care that turns a gathering into home. This story honors ${values} as they have been lived and shared within the family.`;
+  }
+  if (/wedding/i.test(occasion)) {
+    return `For ${recipient}, on the occasion of a wedding and the beginning of a shared family chapter. This story honors ${values} as promises to carry forward together.`;
+  }
+  return `For ${recipient}, with gratitude on the occasion of ${occasion}. This story honors ${values} as qualities made visible through a life, a relationship, and the memories a family keeps.`;
+}
+
+function closingLetterForOccasion(recipient: string, occasion: string, values: string): string {
+  if (/retirement/i.test(occasion)) {
+    return `Dear ${recipient}, may retirement bring time to see how much your contribution has meant. The family carries your example forward with gratitude, and the ${values} you lived remain present in the way they care for one another.`;
+  }
+  if (/christmas/i.test(occasion)) {
+    return `Dear ${recipient}, this Christmas, may you feel the gratitude held in this family. The ${values} you have shared are part of what brings everyone home to one another, and that gift will continue through every season ahead.`;
+  }
+  if (/wedding/i.test(occasion)) {
+    return `Dear ${recipient}, may this wedding mark the beginning of a family life shaped by ${values}. What begins here can become a legacy through the promises you keep and the home you build together.`;
+  }
+  return `Dear ${recipient}, on ${occasion}, may this collection make the family's gratitude visible. The ${values} honored here remain part of what others recognize, remember, and carry forward with love.`;
+}
+
+function titleWords(value: string): string {
+  return value.trim().replace(/\b\w/g, (character) => character.toUpperCase());
+}
+
+function capitalize(value: string): string {
+  return value ? `${value[0]?.toUpperCase()}${value.slice(1)}` : value;
 }
 
 function firstSentences(value: string, count: number): string {
@@ -1536,6 +1623,7 @@ function existingMeaningCustomerInputs(manifest: OrchestrationManifest): Record<
   const customerInputs = recordObject(profile, "customer_inputs");
   return {
     recipient: recordValue(customerInputs, "recipient"),
+    relationship: recordValue(customerInputs, "relationship"),
     occasion: recordValue(customerInputs, "occasion"),
     family_memories: recordValue(customerInputs, "memories")
   };
@@ -1582,6 +1670,8 @@ function meaningInputFromOrder(input: {
   return {
     recipient: stringOrNull(recordValue(input.payload, "recipient"))
       ?? stringOrNull(recordValue(storedCustomerInputs, "recipient")),
+    relationship: stringOrNull(recordValue(input.payload, "relationship"))
+      ?? stringOrNull(recordValue(storedCustomerInputs, "relationship")),
     occasion: stringOrNull(recordValue(input.payload, "occasion"))
       ?? stringOrNull(recordValue(storedCustomerInputs, "occasion")),
     values,

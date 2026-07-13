@@ -27,7 +27,7 @@ const demoArtifacts: DownloadAsset[] = [
   {
     asset_id: "demo_heritage_certificate",
     deliverable_code: "heritage_certificate_pdf",
-    friendly_name: "Heritage Certificate",
+    friendly_name: "Family Legacy Certificate",
     asset_type: "pdf",
     file_ext: "pdf",
     mime_type: "application/pdf",
@@ -85,7 +85,7 @@ const demoVault: DownloadVaultData = {
 const artifactDescriptions: Record<string, string> = {
   crest_artwork: "A symbolic family centerpiece shaped around values, story, and belonging.",
   crest_variant_1_png: "The final approved crest artwork for this private collection.",
-  heritage_certificate_pdf: "A clean keepsake document for collection identity, ceremony, signature, and seal.",
+  heritage_certificate_pdf: "The primary frameable keepsake, centered on the recipient, occasion, Final Crest, signature, and seal.",
   family_story_pdf: "A written family narrative meant to be read, shared, and kept.",
   symbol_explanation_pdf: "A focused explanation of why this crest was created for this family.",
   download_package_zip: "Final step: the complete private collection prepared for safekeeping."
@@ -286,8 +286,8 @@ export function DownloadVault({ token }: { token: string }) {
             {vault ? <span className="vault-status-pill">{vault.assets_ready ? "Vault ready" : "Preparing"}</span> : null}
           </div>
           <p className="lead">
-            Open the final crest, certificate, story, and meaning document before saving the
-            complete collection.
+              Begin with the Family Legacy Certificate, then open the Final Crest, story, and meaning document before saving the
+              complete collection.
           </p>
           {hasPlaceholderAssets ? (
             <p className="notice placeholder-vault-notice">
@@ -425,9 +425,9 @@ export function downloadFileName(asset: Pick<DownloadAsset, "friendly_name" | "f
 
 function artifactOrder(asset: DownloadAsset): number {
   const order: Record<string, number> = {
-    crest_artwork: 1,
-    crest_variant_1_png: 1,
-    heritage_certificate_pdf: 2,
+    heritage_certificate_pdf: 1,
+    crest_artwork: 2,
+    crest_variant_1_png: 2,
     family_story_pdf: 3,
     symbol_explanation_pdf: 4,
     download_package_zip: 8
@@ -437,7 +437,7 @@ function artifactOrder(asset: DownloadAsset): number {
 
 function displayArtifactName(asset: Pick<DownloadAsset, "deliverable_code" | "friendly_name">): string {
   if (asset.deliverable_code === "crest_artwork" || asset.deliverable_code === "crest_variant_1_png") return "Final Crest";
-  if (asset.deliverable_code === "heritage_certificate_pdf") return "Heritage Certificate";
+  if (asset.deliverable_code === "heritage_certificate_pdf") return "Family Legacy Certificate";
   if (asset.deliverable_code === "symbol_explanation_pdf") return "Meaning Behind Your Crest";
   if (asset.deliverable_code === "download_package_zip") return "Download Complete Collection";
   return asset.friendly_name;
@@ -453,8 +453,8 @@ function downloadDemoCollection(asset: DownloadAsset): void {
     "",
     "Open the Family Legacy Collection in this order:",
     "- Welcome",
+    "- Family Legacy Certificate",
     "- Final Crest",
-    "- Heritage Certificate",
     "- Family Story",
     "- Meaning Behind Your Crest",
     "- Download Complete Collection",

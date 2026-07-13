@@ -314,6 +314,7 @@ export function validateMeaningProfile(
 function normalizeCustomerInputs(input: MeaningEngineInput): MeaningCustomerInputs {
   return {
     recipient: cleanOptional(input.recipient),
+    relationship: cleanOptional(input.relationship),
     occasion: cleanOptional(input.occasion),
     values: cleanList(input.values),
     memories: cleanList(input.memories),

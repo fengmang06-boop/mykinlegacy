@@ -46,7 +46,8 @@ describe("mock email provider and delivery rendering", () => {
     expect(rendered.body_html).toContain("https://example.com/download/raw_token_once");
     expect(rendered.body_html).toContain("background:#11100d");
     expect(rendered.subject).toBe("Your MyKinLegacy Private Vault Is Ready");
-    expect(rendered.body_text).toContain("crest artwork");
+    expect(rendered.body_text).toContain("primary Family Legacy Certificate");
+    expect(rendered.body_text).toContain("Final Crest");
     expect(rendered.body_text).toContain("legal heraldic grants");
     expect(rendered.body_html).toContain("legal heraldic grants");
     expect(rendered.body_text).not.toContain("signed-url");

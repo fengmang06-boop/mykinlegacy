@@ -14,6 +14,7 @@ describe("rule-based Meaning Engine", () => {
   it("maps values and memories into themes and symbols", () => {
     const profile = buildMeaningProfile({
       recipient: "father",
+      relationship: "My father",
       occasion: "retirement",
       values: ["protection", "resilience", "gratitude"],
       memories: ["He held the family together through difficult years."],
@@ -21,6 +22,7 @@ describe("rule-based Meaning Engine", () => {
     });
 
     expect(profile.source_level).toBe("customer_informed");
+    expect(profile.customer_inputs.relationship).toBe("My father");
     expect(profile.meaning_themes.map((theme) => theme.theme)).toEqual(
       expect.arrayContaining(["protection", "resilience", "gratitude"])
     );

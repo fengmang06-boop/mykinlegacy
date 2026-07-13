@@ -269,7 +269,7 @@ describe("customer frontend flow", () => {
     expect(html).toContain("complete collection archive");
     expect(html).not.toContain("Files will be prepared next");
     expect(html).not.toContain("Download files will be available in the next delivery step.");
-    expect(html).toContain("Heritage Certificate");
+    expect(html).toContain("Family Legacy Certificate");
     expect(html).toContain("Family Story");
     expect(html).toContain("Meaning Behind Your Crest");
     expect(html).not.toContain("House Meaning Summary");

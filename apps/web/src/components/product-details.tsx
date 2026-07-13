@@ -8,8 +8,8 @@ import { formatMoneyFromCents } from "../lib/format";
 import { trackEvent } from "../lib/analytics";
 
 const collectionArtifacts = [
+  "One frameable Family Legacy Certificate",
   "One personalized Final Crest",
-  "One Heritage Certificate",
   "One Family Story",
   "One Meaning Behind Your Crest",
   "One Complete Collection archive",

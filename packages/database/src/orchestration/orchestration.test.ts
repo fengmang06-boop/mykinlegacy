@@ -7,11 +7,13 @@ import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import {
   InMemoryOrchestrationRepository,
   REQUIRED_DELIVERABLES,
+  buildCustomerPublicationText,
   getAdminDbVisibilitySummary,
   getOrderGenerationSummary,
   processOrderPaidOutbox,
   runManifestDrivenGeneration
 } from "./index";
+import type { ArtifactContext } from "./index";
 import type {
   OrchestrationOrder,
   OrchestrationOrderItem,
@@ -134,19 +136,19 @@ describe("DB-backed orchestration foundation", () => {
     expect(pdfBody.toString("latin1")).toContain("House of Alder");
     expect(pdfBody.toString("latin1")).toContain("Family Story");
     expect(pdfBody.toString("latin1")).toContain("Dedication");
-    expect(pdfBody.toString("latin1")).toContain("A Life of Quiet Strength");
+    expect(pdfBody.toString("latin1")).toContain("A Life Held in Gratitude");
     expect(pdfBody.toString("latin1")).toContain("What the Family Received");
     expect(pdfBody.toString("latin1")).toContain("What the Family Carries Forward");
     expect(pdfBody.toString("latin1")).toContain("Closing Letter");
     expect(pdfBody.toString("latin1").match(/\/Type \/Page\b/g) ?? []).toHaveLength(6);
     expect(pdfBody.toString("latin1")).not.toContain("personalized symbolic keepsake");
     expect(certificateText).toContain("PRESENTED TO");
-    expect(certificateText).toContain("Archive Number");
+    expect(certificateText).toContain("ARCHIVE NUMBER");
     expect(certificateText).toContain("MKL");
     expect(certificateText).not.toContain("Official Seal");
     expect(certificateText).not.toContain("Meaning:");
     expect(certificateText).not.toContain("Family Story");
-    expect(certificateText.match(/\/Type \/Page\b/g) ?? []).toHaveLength(2);
+    expect(certificateText.match(/\/Type \/Page\b/g) ?? []).toHaveLength(1);
     expect(pdfBody.toString("latin1")).not.toMatch(
       /proves your ancestry|official family crest|legally granted arms|noble bloodline/i
     );
@@ -155,7 +157,7 @@ describe("DB-backed orchestration foundation", () => {
     );
     expect(symbolGuidePdfBody.subarray(0, 4).toString()).toBe("%PDF");
     expect(symbolGuidePdfBody.byteLength).toBeGreaterThan(10 * 1024);
-    expect(symbolGuideText).toContain("pdf_layout_version=premium_v4");
+    expect(symbolGuideText).toContain("pdf_layout_version=premium_v5_frameable");
     expect(symbolGuideText).toContain("The Shield");
     expect(symbolGuideText).toContain("The Tree");
     expect(symbolGuideText).toContain("The Knot");
@@ -188,7 +190,7 @@ describe("DB-backed orchestration foundation", () => {
       const body = await readStoredAsset(asset);
       const text = body.toString("latin1");
       expect(text).toContain("MyKinLegacy");
-      expect(text).toContain("pdf_layout_version=premium_v4");
+      expect(text).toContain("pdf_layout_version=premium_v5_frameable");
       expect(text).not.toMatch(/House of Unknown|Unknown|undefined|null|raw json|debug|placeholder/i);
     }
     expect(zipBody.toString("latin1")).toContain("Opening order");
@@ -422,6 +424,67 @@ describe("DB-backed orchestration foundation", () => {
     expect(meaningText).toContain("Michael Johnson");
   }, 15_000);
 
+  it.each([
+    {
+      label: "Mother + Christmas",
+      recipient: "Elena Johnson",
+      relationship: "My mother",
+      occasion: "Christmas",
+      memory: "She held the family together and made every Christmas gathering feel like home.",
+      required: /\bshe\b|\bher\b/i,
+      forbidden: /\bhe\b|\bhis\b|\bhim\b|retirement/i
+    },
+    {
+      label: "Father + Retirement",
+      recipient: "Michael Johnson",
+      relationship: "My father",
+      occasion: "Retirement",
+      memory: "He worked for 35 years to support and protect his family and taught his children through example.",
+      required: /\bhe\b|\bhis\b/i,
+      forbidden: /christmas|wedding/i
+    },
+    {
+      label: "Couple + Wedding",
+      recipient: "Jordan and Avery",
+      relationship: "A couple",
+      occasion: "Wedding",
+      memory: "They are beginning a family life built on faith, unity, and hope.",
+      required: /\bthey\b|\btheir\b/i,
+      forbidden: /\bhe\b|\bhis\b|\bshe\b|\bher\b|retirement/i
+    },
+    {
+      label: "Grandparent + Birthday",
+      recipient: "Grandparent",
+      relationship: "A grandparent",
+      occasion: "80th Birthday",
+      memory: "They built a new life and gave the family courage, hope, and enduring traditions.",
+      required: /\bthey\b|\btheir\b/i,
+      forbidden: /\bhe\b|\bhis\b|\bshe\b|\bher\b|retirement/i
+    },
+    {
+      label: "Unknown recipient gender",
+      recipient: "Alex Morgan",
+      relationship: null,
+      occasion: "Anniversary",
+      memory: "They have kept the family close through patient care and shared responsibility.",
+      required: /\bthey\b|\btheir\b/i,
+      forbidden: /\bhe\b|\bhis\b|\bshe\b|\bher\b|retirement/i
+    }
+  ])("keeps recipient voice and occasion consistent for $label", ({ recipient, relationship, occasion, memory, required, forbidden }) => {
+    const context = publicationContext({ recipient, relationship, occasion, memory });
+    const certificate = buildCustomerPublicationText("heritage_certificate_pdf", context);
+    const story = buildCustomerPublicationText("family_story_pdf", context);
+    const meaning = buildCustomerPublicationText("symbol_explanation_pdf", context);
+    const combined = `${certificate}\n${story}\n${meaning}`;
+
+    expect(certificate).toContain(`Presented To: ${recipient}`);
+    expect(certificate).toContain(`Created For: ${occasion}`);
+    expect(story).toContain(`Occasion: ${occasion}`);
+    expect(combined).toContain(recipient);
+    expect(`${story}\n${meaning}`).toMatch(required);
+    expect(combined).not.toMatch(forbidden);
+  });
+
   it("applies LRE text to one allowlisted order without changing PNG generation", async () => {
     const originalAllowlist = process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST;
     process.env.LRE_PRODUCT_EXPERIENCE_ORDER_ALLOWLIST = "AHL-20260629-ORCH";
@@ -460,7 +523,7 @@ describe("DB-backed orchestration foundation", () => {
       const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
       const zipText = (await readStoredAsset(zipAsset)).toString("latin1");
 
-      expect(certificateText).toContain("Heritage Certificate");
+      expect(certificateText).toContain("FAMILY LEGACY CERTIFICATE");
       expect(certificateText).toContain("PRESENTED TO");
       expect(certificateText).not.toContain("personal in authority");
       expect(familyStoryText).toContain("Nothing here asks the family to believe invented history");
@@ -666,6 +729,44 @@ function createRepository() {
     orderItems: [orderItem],
     outboxEvents: [outbox]
   });
+}
+
+function publicationContext(input: {
+  recipient: string;
+  relationship: string | null;
+  occasion: string;
+  memory: string;
+}): ArtifactContext {
+  return {
+    order_number: "AHL-PERSONALIZATION-TEST",
+    house_name: `${input.recipient} Legacy Collection`,
+    recipient: input.recipient,
+    relationship: input.relationship,
+    occasion: input.occasion,
+    values: ["protection", "integrity", "love"],
+    memories: [input.memory],
+    motto: null,
+    themes: [
+      { theme: "protection", evidence: input.memory },
+      { theme: "integrity", evidence: input.memory },
+      { theme: "love", evidence: input.memory }
+    ],
+    symbols: [
+      {
+        symbol: "shield",
+        meaning: "protection",
+        rationale: "Chosen from the family evidence.",
+        customer_input_basis: input.memory,
+        visual_role: "primary",
+        artifact_role: "crest frame",
+        emotional_relevance: "security"
+      }
+    ],
+    design_rationale: [],
+    story_direction: null,
+    certificate_direction: null,
+    collection_content: null
+  };
 }
 
 async function readStoredAsset(asset: { storage_bucket: string; storage_key: string }) {

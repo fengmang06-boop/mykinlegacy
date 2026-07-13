@@ -17,14 +17,14 @@ export const metadata: Metadata = publicMetadata({
 
 const heroArtifacts = [
   [
-    "Final Crest",
-    "One finished crest artwork prepared for the person you want to honor.",
-    `${finalHomepageAsset}/02_homepage/hero/hero-house-identity.webp`
+    "Family Legacy Certificate",
+    "The primary frameable keepsake, personalized for the person you want to honor.",
+    `${finalHomepageAsset}/02_homepage/hero/hero-heritage-certificate.webp`
   ],
   [
-    "Heritage Certificate",
-    "A clean keepsake document for gifting, printing, and keeping.",
-    `${finalHomepageAsset}/02_homepage/hero/hero-heritage-certificate.webp`
+    "Final Crest",
+    "The finished crest artwork presented on the certificate and provided on its own.",
+    `${finalHomepageAsset}/02_homepage/hero/hero-house-identity.webp`
   ],
   [
     "Private Vault",
@@ -78,14 +78,14 @@ const occasions = [
 
 const receives = [
   [
+    "Family Legacy Certificate",
+    "The primary frameable keepsake, created for personal presentation, printing, and gifting.",
+    `${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`
+  ],
+  [
     "Final Crest",
     "One finished crest artwork shaped around the recipient, occasion, and family meaning.",
     `${finalHomepageAsset}/04_homepage/features/feature-house-identity.webp`
-  ],
-  [
-    "Heritage Certificate",
-    "A clean keepsake document designed for personal keeping and gifting.",
-    `${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`
   ],
   [
     "Family Story",
@@ -196,9 +196,10 @@ export default function HomePage() {
             <p className="home-eyebrow">Founder Edition · Limited Early Access</p>
             <h1>A personalized family legacy gift for someone you love.</h1>
             <p className="home-hero-subtext">
-              One Final Crest, three keepsake publications, and a Complete Collection archive,
-              prepared from the family details you share and reviewed before delivery. Limited to
-              the first 25 Founder Edition orders.
+              One frameable Family Legacy Certificate, its Final Crest, two supporting
+              publications, and a Complete Collection archive, prepared from the family details
+              you share and reviewed before delivery. Limited to the first 25 Founder Edition
+              orders.
             </p>
             <div className="home-cta-row">
               <Link className="home-button home-button-primary" href="/create">

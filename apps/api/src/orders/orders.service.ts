@@ -983,6 +983,7 @@ function founderEditionMetadata(): Record<string, unknown> {
 
 function customerInputsFromInterview(answersJson: unknown): {
   recipient: string | null;
+  relationship: string | null;
   occasion: string | null;
   family_memories: string[];
 } {
@@ -1000,6 +1001,7 @@ function customerInputsFromInterview(answersJson: unknown): {
 
   return {
     recipient,
+    relationship,
     occasion,
     family_memories: memory && memory !== occasion ? [memory] : []
   };

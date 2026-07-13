@@ -50,6 +50,7 @@ describe("OrdersService", () => {
       inputJson: {
         customer_inputs: {
           recipient: "Michael Johnson",
+          relationship: "My father",
           occasion: "Retirement",
           family_memories: [
             "He worked for 35 years to support and protect his family, and taught his children through example."

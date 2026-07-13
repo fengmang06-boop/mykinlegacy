@@ -8,6 +8,7 @@ export type MeaningSource =
 
 export interface MeaningCustomerInputs {
   recipient: string | null;
+  relationship: string | null;
   occasion: string | null;
   values: string[];
   memories: string[];
@@ -130,6 +131,7 @@ export interface CollectionContent {
 
 export interface MeaningEngineInput {
   recipient?: string | null;
+  relationship?: string | null;
   occasion?: string | null;
   values?: string[];
   memories?: string[];

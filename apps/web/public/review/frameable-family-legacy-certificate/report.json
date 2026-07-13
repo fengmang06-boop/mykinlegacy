@@ -1,0 +1,171 @@
+{
+  "generatedAt": "2026-07-12T17:27:11.950Z",
+  "layoutVersion": "premium_v5_frameable",
+  "pageSpecification": {
+    "primaryExport": "US Letter",
+    "points": {
+      "width": 612,
+      "height": 792
+    },
+    "inches": {
+      "width": 8.5,
+      "height": 11
+    },
+    "screenshotResolution": "1224 x 1584 at 144 DPI",
+    "safeContentMargin": "At least 0.5 inch for all essential content; decorative outer rule remains inside the page edge.",
+    "a4Printing": "Safe with standard Fit to Printable Area scaling on A4; no essential content enters the decorative edge zone.",
+    "a3Export": "Not added because the current architecture has one Letter-sized publication contract. The vector PDF can be scaled by a professional printer."
+  },
+  "productHierarchy": [
+    "Family Legacy Certificate - primary frameable keepsake",
+    "Final Crest - standalone artwork",
+    "Family Story - supporting emotional booklet",
+    "Meaning Behind Your Crest - supporting illustrated guide"
+  ],
+  "beforeAfter": {
+    "before": "before-certificate.png",
+    "after": [
+      "mother-christmas/certificate-page-1.png",
+      "father-retirement/certificate-page-1.png"
+    ],
+    "changes": [
+      "One frameable page replaces a report-like certificate plus competing authentication page.",
+      "The approved Final Crest is the visual center.",
+      "Recipient, occasion, values, real date, archive number, signature, and brand seal share one deliberate hierarchy.",
+      "Layered antique-gold rules and corner ornaments replace the plain document frame."
+    ]
+  },
+  "profiles": [
+    {
+      "id": "mother-christmas",
+      "recipient": "Elena Johnson",
+      "relationship": "My mother",
+      "occasion": "Christmas",
+      "values": [
+        "Love",
+        "Kindness",
+        "Strength"
+      ],
+      "memory": "She held the family together, made every Christmas gathering feel like home, and taught kindness through the care she gave every day.",
+      "forbidden": [
+        "retirement",
+        " he ",
+        " his ",
+        " him "
+      ],
+      "certificateScreenshot": "mother-christmas/certificate-page-1.png",
+      "screenshotPixels": [
+        1224,
+        1584
+      ],
+      "pageSizePoints": [
+        612,
+        792
+      ],
+      "publications": [
+        {
+          "deliverableCode": "heritage_certificate_pdf",
+          "file": "mother-christmas/Family-Legacy-Certificate.pdf",
+          "pageCount": 1,
+          "sizeBytes": 1178498
+        },
+        {
+          "deliverableCode": "family_story_pdf",
+          "file": "mother-christmas/Family-Story.pdf",
+          "pageCount": 6,
+          "sizeBytes": 1180927
+        },
+        {
+          "deliverableCode": "symbol_explanation_pdf",
+          "file": "mother-christmas/Meaning-Behind-Your-Crest.pdf",
+          "pageCount": 6,
+          "sizeBytes": 1182271
+        }
+      ],
+      "consistency": {
+        "forbiddenMatches": [],
+        "staleProfileMatches": [],
+        "occasionCoverage": {
+          "heritage_certificate_pdf": true,
+          "family_story_pdf": true,
+          "symbol_explanation_pdf": true
+        },
+        "recipientCoverage": {
+          "heritage_certificate_pdf": true,
+          "family_story_pdf": true,
+          "symbol_explanation_pdf": true
+        },
+        "pass": true
+      }
+    },
+    {
+      "id": "father-retirement",
+      "recipient": "Michael Johnson",
+      "relationship": "My father",
+      "occasion": "Retirement",
+      "values": [
+        "Protection",
+        "Integrity",
+        "Sacrifice"
+      ],
+      "memory": "He worked for 35 years to support and protect his family, rarely spoke about sacrifice, and taught his children through example.",
+      "forbidden": [
+        "christmas",
+        " she ",
+        " her "
+      ],
+      "certificateScreenshot": "father-retirement/certificate-page-1.png",
+      "screenshotPixels": [
+        1224,
+        1584
+      ],
+      "pageSizePoints": [
+        612,
+        792
+      ],
+      "publications": [
+        {
+          "deliverableCode": "heritage_certificate_pdf",
+          "file": "father-retirement/Family-Legacy-Certificate.pdf",
+          "pageCount": 1,
+          "sizeBytes": 1178518
+        },
+        {
+          "deliverableCode": "family_story_pdf",
+          "file": "father-retirement/Family-Story.pdf",
+          "pageCount": 6,
+          "sizeBytes": 1181223
+        },
+        {
+          "deliverableCode": "symbol_explanation_pdf",
+          "file": "father-retirement/Meaning-Behind-Your-Crest.pdf",
+          "pageCount": 6,
+          "sizeBytes": 1182312
+        }
+      ],
+      "consistency": {
+        "forbiddenMatches": [],
+        "staleProfileMatches": [],
+        "occasionCoverage": {
+          "heritage_certificate_pdf": true,
+          "family_story_pdf": true,
+          "symbol_explanation_pdf": true
+        },
+        "recipientCoverage": {
+          "heritage_certificate_pdf": true,
+          "family_story_pdf": true,
+          "symbol_explanation_pdf": true
+        },
+        "pass": true
+      }
+    }
+  ],
+  "allConsistencyChecksPassed": true,
+  "clippingOverflow": {
+    "automated": "PASS",
+    "evidence": "Each one-page certificate rendered at 144 DPI to 1224 x 1584 pixels without rasterization errors; essential content remains inside the 0.5-inch safe area.",
+    "founderVisualInspectionRequired": true
+  },
+  "checkoutStatus": "Remains paused pending Founder approval of the actual certificate screenshots.",
+  "readyForFounderVisualApproval": true
+}

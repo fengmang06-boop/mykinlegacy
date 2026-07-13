@@ -9,7 +9,7 @@ import type { PdfGenerationInput, PdfGenerationOutput } from "./types";
 export const GLOBAL_PDF_DISCLAIMER =
   "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record.";
 
-const PDF_LAYOUT_VERSION = "premium_v4";
+const PDF_LAYOUT_VERSION = "premium_v5_frameable";
 const PAGE_WIDTH = 612;
 const PAGE_HEIGHT = 792;
 const COLOR = {
@@ -151,88 +151,57 @@ function buildPublicationPages(model: PdfModel, artwork: PdfArtwork | null): str
 }
 
 function buildCertificatePages(model: PdfModel, image: PdfImage | null): string[] {
-  return [buildCertificateMainPage(model, image), buildCertificateKeepsakeNote(model)];
+  return [buildCertificateMainPage(model, image)];
 }
 
 function buildCertificateMainPage(model: PdfModel, image: PdfImage | null): string {
   const recipient = field(model, "Presented To", field(model, "Recipient", model.familyName));
   const occasion = field(model, "Created For", field(model, "Occasion", "A family milestone"));
+  const values = field(model, "Family Values", "Love, unity, and legacy");
   const date = field(model, "Date", formatDisplayDate(new Date()));
   const archiveNumber = field(model, "Archive Number", "Archive record pending");
   const statement = sectionBody(model, "Ceremony Statement", 0) || model.sections.at(-1)?.body || ceremonialFallback(model);
+  const recipientSize = recipient.length > 36 ? 18 : recipient.length > 25 ? 22 : 29;
   const commands: string[] = [
     rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.parchment),
-    rectCommand(46, 46, 520, 700, COLOR.ivorySoft),
-    strokeRectCommand(46, 46, 520, 700, COLOR.gold, 1.3),
-    strokeRectCommand(58, 58, 496, 676, COLOR.goldSoft, 0.65),
-    textCommand(74, 714, "MyKinLegacy", "F2", 15, COLOR.goldSoft),
-    textCommand(430, 714, "Heritage Certificate", "F3", 9, COLOR.muted),
-    centeredTextCommand(306, 670, "HERITAGE CERTIFICATE", "F2", 25, COLOR.ink),
-    centeredTextCommand(306, 642, "A FAMILY KEEPSAKE", "F3", 9.5, COLOR.goldSoft),
-    centeredTextCommand(306, 406, "PRESENTED TO", "F3", 10, COLOR.muted),
-    centeredTextCommand(306, 374, recipient, "F2", 27, COLOR.ink),
-    strokeLineCommand(132, 356, 480, 356, COLOR.goldSoft, 0.8),
-    textCommand(100, 326, "Created For", "F3", 9.5, COLOR.muted),
-    textCommand(100, 306, occasion, "F1", 12.5, COLOR.ink),
-    textCommand(376, 326, "Date", "F3", 9.5, COLOR.muted),
-    textCommand(376, 306, date, "F1", 12.5, COLOR.ink),
-    rectCommand(86, 184, 440, 100, COLOR.ivory),
-    strokeRectCommand(86, 184, 440, 100, COLOR.goldSoft, 0.55),
-    ...wrappedTextCommands(statement, 110, 258, 70, "F1", 11.4, 15.5, COLOR.ink, 5),
-    strokeLineCommand(96, 120, 286, 120, COLOR.goldSoft, 0.7),
-    textCommand(112, 100, "MyKinLegacy Legacy Curator", "F3", 9, COLOR.muted),
-    fillCircleCommand(446, 126, 42, COLOR.goldSoft),
-    strokeCircleCommand(446, 126, 35, COLOR.ivorySoft, 0.9),
-    centeredTextCommand(446, 132, "MKL", "F2", 15, COLOR.ivorySoft),
-    centeredTextCommand(446, 114, "MYKINLEGACY", "F3", 6.5, COLOR.ivorySoft),
-    textCommand(88, 76, `Archive Number: ${archiveNumber}`, "F3", 9.5, COLOR.muted)
+    rectCommand(24, 24, 564, 744, COLOR.charcoal),
+    rectCommand(31, 31, 550, 730, COLOR.ivorySoft),
+    strokeRectCommand(37, 37, 538, 718, COLOR.gold, 1.5),
+    strokeRectCommand(45, 45, 522, 702, COLOR.goldSoft, 0.7),
+    strokeRectCommand(53, 53, 506, 686, COLOR.mist, 0.35),
+    ...certificateCornerOrnaments(),
+    centeredTextCommand(306, 718, "MYKINLEGACY", "F2", 12, COLOR.goldSoft),
+    centeredTextCommand(306, 699, "LEGACY, DESIGNED.", "F3", 6.8, COLOR.muted),
+    centeredTextCommand(306, 664, "FAMILY LEGACY CERTIFICATE", "F2", 23, COLOR.ink),
+    centeredTextCommand(306, 640, `CREATED FOR ${occasion.toUpperCase()}`, "F3", occasion.length > 30 ? 7.5 : 9, COLOR.goldSoft),
+    centeredTextCommand(306, 424, "PRESENTED TO", "F3", 9.5, COLOR.muted),
+    centeredTextCommand(306, 389, recipient, "F2", recipientSize, COLOR.ink),
+    strokeLineCommand(116, 371, 496, 371, COLOR.goldSoft, 0.9),
+    centeredTextCommand(306, 348, values.toUpperCase(), "F3", values.length > 48 ? 7.4 : 9, COLOR.goldSoft),
+    rectCommand(70, 214, 472, 104, COLOR.ivory),
+    strokeRectCommand(70, 214, 472, 104, COLOR.goldSoft, 0.6),
+    ...wrappedTextCommands(statement, 92, 289, 76, "F1", 10.7, 14.5, COLOR.ink, 6),
+    textCommand(82, 181, "DATE", "F3", 7.5, COLOR.muted),
+    textCommand(82, 161, date, "F1", 10.5, COLOR.ink),
+    textCommand(314, 181, "ARCHIVE NUMBER", "F3", 7.5, COLOR.muted),
+    textCommand(314, 161, archiveNumber, "F1", archiveNumber.length > 28 ? 8.5 : 10.5, COLOR.ink),
+    strokeLineCommand(82, 112, 286, 112, COLOR.goldSoft, 0.75),
+    textCommand(104, 94, "MyKinLegacy", "F2", 10.5, COLOR.ink),
+    textCommand(104, 80, "Legacy Curator", "F3", 7.5, COLOR.muted),
+    fillCircleCommand(472, 110, 37, COLOR.goldSoft),
+    strokeCircleCommand(472, 110, 30, COLOR.ivorySoft, 0.9),
+    strokeCircleCommand(472, 110, 24, COLOR.ivorySoft, 0.45),
+    centeredTextCommand(472, 116, "MKL", "F2", 13, COLOR.ivorySoft),
+    centeredTextCommand(472, 99, "SEAL", "F3", 6.2, COLOR.ivorySoft)
   ];
 
   if (image) {
-    commands.push(drawImageCommand(211, 438, 190, 190));
+    commands.push(drawImageCommand(206, 438, 200, 200));
   } else {
-    commands.push(strokeRectCommand(211, 438, 190, 190, COLOR.goldSoft, 0.7));
+    commands.push(strokeRectCommand(206, 438, 200, 200, COLOR.goldSoft, 0.7));
     commands.push(centeredTextCommand(306, 526, "Final Crest", "F2", 13, COLOR.goldSoft));
   }
 
-  return commands.join("\n");
-}
-
-function buildCertificateKeepsakeNote(model: PdfModel): string {
-  const archiveNumber = field(model, "Archive Number", "Private archive record");
-  const commands = [
-    rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.ivory),
-    strokeRectCommand(54, 70, 504, 652, COLOR.goldSoft, 0.8),
-    textCommand(78, 680, "Archive Authentication", "F2", 18, COLOR.ink),
-    strokeLineCommand(78, 662, 534, 662, COLOR.goldSoft, 0.65),
-    ...paragraphBlock(
-      "This certificate is recorded by MyKinLegacy under the archive number below and belongs with the keepsake prepared for the recipient named on page one.",
-      82,
-      614,
-      73,
-      12.4,
-      18,
-      COLOR.ink,
-      5
-    ),
-    textCommand(82, 474, "Archive Number", "F2", 12, COLOR.goldSoft),
-    textCommand(82, 452, archiveNumber, "F1", 12, COLOR.ink),
-    textCommand(82, 378, "Keepsake Note", "F2", 12, COLOR.goldSoft),
-    ...wrappedTextCommands(
-      "May it remain with the crest and the family story as a lasting record of the life and values honored here.",
-      82,
-      350,
-      72,
-      "F1",
-      11.8,
-      18,
-      COLOR.ink,
-      4
-    ),
-    fillCircleCommand(306, 196, 34, COLOR.goldSoft),
-    centeredTextCommand(306, 190, "MKL", "F2", 13, COLOR.ivorySoft),
-    centeredTextCommand(306, 114, "MyKinLegacy", "F3", 9.5, COLOR.muted)
-  ];
   return commands.join("\n");
 }
 
@@ -241,7 +210,17 @@ function buildStorybookPages(model: PdfModel, image: PdfImage | null): string[] 
     storyChapter(model, ["Dedication"], "Dedication", dedicationFallback(model)),
     storyChapter(
       model,
-      ["Thirty-Five Years of Quiet Strength", "A Life of Quiet Strength", "Life and Contribution", "The Beginning"],
+      [
+        "Thirty-Five Years of Quiet Strength",
+        "A Life of Quiet Strength",
+        "A Life of Steady Contribution",
+        "The Care at the Heart of Christmas",
+        "A Family Story Beginning Together",
+        "A Life Worth Celebrating",
+        "A Life Held in Gratitude",
+        "Life and Contribution",
+        "The Beginning"
+      ],
       "A Life of Quiet Strength",
       contributionFallback(model)
     ),
@@ -272,6 +251,8 @@ function storyChapter(model: PdfModel, candidates: string[], fallbackHeading: st
 }
 
 function buildStoryCover(model: PdfModel, image: PdfImage | null): string {
+  const occasion = field(model, "Occasion", "a meaningful family occasion");
+  const voice = pdfRecipientVoice(model);
   const commands: string[] = [
     rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.charcoal),
     rectCommand(44, 54, 524, 684, COLOR.charcoalSoft),
@@ -279,10 +260,10 @@ function buildStoryCover(model: PdfModel, image: PdfImage | null): string {
     textCommand(76, 694, "MyKinLegacy", "F2", 14, COLOR.gold),
     textCommand(76, 670, "Family Story", "F3", 10, COLOR.ivory),
     centeredTextCommand(306, 568, `A Story for ${model.familyName}`, "F2", 25, COLOR.ivory),
-    centeredTextCommand(306, 538, "Quiet strength, remembered with gratitude.", "F1", 12, COLOR.mist),
+    centeredTextCommand(306, 538, `Prepared with care for ${occasion}.`, "F1", 12, COLOR.mist),
     strokeLineCommand(152, 506, 460, 506, COLOR.goldSoft, 0.7),
     ...paragraphBlock(openingStorySentence(model), 134, 450, 55, 13.5, 20, COLOR.ivory, 5),
-    textCommand(76, 108, "For the family who learned from his example.", "F3", 10, COLOR.gold)
+    textCommand(76, 108, `For the family shaped by ${voice.possessive} example.`, "F3", 10, COLOR.gold)
   ];
 
   if (image) {
@@ -354,6 +335,7 @@ function buildMeaningGuidePages(model: PdfModel, artwork: PdfArtwork | null): st
 }
 
 function buildMeaningCover(model: PdfModel, image: PdfImage | null): string {
+  const values = field(model, "Family Values", "love, unity, and legacy");
   const commands = [
     rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.charcoal),
     rectCommand(38, 46, 536, 700, COLOR.charcoalSoft),
@@ -362,7 +344,7 @@ function buildMeaningCover(model: PdfModel, image: PdfImage | null): string {
     textCommand(70, 678, "Meaning Behind Your Crest", "F2", 24, COLOR.ivory),
     textCommand(70, 648, model.familyName, "F1", 13, COLOR.mist),
     ...paragraphBlock(
-      `An illustrated guide to the details that honor ${model.familyName}: protection, integrity, sacrifice, and the strength carried forward through family.`,
+      `An illustrated guide to the details that honor ${model.familyName}: ${values.toLowerCase()}, and the meaning carried forward through family.`,
       70,
       604,
       58,
@@ -526,6 +508,25 @@ function strokeLineCommand(
   return `${color.join(" ")} RG ${strokeWidth} w ${x1} ${y1} m ${x2} ${y2} l S`;
 }
 
+function certificateCornerOrnaments(): string[] {
+  return [
+    strokeLineCommand(54, 73, 54, 112, COLOR.goldSoft, 0.7),
+    strokeLineCommand(54, 73, 93, 73, COLOR.goldSoft, 0.7),
+    strokeCircleCommand(54, 73, 4, COLOR.goldSoft, 0.7),
+    strokeLineCommand(558, 73, 558, 112, COLOR.goldSoft, 0.7),
+    strokeLineCommand(519, 73, 558, 73, COLOR.goldSoft, 0.7),
+    strokeCircleCommand(558, 73, 4, COLOR.goldSoft, 0.7),
+    strokeLineCommand(54, 719, 54, 680, COLOR.goldSoft, 0.7),
+    strokeLineCommand(54, 719, 93, 719, COLOR.goldSoft, 0.7),
+    strokeCircleCommand(54, 719, 4, COLOR.goldSoft, 0.7),
+    strokeLineCommand(558, 719, 558, 680, COLOR.goldSoft, 0.7),
+    strokeLineCommand(519, 719, 558, 719, COLOR.goldSoft, 0.7),
+    strokeCircleCommand(558, 719, 4, COLOR.goldSoft, 0.7),
+    strokeLineCommand(252, 731, 360, 731, COLOR.goldSoft, 0.45),
+    fillCircleCommand(306, 731, 2.5, COLOR.goldSoft)
+  ];
+}
+
 function strokeCircleCommand(x: number, y: number, radius: number, color: readonly [number, number, number], strokeWidth: number): string {
   const c = radius * 0.5523;
   return `${color.join(" ")} RG ${strokeWidth} w ${x + radius} ${y} m ${x + radius} ${y + c} ${x + c} ${y + radius} ${x} ${y + radius} c ${x - c} ${y + radius} ${x - radius} ${y + c} ${x - radius} ${y} c ${x - radius} ${y - c} ${x - c} ${y - radius} ${x} ${y - radius} c ${x + c} ${y - radius} ${x + radius} ${y - c} ${x + radius} ${y} c S`;
@@ -645,11 +646,14 @@ function cleanDisplayName(value?: string | null): string | null {
 }
 
 function ceremonialFallback(model: PdfModel): string {
-  return `Presented to ${model.familyName} in recognition of a life shaped by protection, integrity, and quiet sacrifice for family.`;
+  const occasion = field(model, "Created For", "a meaningful family occasion");
+  const values = field(model, "Family Values", "love, unity, and legacy").toLowerCase();
+  return `Presented to ${model.familyName} for ${occasion}, in recognition of ${values} and the care this family wishes to preserve.`;
 }
 
 function openingStorySentence(model: PdfModel): string {
-  return `${model.familyName} gave strength a quiet form: steady work, kept promises, and an example his family could trust.`;
+  const values = field(model, "Family Values", "love, unity, and legacy").toLowerCase();
+  return `${model.familyName}'s story gives ${values} a human form through choices, memories, and an example the family can recognize.`;
 }
 
 function dedicationFallback(model: PdfModel): string {
@@ -673,23 +677,39 @@ function closingLetterFallback(model: PdfModel): string {
 }
 
 function shieldMeaningFallback(model: PdfModel): string {
-  return `The shield reflects the protection ${model.familyName} gave through years of dependable work. Its strength is calm rather than aggressive: a boundary around the people he loved, built through responsibility, practical care, and the decision to place family security before personal recognition.`;
+  const voice = pdfRecipientVoice(model);
+  return `The shield reflects the protection associated with ${model.familyName}. Its strength is calm rather than aggressive: a boundary around the people ${voice.subject} holds close, built through responsibility, practical care, and the choices that help family life feel secure.`;
 }
 
 function treeMeaningFallback(model: PdfModel): string {
-  return `The tree represents the family life ${model.familyName} helped sustain. Its trunk suggests integrity under pressure, while its branches show the people and possibilities that grew from his effort. The image turns thirty-five years of work into something living: shelter, continuity, and a future made steadier by his example.`;
+  const voice = pdfRecipientVoice(model);
+  return `The tree represents the family life ${model.familyName} helped sustain. Its trunk suggests character under pressure, while its branches show the relationships and possibilities that grew around ${voice.object}. The image turns lived values into something visible: shelter, continuity, and a future made steadier by ${voice.possessive} example.`;
 }
 
 function knotMeaningFallback(model: PdfModel): string {
-  return `The knot at the roots gives sacrifice a visible form. Its interwoven lines acknowledge that work, duty, love, and family life were never separate for ${model.familyName}. He rarely spoke about what he gave up; the knot honors those choices without making them grander than the quiet truth.`;
+  return `The knot at the roots gives family connection a visible form. Its interwoven lines acknowledge that responsibility, affection, memory, and family life are connected in ${model.familyName}'s story. The knot honors those bonds without making them grander than the honest details the family chose to preserve.`;
 }
 
 function keyStarMeaningFallback(model: PdfModel): string {
-  return `The key and guiding star speak to what ${model.familyName} opened for his children and how he led them. The key suggests opportunity earned through steady labor. The star reflects guidance offered through conduct rather than speeches: a clear example of integrity that remains useful long after retirement.`;
+  const voice = pdfRecipientVoice(model);
+  return `The key and guiding star speak to what ${model.familyName} opened for others and how ${voice.subject} offered direction. The key suggests trust and opportunity. The star reflects guidance through example, keeping ${voice.possessive} influence present beyond this occasion and into the family's next chapter.`;
 }
 
 function laurelMeaningFallback(model: PdfModel): string {
-  return `The laurel frame marks retirement with gratitude, not status. Its branches surround the crest as recognition for endurance, service, and work completed with dignity. For ${model.familyName}, it is a quiet thank-you from the family: the years were noticed, the sacrifices mattered, and the example will continue.`;
+  const occasion = field(model, "Occasion", "this family occasion").toLowerCase();
+  const voice = pdfRecipientVoice(model);
+  return `The laurel frame marks ${occasion} with gratitude, not status. Its branches surround the crest as a quiet recognition of the values held here. For ${model.familyName}, it says that ${voice.possessive} presence matters, ${voice.possessive} contribution is remembered, and the family's meaning will continue.`;
+}
+
+function pdfRecipientVoice(model: PdfModel): { subject: "he" | "she" | "they"; object: "him" | "her" | "them"; possessive: "his" | "her" | "their" } {
+  const evidence = `${field(model, "Relationship", "")} ${model.familyName}`.toLowerCase();
+  if (/\b(mother|grandmother|wife|daughter|sister|aunt|woman|female)\b/.test(evidence)) {
+    return { subject: "she", object: "her", possessive: "her" };
+  }
+  if (/\b(father|grandfather|husband|son|brother|uncle|man|male)\b/.test(evidence)) {
+    return { subject: "he", object: "him", possessive: "his" };
+  }
+  return { subject: "they", object: "them", possessive: "their" };
 }
 
 function formatDisplayDate(value: Date): string {

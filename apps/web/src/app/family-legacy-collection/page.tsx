@@ -29,7 +29,7 @@ export default function FamilyLegacyCollectionPage() {
           >
             <article className="product-artifact-featured">
               <Image
-                src={`${finalHomepageAsset}/02_homepage/hero/hero-main-crest.webp`}
+                src={`${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`}
                 width={760}
                 height={520}
                 alt=""
@@ -37,20 +37,20 @@ export default function FamilyLegacyCollectionPage() {
                 priority
               />
               <div>
-                <span>Symbolic centerpiece</span>
-                <strong>Final Crest</strong>
+                <span>Primary frameable keepsake</span>
+                <strong>Family Legacy Certificate</strong>
               </div>
             </article>
             <article className="product-artifact-card">
               <Image
-                src={`${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`}
+                src={`${finalHomepageAsset}/02_homepage/hero/hero-main-crest.webp`}
                 width={280}
                 height={190}
                 alt=""
                 aria-hidden="true"
               />
-              <strong>Heritage Certificate</strong>
-              <span>Personal keepsake</span>
+              <strong>Final Crest</strong>
+              <span>Standalone artwork</span>
             </article>
             <article className="product-artifact-card">
               <Image
@@ -134,6 +134,17 @@ export default function FamilyLegacyCollectionPage() {
           gives family stories, symbols, and values a form your parents can return to.
         </p>
         <div className="preview-grid">
+          <article className="mock-certificate artifact-preview-card">
+            <Image
+              src={`${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`}
+              width={460}
+              height={320}
+              alt=""
+              aria-hidden="true"
+            />
+            <span>Family Legacy Certificate</span>
+            <strong>Primary frameable keepsake</strong>
+          </article>
           <article className="mock-crest artifact-preview-card">
             <Image
               src={`${finalHomepageAsset}/04_homepage/features/feature-house-identity.webp`}
@@ -143,17 +154,7 @@ export default function FamilyLegacyCollectionPage() {
               aria-hidden="true"
             />
             <span>Final Crest</span>
-          </article>
-          <article className="mock-certificate artifact-preview-card">
-            <Image
-              src={`${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`}
-              width={460}
-              height={320}
-              alt=""
-              aria-hidden="true"
-            />
-            <span>Heritage Certificate</span>
-            <strong>Personal keepsake</strong>
+            <strong>Standalone artwork</strong>
           </article>
           <article className="mock-page artifact-preview-card">
             <Image
