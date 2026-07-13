@@ -1402,7 +1402,7 @@ function meaningGuidePublicationText(context: ArtifactContext): string {
     `The knot at the roots represents bonds formed through shared life rather than ceremony alone. Its interwoven lines acknowledge that duty, affection, memory, and family are connected in ${recipient}'s story. It honors the choices that held people together and gives ${occasion.toLowerCase()} a symbol of continuity that feels personal rather than formal.`,
     "",
     "The Key and Guiding Star",
-    `The key and guiding star speak to what ${recipient} has opened for others and how ${voice.subject} has offered direction. The key suggests trust, opportunity, and a home that can be entered with confidence. The star reflects guidance through example, keeping ${voice.possessive} influence present beyond ${occasion.toLowerCase()} and into the family's next chapter.`,
+    `The key and guiding star speak to what ${recipient} has opened for others and how ${voice.subject} ${voice.subject === "they" ? "have" : "has"} offered direction. The key suggests trust, opportunity, and a home that can be entered with confidence. The star reflects guidance through example, keeping ${voice.possessive} influence present beyond ${occasion.toLowerCase()} and into the family's next chapter.`,
     "",
     "The Laurel Frame",
     `The laurel frame marks ${occasion.toLowerCase()} with gratitude, not status. Its branches hold the crest together as a quiet recognition of ${values}. For ${recipient}, the laurel is the family's way of saying that ${voice.possessive} presence matters, ${voice.possessive} contribution is remembered, and the meaning represented here will continue.`

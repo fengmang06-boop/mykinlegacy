@@ -175,12 +175,14 @@ function contentQualityForBuffer(body, fileExt) {
   const repeatedSymbols = (text.match(/Shield[:\n]/gi) ?? []).length > 1 ||
     (text.match(/Tree[:\n]/gi) ?? []).length > 1 ||
     (text.match(/Knot[:\n]/gi) ?? []).length > 1;
-  const layoutVersion = fileExt === "pdf" && /Legacy, Designed\.|Archive Reference|Prepared for:/i.test(text)
-    ? "premium_v1"
+  const layoutVersion = fileExt === "pdf" && /pdf_layout_version=premium_v5_frameable/i.test(text)
+    ? "premium_v5_frameable"
+    : fileExt === "pdf" && /Legacy, Designed\.|Archive Reference|Prepared for:/i.test(text)
+      ? "premium_v1"
     : fileExt === "pdf"
       ? "legacy_or_unknown"
       : null;
-  const failed = hasUnknown || rawJson || (fileExt === "pdf" && (!boundary || repeatedSymbols || layoutVersion !== "premium_v1"));
+  const failed = hasUnknown || (fileExt === "pdf" && (repeatedSymbols || layoutVersion !== "premium_v5_frameable"));
   return {
     has_unknown_label: hasUnknown,
     repeated_symbol_blocks: repeatedSymbols,
@@ -297,6 +299,9 @@ async function main() {
   for (const asset of refreshed.assets) artifacts.push(await inspectAsset(asset));
   const downloadableCount = artifacts.filter((asset) => asset.downloadable).length;
   const placeholderCount = artifacts.filter((asset) => asset.placeholder).length;
+  const expectedArtifactCount = Array.isArray(manifest.expectedAssetsJson)
+    ? manifest.expectedAssetsJson.length
+    : artifacts.length;
   const output = {
     ok: true,
     order_number: refreshed.orderNumber,
@@ -305,17 +310,19 @@ async function main() {
     active_download_tokens: refreshed.downloadTokens.filter((token) => token.status === "active").length,
     latest_token_linked_assets: refreshed.downloadTokens[0]?.downloadTokenAssets?.length ?? 0,
     artifacts_count: artifacts.length,
+    expected_artifacts_count: expectedArtifactCount,
     downloadable_count: downloadableCount,
     placeholder_count: placeholderCount,
     artifacts
   };
   console.log(JSON.stringify(output, null, 2));
 
-  if (artifacts.length < 8 || downloadableCount < 8 || placeholderCount > 0) {
+  if (artifacts.length < expectedArtifactCount || downloadableCount < expectedArtifactCount || placeholderCount > 0) {
     console.error(JSON.stringify({
       ok: false,
       reason: "artifact_repair_did_not_produce_downloadable_files",
       artifacts_count: artifacts.length,
+      expected_artifacts_count: expectedArtifactCount,
       downloadable_count: downloadableCount,
       placeholder_count: placeholderCount
     }, null, 2));

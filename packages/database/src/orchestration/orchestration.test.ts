@@ -483,6 +483,7 @@ describe("DB-backed orchestration foundation", () => {
     expect(combined).toContain(recipient);
     expect(`${story}\n${meaning}`).toMatch(required);
     expect(combined).not.toMatch(forbidden);
+    expect(combined).not.toMatch(/\bthey has\b/i);
   });
 
   it("applies LRE text to one allowlisted order without changing PNG generation", async () => {

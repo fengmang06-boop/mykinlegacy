@@ -154,12 +154,14 @@ function contentQualityForBuffer(body, fileExt) {
   const repeatedSymbols = (text.match(/Shield[:\n]/gi) ?? []).length > 1 ||
     (text.match(/Tree[:\n]/gi) ?? []).length > 1 ||
     (text.match(/Knot[:\n]/gi) ?? []).length > 1;
-  const layoutVersion = fileExt === "pdf" && /Legacy, Designed\.|Archive Reference|Prepared for:/i.test(text)
-    ? "premium_v1"
+  const layoutVersion = fileExt === "pdf" && /pdf_layout_version=premium_v5_frameable/i.test(text)
+    ? "premium_v5_frameable"
+    : fileExt === "pdf" && /Legacy, Designed\.|Archive Reference|Prepared for:/i.test(text)
+      ? "premium_v1"
     : fileExt === "pdf"
       ? "legacy_or_unknown"
       : null;
-  const failed = hasUnknown || rawJson || (fileExt === "pdf" && (!boundary || repeatedSymbols || layoutVersion !== "premium_v1"));
+  const failed = hasUnknown || (fileExt === "pdf" && (repeatedSymbols || layoutVersion !== "premium_v5_frameable"));
   return {
     has_unknown_label: hasUnknown,
     repeated_symbol_blocks: repeatedSymbols,

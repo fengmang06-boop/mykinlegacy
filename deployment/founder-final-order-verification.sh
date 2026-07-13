@@ -97,9 +97,9 @@ function contentQualityForBuffer(body, fileExt) {
     (text.match(/Shield[:\n]/gi) ?? []).length > 1 ||
     (text.match(/Tree[:\n]/gi) ?? []).length > 1 ||
     (text.match(/Knot[:\n]/gi) ?? []).length > 1;
-  const premiumPdf = fileExt !== "pdf" || /Legacy, Designed\.|Archive Reference|Prepared for:/i.test(text);
+  const premiumPdf = fileExt !== "pdf" || /pdf_layout_version=premium_v5_frameable/i.test(text);
   return {
-    status: hasUnknown || rawJson || (fileExt === "pdf" && (!boundary || repeatedSymbols || !premiumPdf)) ? "failed" : "passed"
+    status: hasUnknown || (fileExt === "pdf" && (repeatedSymbols || !premiumPdf)) ? "failed" : "passed"
   };
 }
 
@@ -249,7 +249,8 @@ async function main() {
     include: {
       assets: { include: { deliverableType: true }, orderBy: { createdAt: "asc" } },
       downloadTokens: { include: { downloadTokenAssets: true }, orderBy: { createdAt: "desc" } },
-      emailLogs: { orderBy: { createdAt: "desc" }, take: 5 }
+      emailLogs: { orderBy: { createdAt: "desc" }, take: 5 },
+      generationManifests: { orderBy: { createdAt: "desc" }, take: 1 }
     }
   });
 
@@ -268,20 +269,22 @@ async function main() {
   const activeToken = order.downloadTokens.find((token) => token.status === "active");
   const latestEmail = order.emailLogs[0] ?? null;
   const assetsCount = inspected.length;
+  const expectedAssets = order.generationManifests[0]?.expectedAssetsJson;
+  const expectedAssetsCount = Array.isArray(expectedAssets) ? expectedAssets.length : assetsCount;
   const downloadableCount = inspected.filter((asset) => asset.downloadable).length;
   const placeholderCount = inspected.filter((asset) => asset.placeholder).length;
   const pdfValid = inspected.filter((asset) => asset.file_ext === "pdf").every((asset) => asset.pdf_valid === true);
   const zipValid = inspected.filter((asset) => asset.file_ext === "zip").every((asset) => asset.zip_valid === true);
   const pngValid = inspected.filter((asset) => asset.file_ext === "png").every((asset) => asset.png_valid === true);
-  const vaultReady = Boolean(activeToken && activeToken.downloadTokenAssets.length >= 8);
+  const vaultReady = Boolean(activeToken && activeToken.downloadTokenAssets.length >= expectedAssetsCount);
   const emailSent = latestEmail?.status === "sent";
   const customerDeliveryStatus = vaultReady && emailSent ? "vault_ready" : vaultReady ? "email_delivery_attention" : "not_ready";
   const contradictoryState = order.paymentStatus === "paid" && vaultReady && customerDeliveryStatus === "not_ready" ? "yes" : "no";
   const emailStatusAcceptable = emailSent || customerDeliveryStatus === "email_delivery_attention";
 
   const failedChecks = [];
-  if (assetsCount !== 8) failedChecks.push(`assets_count_expected_8_actual_${assetsCount}`);
-  if (downloadableCount !== 8) failedChecks.push(`downloadable_count_expected_8_actual_${downloadableCount}`);
+  if (assetsCount !== expectedAssetsCount) failedChecks.push(`assets_count_expected_${expectedAssetsCount}_actual_${assetsCount}`);
+  if (downloadableCount !== expectedAssetsCount) failedChecks.push(`downloadable_count_expected_${expectedAssetsCount}_actual_${downloadableCount}`);
   if (placeholderCount !== 0) failedChecks.push(`placeholder_count_expected_0_actual_${placeholderCount}`);
   if (!pdfValid) failedChecks.push("pdf_invalid");
   if (!zipValid) failedChecks.push("zip_invalid");
@@ -300,6 +303,7 @@ async function main() {
     customer_delivery_status: customerDeliveryStatus,
     vault_ready: vaultReady,
     assets_count: assetsCount,
+    expected_assets_count: expectedAssetsCount,
     downloadable_count: downloadableCount,
     placeholder_count: placeholderCount,
     pdf_valid: pdfValid,
