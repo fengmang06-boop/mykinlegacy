@@ -1,0 +1,86 @@
+name: Codex Etsy MDIS Read-Only Export
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-mdis-export.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          Path.home().joinpath(".ssh", "prod").write_text(key.rstrip() + "\n")
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload and run read-only MDIS export
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" \
+            scripts/etsy-mdis-export.cjs "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-mdis-export.cjs"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          OUT_DIR="/tmp/etsy-mdis-2026-01-11-to-2026-07-12"
+          rm -rf "$OUT_DIR" /tmp/etsy-mdis-export.tgz
+          cd "$APP_DIR"
+          NODE_PATH="$APP_DIR/node_modules" node /tmp/etsy-mdis-export.cjs "$OUT_DIR"
+          tar -czf /tmp/etsy-mdis-export.tgz -C /tmp "$(basename "$OUT_DIR")"
+          REMOTE
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-mdis-export.tgz" /tmp/etsy-mdis-export.tgz
+
+      - name: Store verified export artifacts
+        shell: bash
+        run: |
+          mkdir -p codex_outputs/mdis
+          tar -xzf /tmp/etsy-mdis-export.tgz -C codex_outputs/mdis
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add codex_outputs/mdis
+          if git diff --cached --quiet; then
+            echo "No MDIS export changes to commit."
+          else
+            git commit -m "Export Etsy discovery data for MDIS"
+            git push origin HEAD:codex/etsy-oauth-fix-20260707
+          fi
