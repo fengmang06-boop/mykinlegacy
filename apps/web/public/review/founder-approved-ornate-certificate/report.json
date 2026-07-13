@@ -1,0 +1,560 @@
+{
+  "generatedAt": "2026-07-13T06:14:34.863Z",
+  "certificateLayoutVersion": "ornate_v1",
+  "scope": "Review-only certificate generation. No production deployment or other publication changes.",
+  "pageDimensions": {
+    "format": "US Letter portrait",
+    "inches": {
+      "width": 8.5,
+      "height": 11
+    },
+    "points": {
+      "width": 612,
+      "height": 792
+    },
+    "highResolutionPreview": "2550 x 3300 pixels at 300 DPI"
+  },
+  "printMargins": {
+    "essentialContent": "0.4 inch minimum",
+    "decorativeBorder": "0.25 inch from page edge",
+    "a4": "Verified for Fit to Printable Area; essential content remains inside the safe zone.",
+    "a3": "Vector PDF may be professionally scaled to A3 without clipping."
+  },
+  "dynamicFieldsUsed": [
+    "recipient name",
+    "relationship",
+    "occasion",
+    "top three values",
+    "personal memory evidence",
+    "archive number",
+    "formatted date",
+    "motto when supplied",
+    "existing approved Final Crest"
+  ],
+  "sealDesign": "Antique-gold MyKinLegacy medallion with MKL monogram and Private Legacy wording; it is a deliberate brand mark, not an empty seal placeholder.",
+  "visualSimilarityAssessment": {
+    "referenceStrengthsCarriedForward": [
+      "antique ivory field",
+      "layered antique-gold border",
+      "classical title hierarchy",
+      "dominant central crest",
+      "balanced value and legacy support areas",
+      "signature and branded medallion finish"
+    ],
+    "intentionalDifferences": [
+      "No photographic wooden frame is baked into the printable PDF.",
+      "Ornament remains controlled to protect home-printer legibility.",
+      "All customer-specific information is generated from the supplied profile rather than reference-image text."
+    ],
+    "assessment": "The new certificate is materially closer to the Founder-approved ornate collectible direction than the previous report-like certificate."
+  },
+  "comparison": {
+    "current": "current-certificate.png",
+    "new": [
+      "elena-johnson-christmas/Family-Legacy-Certificate-300dpi.png",
+      "michael-johnson-retirement/Family-Legacy-Certificate-300dpi.png"
+    ],
+    "founderApprovedReference": "founder-approved-reference.webp"
+  },
+  "profiles": [
+    {
+      "id": "elena-johnson-christmas",
+      "recipient": "Elena Johnson",
+      "relationship": "Mother",
+      "occasion": "Christmas",
+      "values": [
+        "Love",
+        "Kindness",
+        "Strength"
+      ],
+      "memory": "She held the family together, made every Christmas gathering feel like home, and taught kindness through everyday care.",
+      "archiveNumber": "AHL-20260713-ELENA01",
+      "pdf": "elena-johnson-christmas/Family-Legacy-Certificate.pdf",
+      "png": "elena-johnson-christmas/Family-Legacy-Certificate-300dpi.png",
+      "framedMockup": "elena-johnson-christmas/Family-Legacy-Certificate-Framed-Mockup.png",
+      "pdfSizeBytes": 1183508,
+      "pageCount": 1,
+      "pageSizePoints": [
+        612,
+        792
+      ],
+      "pngPixels": [
+        2550,
+        3300
+      ],
+      "textBlockBounds": [
+        [
+          266.6474914550781,
+          31.90599822998047,
+          372.3929748535156,
+          50.60350036621094
+        ],
+        [
+          160.25,
+          56.01250076293945,
+          507.3660888671875,
+          103.50199890136719
+        ],
+        [
+          199.2050018310547,
+          123.4000015258789,
+          393.0169677734375,
+          177.5709991455078
+        ],
+        [
+          258.697509765625,
+          179.8625030517578,
+          372.0364990234375,
+          191.54150390625
+        ],
+        [
+          119.17499542236328,
+          208.06060791015625,
+          403.5157470703125,
+          219.53799438476562
+        ],
+        [
+          121.66600036621094,
+          220.2606201171875,
+          409.9077453613281,
+          231.73800659179688
+        ],
+        [
+          126.64800262451172,
+          232.46063232421875,
+          406.51446533203125,
+          243.93801879882812
+        ],
+        [
+          131.6300048828125,
+          244.66058349609375,
+          392.442626953125,
+          256.1379699707031
+        ],
+        [
+          62,
+          277.260009765625,
+          118.419189453125,
+          287.1528015136719
+        ],
+        [
+          62,
+          305.0379943847656,
+          91.75700378417969,
+          319.58050537109375
+        ],
+        [
+          62,
+          323.96258544921875,
+          117.69977569580078,
+          332.99798583984375
+        ],
+        [
+          62,
+          335.94488525390625,
+          117.82440948486328,
+          344.8826904296875
+        ],
+        [
+          62,
+          365.0379943847656,
+          115.6760025024414,
+          379.58050537109375
+        ],
+        [
+          62,
+          383.96258544921875,
+          124.27836608886719,
+          392.99798583984375
+        ],
+        [
+          62,
+          395.94488525390625,
+          119.49271392822266,
+          404.8826904296875
+        ],
+        [
+          62,
+          425.0379943847656,
+          120.34850311279297,
+          439.58050537109375
+        ],
+        [
+          62,
+          443.96258544921875,
+          132.08535766601562,
+          452.99798583984375
+        ],
+        [
+          62,
+          455.94488525390625,
+          129.5561065673828,
+          464.8826904296875
+        ],
+        [
+          438,
+          277.260009765625,
+          485.6135559082031,
+          287.1528015136719
+        ],
+        [
+          438,
+          308.58221435546875,
+          508.40277099609375,
+          329.1059875488281
+        ],
+        [
+          438,
+          356.58221435546875,
+          484.79217529296875,
+          377.1059875488281
+        ],
+        [
+          438,
+          404.58221435546875,
+          491.51580810546875,
+          425.1059875488281
+        ],
+        [
+          228.51400756835938,
+          504.69000244140625,
+          402.3154602050781,
+          514.033203125
+        ],
+        [
+          91.5885009765625,
+          526.726318359375,
+          426.2688903808594,
+          537.3489990234375
+        ],
+        [
+          70,
+          570.7974853515625,
+          129.9315185546875,
+          580.0032958984375
+        ],
+        [
+          70,
+          584.6806030273438,
+          123.08660888671875,
+          597.7537841796875
+        ],
+        [
+          291.7959899902344,
+          570.7974853515625,
+          327.5337829589844,
+          580.0032958984375
+        ],
+        [
+          282.62701416015625,
+          584.6806030273438,
+          322.3757629394531,
+          597.7537841796875
+        ],
+        [
+          404,
+          570.7974853515625,
+          464.67523193359375,
+          580.0032958984375
+        ],
+        [
+          404,
+          585.5230102539062,
+          502.98193359375,
+          597.5289916992188
+        ],
+        [
+          92,
+          668.6859741210938,
+          170.54000854492188,
+          685.780029296875
+        ],
+        [
+          92,
+          690.6900024414062,
+          172.12445068359375,
+          700.033203125
+        ],
+        [
+          472.00799560546875,
+          650.8400268554688,
+          506.6832275390625,
+          657.4351806640625
+        ],
+        [
+          474.4725036621094,
+          658.8619995117188,
+          509.1130065917969,
+          678.9445190429688
+        ],
+        [
+          468.56298828125,
+          683.947509765625,
+          509.0487060546875,
+          690.4052734375
+        ]
+      ],
+      "requiredFields": {
+        "recipient": true,
+        "occasion": true,
+        "archiveNumber": true,
+        "formattedDate": true,
+        "values": true,
+        "signature": true,
+        "brandSeal": true
+      },
+      "forbiddenMatches": [],
+      "personalizationMatches": [],
+      "staleDataMatches": [],
+      "essentialTextInsideSafeMargin": true,
+      "pass": true
+    },
+    {
+      "id": "michael-johnson-retirement",
+      "recipient": "Michael Johnson",
+      "relationship": "Father",
+      "occasion": "Retirement",
+      "values": [
+        "Protection",
+        "Integrity",
+        "Sacrifice"
+      ],
+      "memory": "He worked for 35 years to support and protect his family, rarely spoke about sacrifice, and taught his children through example.",
+      "archiveNumber": "AHL-20260713-MICHAEL01",
+      "pdf": "michael-johnson-retirement/Family-Legacy-Certificate.pdf",
+      "png": "michael-johnson-retirement/Family-Legacy-Certificate-300dpi.png",
+      "framedMockup": "michael-johnson-retirement/Family-Legacy-Certificate-Framed-Mockup.png",
+      "pdfSizeBytes": 1183541,
+      "pageCount": 1,
+      "pageSizePoints": [
+        612,
+        792
+      ],
+      "pngPixels": [
+        2550,
+        3300
+      ],
+      "textBlockBounds": [
+        [
+          266.6474914550781,
+          31.90599822998047,
+          372.3929748535156,
+          50.60350036621094
+        ],
+        [
+          160.25,
+          56.01250076293945,
+          507.3660888671875,
+          103.50199890136719
+        ],
+        [
+          182.77499389648438,
+          123.4000015258789,
+          407.5559997558594,
+          177.5709991455078
+        ],
+        [
+          256.44500732421875,
+          179.8625030517578,
+          374.9775085449219,
+          191.54150390625
+        ],
+        [
+          116.68399810791016,
+          208.06060791015625,
+          406.2418212890625,
+          231.73800659179688
+        ],
+        [
+          119.17499542236328,
+          232.46063232421875,
+          411.82550048828125,
+          256.1379699707031
+        ],
+        [
+          62,
+          277.260009765625,
+          118.419189453125,
+          287.1528015136719
+        ],
+        [
+          62,
+          305.0379943847656,
+          132.5915069580078,
+          319.58050537109375
+        ],
+        [
+          62,
+          323.96258544921875,
+          121.1999740600586,
+          332.99798583984375
+        ],
+        [
+          62,
+          335.94488525390625,
+          130.1055145263672,
+          344.8826904296875
+        ],
+        [
+          62,
+          365.0379943847656,
+          122.09151458740234,
+          379.58050537109375
+        ],
+        [
+          62,
+          383.96258544921875,
+          127.1569595336914,
+          392.99798583984375
+        ],
+        [
+          62,
+          395.94488525390625,
+          123.77401733398438,
+          404.8826904296875
+        ],
+        [
+          62,
+          425.0379943847656,
+          119.75000762939453,
+          439.58050537109375
+        ],
+        [
+          62,
+          443.96258544921875,
+          139.67779541015625,
+          452.99798583984375
+        ],
+        [
+          62,
+          455.94488525390625,
+          122.11241912841797,
+          464.8826904296875
+        ],
+        [
+          438,
+          277.260009765625,
+          485.6135559082031,
+          287.1528015136719
+        ],
+        [
+          438,
+          308.58221435546875,
+          498.66839599609375,
+          329.1059875488281
+        ],
+        [
+          438,
+          356.58221435546875,
+          494.9789733886719,
+          377.1059875488281
+        ],
+        [
+          438,
+          404.58221435546875,
+          499.105224609375,
+          425.1059875488281
+        ],
+        [
+          228.51400756835938,
+          504.69000244140625,
+          402.3154602050781,
+          514.033203125
+        ],
+        [
+          70.83899688720703,
+          526.726318359375,
+          434.5252380371094,
+          537.3489990234375
+        ],
+        [
+          70,
+          570.7974853515625,
+          129.9315185546875,
+          580.0032958984375
+        ],
+        [
+          70,
+          584.6806030273438,
+          123.08660888671875,
+          597.7537841796875
+        ],
+        [
+          291.7959899902344,
+          570.7974853515625,
+          327.5337829589844,
+          580.0032958984375
+        ],
+        [
+          280.0299987792969,
+          584.6806030273438,
+          323.5811462402344,
+          597.7537841796875
+        ],
+        [
+          404,
+          570.7974853515625,
+          464.67523193359375,
+          580.0032958984375
+        ],
+        [
+          404,
+          585.5230102539062,
+          514.4839477539062,
+          597.5289916992188
+        ],
+        [
+          92,
+          668.6859741210938,
+          170.54000854492188,
+          685.780029296875
+        ],
+        [
+          92,
+          690.6900024414062,
+          172.12445068359375,
+          700.033203125
+        ],
+        [
+          472.00799560546875,
+          650.8400268554688,
+          506.6832275390625,
+          657.4351806640625
+        ],
+        [
+          474.4725036621094,
+          658.8619995117188,
+          509.1130065917969,
+          678.9445190429688
+        ],
+        [
+          468.56298828125,
+          683.947509765625,
+          509.0487060546875,
+          690.4052734375
+        ]
+      ],
+      "requiredFields": {
+        "recipient": true,
+        "occasion": true,
+        "archiveNumber": true,
+        "formattedDate": true,
+        "values": true,
+        "signature": true,
+        "brandSeal": true
+      },
+      "forbiddenMatches": [],
+      "personalizationMatches": [],
+      "staleDataMatches": [],
+      "essentialTextInsideSafeMargin": true,
+      "pass": true
+    }
+  ],
+  "scans": {
+    "pronounOccasion": "PASS",
+    "forbiddenPhrases": "PASS",
+    "overflowClipping": "PASS"
+  },
+  "readyForFounderVisualApproval": true,
+  "deployed": false
+}

@@ -34,11 +34,18 @@ describe("PDF generation foundation", () => {
     });
 
     expect(pdfText).toContain("pdf_layout_version=premium_v5_frameable");
+    expect(pdfText).toContain("certificate_layout_version=reference_ornate_v2");
     expect(pdfText).toContain("/Subtype /Image");
-    expect(pdfText).toContain("FAMILY LEGACY CERTIFICATE");
-    expect(pdfText).toContain("PRESENTED TO");
+    expect(pdfText).toContain("FAMILY LEGACY");
+    expect(pdfText).toContain("CERTIFICATE");
+    expect(pdfText).toContain("THIS CERTIFICATE HONORS");
     expect(pdfText).toContain("ARCHIVE NUMBER");
+    expect(pdfText).toContain("FAMILY VALUES");
+    expect(pdfText).toContain("THIS LEGACY");
+    expect(pdfText).toContain("PRIVATE LEGACY");
+    expect(pdfText).toContain("Founder & Legacy Curator");
     expect(pdfText).toContain("MKL");
+    expect(pdfText).not.toContain("MKL SEAL");
     expect(pdfText).not.toContain("Official Seal");
     expect(pdfText).not.toContain("Family Story");
     expect(pdfText).not.toContain("Primary Symbol");

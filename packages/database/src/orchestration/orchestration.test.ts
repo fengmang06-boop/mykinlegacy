@@ -142,7 +142,7 @@ describe("DB-backed orchestration foundation", () => {
     expect(pdfBody.toString("latin1")).toContain("Closing Letter");
     expect(pdfBody.toString("latin1").match(/\/Type \/Page\b/g) ?? []).toHaveLength(6);
     expect(pdfBody.toString("latin1")).not.toContain("personalized symbolic keepsake");
-    expect(certificateText).toContain("PRESENTED TO");
+    expect(certificateText).toContain("THIS CERTIFICATE HONORS");
     expect(certificateText).toContain("ARCHIVE NUMBER");
     expect(certificateText).toContain("MKL");
     expect(certificateText).not.toContain("Official Seal");
@@ -524,8 +524,9 @@ describe("DB-backed orchestration foundation", () => {
       const pngText = (await readStoredAsset(pngAsset)).toString("latin1");
       const zipText = (await readStoredAsset(zipAsset)).toString("latin1");
 
-      expect(certificateText).toContain("FAMILY LEGACY CERTIFICATE");
-      expect(certificateText).toContain("PRESENTED TO");
+      expect(certificateText).toContain("FAMILY LEGACY");
+      expect(certificateText).toContain("CERTIFICATE");
+      expect(certificateText).toContain("THIS CERTIFICATE HONORS");
       expect(certificateText).not.toContain("personal in authority");
       expect(familyStoryText).toContain("Nothing here asks the family to believe invented history");
       expect(zipText).toContain("This archive includes an LRE text pass");

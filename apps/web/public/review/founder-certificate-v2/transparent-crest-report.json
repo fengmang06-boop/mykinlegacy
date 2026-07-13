@@ -1,0 +1,28 @@
+{
+  "method": "Four-neighbor flood fill from image borders, limited to neutral dark canvas pixels; disconnected background texture removed while warm-metal ribbon and finial details are retained; approved ribbon interior protected; 0.72px alpha feather; exterior edge pixels inherit the nearest retained crest color instead of channel-wise brightening; neutral pale highlights only in the exterior one-pixel boundary band are converted to antique gold before checks against exact certificate ivory, black, and checkerboard mattes.",
+  "sourcePixels": [
+    1254,
+    1254
+  ],
+  "cropBox": [
+    86,
+    5,
+    1164,
+    1248
+  ],
+  "outputPixels": [
+    1078,
+    1243
+  ],
+  "connectedComponentsFound": 2132,
+  "retainedComponents": 79,
+  "transparentPixels": 651328,
+  "opaquePixels": 569421,
+  "antialiasedEdgePixels": 119205,
+  "output": "E:\\CodexStorage\\Documents\\Codex\\2026-06-29\\mykinlegacy-three-book-pdf\\packages\\storage\\assets\\official\\01a-classic-shield-legacy-transparent.png",
+  "previews": [
+    "E:\\CodexStorage\\Documents\\Codex\\2026-06-29\\mykinlegacy-three-book-pdf\\apps\\web\\public\\review\\founder-certificate-v2\\transparent-crest-checkerboard.png",
+    "E:\\CodexStorage\\Documents\\Codex\\2026-06-29\\mykinlegacy-three-book-pdf\\apps\\web\\public\\review\\founder-certificate-v2\\transparent-crest-ivory.png",
+    "E:\\CodexStorage\\Documents\\Codex\\2026-06-29\\mykinlegacy-three-book-pdf\\apps\\web\\public\\review\\founder-certificate-v2\\transparent-crest-dark.png"
+  ]
+}

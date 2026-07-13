@@ -10,6 +10,7 @@ export const GLOBAL_PDF_DISCLAIMER =
   "This is a personalized symbolic keepsake. It is not an official coat of arms, legal heraldic grant, noble title claim, or certified genealogical record.";
 
 const PDF_LAYOUT_VERSION = "premium_v5_frameable";
+const CERTIFICATE_LAYOUT_VERSION = "reference_ornate_v2";
 const PAGE_WIDTH = 612;
 const PAGE_HEIGHT = 792;
 const COLOR = {
@@ -33,6 +34,7 @@ interface PdfImage {
 
 interface PdfArtwork {
   full: PdfImage;
+  certificateFull: PdfImage;
   shield: PdfImage;
   tree: PdfImage;
   knot: PdfImage;
@@ -44,6 +46,8 @@ interface PdfSection {
   heading: string;
   body: string;
 }
+
+type PdfFont = "F1" | "F2" | "F3" | "F4" | "F5";
 
 interface PdfModel {
   deliverableCode: PdfGenerationInput["deliverable_code"];
@@ -88,27 +92,34 @@ function buildPublicationPdf(input: PdfGenerationInput): Buffer {
   const bodyFontObjectId = 3;
   const headingFontObjectId = 4;
   const utilityFontObjectId = 5;
+  const classicalBoldFontObjectId = 6;
+  const scriptFontObjectId = 7;
+  const firstImageObjectId = 8;
   const imageEntries: Array<[string, PdfImage]> = artwork
-    ? [
-        ["Im1", artwork.full],
-        ["Im2", artwork.shield],
-        ["Im3", artwork.tree],
-        ["Im4", artwork.knot],
-        ["Im5", artwork.keyStar],
-        ["Im6", artwork.laurel]
-      ]
+    ? model.deliverableCode === "heritage_certificate_pdf"
+      ? [["Im1", artwork.certificateFull]]
+      : [
+          ["Im1", artwork.full],
+          ["Im2", artwork.shield],
+          ["Im3", artwork.tree],
+          ["Im4", artwork.knot],
+          ["Im5", artwork.keyStar],
+          ["Im6", artwork.laurel]
+        ]
     : [];
-  const firstPageObjectId = 6 + imageEntries.length;
+  const firstPageObjectId = firstImageObjectId + imageEntries.length;
   const pageObjectIds = pageContents.map((_, index) => firstPageObjectId + index * 2);
   const resourceXObject = imageEntries.length
-    ? `/XObject << ${imageEntries.map(([name], index) => `/${name} ${6 + index} 0 R`).join(" ")} >> `
+    ? `/XObject << ${imageEntries.map(([name], index) => `/${name} ${firstImageObjectId + index} 0 R`).join(" ")} >> `
     : "";
   const objects = [
     "<< /Type /Catalog /Pages 2 0 R >>",
     `<< /Type /Pages /Kids [${pageObjectIds.map((id) => `${id} 0 R`).join(" ")}] /Count ${pageContents.length} >>`,
     "<< /Type /Font /Subtype /Type1 /BaseFont /Times-Roman >>",
     "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold >>",
-    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>"
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Times-Bold >>",
+    "<< /Type /Font /Subtype /Type1 /BaseFont /Times-Italic >>"
   ];
 
   for (const [, image] of imageEntries) {
@@ -122,12 +133,14 @@ function buildPublicationPdf(input: PdfGenerationInput): Buffer {
     if (!pageObjectId) throw new Error("pdf_page_object_missing");
     const contentObjectId = pageObjectId + 1;
     objects.push(
-      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PAGE_WIDTH} ${PAGE_HEIGHT}] /Resources << /Font << /F1 ${bodyFontObjectId} 0 R /F2 ${headingFontObjectId} 0 R /F3 ${utilityFontObjectId} 0 R >> ${resourceXObject}>> /Contents ${contentObjectId} 0 R >>`,
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${PAGE_WIDTH} ${PAGE_HEIGHT}] /Resources << /Font << /F1 ${bodyFontObjectId} 0 R /F2 ${headingFontObjectId} 0 R /F3 ${utilityFontObjectId} 0 R /F4 ${classicalBoldFontObjectId} 0 R /F5 ${scriptFontObjectId} 0 R >> ${resourceXObject}>> /Contents ${contentObjectId} 0 R >>`,
       `<< /Length ${Buffer.byteLength(content, "binary")} >>\nstream\n${content}\nendstream`
     );
   }
 
-  let body = `%PDF-1.4\n% pdf_layout_version=${PDF_LAYOUT_VERSION}\n% MyKinLegacy three-book reading experience with approved crest artwork when available\n`;
+  const certificateMetadata =
+    model.deliverableCode === "heritage_certificate_pdf" ? `% certificate_layout_version=${CERTIFICATE_LAYOUT_VERSION}\n` : "";
+  let body = `%PDF-1.4\n% pdf_layout_version=${PDF_LAYOUT_VERSION}\n${certificateMetadata}% MyKinLegacy three-book reading experience with approved crest artwork when available\n`;
   const offsets = [0];
 
   objects.forEach((object, index) => {
@@ -145,7 +158,7 @@ function buildPublicationPdf(input: PdfGenerationInput): Buffer {
 }
 
 function buildPublicationPages(model: PdfModel, artwork: PdfArtwork | null): string[] {
-  if (model.deliverableCode === "heritage_certificate_pdf") return buildCertificatePages(model, artwork?.full ?? null);
+  if (model.deliverableCode === "heritage_certificate_pdf") return buildCertificatePages(model, artwork?.certificateFull ?? null);
   if (model.deliverableCode === "family_story_pdf") return buildStorybookPages(model, artwork?.full ?? null);
   return buildMeaningGuidePages(model, artwork);
 }
@@ -160,49 +173,252 @@ function buildCertificateMainPage(model: PdfModel, image: PdfImage | null): stri
   const values = field(model, "Family Values", "Love, unity, and legacy");
   const date = field(model, "Date", formatDisplayDate(new Date()));
   const archiveNumber = field(model, "Archive Number", "Archive record pending");
-  const statement = sectionBody(model, "Ceremony Statement", 0) || model.sections.at(-1)?.body || ceremonialFallback(model);
-  const recipientSize = recipient.length > 36 ? 18 : recipient.length > 25 ? 22 : 29;
+  const motto = field(model, "Family Motto", field(model, "Motto", ""));
+  const valueList = certificateValues(values);
+  const statement = certificateRecognitionStatement(model, recipient, occasion, valueList);
+  const legacyLines = certificateLegacyLines(model, occasion, valueList);
+  const recipientSize = recipient.length > 42 ? 19 : recipient.length > 30 ? 23 : 29;
   const commands: string[] = [
     rectCommand(0, 0, PAGE_WIDTH, PAGE_HEIGHT, COLOR.parchment),
-    rectCommand(24, 24, 564, 744, COLOR.charcoal),
-    rectCommand(31, 31, 550, 730, COLOR.ivorySoft),
-    strokeRectCommand(37, 37, 538, 718, COLOR.gold, 1.5),
-    strokeRectCommand(45, 45, 522, 702, COLOR.goldSoft, 0.7),
-    strokeRectCommand(53, 53, 506, 686, COLOR.mist, 0.35),
-    ...certificateCornerOrnaments(),
-    centeredTextCommand(306, 718, "MYKINLEGACY", "F2", 12, COLOR.goldSoft),
-    centeredTextCommand(306, 699, "LEGACY, DESIGNED.", "F3", 6.8, COLOR.muted),
-    centeredTextCommand(306, 664, "FAMILY LEGACY CERTIFICATE", "F2", 23, COLOR.ink),
-    centeredTextCommand(306, 640, `CREATED FOR ${occasion.toUpperCase()}`, "F3", occasion.length > 30 ? 7.5 : 9, COLOR.goldSoft),
-    centeredTextCommand(306, 424, "PRESENTED TO", "F3", 9.5, COLOR.muted),
-    centeredTextCommand(306, 389, recipient, "F2", recipientSize, COLOR.ink),
-    strokeLineCommand(116, 371, 496, 371, COLOR.goldSoft, 0.9),
-    centeredTextCommand(306, 348, values.toUpperCase(), "F3", values.length > 48 ? 7.4 : 9, COLOR.goldSoft),
-    rectCommand(70, 214, 472, 104, COLOR.ivory),
-    strokeRectCommand(70, 214, 472, 104, COLOR.goldSoft, 0.6),
-    ...wrappedTextCommands(statement, 92, 289, 76, "F1", 10.7, 14.5, COLOR.ink, 6),
-    textCommand(82, 181, "DATE", "F3", 7.5, COLOR.muted),
-    textCommand(82, 161, date, "F1", 10.5, COLOR.ink),
-    textCommand(314, 181, "ARCHIVE NUMBER", "F3", 7.5, COLOR.muted),
-    textCommand(314, 161, archiveNumber, "F1", archiveNumber.length > 28 ? 8.5 : 10.5, COLOR.ink),
-    strokeLineCommand(82, 112, 286, 112, COLOR.goldSoft, 0.75),
-    textCommand(104, 94, "MyKinLegacy", "F2", 10.5, COLOR.ink),
-    textCommand(104, 80, "Legacy Curator", "F3", 7.5, COLOR.muted),
-    fillCircleCommand(472, 110, 37, COLOR.goldSoft),
-    strokeCircleCommand(472, 110, 30, COLOR.ivorySoft, 0.9),
-    strokeCircleCommand(472, 110, 24, COLOR.ivorySoft, 0.45),
-    centeredTextCommand(472, 116, "MKL", "F2", 13, COLOR.ivorySoft),
-    centeredTextCommand(472, 99, "SEAL", "F3", 6.2, COLOR.ivorySoft)
+    rectCommand(18, 18, 576, 756, COLOR.ivorySoft),
+    ...certificateParchmentTexture(),
+    ...certificateBotanicalWatermark(),
+    ...ornateCertificateFrame(),
+    ...(image
+      ? [drawImageCommand(197, 268, 218, 252)]
+      : [
+          strokeCircleCommand(306, 394, 90, COLOR.goldSoft, 0.7),
+          centeredTextCommand(306, 390, "Final Crest", "F4", 13, COLOR.goldSoft)
+        ]),
+    centeredTextCommand(306, 738, "MYKINLEGACY", "F4", 13.5, COLOR.goldSoft),
+    centeredTextCommand(306, 721, "LEGACY, DESIGNED.", "F3", 6.5, COLOR.muted),
+    ...centerFlourishCommands(306, 714),
+    centeredTextCommand(306, 688, "FAMILY LEGACY", "F4", 24.5, COLOR.ink),
+    centeredTextCommand(306, 660, "CERTIFICATE", "F4", 21.5, COLOR.ink),
+    ...centerFlourishCommands(306, 644),
+    centeredTextCommand(306, 626, "THIS CERTIFICATE HONORS", "F3", 7.5, COLOR.goldSoft),
+    centeredTextCommand(306, 596, recipient, "F4", recipientSize, COLOR.ink),
+    centeredTextCommand(306, 575, `CREATED FOR ${occasion.toUpperCase()}`, "F3", occasion.length > 32 ? 7 : 8.1, COLOR.goldSoft),
+    ...centeredWrappedTextCommands(statement, 306, 553, 82, "F5", 8.8, 11.2, COLOR.muted, 3),
+    textCommand(64, 478, "FAMILY VALUES", "F3", 7.2, COLOR.goldSoft),
+    strokeLineCommand(64, 469, 173, 469, COLOR.goldSoft, 0.55),
+    ...certificateValueCommands(valueList),
+    textCommand(439, 478, "THIS LEGACY", "F3", 7.2, COLOR.goldSoft),
+    strokeLineCommand(439, 469, 548, 469, COLOR.goldSoft, 0.55),
+    ...certificateLegacyCommands(legacyLines),
+    ...certificateCrestLaurelCommands(),
+    ...centerFlourishCommands(306, 278),
+    ...(motto
+      ? [centeredTextCommand(306, 264, motto, "F5", motto.length > 52 ? 8.2 : 9.5, COLOR.goldSoft)]
+      : [centeredTextCommand(306, 264, "A LEGACY OF CHARACTER, CARE, AND CONTINUITY", "F3", 6.8, COLOR.goldSoft)]),
+    centeredTextCommand(306, 243, certificateClosing(recipient, valueList), "F5", 8.4, COLOR.muted),
+    strokeLineCommand(58, 220, 554, 220, COLOR.mist, 0.45),
+    textCommand(70, 203, "DATE OF RECORD", "F3", 6.5, COLOR.muted),
+    textCommand(70, 186, date, "F1", 9.5, COLOR.ink),
+    centeredTextCommand(306, 203, "OCCASION", "F3", 6.5, COLOR.muted),
+    centeredTextCommand(306, 186, occasion, "F1", occasion.length > 24 ? 8.2 : 9.5, COLOR.ink),
+    textCommand(404, 203, "ARCHIVE NUMBER", "F3", 6.5, COLOR.muted),
+    textCommand(404, 186, archiveNumber, "F1", archiveNumber.length > 29 ? 7.2 : 8.8, COLOR.ink),
+    strokeLineCommand(72, 121, 255, 121, COLOR.goldSoft, 0.7),
+    textCommand(91, 102, "MyKinLegacy", "F5", 14, COLOR.ink),
+    textCommand(91, 86, "Founder & Legacy Curator", "F3", 6.8, COLOR.muted),
+    ...brandSealCommands(486, 108),
+    centeredTextCommand(306, 61, "Prepared as a lasting keepsake for the family archive.", "F5", 7.1, COLOR.muted)
   ];
 
-  if (image) {
-    commands.push(drawImageCommand(206, 438, 200, 200));
-  } else {
-    commands.push(strokeRectCommand(206, 438, 200, 200, COLOR.goldSoft, 0.7));
-    commands.push(centeredTextCommand(306, 526, "Final Crest", "F2", 13, COLOR.goldSoft));
-  }
-
   return commands.join("\n");
+}
+
+function certificateParchmentTexture(): string[] {
+  const commands: string[] = [];
+  for (let row = 0; row < 15; row += 1) {
+    for (let column = 0; column < 11; column += 1) {
+      const x = 58 + column * 49 + ((row * 13 + column * 7) % 17);
+      const y = 62 + row * 46 + ((row * 9 + column * 11) % 13);
+      commands.push(fillCircleCommand(x, y, 0.38, row % 2 ? COLOR.mist : COLOR.parchment));
+    }
+  }
+  return commands;
+}
+
+function certificateBotanicalWatermark(): string[] {
+  const branch = (x: number, y: number, direction: number): string[] => {
+    const commands = [
+      `${COLOR.mist.join(" ")} RG 0.28 w ${x} ${y} m ${x + 42 * direction} ${y + 68} ${x + 46 * direction} ${y + 126} ${x + 22 * direction} ${y + 176} c S`
+    ];
+    for (let index = 0; index < 6; index += 1) {
+      const leafY = y + 25 + index * 23;
+      const stemX = x + (18 + index * 4) * direction;
+      commands.push(`${COLOR.mist.join(" ")} RG 0.24 w ${stemX} ${leafY} m ${stemX + 14 * direction} ${leafY + 7} ${stemX + 15 * direction} ${leafY + 17} ${stemX + 3 * direction} ${leafY + 20} c S`);
+    }
+    return commands;
+  };
+  return [...branch(186, 300, -1), ...branch(426, 300, 1)];
+}
+
+function certificateCrestLaurelCommands(): string[] {
+  return [
+    `${COLOR.goldSoft.join(" ")} RG 0.35 w 205 310 m 181 341 180 391 193 446 c S`,
+    `${COLOR.goldSoft.join(" ")} RG 0.35 w 407 310 m 431 341 432 391 419 446 c S`,
+    fillDiamondCommand(193, 446, 2.4, COLOR.goldSoft),
+    fillDiamondCommand(419, 446, 2.4, COLOR.goldSoft)
+  ];
+}
+
+function ornateCertificateFrame(): string[] {
+  const corner = (x: number, y: number, sx: number, sy: number): string[] => [
+    `${COLOR.goldSoft.join(" ")} RG 0.7 w ${x} ${y} m ${x + 30 * sx} ${y} l ${x + 42 * sx} ${y + 12 * sy} ${x + 42 * sx} ${y + 28 * sy} ${x + 55 * sx} ${y + 34 * sy} c S`,
+    `${COLOR.gold.join(" ")} RG 0.55 w ${x} ${y} m ${x} ${y + 30 * sy} l ${x + 12 * sx} ${y + 42 * sy} ${x + 28 * sx} ${y + 42 * sy} ${x + 34 * sx} ${y + 55 * sy} c S`,
+    strokeCircleCommand(x + 12 * sx, y + 12 * sy, 3.2, COLOR.goldSoft, 0.55),
+    fillDiamondCommand(x + 28 * sx, y + 28 * sy, 3.2, COLOR.goldSoft),
+    `${COLOR.goldSoft.join(" ")} RG 0.45 w ${x + 18 * sx} ${y + 4 * sy} m ${x + 24 * sx} ${y + 9 * sy} ${x + 25 * sx} ${y + 18 * sy} ${x + 30 * sx} ${y + 22 * sy} c S`,
+    `${COLOR.goldSoft.join(" ")} RG 0.45 w ${x + 4 * sx} ${y + 18 * sy} m ${x + 9 * sx} ${y + 24 * sy} ${x + 18 * sx} ${y + 25 * sy} ${x + 22 * sx} ${y + 30 * sy} c S`
+  ];
+  return [
+    strokeRectCommand(24, 24, 564, 744, COLOR.ink, 1.2),
+    strokeRectCommand(29, 29, 554, 734, COLOR.gold, 1.2),
+    strokeRectCommand(35, 35, 542, 722, COLOR.goldSoft, 0.45),
+    strokeRectCommand(42, 42, 528, 708, COLOR.goldSoft, 0.8),
+    strokeRectCommand(49, 49, 514, 694, COLOR.mist, 0.3),
+    ...corner(49, 49, 1, 1),
+    ...corner(563, 49, -1, 1),
+    ...corner(49, 743, 1, -1),
+    ...corner(563, 743, -1, -1),
+    ...centerFlourishCommands(306, 755),
+    ...centerFlourishCommands(306, 37)
+  ];
+}
+
+function centerFlourishCommands(x: number, y: number): string[] {
+  return [
+    strokeLineCommand(x - 64, y, x - 15, y, COLOR.goldSoft, 0.45),
+    strokeLineCommand(x + 15, y, x + 64, y, COLOR.goldSoft, 0.45),
+    fillDiamondCommand(x, y, 3.5, COLOR.goldSoft),
+    `${COLOR.goldSoft.join(" ")} RG 0.5 w ${x - 15} ${y} m ${x - 9} ${y + 7} ${x - 4} ${y + 7} ${x} ${y} c ${x + 4} ${y - 7} ${x + 9} ${y - 7} ${x + 15} ${y} c S`,
+    `${COLOR.goldSoft.join(" ")} RG 0.35 w ${x - 13} ${y} m ${x - 8} ${y - 6} ${x - 4} ${y - 6} ${x} ${y} c ${x + 4} ${y + 6} ${x + 8} ${y + 6} ${x + 13} ${y} c S`
+  ];
+}
+
+function certificateValues(value: string): string[] {
+  const parsed = value
+    .replace(/\s+and\s+/gi, ", ")
+    .split(/[,;|]/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+    .slice(0, 3);
+  return parsed.length > 0 ? parsed : ["Love", "Unity", "Legacy"];
+}
+
+function certificateValueCommands(values: string[]): string[] {
+  const commands: string[] = [];
+  values.slice(0, 3).forEach((value, index) => {
+    const y = 444 - index * 58;
+    const descriptor = valueDescriptor(value);
+    commands.push(fillDiamondCommand(68, y + 3, 3.1, COLOR.goldSoft));
+    commands.push(textCommand(78, y, value.toUpperCase(), "F4", value.length > 13 ? 8.5 : 10, COLOR.ink));
+    commands.push(textCommand(78, y - 15, descriptor[0], "F5", 7.2, COLOR.muted));
+    commands.push(textCommand(78, y - 27, descriptor[1], "F1", 6.5, COLOR.muted));
+  });
+  return commands;
+}
+
+function valueDescriptor(value: string): [string, string] {
+  const descriptions: Record<string, [string, string]> = {
+    love: ["Care made visible.", "A bond that endures."],
+    kindness: ["Gentleness in action.", "Warmth freely given."],
+    strength: ["Steady through change.", "Courage without display."],
+    protection: ["A shelter for family.", "Safety built through care."],
+    integrity: ["Character lived daily.", "Truth carried in action."],
+    sacrifice: ["Love expressed in service.", "Giving without praise."],
+    unity: ["Stronger together.", "A foundation that lasts."],
+    faith: ["Trust carried forward.", "Hope beyond the present."],
+    future: ["A promise still growing.", "Tomorrow held with care."],
+    legacy: ["An example remembered.", "Meaning carried onward."],
+    resilience: ["Strength through hardship.", "Endurance with dignity."],
+    hope: ["Light beyond difficulty.", "A future kept in view."],
+    courage: ["Brave in heart.", "Steadfast in every season."],
+    honor: ["Integrity in action.", "A legacy of character."],
+    gratitude: ["The good remembered.", "Thanks made lasting."],
+    joy: ["Warmth shared openly.", "A light within the family."],
+    tradition: ["Memory practiced together.", "Continuity across years."]
+  };
+  return descriptions[value.toLowerCase()] ?? [`${value} carried forward.`, "A value made visible."];
+}
+
+function certificateLegacyLines(model: PdfModel, occasion: string, values: string[]): string[] {
+  const evidence = `${model.bodyText} ${occasion}`.toLowerCase();
+  if (/35 years|thirty-five|retirement/.test(evidence)) {
+    return ["Built through years of service.", "Protected through quiet sacrifice.", "Carried forward by example."];
+  }
+  if (/christmas|gathering|feel like home|held the family together/.test(evidence)) {
+    return ["Home made present in gathering.", "Family held by everyday care.", "Kindness carried into the future."];
+  }
+  if (/wedding|married|beginning a new family/.test(evidence)) {
+    return ["Two lives joined with purpose.", "A home beginning in unity.", "A future shaped together."];
+  }
+  return [
+    `Rooted in ${values[0]?.toLowerCase() ?? "care"}.`,
+    `Guided by ${values[1]?.toLowerCase() ?? "family values"}.`,
+    `Carried forward with ${values[2]?.toLowerCase() ?? "hope"}.`
+  ];
+}
+
+function certificateLegacyCommands(lines: string[]): string[] {
+  const commands: string[] = [];
+  lines.slice(0, 3).forEach((line, index) => {
+    const y = 444 - index * 47;
+    commands.push(...wrappedTextCommands(line, 439, y, 20, "F5", 7.6, 10.8, COLOR.ink, 2));
+    if (index < 2) commands.push(strokeLineCommand(439, y - 27, 540, y - 27, COLOR.mist, 0.3));
+  });
+  return commands;
+}
+
+function certificateRecognitionStatement(
+  model: PdfModel,
+  recipient: string,
+  occasion: string,
+  values: string[]
+): string {
+  const evidence = `${model.bodyText} ${occasion}`.toLowerCase();
+  if (/35 years|thirty-five|retirement/.test(evidence)) {
+    return `Presented to ${recipient} in recognition of thirty-five years of protection, integrity, and quiet sacrifice, and a life that taught through example.`;
+  }
+  if (/christmas|gathering|feel like home|held the family together/.test(evidence)) {
+    return `Presented to ${recipient} in recognition of the love, kindness, and strength that held the family together and made every Christmas gathering feel like home.`;
+  }
+  const valuePhrase = values.length > 1
+    ? `${values.slice(0, -1).map((value) => value.toLowerCase()).join(", ")}, and ${values.at(-1)?.toLowerCase()}`
+    : values[0]?.toLowerCase() ?? "care";
+  return `Presented to ${recipient} for ${occasion}, honoring a family legacy shaped by ${valuePhrase}.`;
+}
+
+function certificateClosing(recipient: string, values: string[]): string {
+  const first = values[0]?.toLowerCase() ?? "care";
+  const second = values[1]?.toLowerCase() ?? "integrity";
+  return `May ${recipient}'s example continue through ${first}, ${second}, and the generations that follow.`;
+}
+
+function brandSealCommands(x: number, y: number): string[] {
+  return [
+    fillPolygonCommand(
+      [
+        [x - 24, y - 22],
+        [x - 8, y - 55],
+        [x, y - 38],
+        [x + 8, y - 55],
+        [x + 24, y - 22]
+      ],
+      COLOR.charcoalSoft
+    ),
+    fillCircleCommand(x, y, 43, COLOR.goldSoft),
+    fillCircleCommand(x, y, 35, COLOR.charcoalSoft),
+    strokeCircleCommand(x, y, 31, COLOR.gold, 1),
+    strokeCircleCommand(x, y, 25, COLOR.goldSoft, 0.45),
+    centeredTextCommand(x, y + 17, "MYKINLEGACY", "F3", 4.8, COLOR.gold),
+    centeredTextCommand(x, y - 1, "MKL", "F4", 14.5, COLOR.ivorySoft),
+    centeredTextCommand(x, y - 16, "PRIVATE LEGACY", "F3", 4.7, COLOR.gold),
+    fillDiamondCommand(x, y + 27, 2.2, COLOR.gold)
+  ];
 }
 
 function buildStorybookPages(model: PdfModel, image: PdfImage | null): string[] {
@@ -508,25 +724,6 @@ function strokeLineCommand(
   return `${color.join(" ")} RG ${strokeWidth} w ${x1} ${y1} m ${x2} ${y2} l S`;
 }
 
-function certificateCornerOrnaments(): string[] {
-  return [
-    strokeLineCommand(54, 73, 54, 112, COLOR.goldSoft, 0.7),
-    strokeLineCommand(54, 73, 93, 73, COLOR.goldSoft, 0.7),
-    strokeCircleCommand(54, 73, 4, COLOR.goldSoft, 0.7),
-    strokeLineCommand(558, 73, 558, 112, COLOR.goldSoft, 0.7),
-    strokeLineCommand(519, 73, 558, 73, COLOR.goldSoft, 0.7),
-    strokeCircleCommand(558, 73, 4, COLOR.goldSoft, 0.7),
-    strokeLineCommand(54, 719, 54, 680, COLOR.goldSoft, 0.7),
-    strokeLineCommand(54, 719, 93, 719, COLOR.goldSoft, 0.7),
-    strokeCircleCommand(54, 719, 4, COLOR.goldSoft, 0.7),
-    strokeLineCommand(558, 719, 558, 680, COLOR.goldSoft, 0.7),
-    strokeLineCommand(519, 719, 558, 719, COLOR.goldSoft, 0.7),
-    strokeCircleCommand(558, 719, 4, COLOR.goldSoft, 0.7),
-    strokeLineCommand(252, 731, 360, 731, COLOR.goldSoft, 0.45),
-    fillCircleCommand(306, 731, 2.5, COLOR.goldSoft)
-  ];
-}
-
 function strokeCircleCommand(x: number, y: number, radius: number, color: readonly [number, number, number], strokeWidth: number): string {
   const c = radius * 0.5523;
   return `${color.join(" ")} RG ${strokeWidth} w ${x + radius} ${y} m ${x + radius} ${y + c} ${x + c} ${y + radius} ${x} ${y + radius} c ${x - c} ${y + radius} ${x - radius} ${y + c} ${x - radius} ${y} c ${x - radius} ${y - c} ${x - c} ${y - radius} ${x} ${y - radius} c ${x + c} ${y - radius} ${x + radius} ${y - c} ${x + radius} ${y} c S`;
@@ -537,11 +734,29 @@ function fillCircleCommand(x: number, y: number, radius: number, color: readonly
   return `${color.join(" ")} rg ${x + radius} ${y} m ${x + radius} ${y + c} ${x + c} ${y + radius} ${x} ${y + radius} c ${x - c} ${y + radius} ${x - radius} ${y + c} ${x - radius} ${y} c ${x - radius} ${y - c} ${x - c} ${y - radius} ${x} ${y - radius} c ${x + c} ${y - radius} ${x + radius} ${y - c} ${x + radius} ${y} c f`;
 }
 
+function fillDiamondCommand(
+  x: number,
+  y: number,
+  radius: number,
+  color: readonly [number, number, number]
+): string {
+  return `${color.join(" ")} rg ${x} ${y + radius} m ${x + radius} ${y} l ${x} ${y - radius} l ${x - radius} ${y} l h f`;
+}
+
+function fillPolygonCommand(
+  points: Array<[number, number]>,
+  color: readonly [number, number, number]
+): string {
+  const [first, ...rest] = points;
+  if (!first) return "";
+  return `${color.join(" ")} rg ${first[0]} ${first[1]} m ${rest.map(([x, y]) => `${x} ${y} l`).join(" ")} h f`;
+}
+
 function textCommand(
   x: number,
   y: number,
   value: string,
-  font: "F1" | "F2" | "F3",
+  font: PdfFont,
   size: number,
   color: readonly [number, number, number]
 ): string {
@@ -552,7 +767,7 @@ function centeredTextCommand(
   x: number,
   y: number,
   value: string,
-  font: "F1" | "F2" | "F3",
+  font: PdfFont,
   size: number,
   color: readonly [number, number, number]
 ): string {
@@ -565,7 +780,7 @@ function wrappedTextCommands(
   x: number,
   y: number,
   width: number,
-  font: "F1" | "F2" | "F3",
+  font: PdfFont,
   size: number,
   leading: number,
   color: readonly [number, number, number],
@@ -574,6 +789,22 @@ function wrappedTextCommands(
   return wrapLine(value, width)
     .slice(0, maxLines)
     .map((line, index) => textCommand(x, y - index * leading, line, font, size, color));
+}
+
+function centeredWrappedTextCommands(
+  value: string,
+  x: number,
+  y: number,
+  width: number,
+  font: PdfFont,
+  size: number,
+  leading: number,
+  color: readonly [number, number, number],
+  maxLines: number
+): string[] {
+  return wrapLine(value, width)
+    .slice(0, maxLines)
+    .map((line, index) => centeredTextCommand(x, y - index * leading, line, font, size, color));
 }
 
 function paragraphBlock(
@@ -643,12 +874,6 @@ function cleanDisplayName(value?: string | null): string | null {
   const cleaned = value?.trim().replace(/\s+/g, " ");
   if (!cleaned || /^(unknown|null|undefined|n\/a|none)$/i.test(cleaned) || /\bHouse of Unknown\b/i.test(cleaned)) return null;
   return cleaned.slice(0, 90);
-}
-
-function ceremonialFallback(model: PdfModel): string {
-  const occasion = field(model, "Created For", "a meaningful family occasion");
-  const values = field(model, "Family Values", "love, unity, and legacy").toLowerCase();
-  return `Presented to ${model.familyName} for ${occasion}, in recognition of ${values} and the care this family wishes to preserve.`;
 }
 
 function openingStorySentence(model: PdfModel): string {
@@ -721,8 +946,10 @@ function loadApprovedCrestArtwork(): PdfArtwork | null {
     try {
       if (!existsSync(filePath)) continue;
       const decoded = decodePng(readFileSync(filePath));
+      const certificateDecoded = loadApprovedTransparentCrest() ?? decoded;
       return {
         full: rgbToPdfImage(decoded.rgb, decoded.width, decoded.height, 420),
+        certificateFull: rgbToPdfImage(certificateDecoded.rgb, certificateDecoded.width, certificateDecoded.height, 520),
         shield: cropPdfImage(decoded, { x: 210, y: 160, width: 840, height: 850 }, 420),
         tree: cropPdfImage(decoded, { x: 320, y: 205, width: 620, height: 560 }, 420),
         knot: cropPdfImage(decoded, { x: 350, y: 635, width: 560, height: 350 }, 420),
@@ -734,6 +961,22 @@ function loadApprovedCrestArtwork(): PdfArtwork | null {
     }
   }
   return null;
+}
+
+function loadApprovedTransparentCrest(): { width: number; height: number; rgb: Buffer } | null {
+  for (const filePath of approvedTransparentCrestCandidates()) {
+    try {
+      if (!existsSync(filePath)) continue;
+      return decodePng(readFileSync(filePath), [254, 251, 241]);
+    } catch {
+      continue;
+    }
+  }
+  return null;
+}
+
+function approvedTransparentCrestCandidates(): string[] {
+  return approvedCrestCandidates().map((filePath) => filePath.replace(/01a-classic-shield-legacy\.png$/, "01a-classic-shield-legacy-transparent.png"));
 }
 
 function approvedCrestCandidates(): string[] {
@@ -777,7 +1020,7 @@ function cropPdfImage(
   return rgbToPdfImage(rgb, width, height, maxDimension);
 }
 
-function decodePng(buffer: Buffer): { width: number; height: number; rgb: Buffer } {
+function decodePng(buffer: Buffer, matte: readonly [number, number, number] = [14, 13, 12]): { width: number; height: number; rgb: Buffer } {
   if (buffer.subarray(0, 8).toString("hex") !== "89504e470d0a1a0a") throw new Error("not_png");
   const width = buffer.readUInt32BE(16);
   const height = buffer.readUInt32BE(20);
@@ -814,9 +1057,9 @@ function decodePng(buffer: Buffer): { width: number; height: number; rgb: Buffer
     const source = index * channels;
     const target = index * 3;
     const alpha = channels === 4 ? (rgba[source + 3] ?? 255) / 255 : 1;
-    rgb[target] = Math.round((rgba[source] ?? 0) * alpha + 14 * (1 - alpha));
-    rgb[target + 1] = Math.round((rgba[source + 1] ?? 0) * alpha + 13 * (1 - alpha));
-    rgb[target + 2] = Math.round((rgba[source + 2] ?? 0) * alpha + 12 * (1 - alpha));
+    rgb[target] = Math.round((rgba[source] ?? 0) * alpha + matte[0] * (1 - alpha));
+    rgb[target + 1] = Math.round((rgba[source + 1] ?? 0) * alpha + matte[1] * (1 - alpha));
+    rgb[target + 2] = Math.round((rgba[source + 2] ?? 0) * alpha + matte[2] * (1 - alpha));
   }
   return { width, height, rgb };
 }
