@@ -1,0 +1,6 @@
+﻿"dataset","fields","reason","affected_records"
+"listing_discovery","views|visits|impressions|clicks","Etsy Open API v3 has no date-bounded discovery analytics endpoint; lifetime views snapshot is exported separately when present.","215"
+"listing_discovery","traffic_sources","Etsy Open API v3 does not expose shop traffic-source analytics.","215"
+"search_discovery","all","Etsy Open API v3 does not expose seller search-query performance linked to listings.","0"
+"listing_engagement","favorite_date|cart_additions","Listing resources expose aggregate favorer count but not favorite event dates or cart-addition events.","215"
+"identifier_mapping","sku","SKU is UNKNOWN where Etsy inventory products contain no SKU.","0"

@@ -1,0 +1,79 @@
+{
+  "exportedAt": "2026-07-13T07:38:47.940Z",
+  "startDate": "2026-01-11",
+  "endDate": "2026-07-12",
+  "shopId": "25333110",
+  "recordCounts": {
+    "listingDiscovery": 215,
+    "searchDiscovery": 0,
+    "engagement": 215,
+    "orderMapping": 69,
+    "identifierMapping": 216
+  },
+  "rateSnapshots": [
+    {
+      "endpoint": "/shops/25333110/listings/active?limit=100&offset=0",
+      "status": 401,
+      "limitPerSecond": "UNKNOWN",
+      "remainingThisSecond": "UNKNOWN",
+      "limitPerDay": "UNKNOWN",
+      "remainingToday": "UNKNOWN"
+    },
+    {
+      "endpoint": "/shops/25333110/transactions?limit=100&offset=0",
+      "status": 401,
+      "limitPerSecond": "UNKNOWN",
+      "remainingThisSecond": "UNKNOWN",
+      "limitPerDay": "UNKNOWN",
+      "remainingToday": "UNKNOWN"
+    },
+    {
+      "endpoint": "/shops/25333110/listings/active?limit=100&offset=0",
+      "status": 200,
+      "limitPerSecond": "5",
+      "remainingThisSecond": "4",
+      "limitPerDay": "5000",
+      "remainingToday": "4993"
+    },
+    {
+      "endpoint": "/shops/25333110/transactions?limit=100&offset=0",
+      "status": 200,
+      "limitPerSecond": "5",
+      "remainingThisSecond": "3",
+      "limitPerDay": "5000",
+      "remainingToday": "4992"
+    },
+    {
+      "endpoint": "/shops/25333110/listings/active?limit=100&offset=100",
+      "status": 200,
+      "limitPerSecond": "5",
+      "remainingThisSecond": "4",
+      "limitPerDay": "5000",
+      "remainingToday": "4991"
+    },
+    {
+      "endpoint": "/shops/25333110/listings/active?limit=100&offset=200",
+      "status": 200,
+      "limitPerSecond": "5",
+      "remainingThisSecond": "4",
+      "limitPerDay": "5000",
+      "remainingToday": "4989"
+    },
+    {
+      "endpoint": "/shops/25333110/transactions?limit=100&offset=100",
+      "status": 200,
+      "limitPerSecond": "5",
+      "remainingThisSecond": "4",
+      "limitPerDay": "5000",
+      "remainingToday": "4990"
+    },
+    {
+      "endpoint": "/shops/25333110/transactions?limit=100&offset=200",
+      "status": 200,
+      "limitPerSecond": "5",
+      "remainingThisSecond": "4",
+      "limitPerDay": "5000",
+      "remainingToday": "4988"
+    }
+  ]
+}
