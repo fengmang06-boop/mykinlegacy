@@ -5,6 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import sitemap from "./app/sitemap";
 import { giftLandingPages } from "./lib/gift-landing-pages";
+import { journalArticles } from "./lib/journal-articles";
 import { showcaseCollections } from "./lib/showcase-collections";
 import { showcaseSeoDetails } from "./lib/showcase-seo";
 
@@ -47,9 +48,16 @@ describe("SEO foundation", () => {
 
   it("publishes all commercial pages while excluding private and review routes", () => {
     const urls = sitemap().map((entry) => entry.url);
-    expect(urls).toHaveLength(41);
+    expect(urls).toHaveLength(47);
     expect(urls.filter((url) => url.includes("/gifts/"))).toHaveLength(8);
     expect(urls.filter((url) => url.includes("/real-examples/"))).toHaveLength(20);
+    expect(urls.filter((url) => url.includes("/journal/"))).toHaveLength(5);
+    expect(urls).toContain("https://mykinlegacy.com/journal");
+    expect(urls).toEqual(
+      expect.arrayContaining(
+        journalArticles.map((article) => `https://mykinlegacy.com/journal/${article.slug}`)
+      )
+    );
     expect(urls.some((url) => url.includes("/create"))).toBe(false);
     expect(urls.some((url) => url.includes("/review"))).toBe(false);
   });
@@ -58,7 +66,8 @@ describe("SEO foundation", () => {
     const sources = await Promise.all([
       readFile(join(__dirname, "app/family-legacy-collection/page.tsx"), "utf8"),
       readFile(join(__dirname, "app/gifts/[slug]/page.tsx"), "utf8"),
-      readFile(join(__dirname, "app/real-examples/[id]/page.tsx"), "utf8")
+      readFile(join(__dirname, "app/real-examples/[id]/page.tsx"), "utf8"),
+      readFile(join(__dirname, "app/journal/[slug]/page.tsx"), "utf8")
     ]);
     const combined = sources.join("\n");
     expect(combined).toContain('"@type": "Product"');

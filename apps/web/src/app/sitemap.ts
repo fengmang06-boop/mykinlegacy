@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { giftLandingPages } from "../lib/gift-landing-pages";
+import { journalArticles } from "../lib/journal-articles";
 import { showcaseCollections } from "../lib/showcase-collections";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mykinlegacy.com";
@@ -11,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "", priority: 1, changeFrequency: "weekly" as const },
     { path: "/family-legacy-collection", priority: 0.9, changeFrequency: "weekly" as const },
     { path: "/real-examples", priority: 0.9, changeFrequency: "weekly" as const },
+    { path: "/journal", priority: 0.8, changeFrequency: "weekly" as const },
     { path: "/family-crest-generator", priority: 0.8, changeFrequency: "weekly" as const },
     { path: "/heritage-gift", priority: 0.7, changeFrequency: "monthly" as const },
     { path: "/family-legacy-gift", priority: 0.7, changeFrequency: "monthly" as const },
@@ -33,8 +35,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
     priority: 0.7,
     changeFrequency: "monthly" as const
   }));
+  const journalPaths = journalArticles.map((article) => ({
+    path: `/journal/${article.slug}`,
+    priority: 0.75,
+    changeFrequency: "monthly" as const
+  }));
 
-  return [...publicPaths, ...giftPaths, ...examplePaths].map((entry) => ({
+  return [...publicPaths, ...giftPaths, ...examplePaths, ...journalPaths].map((entry) => ({
     url: `${SITE_URL}${entry.path}`,
     lastModified: now,
     changeFrequency: entry.changeFrequency,

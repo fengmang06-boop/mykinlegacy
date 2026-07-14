@@ -29,6 +29,7 @@ import { metadata as paymentCancelMetadata } from "./app/payment/cancel/page";
 import { metadata as paymentSuccessMetadata } from "./app/payment/success/page";
 import { sanitizeAnalyticsPayload } from "./lib/analytics";
 import { giftLandingPages } from "./lib/gift-landing-pages";
+import { journalArticles } from "./lib/journal-articles";
 import { showcaseCollections } from "./lib/showcase-collections";
 
 const appRoot = join(__dirname, "..");
@@ -56,6 +57,7 @@ describe("customer frontend security hardening", () => {
         "https://mykinlegacy.com",
         "https://mykinlegacy.com/family-legacy-collection",
         "https://mykinlegacy.com/real-examples",
+        "https://mykinlegacy.com/journal",
         "https://mykinlegacy.com/family-crest-generator",
         "https://mykinlegacy.com/heritage-gift",
         "https://mykinlegacy.com/family-legacy-gift",
@@ -69,7 +71,8 @@ describe("customer frontend security hardening", () => {
         ...giftLandingPages.map((page) => `https://mykinlegacy.com/gifts/${page.slug}`),
         ...showcaseCollections.map(
           (collection) => `https://mykinlegacy.com/real-examples/${collection.id}`
-        )
+        ),
+        ...journalArticles.map((article) => `https://mykinlegacy.com/journal/${article.slug}`)
       ])
     );
     expect(entries).not.toContain("https://mykinlegacy.com/ai-family-crest-generator");

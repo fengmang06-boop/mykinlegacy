@@ -140,6 +140,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             <div className="nav-links">
               <Link href="/family-legacy-collection">Collection</Link>
               <Link href="/real-examples">Examples</Link>
+              <Link href="/journal">Journal</Link>
               <Link href="/#how-it-works">How It Works</Link>
               <Link href="/#gift-ideas">Gift Ideas</Link>
               <Link href="/#faq">FAQ</Link>
@@ -168,6 +169,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             <div className="footer-links">
               <Link href="/family-legacy-collection">Collection</Link>
               <Link href="/real-examples">Real Examples</Link>
+              <Link href="/journal">Journal</Link>
               <Link href="/gifts/father-retirement">Gift Ideas</Link>
               <Link href="/support">Support</Link>
               <Link href="/privacy">Privacy</Link>
