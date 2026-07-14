@@ -3,6 +3,8 @@ import { Cinzel, Cormorant_Garamond, Inter } from "next/font/google";
 import type { ReactNode } from "react";
 import Link from "next/link";
 
+import { GoogleAnalytics } from "../components/google-analytics";
+
 import {
   absoluteUrl,
   BRAND_NAME,
@@ -117,6 +119,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   return (
     <html lang="en">
       <body className={`${bodyFont.variable} ${headingFont.variable} ${labelFont.variable}`}>
+        <GoogleAnalytics />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}

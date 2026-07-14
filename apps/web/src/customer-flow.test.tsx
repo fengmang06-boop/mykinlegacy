@@ -13,7 +13,7 @@ import { metadata as downloadMetadata } from "./app/download/[token]/page";
 import { metadata as cancelMetadata } from "./app/payment/cancel/page";
 import { metadata as successMetadata } from "./app/payment/success/page";
 import { ApiClient, ApiClientError, normalizeApiBaseUrl } from "./lib/api-client";
-import { sanitizeAnalyticsPayload } from "./lib/analytics";
+import { ga4EventFor, sanitizeAnalyticsPayload } from "./lib/analytics";
 import { getSafetyMessage } from "./lib/safety";
 import { areRequiredConsentsAccepted } from "./components/checkout-flow";
 import {
@@ -201,6 +201,27 @@ describe("customer frontend flow", () => {
       product_code: "family_legacy_collection"
     });
     expect(payload).toEqual({ product_code: "family_legacy_collection" });
+  });
+
+  it("maps GA4 conversion events without order or family PII", () => {
+    const event = ga4EventFor("payment_success", {
+      order_number: "AHL-PRIVATE",
+      customer_email: "private@example.com",
+      recipient_name: "Private Recipient",
+      family_story: "Private memory"
+    });
+
+    expect(event).toEqual({ name: "purchase_completed", params: {} });
+    expect(JSON.stringify(event)).not.toContain("AHL-PRIVATE");
+    expect(JSON.stringify(event)).not.toContain("private@example.com");
+    expect(JSON.stringify(event)).not.toContain("Private Recipient");
+    expect(JSON.stringify(event)).not.toContain("Private memory");
+    expect(
+      ga4EventFor("artifact_downloaded", {
+        deliverable_code: "download_package_zip",
+        asset_id: "private-asset-id"
+      })
+    ).toEqual({ name: "collection_downloaded", params: {} });
   });
 
   it("private pages include noindex", () => {

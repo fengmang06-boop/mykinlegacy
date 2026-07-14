@@ -32,6 +32,10 @@ export default function PrivacyPage() {
         {
           title: "Download access",
           body: "Download tokens are stored as hashes. Raw tokens are used only for delivery and are not stored in logs."
+        },
+        {
+          title: "Privacy-safe measurement",
+          body: "We use Google Analytics 4 to measure aggregate visits and key collection steps. We do not send recipient names, family memories, email addresses, raw order numbers, Vault tokens, or collection contents to Google Analytics, and advertising personalization signals are disabled."
         }
       ]}
     />

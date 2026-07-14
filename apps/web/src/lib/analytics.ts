@@ -4,6 +4,7 @@ export type AnalyticsEventName =
   | "checkout_completed"
   | "payment_success"
   | "vault_opened"
+  | "founder_delivery_approved"
   | "email_sent_confirmed"
   | "artifact_downloaded"
   | "landing_cta_clicked"
@@ -47,6 +48,30 @@ const BLOCKED_KEYS = new Set([
   "customer_email"
 ]);
 
+export type Ga4EventName =
+  | "homepage_view"
+  | "real_examples_view"
+  | "gift_landing_view"
+  | "create_started"
+  | "questionnaire_completed"
+  | "checkout_started"
+  | "purchase_completed"
+  | "founder_delivery_approved"
+  | "vault_opened"
+  | "collection_downloaded";
+
+export interface Ga4Event {
+  name: Ga4EventName;
+  params: Record<string, string | boolean>;
+}
+
+declare global {
+  interface Window {
+    dataLayer?: unknown[];
+    gtag?: (...args: unknown[]) => void;
+  }
+}
+
 export function sanitizeAnalyticsPayload(payload: Record<string, unknown>): Record<string, unknown> {
   const sanitized: Record<string, unknown> = {};
   for (const [key, value] of Object.entries(payload)) {
@@ -75,6 +100,8 @@ export function trackEvent(
     if (typeof window === "undefined") {
       return;
     }
+
+    sendGa4Event(eventName, sanitized, options);
 
     const body = JSON.stringify({
       data: {
@@ -115,6 +142,79 @@ export function trackEvent(
     }
   } catch {
     // Analytics must never block checkout, payment, vault, or download flows.
+  }
+}
+
+export function ga4EventFor(
+  eventName: AnalyticsEventName,
+  payload: Record<string, unknown> = {},
+  options: { stepName?: string } = {}
+): Ga4Event | null {
+  const stepName = options.stepName ?? stepNameForEvent(eventName, payload);
+  let name: Ga4EventName | null = null;
+
+  if (eventName === "funnel_step_viewed") {
+    name =
+      stepName === "landing_page"
+        ? "homepage_view"
+        : stepName === "real_examples"
+          ? "real_examples_view"
+          : stepName === "gift_landing"
+            ? "gift_landing_view"
+            : stepName === "create_page"
+              ? "create_started"
+              : null;
+  } else if (eventName === "funnel_step_completed" && stepName === "guided_interview") {
+    name = "questionnaire_completed";
+  } else if (eventName === "checkout_started") {
+    name = "checkout_started";
+  } else if (eventName === "payment_success") {
+    name = "purchase_completed";
+  } else if (eventName === "founder_delivery_approved") {
+    name = "founder_delivery_approved";
+  } else if (eventName === "vault_opened") {
+    name = "vault_opened";
+  } else if (
+    eventName === "artifact_downloaded" &&
+    (payload.deliverable_code === "download_package_zip" || payload.file_ext === "zip")
+  ) {
+    name = "collection_downloaded";
+  }
+
+  if (!name) {
+    return null;
+  }
+
+  const params: Record<string, string | boolean> = {};
+  if (typeof window !== "undefined") {
+    params.page_path = window.location.pathname;
+  }
+  if (name === "gift_landing_view" && typeof payload.gift_slug === "string") {
+    params.gift_slug = payload.gift_slug.slice(0, 80);
+  }
+  if (typeof payload.source === "string" && /^(order_status|download_vault)$/.test(payload.source)) {
+    params.source = payload.source;
+  }
+  if (process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true") {
+    params.debug_mode = true;
+  }
+
+  return { name, params };
+}
+
+function sendGa4Event(
+  eventName: AnalyticsEventName,
+  payload: Record<string, unknown>,
+  options: { stepName?: string }
+): void {
+  try {
+    const event = ga4EventFor(eventName, payload, options);
+    if (!event || typeof window.gtag !== "function") {
+      return;
+    }
+    window.gtag("event", event.name, event.params);
+  } catch {
+    // Measurement must never block customer flows.
   }
 }
 

@@ -76,15 +76,6 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
   const expected = order?.generation_manifest?.expected_assets_count ?? 0;
   const generated = order?.generation_manifest?.generated_assets_count ?? 0;
   const vaultReady = Boolean(order?.download_ready);
-
-  useEffect(() => {
-    if (!vaultReady || vaultReadyTracked.current) {
-      return;
-    }
-    vaultReadyTracked.current = true;
-    trackEvent("vault_opened", { order_number: orderNumber, source: "order_status" }, { stepName: "vault" });
-    trackEvent("email_sent_confirmed", { order_number: orderNumber, source: "order_status" }, { stepName: "email_delivery" });
-  }, [orderNumber, vaultReady]);
   const customerDeliveryStatus =
     order?.customer_delivery_status ?? artifacts?.customer_delivery_status ?? fallbackCustomerDeliveryStatus({
       paymentStatus: order?.payment_status,
@@ -93,6 +84,21 @@ export function OrderStatusView({ orderNumber }: { orderNumber: string }) {
       expected,
       generated
     });
+
+  useEffect(() => {
+    const founderApproved =
+      vaultReady &&
+      (customerDeliveryStatus === "vault_ready" || customerDeliveryStatus === "email_delivery_attention");
+    if (!founderApproved || vaultReadyTracked.current) {
+      return;
+    }
+    vaultReadyTracked.current = true;
+    trackEvent(
+      "founder_delivery_approved",
+      { order_number: orderNumber, source: "order_status" },
+      { stepName: "founder_delivery" }
+    );
+  }, [customerDeliveryStatus, orderNumber, vaultReady]);
   const deliveryCopy = deliveryStatusCopy(customerDeliveryStatus);
   const showSupport =
     elapsed > 30 ||

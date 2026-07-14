@@ -19,6 +19,7 @@ const ALLOWED_EVENTS = new Set([
   "checkout_started",
   "checkout_completed",
   "payment_success",
+  "founder_delivery_approved",
   "vault_opened",
   "email_sent_confirmed",
   "artifact_downloaded"

@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+
+import { FunnelStepTracker } from "../../../components/funnel-tracker";
 import { notFound } from "next/navigation";
 
 import { StructuredData } from "../../../components/structured-data";
@@ -88,6 +90,10 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
 
   return (
     <main className="premium-page gift-landing-page">
+      <FunnelStepTracker
+        stepName="gift_landing"
+        metadata={{ page: `/gifts/${page.slug}`, gift_slug: page.slug }}
+      />
       <StructuredData data={[breadcrumbJsonLd, faqJsonLd, itemListJsonLd]} />
       <section className="premium-hero gift-landing-hero">
         <div className="section gift-landing-hero-grid">

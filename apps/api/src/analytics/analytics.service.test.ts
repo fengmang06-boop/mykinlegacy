@@ -48,6 +48,15 @@ describe("AnalyticsService", () => {
       "Unsupported analytics event"
     );
   });
+
+  it("accepts the Founder delivery approval milestone", async () => {
+    const prisma = createPrisma();
+    const service = new AnalyticsService(prisma as unknown as PrismaService);
+
+    await expect(
+      service.track({ event_name: "founder_delivery_approved", step_name: "founder_delivery" })
+    ).resolves.toMatchObject({ accepted: true, event_name: "founder_delivery_approved" });
+  });
 });
 
 function createPrisma() {
