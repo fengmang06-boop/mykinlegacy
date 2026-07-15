@@ -18,6 +18,7 @@ on:
           - worker_logs
           - pause_checkout
           - resume_checkout
+          - switch_stripe_live
           - verify_stripe_checkout_branding
           - inspect_order
           - repair_order_artifacts
@@ -51,6 +52,8 @@ jobs:
       OPS_ACTION: ${{ inputs.action }}
       ORDER_NUMBER: ${{ inputs.order_number }}
       OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+      STRIPE_LIVE_SECRET_KEY: ${{ secrets.MYKINLEGACY_STRIPE_LIVE_SECRET_KEY }}
+      STRIPE_LIVE_WEBHOOK_SECRET: ${{ secrets.MYKINLEGACY_STRIPE_LIVE_WEBHOOK_SECRET }}
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -67,6 +70,10 @@ jobs:
 
           case "$OPS_ACTION" in
             health_check|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
+              ;;
+            switch_stripe_live)
+              : "${STRIPE_LIVE_SECRET_KEY:?Missing MYKINLEGACY_STRIPE_LIVE_SECRET_KEY}"
+              : "${STRIPE_LIVE_WEBHOOK_SECRET:?Missing MYKINLEGACY_STRIPE_LIVE_WEBHOOK_SECRET}"
               ;;
             inspect_order|repair_order_artifacts|verify_download_binaries|founder_final_order_verification|approve_founder_delivery|ai_image_bridge_order_test)
               if [[ ! "$ORDER_NUMBER" =~ ^[A-Z0-9-]{8,64}$ ]]; then
@@ -133,12 +140,14 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -p "$PROD_SSH_PORT" \
             "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'bash -s' -- "$PROD_PROJECT_DIR" "$OPS_ACTION" "$ORDER_NUMBER" "$OPENAI_API_KEY" <<'REMOTE_SCRIPT'
+            'bash -s' -- "$PROD_PROJECT_DIR" "$OPS_ACTION" "$ORDER_NUMBER" "$OPENAI_API_KEY" "$STRIPE_LIVE_SECRET_KEY" "$STRIPE_LIVE_WEBHOOK_SECRET" <<'REMOTE_SCRIPT'
           set -euo pipefail
           PROJECT_DIR="$1"
           ACTION="$2"
           ORDER_NUMBER="${3:-}"
           OPENAI_API_KEY_FROM_SECRET="${4:-}"
+          STRIPE_LIVE_SECRET_KEY_FROM_SECRET="${5:-}"
+          STRIPE_LIVE_WEBHOOK_SECRET_FROM_SECRET="${6:-}"
 
           echo "SSH connection success: yes"
           test -d "$PROJECT_DIR"
@@ -170,6 +179,149 @@ jobs:
                 docker compose -p mykinlegacy --env-file deployment/.env.production -f deployment/docker-compose.yml up -d --no-build
                 bash deployment/health-check.sh
               ' bash "$PROJECT_DIR"
+              ;;
+            switch_stripe_live)
+              echo "LIGHTWEIGHT_ACTION switch_stripe_live no_git_pull=yes no_build=yes checkout_remains_paused=yes"
+              bash deployment/with-production-lock.sh "ops:switch_stripe_live" bash -s -- \
+                "$PROJECT_DIR" "$STRIPE_LIVE_SECRET_KEY_FROM_SECRET" "$STRIPE_LIVE_WEBHOOK_SECRET_FROM_SECRET" <<'SWITCH_STRIPE_SCRIPT'
+              set -euo pipefail
+
+              PROJECT_DIR="$1"
+              STRIPE_LIVE_SECRET_KEY="$2"
+              STRIPE_LIVE_WEBHOOK_SECRET="$3"
+              ENV_FILE="$PROJECT_DIR/deployment/.env.production"
+              COMPOSE_FILE="$PROJECT_DIR/deployment/docker-compose.yml"
+              IMAGE_FILE="$PROJECT_DIR/deployment/.last-successful-image"
+
+              cd "$PROJECT_DIR"
+              test -f "$ENV_FILE"
+              test -f "$COMPOSE_FILE"
+              test -f "$IMAGE_FILE"
+              [[ "$STRIPE_LIVE_SECRET_KEY" == rk_live_* ]]
+              [[ "$STRIPE_LIVE_WEBHOOK_SECRET" == whsec_* ]]
+
+              BACKUP_FILE="$(mktemp "$PROJECT_DIR/deployment/.env.production.pre-stripe-live.XXXXXX")"
+              cp "$ENV_FILE" "$BACKUP_FILE"
+              chmod 600 "$BACKUP_FILE"
+
+              rollback() {
+                local status=$?
+                if [ "$status" -ne 0 ]; then
+                  echo "STRIPE_LIVE_SWITCH_FAILED rollback=started"
+                  cp "$BACKUP_FILE" "$ENV_FILE"
+                  chmod 600 "$ENV_FILE"
+                  APP_IMAGE="$(tr -d '[:space:]' < "$IMAGE_FILE")"
+                  export APP_IMAGE
+                  docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$COMPOSE_FILE" \
+                    up -d --no-build --no-deps --force-recreate api || true
+                  bash "$PROJECT_DIR/deployment/health-check.sh" || true
+                  echo "STRIPE_LIVE_SWITCH_FAILED rollback=complete"
+                fi
+                rm -f "$BACKUP_FILE"
+                exit "$status"
+              }
+              trap rollback EXIT
+
+              export MKL_STRIPE_LIVE_SECRET_KEY="$STRIPE_LIVE_SECRET_KEY"
+              export MKL_STRIPE_LIVE_WEBHOOK_SECRET="$STRIPE_LIVE_WEBHOOK_SECRET"
+              python3 - <<'PY'
+              import os
+              from pathlib import Path
+
+              path = Path("deployment/.env.production")
+              updates = {
+                  "STRIPE_SECRET_KEY": os.environ["MKL_STRIPE_LIVE_SECRET_KEY"],
+                  "STRIPE_WEBHOOK_SECRET": os.environ["MKL_STRIPE_LIVE_WEBHOOK_SECRET"],
+                  "CHECKOUT_ENABLED": "false",
+                  "FOUNDER_REVIEW_REQUIRED": "true",
+              }
+              lines = path.read_text(encoding="utf-8").splitlines()
+              seen = set()
+              output = []
+              for line in lines:
+                  key = line.split("=", 1)[0] if "=" in line else None
+                  if key in updates:
+                      output.append(f"{key}={updates[key]}")
+                      seen.add(key)
+                  else:
+                      output.append(line)
+              for key, value in updates.items():
+                  if key not in seen:
+                      output.append(f"{key}={value}")
+              temp = path.with_suffix(".tmp")
+              temp.write_text("\n".join(output) + "\n", encoding="utf-8")
+              os.chmod(temp, 0o600)
+              os.replace(temp, path)
+              PY
+              unset MKL_STRIPE_LIVE_SECRET_KEY MKL_STRIPE_LIVE_WEBHOOK_SECRET
+              STRIPE_LIVE_SECRET_KEY=""
+              STRIPE_LIVE_WEBHOOK_SECRET=""
+
+              APP_IMAGE="$(tr -d '[:space:]' < "$IMAGE_FILE")"
+              test -n "$APP_IMAGE"
+              export APP_IMAGE
+              docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$COMPOSE_FILE" \
+                up -d --no-build --no-deps --force-recreate api
+
+              for attempt in $(seq 1 12); do
+                if bash "$PROJECT_DIR/deployment/health-check.sh"; then
+                  break
+                fi
+                if [ "$attempt" -eq 12 ]; then
+                  echo "FAIL health check did not pass after Stripe live switch" >&2
+                  exit 1
+                fi
+                sleep 5
+              done
+
+              docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$COMPOSE_FILE" exec -T api node - <<'NODE'
+              const { StripeAdapter } = require("./apps/api/dist/payments/stripe.adapter.js");
+
+              (async () => {
+                if (!process.env.STRIPE_SECRET_KEY?.startsWith("rk_live_")) {
+                  throw new Error("API is not using the restricted live Stripe key");
+                }
+                if (!process.env.STRIPE_WEBHOOK_SECRET?.startsWith("whsec_")) {
+                  throw new Error("API is not using a Stripe webhook signing secret");
+                }
+                if (process.env.CHECKOUT_ENABLED !== "false") {
+                  throw new Error("Checkout must remain paused during live cutover verification");
+                }
+                if (process.env.FOUNDER_REVIEW_REQUIRED !== "true") {
+                  throw new Error("Founder review hold must remain enabled");
+                }
+
+                const adapter = new StripeAdapter();
+                const result = await adapter.createCheckoutSession({
+                  orderNumber: `LIVE-CUTOVER-${Date.now()}`,
+                  amountCents: 4900,
+                  currency: "USD",
+                  productName: "MyKinLegacy Family Legacy Collection",
+                  successUrl: "https://mykinlegacy.com/payment/success?live_cutover_verification=1",
+                  cancelUrl: "https://mykinlegacy.com/payment/cancel?live_cutover_verification=1",
+                  metadata: {
+                    verification_mode: "unpaid_live_cutover",
+                    product_code: "family_legacy_collection"
+                  }
+                });
+                if (!result.id.startsWith("cs_live_")) {
+                  throw new Error("Stripe did not return a live Checkout Session");
+                }
+                console.log("stripe_key_mode=live_restricted");
+                console.log("stripe_webhook_secret_configured=true");
+                console.log("checkout_session_mode=live");
+                console.log("checkout_url_present=true");
+                console.log("checkout_verification_paid=false");
+                console.log("checkout_enabled=false");
+                console.log("founder_review_required=true");
+              })().catch((error) => {
+                console.error(`STRIPE_LIVE_PREFLIGHT_FAILED ${error.message}`);
+                process.exit(1);
+              });
+              NODE
+
+              echo "STRIPE_LIVE_SWITCH_COMPLETE checkout_enabled=false payment_completed=false"
+              SWITCH_STRIPE_SCRIPT
               ;;
             docker_ps)
               echo "LIGHTWEIGHT_ACTION docker_ps no_git_pull=yes no_build=yes"
