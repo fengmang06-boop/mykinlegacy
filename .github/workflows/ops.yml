@@ -182,13 +182,13 @@ jobs:
               ;;
             switch_stripe_live)
               echo "LIGHTWEIGHT_ACTION switch_stripe_live no_git_pull=yes no_build=yes checkout_remains_paused=yes"
-              bash deployment/with-production-lock.sh "ops:switch_stripe_live" bash -s -- \
-                "$PROJECT_DIR" "$STRIPE_LIVE_SECRET_KEY_FROM_SECRET" "$STRIPE_LIVE_WEBHOOK_SECRET_FROM_SECRET" <<'SWITCH_STRIPE_SCRIPT'
-              set -euo pipefail
+              exec 9>"$PROJECT_DIR/deployment/.production.lock"
+              echo "Waiting for production lock: ops:switch_stripe_live"
+              flock -x -w 1800 9
+              echo "production_lock=held"
 
-              PROJECT_DIR="$1"
-              STRIPE_LIVE_SECRET_KEY="$2"
-              STRIPE_LIVE_WEBHOOK_SECRET="$3"
+              STRIPE_LIVE_SECRET_KEY="$STRIPE_LIVE_SECRET_KEY_FROM_SECRET"
+              STRIPE_LIVE_WEBHOOK_SECRET="$STRIPE_LIVE_WEBHOOK_SECRET_FROM_SECRET"
               ENV_FILE="$PROJECT_DIR/deployment/.env.production"
               COMPOSE_FILE="$PROJECT_DIR/deployment/docker-compose.yml"
               IMAGE_FILE="$PROJECT_DIR/deployment/.last-successful-image"
@@ -222,40 +222,31 @@ jobs:
               }
               trap rollback EXIT
 
-              export MKL_STRIPE_LIVE_SECRET_KEY="$STRIPE_LIVE_SECRET_KEY"
-              export MKL_STRIPE_LIVE_WEBHOOK_SECRET="$STRIPE_LIVE_WEBHOOK_SECRET"
-              python3 - <<'PY'
-              import os
-              from pathlib import Path
-
-              path = Path("deployment/.env.production")
-              updates = {
-                  "STRIPE_SECRET_KEY": os.environ["MKL_STRIPE_LIVE_SECRET_KEY"],
-                  "STRIPE_WEBHOOK_SECRET": os.environ["MKL_STRIPE_LIVE_WEBHOOK_SECRET"],
-                  "CHECKOUT_ENABLED": "false",
-                  "FOUNDER_REVIEW_REQUIRED": "true",
+              set_env_var() {
+                local key="$1"
+                local value="$2"
+                local temp
+                temp="$(mktemp "$PROJECT_DIR/deployment/.env.production.update.XXXXXX")"
+                if grep -q "^${key}=" "$ENV_FILE"; then
+                  awk -v key="$key" -v value="$value" \
+                    'BEGIN { FS = OFS = "=" } $1 == key { print key "=" value; next } { print }' \
+                    "$ENV_FILE" > "$temp"
+                else
+                  cat "$ENV_FILE" > "$temp"
+                  printf '%s=%s\n' "$key" "$value" >> "$temp"
+                fi
+                chmod 600 "$temp"
+                mv "$temp" "$ENV_FILE"
               }
-              lines = path.read_text(encoding="utf-8").splitlines()
-              seen = set()
-              output = []
-              for line in lines:
-                  key = line.split("=", 1)[0] if "=" in line else None
-                  if key in updates:
-                      output.append(f"{key}={updates[key]}")
-                      seen.add(key)
-                  else:
-                      output.append(line)
-              for key, value in updates.items():
-                  if key not in seen:
-                      output.append(f"{key}={value}")
-              temp = path.with_suffix(".tmp")
-              temp.write_text("\n".join(output) + "\n", encoding="utf-8")
-              os.chmod(temp, 0o600)
-              os.replace(temp, path)
-              PY
-              unset MKL_STRIPE_LIVE_SECRET_KEY MKL_STRIPE_LIVE_WEBHOOK_SECRET
+
+              set_env_var "STRIPE_SECRET_KEY" "$STRIPE_LIVE_SECRET_KEY"
+              set_env_var "STRIPE_WEBHOOK_SECRET" "$STRIPE_LIVE_WEBHOOK_SECRET"
+              set_env_var "CHECKOUT_ENABLED" "false"
+              set_env_var "FOUNDER_REVIEW_REQUIRED" "true"
               STRIPE_LIVE_SECRET_KEY=""
               STRIPE_LIVE_WEBHOOK_SECRET=""
+              STRIPE_LIVE_SECRET_KEY_FROM_SECRET=""
+              STRIPE_LIVE_WEBHOOK_SECRET_FROM_SECRET=""
 
               APP_IMAGE="$(tr -d '[:space:]' < "$IMAGE_FILE")"
               test -n "$APP_IMAGE"
@@ -274,54 +265,35 @@ jobs:
                 sleep 5
               done
 
-              docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$COMPOSE_FILE" exec -T api node - <<'NODE'
-              const { StripeAdapter } = require("./apps/api/dist/payments/stripe.adapter.js");
-
-              (async () => {
-                if (!process.env.STRIPE_SECRET_KEY?.startsWith("rk_live_")) {
-                  throw new Error("API is not using the restricted live Stripe key");
-                }
-                if (!process.env.STRIPE_WEBHOOK_SECRET?.startsWith("whsec_")) {
-                  throw new Error("API is not using a Stripe webhook signing secret");
-                }
-                if (process.env.CHECKOUT_ENABLED !== "false") {
-                  throw new Error("Checkout must remain paused during live cutover verification");
-                }
-                if (process.env.FOUNDER_REVIEW_REQUIRED !== "true") {
-                  throw new Error("Founder review hold must remain enabled");
-                }
-
-                const adapter = new StripeAdapter();
-                const result = await adapter.createCheckoutSession({
-                  orderNumber: `LIVE-CUTOVER-${Date.now()}`,
-                  amountCents: 4900,
-                  currency: "USD",
-                  productName: "MyKinLegacy Family Legacy Collection",
-                  successUrl: "https://mykinlegacy.com/payment/success?live_cutover_verification=1",
-                  cancelUrl: "https://mykinlegacy.com/payment/cancel?live_cutover_verification=1",
-                  metadata: {
-                    verification_mode: "unpaid_live_cutover",
-                    product_code: "family_legacy_collection"
-                  }
-                });
-                if (!result.id.startsWith("cs_live_")) {
-                  throw new Error("Stripe did not return a live Checkout Session");
-                }
-                console.log("stripe_key_mode=live_restricted");
-                console.log("stripe_webhook_secret_configured=true");
-                console.log("checkout_session_mode=live");
-                console.log("checkout_url_present=true");
-                console.log("checkout_verification_paid=false");
-                console.log("checkout_enabled=false");
-                console.log("founder_review_required=true");
-              })().catch((error) => {
-                console.error(`STRIPE_LIVE_PREFLIGHT_FAILED ${error.message}`);
-                process.exit(1);
-              });
-              NODE
+              docker compose -p mykinlegacy --env-file "$ENV_FILE" -f "$COMPOSE_FILE" exec -T api node -e '
+                const { StripeAdapter } = require("./apps/api/dist/payments/stripe.adapter.js");
+                (async () => {
+                  if (!process.env.STRIPE_SECRET_KEY?.startsWith("rk_live_")) throw new Error("API is not using the restricted live Stripe key");
+                  if (!process.env.STRIPE_WEBHOOK_SECRET?.startsWith("whsec_")) throw new Error("API is not using a Stripe webhook signing secret");
+                  if (process.env.CHECKOUT_ENABLED !== "false") throw new Error("Checkout must remain paused during live cutover verification");
+                  if (process.env.FOUNDER_REVIEW_REQUIRED !== "true") throw new Error("Founder review hold must remain enabled");
+                  const adapter = new StripeAdapter();
+                  const result = await adapter.createCheckoutSession({
+                    orderNumber: `LIVE-CUTOVER-${Date.now()}`,
+                    amountCents: 4900,
+                    currency: "USD",
+                    productName: "MyKinLegacy Family Legacy Collection",
+                    successUrl: "https://mykinlegacy.com/payment/success?live_cutover_verification=1",
+                    cancelUrl: "https://mykinlegacy.com/payment/cancel?live_cutover_verification=1",
+                    metadata: { verification_mode: "unpaid_live_cutover", product_code: "family_legacy_collection" }
+                  });
+                  if (!result.id.startsWith("cs_live_")) throw new Error("Stripe did not return a live Checkout Session");
+                  console.log("stripe_key_mode=live_restricted");
+                  console.log("stripe_webhook_secret_configured=true");
+                  console.log("checkout_session_mode=live");
+                  console.log("checkout_url_present=true");
+                  console.log("checkout_verification_paid=false");
+                  console.log("checkout_enabled=false");
+                  console.log("founder_review_required=true");
+                })().catch((error) => { console.error(`STRIPE_LIVE_PREFLIGHT_FAILED ${error.message}`); process.exit(1); });
+              '
 
               echo "STRIPE_LIVE_SWITCH_COMPLETE checkout_enabled=false payment_completed=false"
-              SWITCH_STRIPE_SCRIPT
               ;;
             docker_ps)
               echo "LIGHTWEIGHT_ACTION docker_ps no_git_pull=yes no_build=yes"
