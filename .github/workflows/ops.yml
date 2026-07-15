@@ -140,14 +140,16 @@ jobs:
             -o StrictHostKeyChecking=yes \
             -p "$PROD_SSH_PORT" \
             "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'bash -s' -- "$PROD_PROJECT_DIR" "$OPS_ACTION" "$ORDER_NUMBER" "$OPENAI_API_KEY" "$STRIPE_LIVE_SECRET_KEY" "$STRIPE_LIVE_WEBHOOK_SECRET" <<'REMOTE_SCRIPT'
+            'bash -s' -- "$PROD_PROJECT_DIR" "$OPS_ACTION" "$STRIPE_LIVE_SECRET_KEY" "$STRIPE_LIVE_WEBHOOK_SECRET" "${ORDER_NUMBER:-__EMPTY__}" "${OPENAI_API_KEY:-__EMPTY__}" <<'REMOTE_SCRIPT'
           set -euo pipefail
           PROJECT_DIR="$1"
           ACTION="$2"
-          ORDER_NUMBER="${3:-}"
-          OPENAI_API_KEY_FROM_SECRET="${4:-}"
-          STRIPE_LIVE_SECRET_KEY_FROM_SECRET="${5:-}"
-          STRIPE_LIVE_WEBHOOK_SECRET_FROM_SECRET="${6:-}"
+          STRIPE_LIVE_SECRET_KEY_FROM_SECRET="${3:-}"
+          STRIPE_LIVE_WEBHOOK_SECRET_FROM_SECRET="${4:-}"
+          ORDER_NUMBER="${5:-}"
+          OPENAI_API_KEY_FROM_SECRET="${6:-}"
+          [ "$ORDER_NUMBER" = "__EMPTY__" ] && ORDER_NUMBER=""
+          [ "$OPENAI_API_KEY_FROM_SECRET" = "__EMPTY__" ] && OPENAI_API_KEY_FROM_SECRET=""
 
           echo "SSH connection success: yes"
           test -d "$PROJECT_DIR"
@@ -197,8 +199,16 @@ jobs:
               test -f "$ENV_FILE"
               test -f "$COMPOSE_FILE"
               test -f "$IMAGE_FILE"
-              [[ "$STRIPE_LIVE_SECRET_KEY" == rk_live_* ]]
-              [[ "$STRIPE_LIVE_WEBHOOK_SECRET" == whsec_* ]]
+              if [[ "$STRIPE_LIVE_SECRET_KEY" != rk_live_* ]]; then
+                echo "FAIL Stripe live restricted key prefix is invalid" >&2
+                exit 1
+              fi
+              echo "stripe_live_key_prefix=valid"
+              if [[ "$STRIPE_LIVE_WEBHOOK_SECRET" != whsec_* ]]; then
+                echo "FAIL Stripe webhook signing secret prefix is invalid" >&2
+                exit 1
+              fi
+              echo "stripe_webhook_secret_prefix=valid"
 
               BACKUP_FILE="$(mktemp "$PROJECT_DIR/deployment/.env.production.pre-stripe-live.XXXXXX")"
               cp "$ENV_FILE" "$BACKUP_FILE"
