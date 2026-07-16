@@ -1,12 +1,27 @@
 import { getShowcaseCollection } from "./showcase-collections";
+import contentBatch02 from "./journal-articles-batch-02.json";
 
 export type JournalSegment = string | { text: string; href: string };
+
+export type JournalBlock =
+  | { type: "paragraph"; segments: JournalSegment[] }
+  | { type: "bullets"; items: JournalSegment[][] }
+  | { type: "numbered"; items: JournalSegment[][] }
+  | { type: "subheading"; text: string }
+  | { type: "note"; segments: JournalSegment[] }
+  | { type: "quote"; segments: JournalSegment[] }
+  | {
+      type: "table";
+      headers: JournalSegment[][];
+      rows: JournalSegment[][][];
+    };
 
 export type JournalSection = {
   id: string;
   heading: string;
   paragraphs: JournalSegment[][];
   bullets?: JournalSegment[][];
+  blocks?: JournalBlock[];
   visualId?: string;
   visualAlt?: string;
   visualCaption?: string;
@@ -35,6 +50,7 @@ export type JournalArticle = {
   author: string;
   heroId: string;
   heroAlt: string;
+  intro?: JournalBlock[];
   sections: JournalSection[];
   faqs: JournalFaq[];
   sources: JournalSource[];
@@ -46,7 +62,7 @@ export type JournalArticle = {
 const link = (text: string, href: string): JournalSegment => ({ text, href });
 const p = (...segments: JournalSegment[]): JournalSegment[] => segments;
 
-export const journalArticles: JournalArticle[] = [
+const contentBatch01: JournalArticle[] = [
   {
     slug: "family-legacy-gift-ideas",
     targetKeyword: "family legacy gift ideas",
@@ -181,6 +197,21 @@ export const journalArticles: JournalArticle[] = [
             link("real example collections", "/real-examples"),
             " to compare retirement, wedding, grandparent, anniversary, Christmas, and reunion directions. If you want to gather the source material yourself first, use the checklist in ",
             link("How to Create a Family Keepsake", "/journal/how-to-create-a-family-keepsake"),
+            "."
+          ),
+          p(
+            "For occasion-specific planning, compare ",
+            link("family reunion gift ideas", "/journal/family-reunion-gift-ideas"),
+            ", ",
+            link(
+              "personalized anniversary gifts for parents",
+              "/journal/personalized-anniversary-gifts-for-parents"
+            ),
+            ", and ",
+            link(
+              "personalized wedding gifts for couples",
+              "/journal/personalized-wedding-gifts-for-couples"
+            ),
             "."
           )
         ]
@@ -330,6 +361,14 @@ export const journalArticles: JournalArticle[] = [
             link("Wedding Gift", "/real-examples/03-wedding-gift"),
             " examples. Their different occasions and values lead to different visual centers. For a wider buying guide, read ",
             link("Family Legacy Gift Ideas", "/journal/family-legacy-gift-ideas"),
+            "."
+          ),
+          p(
+            "For a practical evidence-to-symbol process, read ",
+            link(
+              "How to Create a Modern Family Crest Based on Your Real Family Story",
+              "/journal/how-to-create-a-modern-family-crest"
+            ),
             "."
           )
         ]
@@ -865,6 +904,11 @@ export const journalArticles: JournalArticle[] = [
   }
 ];
 
+export const journalArticles: JournalArticle[] = [
+  ...contentBatch01,
+  ...(contentBatch02 as JournalArticle[])
+];
+
 export function getJournalArticle(slug: string): JournalArticle | undefined {
   return journalArticles.find((article) => article.slug === slug);
 }
@@ -880,13 +924,30 @@ export function getJournalVisual(id: string) {
 export function journalArticleText(article: JournalArticle): string {
   const segmentText = (segments: JournalSegment[]) =>
     segments.map((segment) => (typeof segment === "string" ? segment : segment.text)).join(" ");
+  const blockText = (block: JournalBlock): string[] => {
+    if (block.type === "subheading") {
+      return [block.text];
+    }
+    if (block.type === "paragraph" || block.type === "note" || block.type === "quote") {
+      return [segmentText(block.segments)];
+    }
+    if (block.type === "bullets" || block.type === "numbered") {
+      return block.items.map(segmentText);
+    }
+    return [
+      ...block.headers.map(segmentText),
+      ...block.rows.flatMap((row) => row.map(segmentText))
+    ];
+  };
   return [
     article.title,
     article.dek,
+    ...(article.intro ?? []).flatMap(blockText),
     ...article.sections.flatMap((section) => [
       section.heading,
       ...section.paragraphs.map(segmentText),
-      ...(section.bullets ?? []).map(segmentText)
+      ...(section.bullets ?? []).map(segmentText),
+      ...(section.blocks ?? []).flatMap(blockText)
     ]),
     ...article.faqs.flatMap((faq) => [faq.question, segmentText(faq.answer)])
   ].join("\n");

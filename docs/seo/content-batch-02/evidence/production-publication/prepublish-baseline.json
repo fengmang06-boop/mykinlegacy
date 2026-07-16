@@ -1,0 +1,26 @@
+{
+  "capturedAt": "2026-07-16",
+  "baselineCommit": "c5fbfe0922b46bc665f090de63eaf41fe6db0093",
+  "originMainCommit": "c5fbfe0922b46bc665f090de63eaf41fe6db0093",
+  "sitemap": {
+    "status": 200,
+    "urlCount": 47
+  },
+  "robotsStatus": 200,
+  "createStatus": 200,
+  "productApi": {
+    "status": 200,
+    "productCode": "family_legacy_collection",
+    "packageStatus": "active",
+    "priceCents": 4900,
+    "currency": "USD"
+  },
+  "batch01": {
+    "expected": 5,
+    "http200": 5
+  },
+  "approvedImageAssetsPresent": true,
+  "productionModified": false,
+  "indexingRequested": false,
+  "sitemapManuallySubmitted": false
+}

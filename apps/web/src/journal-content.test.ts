@@ -5,6 +5,7 @@ import {
   journalArticles,
   journalArticleText,
   journalArticleWordCount,
+  type JournalBlock,
   type JournalSegment
 } from "./lib/journal-articles";
 
@@ -14,14 +15,30 @@ function linksFrom(segments: JournalSegment[]): string[] {
     .map((segment) => segment.href);
 }
 
-describe("SEO Content Batch 01", () => {
-  it("publishes exactly five substantial, uniquely targeted articles", () => {
-    expect(journalArticles).toHaveLength(5);
-    expect(new Set(journalArticles.map((article) => article.slug)).size).toBe(5);
-    expect(new Set(journalArticles.map((article) => article.targetKeyword)).size).toBe(5);
-    expect(new Set(journalArticles.map((article) => article.title)).size).toBe(5);
-    expect(new Set(journalArticles.map((article) => article.metaTitle)).size).toBe(5);
-    expect(new Set(journalArticles.map((article) => article.description)).size).toBe(5);
+function linksFromBlock(block: JournalBlock): string[] {
+  if (block.type === "subheading") {
+    return [];
+  }
+  if (block.type === "paragraph" || block.type === "note" || block.type === "quote") {
+    return linksFrom(block.segments);
+  }
+  if (block.type === "bullets" || block.type === "numbered") {
+    return block.items.flatMap(linksFrom);
+  }
+  return [
+    ...block.headers.flatMap(linksFrom),
+    ...block.rows.flatMap((row) => row.flatMap(linksFrom))
+  ];
+}
+
+describe("SEO journal content", () => {
+  it("publishes exactly nine substantial, uniquely targeted articles", () => {
+    expect(journalArticles).toHaveLength(9);
+    expect(new Set(journalArticles.map((article) => article.slug)).size).toBe(9);
+    expect(new Set(journalArticles.map((article) => article.targetKeyword)).size).toBe(9);
+    expect(new Set(journalArticles.map((article) => article.title)).size).toBe(9);
+    expect(new Set(journalArticles.map((article) => article.metaTitle)).size).toBe(9);
+    expect(new Set(journalArticles.map((article) => article.description)).size).toBe(9);
 
     for (const article of journalArticles) {
       expect(article.metaTitle.length).toBeLessThanOrEqual(60);
@@ -55,8 +72,10 @@ describe("SEO Content Batch 01", () => {
     for (const article of journalArticles) {
       const bodyLinks = article.sections.flatMap((section) => [
         ...section.paragraphs.flatMap(linksFrom),
-        ...(section.bullets ?? []).flatMap(linksFrom)
+        ...(section.bullets ?? []).flatMap(linksFrom),
+        ...(section.blocks ?? []).flatMap(linksFromBlock)
       ]);
+      bodyLinks.push(...(article.intro ?? []).flatMap(linksFromBlock));
       expect(article.commercialPath.startsWith("/")).toBe(true);
       expect(bodyLinks.some((href) => href.startsWith("/journal/"))).toBe(true);
       expect(bodyLinks.some((href) => href.startsWith("/real-examples"))).toBe(true);
@@ -69,7 +88,9 @@ describe("SEO Content Batch 01", () => {
     const allowedSourceHosts = new Set([
       "www.archives.gov",
       "www.college-of-arms.gov.uk",
-      "www.loc.gov"
+      "www.loc.gov",
+      "time.com",
+      "www.timeanddate.com"
     ]);
     for (const article of journalArticles) {
       for (const source of article.sources) {
@@ -113,8 +134,72 @@ describe("SEO Content Batch 01", () => {
             longParagraphs.push(normalized);
           }
         }
+        for (const block of section.blocks ?? []) {
+          if (block.type === "paragraph" || block.type === "note" || block.type === "quote") {
+            const normalized = journalBlockText(block).replace(/\s+/g, " ").trim().toLowerCase();
+            if (normalized.length >= 100) {
+              longParagraphs.push(normalized);
+            }
+          }
+        }
+      }
+      for (const block of article.intro ?? []) {
+        if (block.type === "paragraph" || block.type === "note" || block.type === "quote") {
+          const normalized = journalBlockText(block).replace(/\s+/g, " ").trim().toLowerCase();
+          if (normalized.length >= 100) {
+            longParagraphs.push(normalized);
+          }
+        }
       }
     }
     expect(new Set(longParagraphs).size).toBe(longParagraphs.length);
   });
+
+  it("locks the CSO-approved Content Batch 02 titles, boundaries, and delivery note", () => {
+    const reunion = journalArticles.find((article) => article.slug === "family-reunion-gift-ideas");
+    const crest = journalArticles.find(
+      (article) => article.slug === "how-to-create-a-modern-family-crest"
+    );
+    const wedding = journalArticles.find(
+      (article) => article.slug === "personalized-wedding-gifts-for-couples"
+    );
+
+    expect(reunion?.description).toBe(
+      "Explore family reunion gift ideas that preserve shared memories, places, values, and stories—not only the event date or a standard event favor."
+    );
+    expect(crest?.title).toBe(
+      "How to Create a Modern Family Crest Based on Your Real Family Story"
+    );
+    expect(crest?.dek).toBe(
+      "A modern family crest created for personal use is a symbolic artwork, not proof of ancestry, nobility, legal heraldic ownership, or an officially registered coat of arms."
+    );
+    expect(crest?.sources).toHaveLength(1);
+    expect(crest?.sources[0]?.organization).toBe("College of Arms");
+    expect(wedding?.title).toBe(
+      "Personalized Wedding Gifts for Couples Beginning a Shared Legacy"
+    );
+    expect(
+      wedding?.intro?.some(
+        (block) => block.type === "note" && journalBlockText(block).includes("delivered digitally")
+      )
+    ).toBe(true);
+    expect(journalArticleText(wedding!)).toContain(
+      "It should not claim inherited arms, genealogy, or official status.[2]"
+    );
+  });
 });
+
+function journalBlockText(block: JournalBlock): string {
+  const segmentText = (segments: JournalSegment[]) =>
+    segments.map((segment) => (typeof segment === "string" ? segment : segment.text)).join(" ");
+  if (block.type === "subheading") {
+    return block.text;
+  }
+  if (block.type === "paragraph" || block.type === "note" || block.type === "quote") {
+    return segmentText(block.segments);
+  }
+  if (block.type === "bullets" || block.type === "numbered") {
+    return block.items.map(segmentText).join(" ");
+  }
+  return [...block.headers, ...block.rows.flat()].map(segmentText).join(" ");
+}

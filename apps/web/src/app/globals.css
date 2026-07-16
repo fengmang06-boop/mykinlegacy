@@ -4511,6 +4511,59 @@ textarea {
   padding-left: 24px;
 }
 
+.journal-prose ol {
+  display: grid;
+  gap: 10px;
+  margin: 20px 0 26px;
+  padding-left: 26px;
+}
+
+.journal-introduction {
+  margin: 0 0 48px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid rgba(85, 57, 23, 0.2);
+}
+
+.journal-note,
+.journal-quote {
+  margin: 24px 0;
+  padding: 18px 22px;
+  border-left: 3px solid #a47a35;
+  background: rgba(164, 122, 53, 0.09);
+  color: #3a2b1a;
+  font-size: 1.02rem;
+  line-height: 1.72;
+}
+
+.journal-table-wrap {
+  max-width: 100%;
+  margin: 24px 0 30px;
+  overflow-x: auto;
+}
+
+.journal-table-wrap table {
+  width: 100%;
+  min-width: 620px;
+  border-collapse: collapse;
+  background: rgba(255, 255, 255, 0.34);
+}
+
+.journal-table-wrap th,
+.journal-table-wrap td {
+  padding: 12px 14px;
+  border: 1px solid rgba(85, 57, 23, 0.2);
+  color: #241c13;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  text-align: left;
+  vertical-align: top;
+}
+
+.journal-table-wrap th {
+  background: rgba(164, 122, 53, 0.12);
+  font-family: var(--font-heading), Georgia, serif;
+}
+
 .journal-inline-visual {
   max-width: 620px;
   margin: 32px auto 4px;

@@ -10,6 +10,7 @@ import {
   getJournalVisual,
   journalArticles,
   journalArticleWordCount,
+  type JournalBlock,
   type JournalSegment
 } from "../../../lib/journal-articles";
 import { absoluteUrl, BRAND_NAME, publicMetadata, SITE_URL } from "../../../lib/seo";
@@ -78,6 +79,61 @@ function RichText({ segments }: Readonly<{ segments: JournalSegment[] }>) {
       >
         {segment.text}
       </a>
+    );
+  });
+}
+
+function JournalBlocks({ blocks }: Readonly<{ blocks: JournalBlock[] }>) {
+  return blocks.map((block, index) => {
+    const key = `${block.type}-${index}`;
+    if (block.type === "paragraph") {
+      return <p key={key}><RichText segments={block.segments} /></p>;
+    }
+    if (block.type === "subheading") {
+      return <h3 key={key}>{block.text}</h3>;
+    }
+    if (block.type === "note" || block.type === "quote") {
+      return (
+        <blockquote className={`journal-${block.type}`} key={key}>
+          <RichText segments={block.segments} />
+        </blockquote>
+      );
+    }
+    if (block.type === "bullets" || block.type === "numbered") {
+      const List = block.type === "numbered" ? "ol" : "ul";
+      return (
+        <List key={key}>
+          {block.items.map((item, itemIndex) => (
+            <li key={`${key}-${itemIndex}`}><RichText segments={item} /></li>
+          ))}
+        </List>
+      );
+    }
+    return (
+      <div className="journal-table-wrap" key={key}>
+        <table>
+          <thead>
+            <tr>
+              {block.headers.map((header, headerIndex) => (
+                <th key={`${key}-h-${headerIndex}`} scope="col">
+                  <RichText segments={header} />
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {block.rows.map((row, rowIndex) => (
+              <tr key={`${key}-r-${rowIndex}`}>
+                {row.map((cell, cellIndex) => (
+                  <td key={`${key}-r-${rowIndex}-c-${cellIndex}`}>
+                    <RichText segments={cell} />
+                  </td>
+                ))}
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     );
   });
 }
@@ -168,6 +224,11 @@ export default async function JournalArticlePage({ params }: JournalArticlePageP
           </aside>
 
           <div className="journal-prose">
+            {article.intro ? (
+              <div className="journal-introduction">
+                <JournalBlocks blocks={article.intro} />
+              </div>
+            ) : null}
             {article.sections.map((section) => (
               <section id={section.id} key={section.id}>
                 <h2>{section.heading}</h2>
@@ -181,6 +242,7 @@ export default async function JournalArticlePage({ params }: JournalArticlePageP
                     ))}
                   </ul>
                 ) : null}
+                {section.blocks ? <JournalBlocks blocks={section.blocks} /> : null}
                 {section.visualId ? (
                   <ArticleVisual
                     id={section.visualId}

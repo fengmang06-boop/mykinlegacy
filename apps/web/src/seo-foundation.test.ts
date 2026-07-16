@@ -48,10 +48,10 @@ describe("SEO foundation", () => {
 
   it("publishes all commercial pages while excluding private and review routes", () => {
     const urls = sitemap().map((entry) => entry.url);
-    expect(urls).toHaveLength(47);
+    expect(urls).toHaveLength(51);
     expect(urls.filter((url) => url.includes("/gifts/"))).toHaveLength(8);
     expect(urls.filter((url) => url.includes("/real-examples/"))).toHaveLength(20);
-    expect(urls.filter((url) => url.includes("/journal/"))).toHaveLength(5);
+    expect(urls.filter((url) => url.includes("/journal/"))).toHaveLength(9);
     expect(urls).toContain("https://mykinlegacy.com/journal");
     expect(urls).toEqual(
       expect.arrayContaining(

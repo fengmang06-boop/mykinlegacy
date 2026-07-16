@@ -1,0 +1,47 @@
+{
+  "generatedAt": "2026-07-15",
+  "status": "READY_FOR_CSO_PREPUBLISH_REVIEW",
+  "productionModified": false,
+  "contentPublished": false,
+  "indexingRequested": false,
+  "unresolvedClaims": 0,
+  "unsafeForbiddenPhraseHits": 0,
+  "keywordStuffingFindings": 0,
+  "severeCannibalizationFindings": 0,
+  "internalDestinationsChecked": 12,
+  "internalDestinationsHttp200": 12,
+  "articles": [
+    {
+      "id": "01-family-reunion-gift-ideas",
+      "wordCount": 2569,
+      "score": 96,
+      "searchIntent": 19,
+      "brandAndHeraldrySafety": 5,
+      "status": "READY_FOR_CSO_PREPUBLISH_REVIEW"
+    },
+    {
+      "id": "02-anniversary-gifts-for-parents",
+      "wordCount": 2266,
+      "score": 96,
+      "searchIntent": 19,
+      "brandAndHeraldrySafety": 5,
+      "status": "READY_FOR_CSO_PREPUBLISH_REVIEW"
+    },
+    {
+      "id": "03-modern-family-crest",
+      "wordCount": 2494,
+      "score": 98,
+      "searchIntent": 19,
+      "brandAndHeraldrySafety": 5,
+      "status": "READY_FOR_CSO_PREPUBLISH_REVIEW"
+    },
+    {
+      "id": "04-personalized-wedding-gifts-for-couples",
+      "wordCount": 2386,
+      "score": 96,
+      "searchIntent": 19,
+      "brandAndHeraldrySafety": 5,
+      "status": "READY_FOR_CSO_PREPUBLISH_REVIEW"
+    }
+  ]
+}
