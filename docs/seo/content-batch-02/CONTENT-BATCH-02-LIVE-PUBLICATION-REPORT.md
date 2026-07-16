@@ -1,6 +1,6 @@
 # Content Batch 02 Live Publication Report
 
-Status: PREPUBLISH_GATES_PASSED_PENDING_DEPLOYMENT
+Status: LIVE_VALIDATED
 
 Date: 2026-07-16
 
@@ -55,3 +55,21 @@ Only these four URLs are in scope:
 - Indexing requested: NO
 - Sitemap manually submitted: NO
 - Analytics, Search Console, Cloudflare, Stripe, payment, pricing, or checkout settings changed: NO
+
+## Deployment
+
+- Publication commit: `5ad5a1e9ab4c83cf64161caf5ea8452f78de8a2a`
+- GitHub Actions run: `https://github.com/fengmang06-boop/mykinlegacy/actions/runs/29480815320`
+- Deployment conclusion: SUCCESS
+- Four scoped articles: 4/4 HTTP 200
+- Sitemap after deployment: HTTP 200, 51 URLs, all four scoped URLs present
+- Production health and homepage: HTTP 200
+- `/create`: HTTP 200
+- Product API: HTTP 200, active, USD 49
+- Checkout safety probe: HTTP 400 for an intentionally invalid empty request, not kill-switch HTTP 503; no order or Checkout Session was created
+- Existing Batch 01 articles: 5/5 HTTP 200
+- Production incidents: NONE
+
+## Final decision
+
+`LIVE_VALIDATED`

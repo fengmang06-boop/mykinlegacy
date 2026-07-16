@@ -1,0 +1,961 @@
+{
+  "checkedAt": "2026-07-16T07:47:58.572Z",
+  "pages": [
+    {
+      "slug": "family-reunion-gift-ideas",
+      "viewports": {
+        "desktop": {
+          "status": 200,
+          "h1": [
+            "Meaningful Family Reunion Gift Ideas That Preserve Your Family Story"
+          ],
+          "title": "Meaningful Family Reunion Gift Ideas That Preserve Stories",
+          "description": "Explore family reunion gift ideas that preserve shared memories, places, values, and stories—not only the event date or a standard event favor.",
+          "canonical": "https://mykinlegacy.com/journal/family-reunion-gift-ideas",
+          "ogTitle": "Meaningful Family Reunion Gift Ideas That Preserve Stories",
+          "ogDescription": "Explore family reunion gift ideas that preserve shared memories, places, values, and stories—not only the event date or a standard event favor.",
+          "ogImage": "https://mykinlegacy.com/assets/showcase-collections/11-family-reunion/final-crest.png",
+          "schemas": [
+            "Organization",
+            "WebSite",
+            "Article",
+            "BreadcrumbList"
+          ],
+          "schemaCounts": {
+            "Article": 1,
+            "BreadcrumbList": 1,
+            "FAQPage": 0,
+            "Product": 0,
+            "Review": 0,
+            "Rating": 0
+          },
+          "images": [
+            {
+              "alt": "Tree-centered gold and black final crest created for a family reunion example",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F11-family-reunion%2Ffinal-crest.png&w=640&q=75",
+              "complete": true,
+              "naturalWidth": 604
+            },
+            {
+              "alt": "Tree and roots final crest representing shared generations at a family reunion",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F11-family-reunion%2Ffinal-crest.png&w=750&q=75",
+              "complete": true,
+              "naturalWidth": 700
+            }
+          ],
+          "brokenImages": [],
+          "internalLinks": [
+            "https://mykinlegacy.com/",
+            "https://mykinlegacy.com/family-legacy-collection",
+            "https://mykinlegacy.com/real-examples",
+            "https://mykinlegacy.com/journal",
+            "https://mykinlegacy.com/#how-it-works",
+            "https://mykinlegacy.com/#gift-ideas",
+            "https://mykinlegacy.com/#faq",
+            "https://mykinlegacy.com/create",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#what-a-reunion-gift-should-preserve",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#decide-who-the-gift-is-really-for",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#seven-story-first-reunion-gift-directions",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#match-the-format-to-the-family",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#gather-evidence-without-creating-homework",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#turn-family-evidence-into-symbols-and-story",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#privacy-review-and-preservation",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#a-practical-planning-framework",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#a-lasting-reunion-gift-begins-with-one-true-detail",
+            "https://mykinlegacy.com/real-examples/11-family-reunion",
+            "https://mykinlegacy.com/gifts/family-reunion",
+            "https://mykinlegacy.com/journal/how-to-create-a-family-keepsake",
+            "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+            "https://mykinlegacy.com/gifts/father-retirement",
+            "https://mykinlegacy.com/support",
+            "https://mykinlegacy.com/privacy",
+            "https://mykinlegacy.com/terms",
+            "https://mykinlegacy.com/refund-policy",
+            "https://mykinlegacy.com/digital-delivery",
+            "https://mykinlegacy.com/disclaimer"
+          ],
+          "externalLinks": [
+            "https://www.archives.gov/preservation/family-archives/digitizing",
+            "https://www.loc.gov/static/programs/digital-preservation/personal-digital-archiving/",
+            "https://www.archives.gov/preservation/family-archives/displaying"
+          ],
+          "horizontalOverflow": false,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "forbiddenMatches": [],
+          "markdownArtifact": false,
+          "digitalDisclosure": true,
+          "heraldryBoundary": false
+        },
+        "mobile": {
+          "status": 200,
+          "h1": [
+            "Meaningful Family Reunion Gift Ideas That Preserve Your Family Story"
+          ],
+          "title": "Meaningful Family Reunion Gift Ideas That Preserve Stories",
+          "description": "Explore family reunion gift ideas that preserve shared memories, places, values, and stories—not only the event date or a standard event favor.",
+          "canonical": "https://mykinlegacy.com/journal/family-reunion-gift-ideas",
+          "ogTitle": "Meaningful Family Reunion Gift Ideas That Preserve Stories",
+          "ogDescription": "Explore family reunion gift ideas that preserve shared memories, places, values, and stories—not only the event date or a standard event favor.",
+          "ogImage": "https://mykinlegacy.com/assets/showcase-collections/11-family-reunion/final-crest.png",
+          "schemas": [
+            "Organization",
+            "WebSite",
+            "Article",
+            "BreadcrumbList"
+          ],
+          "schemaCounts": {
+            "Article": 1,
+            "BreadcrumbList": 1,
+            "FAQPage": 0,
+            "Product": 0,
+            "Review": 0,
+            "Rating": 0
+          },
+          "images": [
+            {
+              "alt": "Tree-centered gold and black final crest created for a family reunion example",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F11-family-reunion%2Ffinal-crest.png&w=384&q=75",
+              "complete": true,
+              "naturalWidth": 358
+            },
+            {
+              "alt": "Tree and roots final crest representing shared generations at a family reunion",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F11-family-reunion%2Ffinal-crest.png&w=640&q=75",
+              "complete": true,
+              "naturalWidth": 358
+            }
+          ],
+          "brokenImages": [],
+          "internalLinks": [
+            "https://mykinlegacy.com/",
+            "https://mykinlegacy.com/family-legacy-collection",
+            "https://mykinlegacy.com/real-examples",
+            "https://mykinlegacy.com/journal",
+            "https://mykinlegacy.com/#how-it-works",
+            "https://mykinlegacy.com/#gift-ideas",
+            "https://mykinlegacy.com/#faq",
+            "https://mykinlegacy.com/create",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#what-a-reunion-gift-should-preserve",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#decide-who-the-gift-is-really-for",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#seven-story-first-reunion-gift-directions",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#match-the-format-to-the-family",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#gather-evidence-without-creating-homework",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#turn-family-evidence-into-symbols-and-story",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#privacy-review-and-preservation",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#a-practical-planning-framework",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas#a-lasting-reunion-gift-begins-with-one-true-detail",
+            "https://mykinlegacy.com/real-examples/11-family-reunion",
+            "https://mykinlegacy.com/gifts/family-reunion",
+            "https://mykinlegacy.com/journal/how-to-create-a-family-keepsake",
+            "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+            "https://mykinlegacy.com/gifts/father-retirement",
+            "https://mykinlegacy.com/support",
+            "https://mykinlegacy.com/privacy",
+            "https://mykinlegacy.com/terms",
+            "https://mykinlegacy.com/refund-policy",
+            "https://mykinlegacy.com/digital-delivery",
+            "https://mykinlegacy.com/disclaimer"
+          ],
+          "externalLinks": [
+            "https://www.archives.gov/preservation/family-archives/digitizing",
+            "https://www.loc.gov/static/programs/digital-preservation/personal-digital-archiving/",
+            "https://www.archives.gov/preservation/family-archives/displaying"
+          ],
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "forbiddenMatches": [],
+          "markdownArtifact": false,
+          "digitalDisclosure": true,
+          "heraldryBoundary": false
+        }
+      }
+    },
+    {
+      "slug": "personalized-anniversary-gifts-for-parents",
+      "viewports": {
+        "desktop": {
+          "status": 200,
+          "h1": [
+            "Personalized Anniversary Gifts for Parents That Celebrate Their Family Legacy"
+          ],
+          "title": "Personalized Anniversary Gifts for Parents with Meaning",
+          "description": "Choose a personalized anniversary gift for parents that honors the shared memories, values, traditions, and family life they built together.",
+          "canonical": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents",
+          "ogTitle": "Personalized Anniversary Gifts for Parents with Meaning",
+          "ogDescription": "Choose a personalized anniversary gift for parents that honors the shared memories, values, traditions, and family life they built together.",
+          "ogImage": "https://mykinlegacy.com/assets/showcase-collections/20-parents-anniversary/final-crest.png",
+          "schemas": [
+            "Organization",
+            "WebSite",
+            "Article",
+            "BreadcrumbList"
+          ],
+          "schemaCounts": {
+            "Article": 1,
+            "BreadcrumbList": 1,
+            "FAQPage": 0,
+            "Product": 0,
+            "Review": 0,
+            "Rating": 0
+          },
+          "images": [
+            {
+              "alt": "Gold and black tree crest created for a parents anniversary gift example",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F20-parents-anniversary%2Ffinal-crest.png&w=640&q=75",
+              "complete": true,
+              "naturalWidth": 604
+            },
+            {
+              "alt": "Tree and shield artwork shaped by evidence about a couple and the family they built",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F20-parents-anniversary%2Ffinal-crest.png&w=750&q=75",
+              "complete": true,
+              "naturalWidth": 700
+            }
+          ],
+          "brokenImages": [],
+          "internalLinks": [
+            "https://mykinlegacy.com/",
+            "https://mykinlegacy.com/family-legacy-collection",
+            "https://mykinlegacy.com/real-examples",
+            "https://mykinlegacy.com/journal",
+            "https://mykinlegacy.com/#how-it-works",
+            "https://mykinlegacy.com/#gift-ideas",
+            "https://mykinlegacy.com/#faq",
+            "https://mykinlegacy.com/create",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#why-anniversary-gifts-for-parents-become-generic",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#begin-with-what-they-built-together",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#gather-evidence-from-the-family",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#choose-among-four-gift-directions",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#use-anniversary-traditions-without-becoming-trapped-by-them",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#build-a-gift-for-both-parents",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#a-story-to-symbol-example",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#presentation-and-preservation",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#what-to-avoid",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#celebrate-what-the-years-created",
+            "https://mykinlegacy.com/real-examples/20-parents-anniversary",
+            "https://mykinlegacy.com/gifts/anniversary",
+            "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas",
+            "https://mykinlegacy.com/gifts/father-retirement",
+            "https://mykinlegacy.com/support",
+            "https://mykinlegacy.com/privacy",
+            "https://mykinlegacy.com/terms",
+            "https://mykinlegacy.com/refund-policy",
+            "https://mykinlegacy.com/digital-delivery",
+            "https://mykinlegacy.com/disclaimer"
+          ],
+          "externalLinks": [
+            "https://time.com/4771179/history-anniversary-gifts-paper-silver-gold/",
+            "https://www.timeanddate.com/date/anniversary-gift-traditions.html",
+            "https://www.archives.gov/preservation/family-archives/digitizing",
+            "https://www.archives.gov/preservation/family-archives/displaying"
+          ],
+          "horizontalOverflow": false,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "forbiddenMatches": [],
+          "markdownArtifact": false,
+          "digitalDisclosure": true,
+          "heraldryBoundary": false
+        },
+        "mobile": {
+          "status": 200,
+          "h1": [
+            "Personalized Anniversary Gifts for Parents That Celebrate Their Family Legacy"
+          ],
+          "title": "Personalized Anniversary Gifts for Parents with Meaning",
+          "description": "Choose a personalized anniversary gift for parents that honors the shared memories, values, traditions, and family life they built together.",
+          "canonical": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents",
+          "ogTitle": "Personalized Anniversary Gifts for Parents with Meaning",
+          "ogDescription": "Choose a personalized anniversary gift for parents that honors the shared memories, values, traditions, and family life they built together.",
+          "ogImage": "https://mykinlegacy.com/assets/showcase-collections/20-parents-anniversary/final-crest.png",
+          "schemas": [
+            "Organization",
+            "WebSite",
+            "Article",
+            "BreadcrumbList"
+          ],
+          "schemaCounts": {
+            "Article": 1,
+            "BreadcrumbList": 1,
+            "FAQPage": 0,
+            "Product": 0,
+            "Review": 0,
+            "Rating": 0
+          },
+          "images": [
+            {
+              "alt": "Gold and black tree crest created for a parents anniversary gift example",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F20-parents-anniversary%2Ffinal-crest.png&w=384&q=75",
+              "complete": true,
+              "naturalWidth": 358
+            },
+            {
+              "alt": "Tree and shield artwork shaped by evidence about a couple and the family they built",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F20-parents-anniversary%2Ffinal-crest.png&w=640&q=75",
+              "complete": true,
+              "naturalWidth": 358
+            }
+          ],
+          "brokenImages": [],
+          "internalLinks": [
+            "https://mykinlegacy.com/",
+            "https://mykinlegacy.com/family-legacy-collection",
+            "https://mykinlegacy.com/real-examples",
+            "https://mykinlegacy.com/journal",
+            "https://mykinlegacy.com/#how-it-works",
+            "https://mykinlegacy.com/#gift-ideas",
+            "https://mykinlegacy.com/#faq",
+            "https://mykinlegacy.com/create",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#why-anniversary-gifts-for-parents-become-generic",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#begin-with-what-they-built-together",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#gather-evidence-from-the-family",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#choose-among-four-gift-directions",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#use-anniversary-traditions-without-becoming-trapped-by-them",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#build-a-gift-for-both-parents",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#a-story-to-symbol-example",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#presentation-and-preservation",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#what-to-avoid",
+            "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#celebrate-what-the-years-created",
+            "https://mykinlegacy.com/real-examples/20-parents-anniversary",
+            "https://mykinlegacy.com/gifts/anniversary",
+            "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+            "https://mykinlegacy.com/journal/family-reunion-gift-ideas",
+            "https://mykinlegacy.com/gifts/father-retirement",
+            "https://mykinlegacy.com/support",
+            "https://mykinlegacy.com/privacy",
+            "https://mykinlegacy.com/terms",
+            "https://mykinlegacy.com/refund-policy",
+            "https://mykinlegacy.com/digital-delivery",
+            "https://mykinlegacy.com/disclaimer"
+          ],
+          "externalLinks": [
+            "https://time.com/4771179/history-anniversary-gifts-paper-silver-gold/",
+            "https://www.timeanddate.com/date/anniversary-gift-traditions.html",
+            "https://www.archives.gov/preservation/family-archives/digitizing",
+            "https://www.archives.gov/preservation/family-archives/displaying"
+          ],
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "forbiddenMatches": [],
+          "markdownArtifact": false,
+          "digitalDisclosure": true,
+          "heraldryBoundary": false
+        }
+      }
+    },
+    {
+      "slug": "how-to-create-a-modern-family-crest",
+      "viewports": {
+        "desktop": {
+          "status": 200,
+          "h1": [
+            "How to Create a Modern Family Crest Based on Your Real Family Story"
+          ],
+          "title": "How to Create a Modern Family Crest from Real Stories",
+          "description": "Learn how to create a modern family crest from real memories and values—without claiming inherited arms, verified ancestry, or historical status.",
+          "canonical": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest",
+          "ogTitle": "How to Create a Modern Family Crest from Real Stories",
+          "ogDescription": "Learn how to create a modern family crest from real memories and values—without claiming inherited arms, verified ancestry, or historical status.",
+          "ogImage": "https://mykinlegacy.com/assets/showcase-collections/01-father-retirement/final-crest.png",
+          "schemas": [
+            "Organization",
+            "WebSite",
+            "Article",
+            "BreadcrumbList"
+          ],
+          "schemaCounts": {
+            "Article": 1,
+            "BreadcrumbList": 1,
+            "FAQPage": 0,
+            "Product": 0,
+            "Review": 0,
+            "Rating": 0
+          },
+          "images": [
+            {
+              "alt": "Shield and tree final crest used to explain evidence-led modern symbolic artwork",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F01-father-retirement%2Ffinal-crest.png&w=640&q=75",
+              "complete": true,
+              "naturalWidth": 604
+            },
+            {
+              "alt": "Lantern final crest showing how memory and guidance can lead a symbolic composition",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F06-grandfather-legacy%2Ffinal-crest.png&w=750&q=75",
+              "complete": true,
+              "naturalWidth": 700
+            }
+          ],
+          "brokenImages": [],
+          "internalLinks": [
+            "https://mykinlegacy.com/",
+            "https://mykinlegacy.com/family-legacy-collection",
+            "https://mykinlegacy.com/real-examples",
+            "https://mykinlegacy.com/journal",
+            "https://mykinlegacy.com/#how-it-works",
+            "https://mykinlegacy.com/#gift-ideas",
+            "https://mykinlegacy.com/#faq",
+            "https://mykinlegacy.com/create",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#modern-symbolic-art-and-historical-arms-are-different-things",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#begin-with-evidence-not-a-symbol-catalog",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#convert-evidence-into-dominant-meaning",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#choose-one-primary-symbol",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#add-secondary-and-structural-symbols-carefully",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#define-symbol-dna-instead-of-choosing-generic-icons",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#use-composition-material-and-light-to-serve-meaning",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#write-the-design-basis-and-symbol-rationale",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#compare-three-evidence-to-design-examples",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#commissioning-checklist",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#build-from-what-your-family-can-recognize",
+            "https://mykinlegacy.com/symbolic-family-crest",
+            "https://mykinlegacy.com/journal/what-is-a-family-crest",
+            "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+            "https://mykinlegacy.com/gifts/father-retirement",
+            "https://mykinlegacy.com/support",
+            "https://mykinlegacy.com/privacy",
+            "https://mykinlegacy.com/terms",
+            "https://mykinlegacy.com/refund-policy",
+            "https://mykinlegacy.com/digital-delivery",
+            "https://mykinlegacy.com/disclaimer"
+          ],
+          "externalLinks": [
+            "https://www.college-of-arms.gov.uk/resources/faqs"
+          ],
+          "horizontalOverflow": false,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "forbiddenMatches": [],
+          "markdownArtifact": false,
+          "digitalDisclosure": true,
+          "heraldryBoundary": true
+        },
+        "mobile": {
+          "status": 200,
+          "h1": [
+            "How to Create a Modern Family Crest Based on Your Real Family Story"
+          ],
+          "title": "How to Create a Modern Family Crest from Real Stories",
+          "description": "Learn how to create a modern family crest from real memories and values—without claiming inherited arms, verified ancestry, or historical status.",
+          "canonical": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest",
+          "ogTitle": "How to Create a Modern Family Crest from Real Stories",
+          "ogDescription": "Learn how to create a modern family crest from real memories and values—without claiming inherited arms, verified ancestry, or historical status.",
+          "ogImage": "https://mykinlegacy.com/assets/showcase-collections/01-father-retirement/final-crest.png",
+          "schemas": [
+            "Organization",
+            "WebSite",
+            "Article",
+            "BreadcrumbList"
+          ],
+          "schemaCounts": {
+            "Article": 1,
+            "BreadcrumbList": 1,
+            "FAQPage": 0,
+            "Product": 0,
+            "Review": 0,
+            "Rating": 0
+          },
+          "images": [
+            {
+              "alt": "Shield and tree final crest used to explain evidence-led modern symbolic artwork",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F01-father-retirement%2Ffinal-crest.png&w=384&q=75",
+              "complete": true,
+              "naturalWidth": 358
+            },
+            {
+              "alt": "Lantern final crest showing how memory and guidance can lead a symbolic composition",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F06-grandfather-legacy%2Ffinal-crest.png&w=640&q=75",
+              "complete": true,
+              "naturalWidth": 358
+            }
+          ],
+          "brokenImages": [],
+          "internalLinks": [
+            "https://mykinlegacy.com/",
+            "https://mykinlegacy.com/family-legacy-collection",
+            "https://mykinlegacy.com/real-examples",
+            "https://mykinlegacy.com/journal",
+            "https://mykinlegacy.com/#how-it-works",
+            "https://mykinlegacy.com/#gift-ideas",
+            "https://mykinlegacy.com/#faq",
+            "https://mykinlegacy.com/create",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#modern-symbolic-art-and-historical-arms-are-different-things",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#begin-with-evidence-not-a-symbol-catalog",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#convert-evidence-into-dominant-meaning",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#choose-one-primary-symbol",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#add-secondary-and-structural-symbols-carefully",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#define-symbol-dna-instead-of-choosing-generic-icons",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#use-composition-material-and-light-to-serve-meaning",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#write-the-design-basis-and-symbol-rationale",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#compare-three-evidence-to-design-examples",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#commissioning-checklist",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#build-from-what-your-family-can-recognize",
+            "https://mykinlegacy.com/symbolic-family-crest",
+            "https://mykinlegacy.com/journal/what-is-a-family-crest",
+            "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+            "https://mykinlegacy.com/gifts/father-retirement",
+            "https://mykinlegacy.com/support",
+            "https://mykinlegacy.com/privacy",
+            "https://mykinlegacy.com/terms",
+            "https://mykinlegacy.com/refund-policy",
+            "https://mykinlegacy.com/digital-delivery",
+            "https://mykinlegacy.com/disclaimer"
+          ],
+          "externalLinks": [
+            "https://www.college-of-arms.gov.uk/resources/faqs"
+          ],
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "forbiddenMatches": [],
+          "markdownArtifact": false,
+          "digitalDisclosure": true,
+          "heraldryBoundary": true
+        }
+      }
+    },
+    {
+      "slug": "personalized-wedding-gifts-for-couples",
+      "viewports": {
+        "desktop": {
+          "status": 200,
+          "h1": [
+            "Personalized Wedding Gifts for Couples Beginning a Shared Legacy"
+          ],
+          "title": "Personalized Wedding Gifts for Couples with Meaning",
+          "description": "Find a personalized wedding gift for a couple that reflects both people, their shared story, values, places, and the future they are beginning.",
+          "canonical": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples",
+          "ogTitle": "Personalized Wedding Gifts for Couples with Meaning",
+          "ogDescription": "Find a personalized wedding gift for a couple that reflects both people, their shared story, values, places, and the future they are beginning.",
+          "ogImage": "https://mykinlegacy.com/assets/showcase-collections/03-wedding-gift/final-crest.png",
+          "schemas": [
+            "Organization",
+            "WebSite",
+            "Article",
+            "BreadcrumbList"
+          ],
+          "schemaCounts": {
+            "Article": 1,
+            "BreadcrumbList": 1,
+            "FAQPage": 0,
+            "Product": 0,
+            "Review": 0,
+            "Rating": 0
+          },
+          "images": [
+            {
+              "alt": "Compass and path final crest created for a personalized wedding gift example",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F03-wedding-gift%2Ffinal-crest.png&w=640&q=75",
+              "complete": true,
+              "naturalWidth": 604
+            },
+            {
+              "alt": "Compass-led final crest representing two people beginning a shared direction",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F03-wedding-gift%2Ffinal-crest.png&w=750&q=75",
+              "complete": true,
+              "naturalWidth": 700
+            }
+          ],
+          "brokenImages": [],
+          "internalLinks": [
+            "https://mykinlegacy.com/",
+            "https://mykinlegacy.com/family-legacy-collection",
+            "https://mykinlegacy.com/real-examples",
+            "https://mykinlegacy.com/journal",
+            "https://mykinlegacy.com/#how-it-works",
+            "https://mykinlegacy.com/#gift-ideas",
+            "https://mykinlegacy.com/#faq",
+            "https://mykinlegacy.com/create",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#what-the-registry-cannot-say",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#personalized-is-not-always-personally-meaningful",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#begin-with-both-people",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#match-the-gift-to-your-relationship-with-the-couple",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#compare-five-wedding-gift-directions",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#build-a-story-based-gift-from-real-evidence",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#use-symbols-without-inventing-family-history",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#make-the-gift-meaningful-after-the-wedding",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#what-to-avoid",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#give-them-a-record-of-what-they-are-beginning",
+            "https://mykinlegacy.com/real-examples/03-wedding-gift",
+            "https://mykinlegacy.com/gifts/wedding",
+            "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest",
+            "https://mykinlegacy.com/gifts/father-retirement",
+            "https://mykinlegacy.com/support",
+            "https://mykinlegacy.com/privacy",
+            "https://mykinlegacy.com/terms",
+            "https://mykinlegacy.com/refund-policy",
+            "https://mykinlegacy.com/digital-delivery",
+            "https://mykinlegacy.com/disclaimer"
+          ],
+          "externalLinks": [
+            "https://www.archives.gov/preservation/family-archives/digitizing",
+            "https://www.college-of-arms.gov.uk/resources/faqs"
+          ],
+          "horizontalOverflow": false,
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "forbiddenMatches": [],
+          "markdownArtifact": false,
+          "digitalDisclosure": true,
+          "heraldryBoundary": true
+        },
+        "mobile": {
+          "status": 200,
+          "h1": [
+            "Personalized Wedding Gifts for Couples Beginning a Shared Legacy"
+          ],
+          "title": "Personalized Wedding Gifts for Couples with Meaning",
+          "description": "Find a personalized wedding gift for a couple that reflects both people, their shared story, values, places, and the future they are beginning.",
+          "canonical": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples",
+          "ogTitle": "Personalized Wedding Gifts for Couples with Meaning",
+          "ogDescription": "Find a personalized wedding gift for a couple that reflects both people, their shared story, values, places, and the future they are beginning.",
+          "ogImage": "https://mykinlegacy.com/assets/showcase-collections/03-wedding-gift/final-crest.png",
+          "schemas": [
+            "Organization",
+            "WebSite",
+            "Article",
+            "BreadcrumbList"
+          ],
+          "schemaCounts": {
+            "Article": 1,
+            "BreadcrumbList": 1,
+            "FAQPage": 0,
+            "Product": 0,
+            "Review": 0,
+            "Rating": 0
+          },
+          "images": [
+            {
+              "alt": "Compass and path final crest created for a personalized wedding gift example",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F03-wedding-gift%2Ffinal-crest.png&w=384&q=75",
+              "complete": true,
+              "naturalWidth": 358
+            },
+            {
+              "alt": "Compass-led final crest representing two people beginning a shared direction",
+              "src": "https://mykinlegacy.com/_next/image?url=%2Fassets%2Fshowcase-collections%2F03-wedding-gift%2Ffinal-crest.png&w=640&q=75",
+              "complete": true,
+              "naturalWidth": 358
+            }
+          ],
+          "brokenImages": [],
+          "internalLinks": [
+            "https://mykinlegacy.com/",
+            "https://mykinlegacy.com/family-legacy-collection",
+            "https://mykinlegacy.com/real-examples",
+            "https://mykinlegacy.com/journal",
+            "https://mykinlegacy.com/#how-it-works",
+            "https://mykinlegacy.com/#gift-ideas",
+            "https://mykinlegacy.com/#faq",
+            "https://mykinlegacy.com/create",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#what-the-registry-cannot-say",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#personalized-is-not-always-personally-meaningful",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#begin-with-both-people",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#match-the-gift-to-your-relationship-with-the-couple",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#compare-five-wedding-gift-directions",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#build-a-story-based-gift-from-real-evidence",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#use-symbols-without-inventing-family-history",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#make-the-gift-meaningful-after-the-wedding",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#what-to-avoid",
+            "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#give-them-a-record-of-what-they-are-beginning",
+            "https://mykinlegacy.com/real-examples/03-wedding-gift",
+            "https://mykinlegacy.com/gifts/wedding",
+            "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+            "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest",
+            "https://mykinlegacy.com/gifts/father-retirement",
+            "https://mykinlegacy.com/support",
+            "https://mykinlegacy.com/privacy",
+            "https://mykinlegacy.com/terms",
+            "https://mykinlegacy.com/refund-policy",
+            "https://mykinlegacy.com/digital-delivery",
+            "https://mykinlegacy.com/disclaimer"
+          ],
+          "externalLinks": [
+            "https://www.archives.gov/preservation/family-archives/digitizing",
+            "https://www.college-of-arms.gov.uk/resources/faqs"
+          ],
+          "horizontalOverflow": false,
+          "scrollWidth": 390,
+          "clientWidth": 390,
+          "forbiddenMatches": [],
+          "markdownArtifact": false,
+          "digitalDisclosure": true,
+          "heraldryBoundary": true
+        }
+      }
+    }
+  ],
+  "internalLinkChecks": [
+    {
+      "url": "https://mykinlegacy.com/",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/family-legacy-collection",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/real-examples",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/#how-it-works",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/#gift-ideas",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/#faq",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/create",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#what-a-reunion-gift-should-preserve",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#decide-who-the-gift-is-really-for",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#seven-story-first-reunion-gift-directions",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#match-the-format-to-the-family",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#gather-evidence-without-creating-homework",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#turn-family-evidence-into-symbols-and-story",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#privacy-review-and-preservation",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#a-practical-planning-framework",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas#a-lasting-reunion-gift-begins-with-one-true-detail",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/real-examples/11-family-reunion",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/gifts/family-reunion",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-family-keepsake",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-legacy-gift-ideas",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/gifts/father-retirement",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/support",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/privacy",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/terms",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/refund-policy",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/digital-delivery",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/disclaimer",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#why-anniversary-gifts-for-parents-become-generic",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#begin-with-what-they-built-together",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#gather-evidence-from-the-family",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#choose-among-four-gift-directions",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#use-anniversary-traditions-without-becoming-trapped-by-them",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#build-a-gift-for-both-parents",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#a-story-to-symbol-example",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#presentation-and-preservation",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#what-to-avoid",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-anniversary-gifts-for-parents#celebrate-what-the-years-created",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/real-examples/20-parents-anniversary",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/gifts/anniversary",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/family-reunion-gift-ideas",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#modern-symbolic-art-and-historical-arms-are-different-things",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#begin-with-evidence-not-a-symbol-catalog",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#convert-evidence-into-dominant-meaning",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#choose-one-primary-symbol",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#add-secondary-and-structural-symbols-carefully",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#define-symbol-dna-instead-of-choosing-generic-icons",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#use-composition-material-and-light-to-serve-meaning",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#write-the-design-basis-and-symbol-rationale",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#compare-three-evidence-to-design-examples",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#commissioning-checklist",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest#build-from-what-your-family-can-recognize",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/symbolic-family-crest",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/what-is-a-family-crest",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#what-the-registry-cannot-say",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#personalized-is-not-always-personally-meaningful",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#begin-with-both-people",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#match-the-gift-to-your-relationship-with-the-couple",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#compare-five-wedding-gift-directions",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#build-a-story-based-gift-from-real-evidence",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#use-symbols-without-inventing-family-history",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#make-the-gift-meaningful-after-the-wedding",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#what-to-avoid",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/personalized-wedding-gifts-for-couples#give-them-a-record-of-what-they-are-beginning",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/real-examples/03-wedding-gift",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/gifts/wedding",
+      "status": 200
+    },
+    {
+      "url": "https://mykinlegacy.com/journal/how-to-create-a-modern-family-crest",
+      "status": 200
+    }
+  ]
+}
