@@ -1,0 +1,11 @@
+{
+  "task_name": "MyKinLegacy SEO Daily Monitor",
+  "schedule": "daily 09:15 Asia/Shanghai",
+  "logon_type": "S4U",
+  "run_level": "Limited",
+  "execution_time_limit": "PT10M",
+  "multiple_instances": "IgnoreNew",
+  "start_when_available": true,
+  "unattended_validation_result": 0,
+  "next_run": "2026-07-17T09:15:15+08:00"
+}

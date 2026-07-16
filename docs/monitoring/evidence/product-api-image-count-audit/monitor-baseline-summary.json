@@ -1,0 +1,15 @@
+{
+  "baseline_date": "2026-07-16",
+  "articles_monitored": 9,
+  "batch_01": 5,
+  "batch_02": 4,
+  "sitemap_http_status": 200,
+  "sitemap_expected_url_count": 51,
+  "sitemap_observed_url_count": 51,
+  "articles_http_200": 9,
+  "articles_present_in_sitemap": 9,
+  "indexing_requests_performed": false,
+  "sitemap_submission_performed": false,
+  "manufactured_visits_performed": false,
+  "credentials_in_repository": false
+}

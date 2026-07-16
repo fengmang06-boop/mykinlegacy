@@ -28,6 +28,22 @@ describe("ProductsService", () => {
     expect(JSON.stringify(result)).not.toMatch(/crest_variant_2_png|crest_variant_3_png|transparent_crest_png/);
   });
 
+  it("separates internal generation candidates from customer deliverable counts", async () => {
+    const service = new ProductsService(createPrismaServiceMock());
+    const result = await service.getProduct("family_legacy_collection");
+    const productPackage = result.packages[0];
+
+    expect(productPackage?.generation_config).toMatchObject({ generation_candidate_count: 3 });
+    expect(productPackage?.generation_config).not.toHaveProperty("image_count");
+    expect(productPackage?.customer_deliverables).toEqual({
+      final_crest_count: 1,
+      heritage_certificate_count: 1,
+      family_story_count: 1,
+      meaning_behind_your_crest_count: 1,
+      complete_collection_archive_count: 1
+    });
+  });
+
   it("removes AI-generated wording from customer-facing product payload", async () => {
     const service = new ProductsService(createPrismaServiceMock());
     const result = await service.getProduct("family_legacy_collection");
@@ -92,7 +108,7 @@ function createProductRecord() {
         priceCents: 4900n,
         currency: "USD",
         sortOrder: 1,
-        generationConfigJson: {},
+        generationConfigJson: { image_count: 3, zip_required: true },
         metadataJson: {},
         packageDeliverables: deliverables.map((deliverableCode, index) => ({
           deliverableCode,

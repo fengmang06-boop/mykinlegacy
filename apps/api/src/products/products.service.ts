@@ -136,6 +136,7 @@ function serializeProduct(product: ProductRecord) {
       currency: productPackage.currency,
       sort_order: productPackage.sortOrder,
       generation_config: customerSafeGenerationConfig(productPackage.generationConfigJson),
+      customer_deliverables: customerDeliverableCounts(productPackage.packageDeliverables),
       metadata: productPackage.metadataJson,
       deliverables: productPackage.packageDeliverables
         .filter((deliverable) => CUSTOMER_DELIVERABLE_CODES.has(deliverable.deliverableCode))
@@ -158,6 +159,10 @@ function serializeProduct(product: ProductRecord) {
 function customerSafeGenerationConfig(value: unknown): unknown {
   if (!value || typeof value !== "object" || Array.isArray(value)) return value;
   const config = { ...(value as Record<string, unknown>) };
+  if (typeof config.image_count === "number") {
+    config.generation_candidate_count = config.image_count;
+    delete config.image_count;
+  }
   if ("transparent_png" in config) {
     config.transparent_png = false;
   }
@@ -165,6 +170,19 @@ function customerSafeGenerationConfig(value: unknown): unknown {
     config.zip_structure = config.zip_structure.filter((entry) => entry !== "transparent-png");
   }
   return config;
+}
+
+function customerDeliverableCounts(deliverables: PackageDeliverableRecord[]) {
+  const quantity = (code: string) =>
+    deliverables.find((deliverable) => deliverable.deliverableCode === code)?.quantity ?? 0;
+
+  return {
+    final_crest_count: quantity("crest_variant_1_png"),
+    heritage_certificate_count: quantity("heritage_certificate_pdf"),
+    family_story_count: quantity("family_story_pdf"),
+    meaning_behind_your_crest_count: quantity("symbol_explanation_pdf"),
+    complete_collection_archive_count: quantity("download_package_zip")
+  };
 }
 
 function customerSafeProductCopy(value: string | null): string | null {

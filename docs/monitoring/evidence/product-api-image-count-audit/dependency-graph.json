@@ -1,0 +1,21 @@
+{
+  "audit_date": "2026-07-16",
+  "field": "generation_config.image_count",
+  "classification": "LEGACY_UNUSED_FIELD",
+  "historical_semantic_classification": "GENERATION_CANDIDATE_COUNT",
+  "writers": [
+    "packages/database/prisma/seed-data.ts",
+    "packages/database/prisma/seed.ts"
+  ],
+  "storage": "ProductPackage.generationConfigJson / generation_config_json",
+  "runtime_readers": [
+    "apps/api/src/products/products.service.ts"
+  ],
+  "generation_runtime_readers": [],
+  "checkout_readers": [],
+  "zip_readers": [],
+  "vault_readers": [],
+  "download_readers": [],
+  "customer_delivery_affected": false,
+  "generation_pipeline_affected": false
+}
