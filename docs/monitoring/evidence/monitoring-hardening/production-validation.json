@@ -1,0 +1,26 @@
+{
+  "validated_at": "2026-07-16T19:29:00+08:00",
+  "health_http": 200,
+  "create_http": 200,
+  "product_api_http": 200,
+  "product_status": "active",
+  "price_cents": 4900,
+  "currency": "USD",
+  "generation_candidate_count": 3,
+  "public_image_count_present": false,
+  "customer_deliverables": {
+    "final_crest_count": 1,
+    "heritage_certificate_count": 1,
+    "family_story_count": 1,
+    "meaning_behind_your_crest_count": 1,
+    "complete_collection_archive_count": 1
+  },
+  "invalid_checkout_http": 400,
+  "checkout_session_id_present": false,
+  "order_number_present": false,
+  "articles_http_200": 9,
+  "sitemap_http": 200,
+  "sitemap_url_count": 51,
+  "all_nine_articles_in_sitemap": true,
+  "production_incidents": 0
+}

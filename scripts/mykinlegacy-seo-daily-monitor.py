@@ -395,11 +395,15 @@ def row_date(row: dict) -> str | None:
     return f"{raw[:4]}-{raw[4:6]}-{raw[6:8]}" if len(raw) == 8 and raw.isdigit() else raw
 
 
-def update_milestones(milestones: dict, path: str, gsc: dict, ga4: dict) -> dict:
+def update_milestones(
+    milestones: dict, path: str, inspection: dict, gsc: dict, ga4: dict, observed_date: str
+) -> dict:
     current = milestones.setdefault(
         path,
         {
             "publication_date": "2026-07-16",
+            "first_discovered_date": None,
+            "first_indexed_date": None,
             "first_impression_date": None,
             "first_query_date": None,
             "first_organic_click_date": None,
@@ -409,6 +413,15 @@ def update_milestones(milestones: dict, path: str, gsc: dict, ga4: dict) -> dict
             "first_purchase_completed": None,
         },
     )
+    current.setdefault("first_discovered_date", None)
+    current.setdefault("first_indexed_date", None)
+    coverage_state = inspection.get("coverage_state")
+    if coverage_state and coverage_state != "URL is unknown to Google" and not current["first_discovered_date"]:
+        current["first_discovered_date"] = observed_date
+    if (
+        inspection.get("verdict") == "PASS" or coverage_state == "Submitted and indexed"
+    ) and not current["first_indexed_date"]:
+        current["first_indexed_date"] = observed_date
     for row in gsc.get("dated_rows") or []:
         observed = row_date(row)
         if row.get("impressions", 0) > 0 and not current["first_impression_date"]:
@@ -513,7 +526,9 @@ def run(report_date: date) -> dict:
             },
         }
         if batch == "batch-02":
-            record["milestones"] = update_milestones(milestones, path, gsc_cumulative, ga4_cumulative)
+            record["milestones"] = update_milestones(
+                milestones, path, inspection, gsc_cumulative, ga4_cumulative, report_date.isoformat()
+            )
         articles.append(sanitized_article(record))
     report = {
         "schema_version": "seo-nine-article-daily-v1",
@@ -548,6 +563,27 @@ def self_test() -> None:
     assert api_status(200, True) == STATUS_ACTIVITY
     assert api_status(403, None) == STATUS_ACCESS
     assert api_status(503, None) == STATUS_UNAVAILABLE
+    milestones: dict = {}
+    unknown = update_milestones(
+        milestones,
+        "/journal/example",
+        {"verdict": "NEUTRAL", "coverage_state": "URL is unknown to Google"},
+        {"dated_rows": []},
+        {},
+        "2026-07-16",
+    )
+    assert unknown["first_discovered_date"] is None
+    assert unknown["first_indexed_date"] is None
+    indexed = update_milestones(
+        milestones,
+        "/journal/example",
+        {"verdict": "PASS", "coverage_state": "Submitted and indexed"},
+        {"dated_rows": []},
+        {},
+        "2026-07-17",
+    )
+    assert indexed["first_discovered_date"] == "2026-07-17"
+    assert indexed["first_indexed_date"] == "2026-07-17"
     print("SELF_TEST_PASS articles=9 batch_01=5 batch_02=4")
 
 

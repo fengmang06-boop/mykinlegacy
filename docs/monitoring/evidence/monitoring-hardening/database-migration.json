@@ -1,0 +1,14 @@
+{
+  "migrated_at_utc": "2026-07-16T11:26:58Z",
+  "records_inspected": 1,
+  "records_migrated": 1,
+  "field_conflicts": 0,
+  "before": {"image_count_records": 1, "generation_candidate_count_records": 0, "value": 3},
+  "after": {"image_count_records": 0, "generation_candidate_count_records": 1, "value": 3},
+  "transaction_protected": true,
+  "backup_created": true,
+  "backup_mode": "600",
+  "rollback_supported": true,
+  "customer_data_touched": false,
+  "order_snapshots_touched": false
+}

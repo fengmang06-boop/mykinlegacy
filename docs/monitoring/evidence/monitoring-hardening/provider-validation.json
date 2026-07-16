@@ -1,0 +1,13 @@
+{
+  "validated_at": "2026-07-16T19:13:55+08:00",
+  "gsc_api": "SUCCESS",
+  "ga4_api": "SUCCESS",
+  "cloudflare_api": "SUCCESS",
+  "stripe_readonly_api": "ACCESS_UNAVAILABLE",
+  "stripe_note": "Correct-project read-only credential is absent; broader production credentials were not used.",
+  "articles_monitored": 9,
+  "sitemap_http": 200,
+  "sitemap_url_count": 51,
+  "indexing_requests": 0,
+  "sitemap_submissions": 0
+}

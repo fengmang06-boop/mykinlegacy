@@ -1,0 +1,15 @@
+{
+  "validated_at": "2026-07-16T19:13:55+08:00",
+  "previous_time": "09:15 Asia/Shanghai",
+  "corrected_time": "09:00 Asia/Shanghai",
+  "next_run": "2026-07-17T09:00:00+08:00",
+  "last_result": 0,
+  "logon_type": "S4U",
+  "run_level": "Limited",
+  "multiple_instances": "IgnoreNew",
+  "start_when_available": true,
+  "restart_count": 3,
+  "restart_interval": "PT15M",
+  "execution_time_limit": "PT10M",
+  "credentials_in_arguments": false
+}

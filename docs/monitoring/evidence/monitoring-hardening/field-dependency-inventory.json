@@ -1,0 +1,15 @@
+{
+  "legacy_field": "generationConfigJson.image_count",
+  "replacement_field": "generationConfigJson.generation_candidate_count",
+  "seed_source": "packages/database/prisma/seed-data.ts",
+  "seed_writer": "packages/database/prisma/seed.ts",
+  "storage": "ProductPackage.generationConfigJson",
+  "runtime_readers": ["apps/api/src/products/products.service.ts"],
+  "generation_pipeline_dependency": false,
+  "checkout_dependency": false,
+  "order_processing_dependency": false,
+  "zip_dependency": false,
+  "vault_dependency": false,
+  "download_dependency": false,
+  "order_snapshots_modified": false
+}
