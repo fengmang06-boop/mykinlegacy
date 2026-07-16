@@ -214,6 +214,9 @@ compose up -d mysql redis
 phase "Running database migrations"
 compose run --rm api corepack pnpm db:migrate:deploy
 
+phase "Migrating generation candidate configuration"
+bash "$SCRIPT_DIR/migrate-generation-candidate-count.sh" --apply
+
 if [ "${RUN_SEED:-true}" = "true" ]; then
   phase "Running seed data"
   compose run --rm api sh -lc "corepack pnpm db:seed"

@@ -28,7 +28,7 @@ export const packageSeed = {
   currency: "USD",
   sortOrder: 1,
   generationConfigJson: {
-    image_count: 3,
+    generation_candidate_count: 3,
     transparent_png: false,
     required_pdf_count: 3,
     zip_required: true,

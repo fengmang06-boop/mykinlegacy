@@ -159,10 +159,7 @@ function serializeProduct(product: ProductRecord) {
 function customerSafeGenerationConfig(value: unknown): unknown {
   if (!value || typeof value !== "object" || Array.isArray(value)) return value;
   const config = { ...(value as Record<string, unknown>) };
-  if (typeof config.image_count === "number") {
-    config.generation_candidate_count = config.image_count;
-    delete config.image_count;
-  }
+  delete config.image_count;
   if ("transparent_png" in config) {
     config.transparent_png = false;
   }

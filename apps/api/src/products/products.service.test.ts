@@ -44,6 +44,14 @@ describe("ProductsService", () => {
     });
   });
 
+  it("never exposes the retired image_count field", async () => {
+    const service = new ProductsService(createPrismaServiceMock({ image_count: 3, zip_required: true }));
+    const result = await service.getProduct("family_legacy_collection");
+
+    expect(result.packages[0]?.generation_config).not.toHaveProperty("image_count");
+    expect(result.packages[0]?.generation_config).not.toHaveProperty("generation_candidate_count");
+  });
+
   it("removes AI-generated wording from customer-facing product payload", async () => {
     const service = new ProductsService(createPrismaServiceMock());
     const result = await service.getProduct("family_legacy_collection");
@@ -58,8 +66,8 @@ describe("ProductsService", () => {
   });
 });
 
-function createPrismaServiceMock(): PrismaService {
-  const product = createProductRecord();
+function createPrismaServiceMock(generationConfig?: Record<string, unknown>): PrismaService {
+  const product = createProductRecord(generationConfig);
   return {
     db: {
       product: {
@@ -70,7 +78,9 @@ function createPrismaServiceMock(): PrismaService {
   } as unknown as PrismaService;
 }
 
-function createProductRecord() {
+function createProductRecord(
+  generationConfig: Record<string, unknown> = { generation_candidate_count: 3, zip_required: true }
+) {
   const deliverables = [
     "crest_variant_1_png",
     "crest_variant_2_png",
@@ -108,7 +118,7 @@ function createProductRecord() {
         priceCents: 4900n,
         currency: "USD",
         sortOrder: 1,
-        generationConfigJson: { image_count: 3, zip_required: true },
+        generationConfigJson: generationConfig,
         metadataJson: {},
         packageDeliverables: deliverables.map((deliverableCode, index) => ({
           deliverableCode,

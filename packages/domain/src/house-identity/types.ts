@@ -46,7 +46,6 @@ export interface HousePrivacyPreferences {
 
 export interface HouseGenerationPreferences {
   text_strategy: TextStrategy;
-  image_count?: number;
   transparent_png?: boolean;
 }
 
