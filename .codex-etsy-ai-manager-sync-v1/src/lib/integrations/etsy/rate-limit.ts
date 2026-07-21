@@ -1,7 +1,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-export type EtsyRequestClass = "interactive" | "bulk";
+export type EtsyRequestClass = "interactive" | "baseline" | "bulk";
 
 export type EtsyRateLimitSnapshot = {
   capturedAt: string;
@@ -91,9 +91,9 @@ export function assertEtsyRateBudget(requestClass: EtsyRequestClass): void {
   if (snapshot.remainingToday <= 0) {
     throw new Error("Etsy API daily budget exhausted. Waiting for the rolling 24-hour window to release quota.");
   }
-  if (requestClass === "bulk" && snapshot.remainingToday <= reserve) {
+  if ((requestClass === "bulk" || requestClass === "baseline") && snapshot.remainingToday <= reserve) {
     throw new Error(
-      `Etsy bulk sync paused with ${snapshot.remainingToday} calls remaining; ${reserve} calls are reserved for OAuth, tracking, and approved review work.`
+      `Etsy ${requestClass} request paused with ${snapshot.remainingToday} calls remaining; ${reserve} calls are reserved for OAuth, tracking, and approved review work.`
     );
   }
 }

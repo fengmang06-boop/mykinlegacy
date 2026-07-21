@@ -20,9 +20,10 @@ type EtsyClientOptions = {
   clientSecret?: string;
   shopId?: string;
   requestClass?: EtsyRequestClass;
+  noRetry?: boolean;
 };
 
-type EtsyAuthOptions = Omit<EtsyClientOptions, "shopId" | "requestClass">;
+type EtsyAuthOptions = Omit<EtsyClientOptions, "shopId" | "requestClass" | "noRetry">;
 
 export type EtsyListingSummary = {
   listing_id: number;
@@ -38,7 +39,41 @@ export type EtsyListingSummary = {
   updated_timestamp?: number;
   last_modified_timestamp?: number;
   last_modified_tsz?: number;
+  taxonomy_id?: number;
+  shipping_profile_id?: number;
+  images?: Array<{
+    listing_image_id: number | string;
+    url_fullxfull?: string;
+    alt_text?: string;
+    rank?: number;
+  }>;
+  inventory?: EtsyListingInventoryResponse;
 };
+
+export type EtsyListingInventoryResponse = {
+  products?: Array<{
+    product_id?: number | string;
+    sku?: string;
+    is_deleted?: boolean;
+    offerings?: Array<{
+      quantity?: number;
+      is_enabled?: boolean;
+      price?: { amount?: number; divisor?: number; currency_code?: string } | string | number;
+    }>;
+    property_values?: unknown[];
+  }>;
+};
+
+export class EtsyApiError extends Error {
+  constructor(
+    public readonly status: number,
+    public readonly responseBody: string,
+    public readonly requestPath: string
+  ) {
+    super(`Etsy API request failed: ${status} ${responseBody}`);
+    this.name = "EtsyApiError";
+  }
+}
 
 export type EtsyTokenRefreshResult = {
   accessToken: string;
@@ -124,7 +159,8 @@ export async function refreshEtsyTokenIfNeeded(force = false): Promise<EtsyToken
 async function requestEtsy<T>(path: string, init: RequestInit = {}, options?: EtsyClientOptions): Promise<T> {
   assertEtsyReadOnlyRequest(init.method ?? "GET");
   const config = readAuthOptions(options);
-  for (let attempt = 0; attempt < 3; attempt += 1) {
+  const maxAttempts = options?.noRetry ? 1 : 3;
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     assertEtsyRateBudget(options?.requestClass ?? "interactive");
     await waitForEtsySlot();
     const response = await fetch(`${ETSY_API_BASE}${path}`, {
@@ -148,16 +184,16 @@ async function requestEtsy<T>(path: string, init: RequestInit = {}, options?: Et
       const exhaustedHeaders = new Headers(response.headers);
       exhaustedHeaders.set("x-remaining-today", "0");
       recordEtsyRateLimitHeaders(exhaustedHeaders, response.status, path);
-      throw new Error(`Etsy API daily rate limit reached: ${response.status} ${body}`);
+      throw new EtsyApiError(response.status, body, path);
     }
 
     const retryable = response.status === 429 || response.status >= 500;
-    if (retryable && attempt < 2) {
+    if (retryable && attempt < maxAttempts - 1) {
       await sleep(retryDelay(attempt, response));
       continue;
     }
 
-    throw new Error(`Etsy API request failed: ${response.status} ${body}`);
+    throw new EtsyApiError(response.status, body, path);
   }
 
   throw new Error("Etsy API request failed after retries.");
@@ -170,7 +206,7 @@ async function etsyFetch<T>(path: string, init: RequestInit = {}, options?: Etsy
     return await requestEtsy<T>(path, init, options);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    if (!/Etsy API request failed: 401/.test(message)) throw error;
+    if (options?.noRetry || !/Etsy API request failed: 401/.test(message)) throw error;
     const refreshed = await refreshEtsyTokenIfNeeded(true);
     if (!refreshed) throw error;
     return requestEtsy<T>(path, init, { ...options, accessToken: refreshed.accessToken });
@@ -249,6 +285,14 @@ export async function fetchListingDetails(listingId: string | number, options?: 
   return etsyFetch<EtsyListingSummary>(`/listings/${listingId}`, {}, options);
 }
 
+export async function fetchListingBaselineDetails(listingId: string | number, options?: EtsyClientOptions) {
+  return etsyFetch<EtsyListingSummary>(`/listings/${listingId}?includes=Images,Inventory`, {}, {
+    ...options,
+    requestClass: "baseline",
+    noRetry: true
+  });
+}
+
 export async function fetchListingImages(listingId: string | number, options?: EtsyClientOptions) {
   return etsyFetch<{ results?: Array<{ listing_image_id: number | string; url_fullxfull?: string; alt_text?: string; rank?: number }> }>(
     `/listings/${listingId}/images`,
@@ -258,19 +302,7 @@ export async function fetchListingImages(listingId: string | number, options?: E
 }
 
 export async function fetchListingInventory(listingId: string | number, options?: EtsyClientOptions) {
-  return etsyFetch<{
-    products?: Array<{
-      product_id?: number | string;
-      sku?: string;
-      is_deleted?: boolean;
-      offerings?: Array<{
-        quantity?: number;
-        is_enabled?: boolean;
-        price?: { amount?: number; divisor?: number; currency_code?: string } | string | number;
-      }>;
-      property_values?: unknown[];
-    }>;
-  }>(`/listings/${listingId}/inventory?max_variations_supported=3`, {}, options);
+  return etsyFetch<EtsyListingInventoryResponse>(`/listings/${listingId}/inventory?max_variations_supported=3`, {}, options);
 }
 
 export async function fetchReceipts(options?: EtsyClientOptions, pagination?: EtsyPaginationOptions) {
