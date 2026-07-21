@@ -73,6 +73,11 @@ function hashJson(value: unknown): string {
   return crypto.createHash("sha256").update(JSON.stringify(value)).digest("hex");
 }
 
+function cacheMaxAgeMinutes(): number {
+  const configured = Number(process.env.ETSY_BASELINE_CACHE_MAX_AGE_MINUTES ?? DEFAULT_CACHE_MAX_AGE_MINUTES);
+  return Number.isFinite(configured) && configured >= 0 ? configured : DEFAULT_CACHE_MAX_AGE_MINUTES;
+}
+
 export function validateListingIds(input: unknown): string[] {
   if (!Array.isArray(input) || input.length < 1 || input.length > MAX_BASELINE_LISTINGS) {
     throw new Error(`listingIds must contain between 1 and ${MAX_BASELINE_LISTINGS} Etsy listing IDs.`);
@@ -103,9 +108,7 @@ function cacheTimestamp(listing: CachedListing): Date | null {
 function cacheIsRecent(listing: CachedListing, now = Date.now()): boolean {
   const timestamp = cacheTimestamp(listing);
   if (!timestamp) return false;
-  const configured = Number(process.env.ETSY_BASELINE_CACHE_MAX_AGE_MINUTES ?? DEFAULT_CACHE_MAX_AGE_MINUTES);
-  const maxAgeMinutes = Number.isFinite(configured) && configured >= 0 ? configured : DEFAULT_CACHE_MAX_AGE_MINUTES;
-  return now - timestamp.getTime() <= maxAgeMinutes * 60_000;
+  return now - timestamp.getTime() <= cacheMaxAgeMinutes() * 60_000;
 }
 
 function rawListing(listing: CachedListing): Record<string, unknown> {
@@ -136,6 +139,53 @@ function cacheHasCompleteBaseline(listing: CachedListing): boolean {
 
 function withBaselineHash(value: Omit<ListingBaseline, "baseline_sha256">): ListingBaseline {
   return { ...value, baseline_sha256: hashJson(value) };
+}
+
+function savedBaselineIsValid(value: unknown, listingId: string, now = Date.now()): value is ListingBaseline {
+  if (!value || typeof value !== "object") return false;
+  const listing = value as ListingBaseline;
+  const capturedAt = new Date(listing.baseline_captured_at).getTime();
+  if (
+    listing.listing_id !== listingId ||
+    !Number.isFinite(capturedAt) ||
+    now - capturedAt > cacheMaxAgeMinutes() * 60_000 ||
+    typeof listing.title !== "string" ||
+    !Array.isArray(listing.tags) ||
+    typeof listing.state !== "string" ||
+    typeof listing.quantity !== "number" ||
+    !Array.isArray(listing.images) ||
+    !listing.baseline_sha256
+  ) {
+    return false;
+  }
+  const { baseline_sha256: storedHash, ...payload } = listing;
+  return hashJson(payload) === storedHash;
+}
+
+function findSavedBaseline(listingId: string, capturedAt: string): ListingBaseline | null {
+  const root = path.join(process.cwd(), "exports", "low-signal-breakthrough");
+  if (!fs.existsSync(root)) return null;
+  const candidates = fs
+    .readdirSync(root, { withFileTypes: true })
+    .filter((entry) => entry.isDirectory())
+    .map((entry) => path.join(root, entry.name, "baseline.json"))
+    .filter((file) => fs.existsSync(file))
+    .sort((left, right) => fs.statSync(right).mtimeMs - fs.statSync(left).mtimeMs);
+
+  for (const file of candidates) {
+    const report = parseJson<{ listings?: unknown[] }>(fs.readFileSync(file, "utf8"), {});
+    const listing = report.listings?.find(
+      (item) => item && typeof item === "object" && String((item as { listing_id?: unknown }).listing_id) === listingId
+    );
+    if (!savedBaselineIsValid(listing, listingId)) continue;
+    const { baseline_sha256: _storedHash, baseline_source: _storedSource, baseline_captured_at: _storedAt, ...payload } = listing;
+    return withBaselineHash({
+      ...payload,
+      baseline_source: "cache",
+      baseline_captured_at: capturedAt
+    });
+  }
+  return null;
 }
 
 function baselineFromCache(listing: CachedListing, capturedAt: string): ListingBaseline {
@@ -247,6 +297,12 @@ export async function captureListingBaselines(listingIds: string[], batchKey: st
     const listing = byId.get(listingId)!;
     if (cacheHasCompleteBaseline(listing) && cacheIsRecent(listing)) {
       baselines.push(baselineFromCache(listing, capturedAt));
+      continue;
+    }
+
+    const savedBaseline = findSavedBaseline(listingId, capturedAt);
+    if (savedBaseline) {
+      baselines.push(savedBaseline);
       continue;
     }
 
