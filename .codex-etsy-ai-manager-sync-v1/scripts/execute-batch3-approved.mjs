@@ -3,6 +3,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const ETSY_API_BASE = "https://openapi.etsy.com/v3/application";
+const ETSY_TOKEN_URL = "https://api.etsy.com/v3/public/oauth/token";
 const EXPECTED_SHOP_ID = "25333110";
 const MAX_WRITES = 2;
 const MIN_REQUEST_INTERVAL_MS = 450;
@@ -38,6 +39,7 @@ const weaveListingId = "1893979797";
 let nextRequestAt = 0;
 let rateLimit = { limitPerDay: null, remainingToday: null, reserve: null };
 let writeWindow = false;
+let tokenRefreshAttempted = false;
 
 function loadEnvFile(file) {
   if (!fs.existsSync(file)) return;
@@ -59,6 +61,60 @@ function atomicJson(file, value) {
   fs.writeFileSync(temp, `${JSON.stringify(value, null, 2)}\n`, { mode: 0o600 });
   fs.renameSync(temp, file);
   fs.chmodSync(file, 0o600);
+}
+
+function saveEnvValues(values) {
+  const envFile = path.join(process.cwd(), ".env.local");
+  const backupDir = path.join("/root", "mensskull-etsy-backups", "batch-3-token-refresh", new Date().toISOString().replace(/[:.]/g, "-"));
+  fs.mkdirSync(backupDir, { recursive: true });
+  fs.copyFileSync(envFile, path.join(backupDir, ".env.local"));
+  const updates = Object.fromEntries(Object.entries(values).filter(([, value]) => typeof value === "string" && value.length));
+  const keys = new Set(Object.keys(updates));
+  const kept = fs.readFileSync(envFile, "utf8").split(/\r?\n/).filter((line) => {
+    const match = line.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=/);
+    return !match || !keys.has(match[1]);
+  }).filter((line) => line.trim());
+  const formatted = Object.entries(updates).map(([key, value]) => {
+    const encoded = /[\s"#\\]/.test(value) ? JSON.stringify(value) : value;
+    return `${key}=${encoded}`;
+  });
+  const temp = `${envFile}.batch3-${process.pid}`;
+  fs.writeFileSync(temp, `${[...kept, ...formatted].join("\n")}\n`, { mode: 0o600 });
+  fs.renameSync(temp, envFile);
+  fs.chmodSync(envFile, 0o600);
+  Object.assign(process.env, updates);
+  return backupDir;
+}
+
+async function refreshAccessToken() {
+  if (tokenRefreshAttempted) throw new Error("Etsy token refresh already attempted once; stopped.");
+  tokenRefreshAttempted = true;
+  const clientId = process.env.ETSY_CLIENT_ID ?? "";
+  const refreshToken = process.env.ETSY_REFRESH_TOKEN ?? "";
+  if (!clientId || !refreshToken) throw new Error("Cannot refresh Etsy token: client ID or refresh token is missing.");
+  const response = await fetch(ETSY_TOKEN_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({ grant_type: "refresh_token", client_id: clientId, refresh_token: refreshToken })
+  });
+  const text = await response.text();
+  let token;
+  try { token = text ? JSON.parse(text) : null; } catch { token = null; }
+  if (!response.ok || !token?.access_token) throw new Error(`Etsy token refresh failed: ${response.status} ${text}`);
+  const expiresAt = new Date(Date.now() + Number(token.expires_in ?? 3600) * 1000).toISOString();
+  const backupDir = saveEnvValues({
+    ETSY_ACCESS_TOKEN: token.access_token,
+    ETSY_REFRESH_TOKEN: token.refresh_token ?? refreshToken,
+    ETSY_TOKEN_EXPIRES_AT: expiresAt,
+    ETSY_TOKEN_SCOPE: token.scope || process.env.ETSY_TOKEN_SCOPE
+  });
+  return { expiresAt, backupDir, scope: token.scope ?? null };
+}
+
+async function ensureFreshAccessToken() {
+  const expiresAt = process.env.ETSY_TOKEN_EXPIRES_AT ? new Date(process.env.ETSY_TOKEN_EXPIRES_AT).getTime() : 0;
+  if (!Number.isFinite(expiresAt) || expiresAt - Date.now() < 5 * 60 * 1000) return refreshAccessToken();
+  return null;
 }
 
 function normalizeTags(tags) {
@@ -334,6 +390,7 @@ async function main() {
   const reviewedBaseline = verifyBaselineFile();
   const dailyWrites = readDailyWriteCount(new Date().toISOString().slice(0, 10));
   if (dailyWrites + approvedChanges.length > 3) throw new Error(`Daily write limit blocked Batch 3: ${dailyWrites} writes already recorded today.`);
+  const tokenRefresh = await ensureFreshAccessToken();
   const officialScopes = await verifyOfficialScopes();
   if (rateLimit.remainingToday !== null && rateLimit.reserve !== null && rateLimit.remainingToday - 7 <= rateLimit.reserve) {
     throw new Error("Insufficient Etsy quota above the 20% reserve for the approved execution.");
@@ -421,6 +478,7 @@ async function main() {
     executedAt: executionTime,
     allSuccessful: results.length === approvedChanges.length && results.every((result) => result.verified),
     officialScopes,
+    tokenRefresh: tokenRefresh ? { refreshed: true, expiresAt: tokenRefresh.expiresAt, backupDir: tokenRefresh.backupDir } : { refreshed: false },
     baselineReportSha256: reviewedBaseline.reportHash,
     results,
     weaveVerification,

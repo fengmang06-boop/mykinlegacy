@@ -79,7 +79,8 @@ jobs:
           MESSAGE="$(printf '%s' "$RESULT" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
           echo "::notice title=Batch 3 verified execution::$MESSAGE"
 
-      - name: Verify guards and MyKinLegacy
+      - name: Restore runtime token, verify guards and MyKinLegacy
+        if: always()
         shell: bash
         run: |
           ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
@@ -88,13 +89,15 @@ jobs:
           cd /root/mykinlegacy/mensskull-etsy-ai-manager
           grep -Eq '^ETSY_READ_ONLY_MODE=(true|"true")$' .env.local
           grep -Eq '^ETSY_WRITE_APPROVED=(false|"false")$' .env.local
-          test -s exports/low-signal-breakthrough/batch-3/batch-3-execution-success.json
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 5
           curl -fsS -o /tmp/batch3-status.json --max-time 20 https://tools.mensskull.com/api/etsy/status
           node - <<'NODE'
           const status = require('/tmp/batch3-status.json');
           if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) {
             throw new Error('Production Etsy guards were not restored.');
           }
+          if (status?.env?.tokenExpired === true) throw new Error('Production Etsy token is still expired.');
           NODE
           curl -fsS -o /dev/null --max-time 20 https://mykinlegacy.com/health
           REMOTE
