@@ -1,0 +1,83 @@
+name: Codex Etsy Batch 3 Offline Review Export
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-batch3-review-export.yml"
+      - ".codex-etsy-ai-manager-sync-v1/scripts/generate-batch3-review.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Export Batch 3 review from saved baseline only
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" \
+            .codex-etsy-ai-manager-sync-v1/scripts/generate-batch3-review.mjs \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/generate-batch3-review.mjs"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd /root/mykinlegacy/mensskull-etsy-ai-manager
+          grep -Eq '^ETSY_READ_ONLY_MODE=(true|"true")$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=(false|"false")$' .env.local
+          test -f exports/low-signal-breakthrough/batch-3/baseline.json
+          node /tmp/generate-batch3-review.mjs
+          test -s exports/low-signal-breakthrough/batch-3/dry-run-diff.json
+          test -s exports/low-signal-breakthrough/batch-3/founder-cso-review.md
+          node - <<'NODE'
+          const report = require('./exports/low-signal-breakthrough/batch-3/dry-run-diff.json');
+          if (!report.baseline_integrity_verified || report.items?.length !== 3 || report.items.some((item) => !item.validation?.passed)) {
+            throw new Error('Batch 3 review validation failed.');
+          }
+          if (report.etsy_modified !== false) throw new Error('Review report is not read-only.');
+          NODE
+          curl -fsS -o /dev/null --max-time 20 https://mykinlegacy.com/health
+          REMOTE
