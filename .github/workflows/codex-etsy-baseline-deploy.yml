@@ -72,7 +72,7 @@ jobs:
             -P "$PROD_SSH_PORT" /tmp/etsy-generic-baseline.tgz \
             "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-generic-baseline.tgz"
 
-      - name: Deploy baseline endpoint without Etsy writes
+      - name: Verify production isolation guards
         shell: bash
         run: |
           ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
@@ -82,14 +82,36 @@ jobs:
           APP_REAL="$(realpath "$APP_DIR")"
           [ "$APP_REAL" = "/root/mykinlegacy/mensskull-etsy-ai-manager" ] || exit 1
           cd "$APP_DIR"
+          node <<'NODE'
+          const fs = require('fs');
+          const values = {};
+          for (const line of fs.readFileSync('.env.local', 'utf8').split(/\r?\n/)) {
+            const match = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
+            if (match) values[match[1]] = match[2].replace(/^['"]|['"]$/g, '');
+          }
+          if (values.ETSY_READ_ONLY_MODE !== 'true' || values.ETSY_WRITE_APPROVED !== 'false') {
+            throw new Error('Production Etsy guards are not read-only.');
+          }
+          if (!String(values.DATABASE_URL || 'file:./dev.db').startsWith('file:')) {
+            throw new Error('Etsy database is not isolated SQLite.');
+          }
+          NODE
+          pm2 describe mensskull-etsy-ai-manager >/dev/null
+          REMOTE
 
-          grep -Eq '^ETSY_READ_ONLY_MODE=(true|"true")$' .env.local
-          grep -Eq '^ETSY_WRITE_APPROVED=(false|"false")$' .env.local
+      - name: Install baseline source with rollback backup
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          cd "$APP_DIR"
           TS="$(date +%Y%m%d%H%M%S)"
           BACKUP_DIR="$APP_DIR/backups/generic-baseline/$TS"
           mkdir -p "$BACKUP_DIR"
           cp -a .env.local "$BACKUP_DIR/.env.local"
-          cp -a prisma/dev.db "$BACKUP_DIR/dev.db"
+          [ -f prisma/dev.db ] && cp -a prisma/dev.db "$BACKUP_DIR/dev.db"
           pm2 jlist > "$BACKUP_DIR/pm2-jlist.json"
           for file in \
             src/lib/integrations/etsy/client.ts \
@@ -108,14 +130,28 @@ jobs:
           cp -a "$STAGE/src/lib/integrations/etsy/rate-limit.ts" src/lib/integrations/etsy/rate-limit.ts
           cp -a "$STAGE/src/lib/integrations/etsy/listing-baseline.ts" src/lib/integrations/etsy/listing-baseline.ts
           cp -a "$STAGE/src/app/api/etsy/listings/baseline/route.ts" src/app/api/etsy/listings/baseline/route.ts
+          REMOTE
 
-          npm run build
+      - name: Build Etsy application only
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npm run build'
+
+      - name: Restart Etsy PM2 process and verify
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd /root/mykinlegacy/mensskull-etsy-ai-manager
           pm2 restart mensskull-etsy-ai-manager --update-env
           sleep 5
           curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/status > /tmp/etsy-status-after-baseline.json
           node - <<'NODE'
           const status = require('/tmp/etsy-status-after-baseline.json');
-          if (status?.env?.readOnly !== true || status?.env?.writeApproved !== false) {
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) {
             throw new Error('Production Etsy guards are not read-only.');
           }
           NODE
