@@ -135,9 +135,17 @@ jobs:
       - name: Build Etsy application only
         shell: bash
         run: |
+          set +e
           ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
             -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npm run build'
+            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npm run build' 2>&1 | tee /tmp/etsy-baseline-build.log
+          BUILD_STATUS="${PIPESTATUS[0]}"
+          set -e
+          if [ "$BUILD_STATUS" -ne 0 ]; then
+            MESSAGE="$(tail -n 35 /tmp/etsy-baseline-build.log | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+            echo "::error title=Etsy baseline production build failed::$MESSAGE"
+            exit "$BUILD_STATUS"
+          fi
 
       - name: Restart Etsy PM2 process and verify
         shell: bash
