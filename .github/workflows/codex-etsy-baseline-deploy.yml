@@ -1,0 +1,127 @@
+name: Codex Etsy Generic Baseline Deploy
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-baseline-deploy.yml"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/client.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/rate-limit.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/listing-baseline.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/app/api/etsy/listings/baseline/route.ts"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Upload baseline-only package
+        shell: bash
+        run: |
+          tar -czf /tmp/etsy-generic-baseline.tgz \
+            -C .codex-etsy-ai-manager-sync-v1 \
+            src/lib/integrations/etsy/client.ts \
+            src/lib/integrations/etsy/rate-limit.ts \
+            src/lib/integrations/etsy/listing-baseline.ts \
+            src/app/api/etsy/listings/baseline/route.ts
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" /tmp/etsy-generic-baseline.tgz \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-generic-baseline.tgz"
+
+      - name: Deploy baseline endpoint without Etsy writes
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          APP_REAL="$(realpath "$APP_DIR")"
+          [ "$APP_REAL" = "/root/mykinlegacy/mensskull-etsy-ai-manager" ] || exit 1
+          cd "$APP_DIR"
+
+          grep -Eq '^ETSY_READ_ONLY_MODE=(true|"true")$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=(false|"false")$' .env.local
+          TS="$(date +%Y%m%d%H%M%S)"
+          BACKUP_DIR="$APP_DIR/backups/generic-baseline/$TS"
+          mkdir -p "$BACKUP_DIR"
+          cp -a .env.local "$BACKUP_DIR/.env.local"
+          cp -a prisma/dev.db "$BACKUP_DIR/dev.db"
+          pm2 jlist > "$BACKUP_DIR/pm2-jlist.json"
+          for file in \
+            src/lib/integrations/etsy/client.ts \
+            src/lib/integrations/etsy/rate-limit.ts \
+            src/lib/integrations/etsy/listing-baseline.ts \
+            src/app/api/etsy/listings/baseline/route.ts
+          do
+            [ -f "$file" ] && { mkdir -p "$BACKUP_DIR/$(dirname "$file")"; cp -a "$file" "$BACKUP_DIR/$file"; }
+          done
+
+          STAGE="/tmp/etsy-generic-baseline-$TS"
+          mkdir -p "$STAGE"
+          tar -xzf /tmp/etsy-generic-baseline.tgz -C "$STAGE"
+          mkdir -p src/lib/integrations/etsy src/app/api/etsy/listings/baseline
+          cp -a "$STAGE/src/lib/integrations/etsy/client.ts" src/lib/integrations/etsy/client.ts
+          cp -a "$STAGE/src/lib/integrations/etsy/rate-limit.ts" src/lib/integrations/etsy/rate-limit.ts
+          cp -a "$STAGE/src/lib/integrations/etsy/listing-baseline.ts" src/lib/integrations/etsy/listing-baseline.ts
+          cp -a "$STAGE/src/app/api/etsy/listings/baseline/route.ts" src/app/api/etsy/listings/baseline/route.ts
+
+          npm run build
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 5
+          curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/status > /tmp/etsy-status-after-baseline.json
+          node - <<'NODE'
+          const status = require('/tmp/etsy-status-after-baseline.json');
+          if (status?.env?.readOnly !== true || status?.env?.writeApproved !== false) {
+            throw new Error('Production Etsy guards are not read-only.');
+          }
+          NODE
+          CODE="$(curl -sS -o /tmp/baseline-validation.json -w '%{http_code}' --max-time 20 \
+            -H 'content-type: application/json' -d '{"listingIds":["invalid"]}' \
+            https://tools.mensskull.com/api/etsy/listings/baseline)"
+          [ "$CODE" = "400" ]
+          curl -fsS -o /dev/null --max-time 20 https://mykinlegacy.com/health
+          REMOTE
