@@ -76,7 +76,27 @@ jobs:
           fi
           RESULT="$(printf '%s\n' "$OUTPUT" | sed -n 's/^BATCH3_RESULT_JSON=//p' | tail -n 1)"
           test -n "$RESULT"
-          MESSAGE="$(printf '%s' "$RESULT" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          COMPACT="$(RESULT_JSON="$RESULT" node -e '
+            const result = JSON.parse(process.env.RESULT_JSON);
+            const listings = Object.fromEntries((result.results || []).map((item) => [item.listingId, {
+              status: item.status,
+              verified: item.verified,
+              verification: item.verification,
+              rollbackPath: item.rollbackPath,
+              rollbackSha256: item.rollbackSha256,
+            }]));
+            process.stdout.write(JSON.stringify({
+              idempotentReplay: result.idempotentReplay === true,
+              executedAt: result.executedAt,
+              trackingStartTime: result.trackingStartTime,
+              allSuccessful: result.allSuccessful,
+              rollbackStatus: result.rollbackStatus,
+              writeModeDisabled: result.writeModeDisabled,
+              listings,
+              weaveVerification: result.weaveVerification,
+            }));
+          ')"
+          MESSAGE="$(printf '%s' "$COMPACT" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
           echo "::notice title=Batch 3 verified execution::$MESSAGE"
 
       - name: Restore runtime token, verify guards and MyKinLegacy
