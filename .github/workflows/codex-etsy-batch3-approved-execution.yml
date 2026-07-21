@@ -1,0 +1,100 @@
+name: Codex Etsy Batch 3 Approved Execution
+
+on:
+  push:
+    branches:
+      - codex/etsy-oauth-fix-20260707
+    paths:
+      - ".github/workflows/codex-etsy-batch3-approved-execution.yml"
+      - ".codex-etsy-ai-manager-sync-v1/scripts/execute-batch3-approved.mjs"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Execute exact approved Batch 3 values
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" \
+            .codex-etsy-ai-manager-sync-v1/scripts/execute-batch3-approved.mjs \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/execute-batch3-approved.mjs"
+          set +e
+          OUTPUT="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && node /tmp/execute-batch3-approved.mjs' 2>&1)"
+          STATUS="$?"
+          set -e
+          printf '%s\n' "$OUTPUT"
+          if [ "$STATUS" -ne 0 ]; then
+            MESSAGE="$(printf '%s' "$OUTPUT" | tail -n 20 | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+            echo "::error title=Batch 3 execution stopped::$MESSAGE"
+            exit "$STATUS"
+          fi
+          RESULT="$(printf '%s\n' "$OUTPUT" | sed -n 's/^BATCH3_RESULT_JSON=//p' | tail -n 1)"
+          test -n "$RESULT"
+          MESSAGE="$(printf '%s' "$RESULT" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          echo "::notice title=Batch 3 verified execution::$MESSAGE"
+
+      - name: Verify guards and MyKinLegacy
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd /root/mykinlegacy/mensskull-etsy-ai-manager
+          grep -Eq '^ETSY_READ_ONLY_MODE=(true|"true")$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=(false|"false")$' .env.local
+          test -s exports/low-signal-breakthrough/batch-3/batch-3-execution-success.json
+          curl -fsS -o /tmp/batch3-status.json --max-time 20 https://tools.mensskull.com/api/etsy/status
+          node - <<'NODE'
+          const status = require('/tmp/batch3-status.json');
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) {
+            throw new Error('Production Etsy guards were not restored.');
+          }
+          NODE
+          curl -fsS -o /dev/null --max-time 20 https://mykinlegacy.com/health
+          REMOTE
