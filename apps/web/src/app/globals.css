@@ -126,8 +126,8 @@ select {
   display: flex;
   gap: 22px;
   align-items: center;
-  color: rgba(246, 235, 212, 0.78);
-  font-size: 13px;
+  color: rgba(246, 235, 212, 0.88);
+  font-size: 14px;
   letter-spacing: 0.01em;
 }
 
@@ -4849,6 +4849,176 @@ textarea {
   text-transform: uppercase;
 }
 
+.gift-hero-artwork figcaption strong,
+.gift-hero-artwork figcaption span {
+  display: block;
+}
+
+.gift-hero-artwork figcaption span {
+  margin-top: 6px;
+  color: rgba(248, 235, 207, 0.72);
+  font-family: var(--font-body), sans-serif;
+  font-size: 0.78rem;
+  letter-spacing: 0;
+  line-height: 1.45;
+  text-transform: none;
+}
+
+.christmas-gift-page .gift-landing-hero {
+  background:
+    radial-gradient(circle at 78% 18%, rgba(196, 154, 76, 0.16), transparent 34%),
+    linear-gradient(135deg, #0d1a16 0%, #17100e 55%, #251016 100%);
+}
+
+.christmas-gift-page .gift-hero-artwork {
+  padding: 7px;
+  border-color: rgba(211, 177, 106, 0.72);
+  background:
+    radial-gradient(circle at 50% 28%, rgba(177, 130, 71, 0.18), transparent 58%), #21170f;
+  box-shadow: 0 30px 78px rgba(26, 15, 9, 0.42);
+}
+
+.christmas-gift-page .gift-hero-artwork img {
+  filter: brightness(1.06) sepia(0.04);
+}
+
+.christmas-gift-page .gift-hero-artwork figcaption {
+  padding: 12px 10px 8px;
+}
+
+.christmas-hero-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  margin: 20px 0 0;
+  padding: 0;
+  color: rgba(248, 235, 207, 0.82);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+}
+
+.christmas-hero-proof i {
+  color: rgba(210, 175, 103, 0.7);
+  font-style: normal;
+}
+
+.christmas-trust-break {
+  display: none;
+}
+
+.christmas-hero-includes {
+  max-width: 680px;
+  margin: 11px 0 0;
+  color: rgba(248, 235, 207, 0.68);
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.christmas-suite {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.8fr) minmax(280px, 1.2fr);
+  gap: 28px;
+  align-items: center;
+  margin-top: 30px;
+  padding: 28px;
+  background: #16221c;
+  box-shadow: 0 25px 70px rgba(34, 20, 12, 0.18);
+}
+
+.christmas-suite-crest {
+  padding: 12px;
+  border: 1px solid rgba(211, 177, 106, 0.45);
+  background: #080b09;
+}
+
+.christmas-suite-crest img {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.christmas-suite-documents {
+  position: relative;
+  min-height: 360px;
+}
+
+.christmas-suite-documents div {
+  position: absolute;
+  width: min(72%, 330px);
+  aspect-ratio: 0.72;
+  padding: 24px;
+  border: 1px solid #b9934e;
+  background:
+    linear-gradient(rgba(119, 86, 31, 0.1) 1px, transparent 1px) 0 86px / 100% 24px,
+    #f3ead8;
+  color: #422f1f;
+  box-shadow: 0 18px 34px rgba(0, 0, 0, 0.25);
+}
+
+.christmas-suite-documents div:nth-child(1) {
+  top: 0;
+  left: 0;
+  transform: rotate(-4deg);
+}
+
+.christmas-suite-documents div:nth-child(2) {
+  top: 18px;
+  left: 14%;
+  transform: rotate(2deg);
+}
+
+.christmas-suite-documents div:nth-child(3) {
+  top: 38px;
+  left: 27%;
+  transform: rotate(6deg);
+}
+
+.christmas-suite-documents span {
+  display: block;
+  padding-bottom: 14px;
+  border-bottom: 2px solid #a77b36;
+  font-family: var(--font-label), serif;
+  font-weight: 700;
+}
+
+.christmas-evidence-chain {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 8px;
+  margin: 28px 0;
+  padding: 0;
+  list-style: none;
+}
+
+.christmas-evidence-chain li {
+  position: relative;
+  padding: 14px 22px 14px 14px;
+  border: 1px solid rgba(196, 154, 76, 0.28);
+  background: rgba(196, 154, 76, 0.07);
+  color: var(--ivory);
+  font-size: 0.86rem;
+}
+
+.christmas-evidence-chain li:not(:last-child)::after {
+  position: absolute;
+  top: 50%;
+  right: -8px;
+  z-index: 1;
+  color: var(--gold);
+  content: "→";
+  transform: translateY(-50%);
+}
+
+.christmas-example-intro {
+  max-width: 780px;
+  color: #493723;
+}
+
+.christmas-example-grid {
+  grid-template-columns: minmax(0, 640px);
+}
+
 .gift-section-ivory {
   background: #efe4cf;
   color: #1c1711;
@@ -5052,6 +5222,21 @@ textarea {
   .related-showcase-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .christmas-evidence-chain {
+    grid-template-columns: 1fr;
+  }
+
+  .christmas-evidence-chain li:not(:last-child)::after {
+    top: auto;
+    right: 14px;
+    bottom: -13px;
+    transform: rotate(90deg);
+  }
+
+  .christmas-example-grid {
+    grid-template-columns: minmax(0, 640px);
+  }
 }
 
 @media (max-width: 640px) {
@@ -5070,5 +5255,87 @@ textarea {
   .gift-content-list article {
     grid-template-columns: 40px minmax(0, 1fr);
     gap: 10px;
+  }
+
+  .christmas-suite {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .christmas-suite-documents {
+    min-height: 285px;
+  }
+
+  .christmas-suite-documents div {
+    padding: 16px;
+  }
+
+  .christmas-hero-proof {
+    gap: 4px 7px;
+    margin-top: 15px;
+    line-height: 1.5;
+  }
+
+  .christmas-gift-page .gift-landing-hero .section {
+    width: min(100% - 20px, 1140px);
+    padding: 36px 0 0;
+  }
+
+  .christmas-gift-page .gift-landing-hero-grid {
+    gap: 24px;
+  }
+
+  .christmas-gift-page .seo-breadcrumb {
+    margin-bottom: 10px;
+  }
+
+  .christmas-gift-page .premium-hero .eyebrow {
+    margin-bottom: 9px;
+  }
+
+  .christmas-gift-page .premium-hero h1 {
+    margin-bottom: 14px;
+    font-size: clamp(2.35rem, 11.6vw, 3.15rem);
+    line-height: 0.98;
+  }
+
+  .christmas-gift-page .premium-hero .lead {
+    font-size: 1rem;
+    line-height: 1.48;
+  }
+
+  .christmas-trust-break {
+    display: block;
+    flex-basis: 100%;
+    height: 0;
+  }
+
+  .christmas-trust-break + i {
+    display: none;
+  }
+
+  .christmas-hero-includes {
+    margin-top: 8px;
+    font-size: 0.78rem;
+    line-height: 1.42;
+  }
+
+  .christmas-gift-page .button-row {
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .christmas-gift-page .secondary-button {
+    border-color: rgba(222, 196, 142, 0.58);
+    color: #f6e7ca;
+    background: rgba(231, 205, 151, 0.05);
+  }
+
+  .christmas-gift-page .gift-hero-artwork {
+    padding: 5px;
+  }
+
+  .christmas-gift-page .gift-hero-artwork figcaption {
+    padding-bottom: 7px;
   }
 }

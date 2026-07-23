@@ -19,11 +19,28 @@ type GiftLandingPageProps = {
 };
 
 const collectionContents = [
-  ["Family Legacy Certificate", "The primary frameable keepsake, personalized for the recipient and occasion."],
+  [
+    "Family Legacy Certificate",
+    "The primary frameable keepsake, personalized for the recipient and occasion."
+  ],
   ["Final Crest", "One finished symbolic artwork shaped around the family evidence you share."],
   ["Family Story", "A recipient-centered narrative grounded in real memories and lived values."],
   ["Meaning Behind Your Crest", "A visual guide explaining why each earned symbol belongs."],
   ["Private Vault", "Secure digital access to the finished Complete Collection archive."]
+] as const;
+
+const christmasCollectionContents = [
+  ["Final Crest", "One finished symbolic artwork shaped by the family evidence you share."],
+  ["Heritage Certificate", "The keepsake document that introduces the collection and occasion."],
+  ["Family Story", "A recipient-centered narrative grounded in real memories and lived values."],
+  [
+    "Meaning Behind Your Crest",
+    "The guide explaining the design basis and why each symbol belongs."
+  ],
+  [
+    "Complete Collection",
+    "All finished customer files, privately delivered through the Private Vault."
+  ]
 ] as const;
 
 export function generateStaticParams() {
@@ -54,6 +71,11 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
   }
 
   const examples = page.exampleIds.map((id) => getShowcaseCollection(id)).filter(Boolean);
+  const isChristmas = page.slug === "christmas-family";
+  const displayedExamples = isChristmas ? examples.slice(0, 1) : examples;
+  const displayedCollectionContents = isChristmas
+    ? christmasCollectionContents
+    : collectionContents;
   const relatedPages = page.relatedSlugs
     .map((relatedSlug) => getGiftLandingPage(relatedSlug))
     .filter((relatedPage): relatedPage is GiftLandingPageSpec => Boolean(relatedPage));
@@ -80,7 +102,7 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
     "@context": "https://schema.org",
     "@type": "ItemList",
     name: `Examples for ${page.eyebrow}`,
-    itemListElement: examples.map((example, index) => ({
+    itemListElement: displayedExamples.map((example, index) => ({
       "@type": "ListItem",
       position: index + 1,
       url: `${SITE_URL}/real-examples/${example?.id}`,
@@ -89,29 +111,56 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
   };
 
   return (
-    <main className="premium-page gift-landing-page">
+    <main className={`premium-page gift-landing-page${isChristmas ? " christmas-gift-page" : ""}`}>
       <FunnelStepTracker
         stepName="gift_landing"
         metadata={{ page: `/gifts/${page.slug}`, gift_slug: page.slug }}
       />
-      <StructuredData data={[breadcrumbJsonLd, faqJsonLd, itemListJsonLd]} />
+      <StructuredData
+        data={
+          isChristmas
+            ? [breadcrumbJsonLd, itemListJsonLd]
+            : [breadcrumbJsonLd, faqJsonLd, itemListJsonLd]
+        }
+      />
       <section className="premium-hero gift-landing-hero">
         <div className="section gift-landing-hero-grid">
           <div>
             <nav className="seo-breadcrumb" aria-label="Breadcrumb">
               <Link href="/">Home</Link>
               <span aria-hidden="true">/</span>
-              <span>{page.eyebrow}</span>
+              <span>{isChristmas ? "Christmas Gifts" : page.eyebrow}</span>
             </nav>
             <p className="eyebrow">{page.eyebrow}</p>
             <h1>{page.h1}</h1>
             <p className="lead">{page.lead}</p>
+            {isChristmas ? (
+              <>
+                <p className="christmas-hero-proof" aria-label="Collection details">
+                  <span>One shared gift</span>
+                  <i aria-hidden="true">·</i>
+                  <span>Digital delivery</span>
+                  <b className="christmas-trust-break" aria-hidden="true" />
+                  <i aria-hidden="true">·</i>
+                  <span>Founder reviewed</span>
+                  <i aria-hidden="true">·</i>
+                  <span>USD $49</span>
+                </p>
+                <p className="christmas-hero-includes">
+                  Includes the Final Crest, Heritage Certificate, Family Story, Meaning Behind Your
+                  Crest, and private Complete Collection.
+                </p>
+              </>
+            ) : null}
             <div className="button-row">
               <Link className="button" href="/create">
                 Create Their Collection
               </Link>
-              <Link className="secondary-button" href="/real-examples">
-                See Real Examples
+              <Link
+                className="secondary-button"
+                href={isChristmas ? "/real-examples/05-christmas-family" : "/real-examples"}
+              >
+                {isChristmas ? "View the Christmas Example" : "See Real Examples"}
               </Link>
             </div>
           </div>
@@ -125,7 +174,14 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
                 priority
                 sizes="(max-width: 900px) 92vw, 44vw"
               />
-              <figcaption>{examples[0].title} example</figcaption>
+              <figcaption>
+                <strong>{examples[0].title} example</strong>
+                {isChristmas ? (
+                  <span>
+                    Mountain, path, and laurel express gathering, continuity, and gratitude.
+                  </span>
+                ) : null}
+              </figcaption>
             </figure>
           ) : null}
         </div>
@@ -147,10 +203,40 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
 
       <section className="premium-section gift-section-ivory">
         <div className="section">
-          <p className="eyebrow">What the recipient receives</p>
-          <h2>One finished Family Legacy Collection.</h2>
+          <p className="eyebrow">
+            {isChristmas ? "The Complete Collection" : "What the recipient receives"}
+          </p>
+          <h2>
+            {isChristmas
+              ? "Five finished deliverables, designed to belong together."
+              : "One finished Family Legacy Collection."}
+          </h2>
+          {isChristmas && examples[0] ? (
+            <div className="christmas-suite" aria-label="Complete Collection deliverables">
+              <div className="christmas-suite-crest">
+                <Image
+                  src={examples[0].crestSrc}
+                  alt="Christmas Family Final Crest from the real example collection"
+                  width={720}
+                  height={720}
+                  sizes="(max-width: 700px) 80vw, 34vw"
+                />
+              </div>
+              <div className="christmas-suite-documents" aria-hidden="true">
+                <div>
+                  <span>Heritage Certificate</span>
+                </div>
+                <div>
+                  <span>Family Story</span>
+                </div>
+                <div>
+                  <span>Meaning Behind Your Crest</span>
+                </div>
+              </div>
+            </div>
+          ) : null}
           <div className="gift-content-list">
-            {collectionContents.map(([title, description], index) => (
+            {displayedCollectionContents.map(([title, description], index) => (
               <article key={title}>
                 <span>{String(index + 1).padStart(2, "0")}</span>
                 <div>
@@ -166,7 +252,20 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
       <section className="premium-section">
         <div className="section">
           <p className="eyebrow">How it becomes personal</p>
-          <h2>The visible details come from the evidence you provide.</h2>
+          <h2>
+            {isChristmas
+              ? "From a Christmas memory to a family symbol."
+              : "The visible details come from the evidence you provide."}
+          </h2>
+          {isChristmas ? (
+            <ol className="christmas-evidence-chain" aria-label="Personalization evidence chain">
+              <li>Christmas memory</li>
+              <li>Family meaning</li>
+              <li>Chosen symbol</li>
+              <li>Final Crest</li>
+              <li>Story and meaning guide</li>
+            </ol>
+          ) : null}
           <div className="gift-personalization-grid">
             {page.personalization.map((item) => (
               <article key={item}>
@@ -176,9 +275,9 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
             ))}
           </div>
           <p className="gift-boundary-note">
-            MyKinLegacy interprets the family details you share. It does not invent ancestry or
-            sell an official coat of arms, legal heraldic grant, noble title, or certified
-            genealogical record.
+            MyKinLegacy interprets the family details you share. It does not invent ancestry or sell
+            an official coat of arms, legal heraldic grant, noble title, or certified genealogical
+            record.
           </p>
         </div>
       </section>
@@ -187,15 +286,28 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
         <div className="section">
           <div className="section-heading-row">
             <div>
-              <p className="eyebrow">Related real collections</p>
-              <h2>See how different evidence changes the result.</h2>
+              <p className="eyebrow">
+                {isChristmas ? "Real Christmas example" : "Related real collections"}
+              </p>
+              <h2>
+                {isChristmas
+                  ? "See how shared traditions become one family keepsake."
+                  : "See how different evidence changes the result."}
+              </h2>
             </div>
             <Link className="showcase-card-link" href="/real-examples">
               Browse all 20 examples
             </Link>
           </div>
-          <div className="gift-example-grid">
-            {examples.map((example) =>
+          {isChristmas ? (
+            <p className="christmas-example-intro">
+              This real example begins with the family&apos;s gathering, gratitude, traditions, and
+              retold stories. Mountain, path, and laurel were selected to express continuity and
+              shared meaning—not to imply official heraldry or invented history.
+            </p>
+          ) : null}
+          <div className={`gift-example-grid${isChristmas ? " christmas-example-grid" : ""}`}>
+            {displayedExamples.map((example) =>
               example ? (
                 <article key={example.id}>
                   <Link href={`/real-examples/${example.id}`}>
@@ -229,7 +341,7 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
             <p>
               See the <Link href="/digital-delivery">digital delivery policy</Link>,{" "}
               <Link href="/refund-policy">refund policy</Link>, and{" "}
-              <Link href="/privacy">privacy policy</Link> before ordering.
+              <Link href="/disclaimer">heraldry disclaimer</Link> before ordering.
             </p>
           </article>
           <article>

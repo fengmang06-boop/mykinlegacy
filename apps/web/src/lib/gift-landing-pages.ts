@@ -25,8 +25,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       "Honor Dad's work, sacrifice, and example with a personalized retirement gift: a frameable certificate, final crest, family story, and private collection.",
     eyebrow: "Retirement gift for father",
     h1: "A retirement gift that honors everything Dad carried for the family.",
-    lead:
-      "Retirement deserves more than another watch or bottle. MyKinLegacy turns the years he worked, the values he lived, and the family he protected into a private digital keepsake made for presentation and preservation.",
+    lead: "Retirement deserves more than another watch or bottle. MyKinLegacy turns the years he worked, the values he lived, and the family he protected into a private digital keepsake made for presentation and preservation.",
     buyerProblemTitle: "For the father who says he does not need anything",
     buyerProblem:
       "The hardest retirement gifts are for fathers whose contribution was steady rather than showy. This collection gives the family a dignified way to name his work, sacrifice, integrity, and influence without exaggerating his history.",
@@ -68,8 +67,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       "Create a meaningful Father's Day gift shaped by Dad's values, quiet care, and place in the family, with a final crest and frameable certificate.",
     eyebrow: "Meaningful Father's Day gift",
     h1: "Give Dad a Father's Day gift that recognizes who he is to the family.",
-    lead:
-      "For the father who rarely asks for anything, a useful gift can still feel ordinary. This collection centers the protection, humor, patience, work, or everyday care that made him matter.",
+    lead: "For the father who rarely asks for anything, a useful gift can still feel ordinary. This collection centers the protection, humor, patience, work, or everyday care that made him matter.",
     buyerProblemTitle: "Say more than a card can hold",
     buyerProblem:
       "Father's Day often reduces a lifetime of care to a short message. MyKinLegacy gives that message a lasting form through one Final Crest, a frameable certificate, a Family Story, and the meaning behind the design.",
@@ -111,8 +109,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       "Celebrate Mom with a personalized birthday keepsake built around her love, strength, memories, and the family she has held together.",
     eyebrow: "Birthday gift for mother",
     h1: "A birthday gift that lets Mom see what her care has meant.",
-    lead:
-      "Milestone birthdays invite the family to look back with gratitude. This private collection turns the qualities people rely on in her into a frameable certificate, a symbolic crest, and a story she can return to.",
+    lead: "Milestone birthdays invite the family to look back with gratitude. This private collection turns the qualities people rely on in her into a frameable certificate, a symbolic crest, and a story she can return to.",
     buyerProblemTitle: "For a life that cannot be summarized by another present",
     buyerProblem:
       "When a mother has spent years holding people together, ordinary birthday gifts can feel disconnected from what the family truly wants to say. This collection makes her contribution the center of the gift.",
@@ -140,8 +137,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       },
       {
         question: "Can Mom print the certificate?",
-        answer:
-          "Yes. The primary certificate is designed as a personal, frameable keepsake."
+        answer: "Yes. The primary certificate is designed as a personal, frameable keepsake."
       }
     ],
     relatedSlugs: ["grandparents", "anniversary", "christmas-family"]
@@ -154,8 +150,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       "Create a personalized gift for grandparents that preserves their guidance, memories, values, and place in the family as a private legacy collection.",
     eyebrow: "Personalized gift for grandparents",
     h1: "Preserve the stories and values your grandparents gave the family.",
-    lead:
-      "Grandparents often value recognition more than more belongings. A Family Legacy Collection honors the memories they kept, the guidance they offered, and what younger generations will carry forward.",
+    lead: "Grandparents often value recognition more than more belongings. A Family Legacy Collection honors the memories they kept, the guidance they offered, and what younger generations will carry forward.",
     buyerProblemTitle: "A gift for people whose real legacy is already living in the family",
     buyerProblem:
       "Photo gifts can preserve faces while leaving the deeper story unspoken. This collection connects a real memory to a symbolic Final Crest, a Family Story, and a frameable certificate made for the recipient.",
@@ -197,8 +192,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       "Mark the beginning of a new family with a personalized wedding legacy gift: a symbolic final crest, certificate, story, and private collection.",
     eyebrow: "Personalized wedding legacy gift",
     h1: "A wedding gift for the family two people are beginning together.",
-    lead:
-      "A registry helps furnish a home. This collection honors the values, hopes, and shared direction that will shape the life built inside it.",
+    lead: "A registry helps furnish a home. This collection honors the values, hopes, and shared direction that will shape the life built inside it.",
     buyerProblemTitle: "Give the couple something about the future they are choosing",
     buyerProblem:
       "The most meaningful wedding gifts recognize the relationship rather than simply adding another object. MyKinLegacy creates a symbolic keepsake around unity, faith when explicitly shared, home, guidance, and future generations.",
@@ -240,8 +234,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       "Honor the life your parents built together with a personalized anniversary gift shaped by commitment, family memories, and shared values.",
     eyebrow: "Anniversary gift for parents",
     h1: "Celebrate the family your parents built together.",
-    lead:
-      "An anniversary is not only about a date. It is about the home, traditions, choices, and relationships that grew from two people continuing to choose each other.",
+    lead: "An anniversary is not only about a date. It is about the home, traditions, choices, and relationships that grew from two people continuing to choose each other.",
     buyerProblemTitle: "Make the years together visible",
     buyerProblem:
       "Traditional anniversary gifts mark a material. A Family Legacy Collection marks the lived result: loyalty, patience, humor, resilience, and the family that now shares their story.",
@@ -264,8 +257,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       },
       {
         question: "Can children give this to their parents together?",
-        answer:
-          "Yes. The dedication and story can speak from the family as a whole."
+        answer: "Yes. The dedication and story can speak from the family as a whole."
       },
       {
         question: "Is the delivery private?",
@@ -278,18 +270,17 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
   {
     slug: "christmas-family",
     primaryKeyword: "personalized Christmas family gift",
-    title: "Personalized Christmas Family Gift | Legacy Collection",
+    title: "Personalized Christmas Gift for the Whole Family | MyKinLegacy",
     description:
-      "Give the whole family a personalized Christmas keepsake built around shared traditions, gratitude, memories, and the values carried across generations.",
-    eyebrow: "Personalized Christmas family gift",
-    h1: "A Christmas gift the whole family can open and keep together.",
-    lead:
-      "Christmas gathers people around familiar stories. This collection gives those stories, values, and traditions a shared form that can remain meaningful after the season ends.",
-    buyerProblemTitle: "Choose one family gift instead of another round of things",
+      "Create one personalized Christmas gift the whole family can keep, shaped by memories, traditions, and values and privately delivered as a digital collection.",
+    eyebrow: "One personalized Christmas gift for the whole family",
+    h1: "A Christmas Gift the Whole Family Can Open and Keep Together",
+    lead: "Turn the memories, traditions, and values your family already shares into one Founder-reviewed digital keepsake collection—created for the whole family, from USD $49.",
+    buyerProblemTitle: "One gift, shared by the family",
     buyerProblem:
-      "A whole-family gift needs to feel inclusive without becoming generic. MyKinLegacy uses specific traditions, memories, and family values to create one Final Crest and one collection for everyone being honored.",
+      "Instead of choosing a separate present for every person, adult children and siblings can create one meaningful family keepsake for parents, grandparents, or several generations to open together.",
     recipientFit:
-      "For parents, grandparents, siblings, adult children, or an extended family gathering around Christmas traditions and shared gratitude.",
+      "Best for parents and grandparents, adult children gifting together, extended families, long-distance families, and families who already have the things they need. It is not a bundle of inexpensive individual gifts.",
     personalization: [
       "A holiday tradition or memory the family immediately recognizes",
       "The whole family or named recipients, without mixing individual pronouns",
@@ -298,22 +289,47 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
     ],
     exampleIds: ["05-christmas-family", "20-parents-anniversary", "11-family-reunion"],
     deliveryNote:
-      "This is a digital collection with no shipping delay, but personalization and Founder review still require time. Order before the day you plan to present it.",
+      "The complete collection is delivered digitally through a Private Vault; nothing is shipped physically. Printing and framing can be arranged separately. Personalization and Founder review require time, so order well before the day you plan to present it.",
     faq: [
       {
-        question: "Is the design Christmas-themed?",
+        question: "Is this one gift for the whole family?",
         answer:
-          "The occasion shapes the dedication and tone, while the crest remains a lasting family keepsake rather than temporary holiday decoration."
+          "Yes. One collection is created around shared family memories, traditions, and values so parents, grandparents, siblings, and other relatives can open and keep it together."
       },
       {
-        question: "Can the collection honor several generations?",
+        question: "Is anything shipped physically?",
         answer:
-          "Yes. Shared memories and values can connect grandparents, parents, and younger generations without inventing genealogy."
+          "No. The Founder Edition is delivered digitally through a Private Vault. Printing and framing are arranged separately."
       },
       {
-        question: "Will anything arrive by mail?",
+        question: "Can siblings create the gift together?",
         answer:
-          "No. The Founder Edition is delivered digitally through a private vault."
+          "Yes. Siblings or adult children can contribute the memories, traditions, and values they want the collection to reflect."
+      },
+      {
+        question: "Can it honor parents and grandparents?",
+        answer:
+          "Yes. The recipient language can honor parents, grandparents, or several generations without inventing ancestry or making claims about every family branch."
+      },
+      {
+        question: "Is this an official family crest?",
+        answer:
+          "No. The Final Crest is contemporary symbolic artwork based on the information you provide, not inherited arms, a legal heraldic grant, or genealogical proof."
+      },
+      {
+        question: "Can we print the collection ourselves?",
+        answer:
+          "Yes. The files are delivered digitally for personal family use, so you can arrange your preferred printing and framing separately."
+      },
+      {
+        question: "How early should we order before Christmas?",
+        answer:
+          "Order well before the date you plan to present it. Every collection is personalized and Founder reviewed, so an exact delivery date should be confirmed before relying on it."
+      },
+      {
+        question: "What information do we need to provide?",
+        answer:
+          "Share real family memories, traditions, values, recipient details, and the meaning you want the gift to carry. MyKinLegacy does not invent ancestry or family history."
       }
     ],
     relatedSlugs: ["family-reunion", "grandparents", "anniversary"]
@@ -326,8 +342,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       "Create a personalized family reunion gift that recognizes shared roots, memories, values, and the meaning of gathering again.",
     eyebrow: "Personalized family reunion gift",
     h1: "Give the family a shared keepsake for the stories that bring everyone back.",
-    lead:
-      "A reunion is a rare chance to see the family as a whole. This collection turns the reason people gathered, the memories they share, and the values they want to continue into one private legacy keepsake.",
+    lead: "A reunion is a rare chance to see the family as a whole. This collection turns the reason people gathered, the memories they share, and the values they want to continue into one private legacy keepsake.",
     buyerProblemTitle: "Create one focal gift for the gathering",
     buyerProblem:
       "Reunion favors are easy to distribute but easy to forget. A Family Legacy Collection gives relatives one meaningful artifact to open together and a digital archive they can preserve afterward.",
