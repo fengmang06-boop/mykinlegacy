@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 
 import { GoogleAnalytics } from "../components/google-analytics";
+import { BrandMark, SiteHeader } from "../components/site-header";
 
 import {
   absoluteUrl,
@@ -73,28 +74,6 @@ export const metadata: Metadata = {
     : undefined
 };
 
-function BrandMark() {
-  return (
-    <svg className="brand-mark" viewBox="0 0 64 72" aria-hidden="true" focusable="false">
-      <path
-        d="M32 4 55 13v19c0 16.2-8.6 28.8-23 35.7C17.6 60.8 9 48.2 9 32V13L32 4Z"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="3"
-      />
-      <path
-        d="M21 47V24l11 13 11-13v23M21 24l11 15 11-15"
-        fill="none"
-        stroke="currentColor"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        strokeWidth="3"
-      />
-      <path d="M17 17h30" stroke="currentColor" strokeLinecap="round" strokeWidth="2" />
-    </svg>
-  );
-}
-
 export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
   const organizationJsonLd = {
     "@context": "https://schema.org",
@@ -128,28 +107,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
-        <header className="site-header">
-          <nav className="nav" aria-label="Primary navigation">
-            <Link className="brand" href="/">
-              <BrandMark />
-              <span className="brand-copy">
-                <span className="brand-name">MyKinLegacy</span>
-                <span className="brand-tagline">Legacy, Designed.</span>
-              </span>
-            </Link>
-            <div className="nav-links">
-              <Link href="/family-legacy-collection">Collection</Link>
-              <Link href="/real-examples">Examples</Link>
-              <Link href="/journal">Journal</Link>
-              <Link href="/#how-it-works">How It Works</Link>
-              <Link href="/#gift-ideas">Gift Ideas</Link>
-              <Link href="/#faq">FAQ</Link>
-              <Link className="nav-cta" href="/create">
-                Begin Their Legacy
-              </Link>
-            </div>
-          </nav>
-        </header>
+        <SiteHeader />
         {children}
         <footer className="site-footer">
           <div className="footer-inner">

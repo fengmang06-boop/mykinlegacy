@@ -1,3 +1,5 @@
+import { fileURLToPath } from "node:url";
+
 const securityHeaders = [
   { key: "X-Frame-Options", value: "DENY" },
   { key: "X-Content-Type-Options", value: "nosniff" },
@@ -7,6 +9,7 @@ const securityHeaders = [
 
 /** @type {import("next").NextConfig} */
 const nextConfig = {
+  outputFileTracingRoot: fileURLToPath(new URL("../..", import.meta.url)),
   async headers() {
     return [
       {

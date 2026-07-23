@@ -30,13 +30,13 @@ const testDir = dirname(fileURLToPath(import.meta.url));
 describe("customer frontend flow", () => {
   it("landing page renders CTA and disclaimer", () => {
     const html = renderToStaticMarkup(<HomePage />);
-    expect(html).toContain("A personalized family legacy gift for someone you love.");
-    expect(html).toContain("Limited to");
-    expect(html).toContain("25 Founder Edition orders");
-    expect(html).toContain("Create Your Legacy");
-    expect(html).toContain("View Collections");
-    expect(html).toContain("not an official coat of arms");
-    expect(html).toContain("not a genealogy claim");
+    expect(html).toContain("Give them their family story, made visible.");
+    expect(html).toContain("USD $49");
+    expect(html).toContain("Begin Their Legacy");
+    expect(html).toContain("View Real Examples");
+    expect(html).toContain("Heritage Certificate");
+    expect(html).toContain("No physical shipping included");
+    expect(html).toContain("not inherited arms, official heraldry, or genealogical proof");
   });
 
   it("product API client fetches product price from API mock", async () => {

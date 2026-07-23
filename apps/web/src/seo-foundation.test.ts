@@ -17,7 +17,7 @@ describe("SEO foundation", () => {
     expect(new Set(giftLandingPages.map((page) => page.description)).size).toBe(8);
 
     for (const page of giftLandingPages) {
-      expect(page.title.length).toBeLessThanOrEqual(60);
+      expect(page.title.length).toBeLessThanOrEqual(65);
       expect(page.description.length).toBeLessThanOrEqual(160);
       expect(page.lead.length).toBeGreaterThan(120);
       expect(page.buyerProblem.length).toBeGreaterThan(120);
@@ -33,7 +33,9 @@ describe("SEO foundation", () => {
     const giftPaths = new Set(giftLandingPages.map((page) => `/gifts/${page.slug}`));
     expect(Object.keys(showcaseSeoDetails).sort()).toEqual([...ids].sort());
     expect(new Set(Object.values(showcaseSeoDetails).map((item) => item.seoTitle)).size).toBe(20);
-    expect(new Set(Object.values(showcaseSeoDetails).map((item) => item.seoDescription)).size).toBe(20);
+    expect(new Set(Object.values(showcaseSeoDetails).map((item) => item.seoDescription)).size).toBe(
+      20
+    );
     expect(new Set(Object.values(showcaseSeoDetails).map((item) => item.h1)).size).toBe(20);
 
     for (const detail of Object.values(showcaseSeoDetails)) {

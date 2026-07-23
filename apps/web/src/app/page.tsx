@@ -7,8 +7,6 @@ import { FunnelStepTracker } from "../components/funnel-tracker";
 import { StructuredData } from "../components/structured-data";
 import { publicMetadata } from "../lib/seo";
 
-const finalHomepageAsset = "/assets/final-homepage";
-
 export const metadata: Metadata = publicMetadata({
   title: "Personalized Family Gift & Legacy Keepsake | MyKinLegacy",
   description:
@@ -16,204 +14,30 @@ export const metadata: Metadata = publicMetadata({
   path: "/"
 });
 
-const heroArtifacts = [
-  [
-    "Family Legacy Certificate",
-    "The primary frameable keepsake, personalized for the person you want to honor.",
-    `${finalHomepageAsset}/02_homepage/hero/hero-heritage-certificate.webp`
-  ],
-  [
-    "Final Crest",
-    "The finished crest artwork presented on the certificate and provided on its own.",
-    `${finalHomepageAsset}/02_homepage/hero/hero-house-identity.webp`
-  ],
-  [
-    "Private Vault",
-    "A secure space to receive and preserve the finished collection.",
-    `${finalHomepageAsset}/02_homepage/hero/hero-private-vault.webp`
-  ]
+const assets = "/assets/final-homepage";
+const examples = "/assets/showcase-collections";
+
+const realExamples = [
+  ["Father Retirement", "A working life interpreted through resilience, guidance, and home.", "01-father-retirement", "01-father-retirement"],
+  ["Parents Anniversary", "A shared life shaped into symbols of continuity, devotion, and family.", "20-parents-anniversary", "20-parents-anniversary"],
+  ["Grandparents", "The stories and values younger generations should still be able to revisit.", "06-grandfather-legacy", "06-grandfather-legacy"],
+  ["Wedding", "Two histories meeting in one new family story.", "03-wedding-gift", "03-wedding-gift"],
+  ["Family Reunion", "A gathering expressed through belonging, memory, and return.", "11-family-reunion", "11-family-reunion"],
+  ["Christmas Family", "Tradition, gratitude, and the stories retold when everyone comes home.", "05-christmas-family", "05-christmas-family"]
 ] as const;
 
-const occasions = [
-  [
-    "Father's Day",
-    "For the father who never asks for much.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-fathers-day.webp`,
-    "/gifts/fathers-day"
-  ],
-  [
-    "Birthday",
-    "For a gift that says more than another object.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-birthday.webp`,
-    "/gifts/mother-birthday"
-  ],
-  [
-    "Anniversary",
-    "For honoring the family two people built together.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-anniversary.webp`,
-    "/gifts/anniversary"
-  ],
-  [
-    "Christmas",
-    "For the family moment everyone remembers.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-christmas.webp`,
-    "/gifts/christmas-family"
-  ],
-  [
-    "Retirement",
-    "For a life of work, care, and quiet legacy.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-retirement.webp`,
-    "/gifts/father-retirement"
-  ],
-  [
-    "Thanksgiving",
-    "For gathering around the story that holds everyone.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-thanksgiving.webp`,
-    "/gifts/family-reunion"
-  ],
-  [
-    "New Baby",
-    "For welcoming a child into a living family story.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-new-baby.webp`,
-    "/real-examples/10-new-baby"
-  ],
-  [
-    "Graduation",
-    "For sending someone forward with roots.",
-    `${finalHomepageAsset}/03_homepage/occasions/occasion-graduation.webp`,
-    "/real-examples/08-graduation"
-  ]
+const faq = [
+  ["Is this official heraldry?", "No. It is contemporary symbolic artwork, not inherited arms, official heraldry, or genealogical proof."],
+  ["Is anything shipped?", "No. The Founder Edition is a digital collection. Printing and framing are arranged separately."],
+  ["How is the collection delivered?", "After Founder review, the finished files are released privately through the Complete Collection vault."],
+  ["Will our family details be public?", "No. Customer inputs are private by default and are not displayed publicly."]
 ] as const;
-
-const homeFaq = [
-  ["Is this an official coat of arms?", "No. It is a personalized heritage-inspired symbolic keepsake."],
-  ["Is the collection private?", "Yes. It is private by default and made for personal family keeping."],
-  [
-    "Can I give it as a gift?",
-    "Yes. It is designed for parents, grandparents, and meaningful family moments."
-  ],
-  [
-    "When will it be delivered?",
-    "Founder Edition collections are normally reviewed and delivered within two business days after payment."
-  ],
-  ["Is anything shipped?", "No. This is a personalized digital collection with no physical delivery."]
-] as const;
-
-const receives = [
-  [
-    "Family Legacy Certificate",
-    "The primary frameable keepsake, created for personal presentation, printing, and gifting.",
-    `${finalHomepageAsset}/04_homepage/features/feature-heritage-certificate.webp`
-  ],
-  [
-    "Final Crest",
-    "One finished crest artwork shaped around the recipient, occasion, and family meaning.",
-    `${finalHomepageAsset}/04_homepage/features/feature-house-identity.webp`
-  ],
-  [
-    "Family Story",
-    "A warm narrative that helps parents feel recognized instead of merely represented.",
-    `${finalHomepageAsset}/04_homepage/features/feature-family-story.webp`
-  ],
-  [
-    "Meaning Behind Your Crest",
-    "A clear explanation of why this crest was created for the family.",
-    `${finalHomepageAsset}/04_homepage/features/feature-symbol-guide.webp`
-  ],
-  [
-    "Private Collection Vault",
-    "A protected delivery space for receiving the finished collection.",
-    `${finalHomepageAsset}/04_homepage/features/feature-private-vault.webp`
-  ],
-  [
-    "Complete Collection",
-    "A single archive containing the finished crest and keepsake documents in reading order.",
-    `${finalHomepageAsset}/04_homepage/features/feature-recognition-cards.webp`
-  ]
-] as const;
-
-const steps = [
-  [
-    "1",
-    "Tell Us",
-    "Share who the collection is for and what your family wants remembered.",
-    `${finalHomepageAsset}/05_homepage/steps/step-01-tell-us.webp`
-  ],
-  [
-    "2",
-    "We Create",
-    "We shape values, culture, symbols, and story into one private digital collection.",
-    `${finalHomepageAsset}/05_homepage/steps/step-02-we-create.webp`
-  ],
-  [
-    "3",
-    "Founder Review",
-    "Each Early Access collection is checked before its private delivery is released.",
-    `${finalHomepageAsset}/05_homepage/steps/step-03-review.webp`
-  ],
-  [
-    "4",
-    "Finalize",
-    "The symbolic artwork and written artifacts are prepared for keeping.",
-    `${finalHomepageAsset}/05_homepage/steps/step-04-finalize.webp`
-  ],
-  [
-    "5",
-    "Receive",
-    "Your collection is delivered through a private vault.",
-    `${finalHomepageAsset}/05_homepage/steps/step-05-receive.webp`
-  ]
-] as const;
-
-const generationCards = [
-  [
-    "Crafted with meaning",
-    "Every artifact should explain why it belongs, not simply look decorative.",
-    `${finalHomepageAsset}/06_homepage/generations/generations-crafted-with-meaning.webp`
-  ],
-  [
-    "A legacy that lives on",
-    "Made for parents, children, and grandchildren to revisit over time.",
-    `${finalHomepageAsset}/06_homepage/generations/generations-a-legacy-that-lives-on.webp`
-  ],
-  [
-    "Our story",
-    "A collection that gives the family language for what it has carried.",
-    `${finalHomepageAsset}/06_homepage/generations/generations-our-story.webp`
-  ],
-  [
-    "A collection that lasts",
-    "Private, gift-ready, and designed to feel worth preserving.",
-    `${finalHomepageAsset}/06_homepage/generations/generations-a-collection-that-lasts.webp`
-  ]
-] as const;
-
-function HomeAsset({
-  className,
-  src,
-  size = 96
-}: Readonly<{
-  className?: string;
-  src: string;
-  size?: number;
-}>) {
-  return (
-    <Image
-      className={className}
-      src={src}
-      width={size}
-      height={size}
-      alt=""
-      aria-hidden="true"
-    />
-  );
-}
 
 export default function HomePage() {
   const faqJsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    mainEntity: homeFaq.map(([question, answer]) => ({
+    mainEntity: faq.map(([question, answer]) => ({
       "@type": "Question",
       name: question,
       acceptedAnswer: { "@type": "Answer", text: answer }
@@ -221,218 +45,170 @@ export default function HomePage() {
   };
 
   return (
-    <main className="home-premium">
+    <main className="home-v2">
       <StructuredData data={faqJsonLd} />
       <FunnelStepTracker stepName="landing_page" metadata={{ page: "/" }} />
-      <section className="home-hero">
-        <div className="home-shell home-hero-grid">
-          <div className="home-hero-copy">
-            <p className="home-eyebrow">Founder Edition · Limited Early Access</p>
-            <h1>A personalized family legacy gift for someone you love.</h1>
-            <p className="home-hero-subtext">
-              One frameable Family Legacy Certificate, its Final Crest, two supporting
-              publications, and a Complete Collection archive, prepared from the family details
-              you share and reviewed before delivery. Limited to the first 25 Founder Edition
-              orders.
-            </p>
-            <div className="home-cta-row">
-              <Link className="home-button home-button-primary" href="/create">
-                Create Your Legacy
-              </Link>
-              <Link className="home-button home-button-secondary" href="/family-legacy-collection">
-                View Collections
-              </Link>
-              <Link className="home-button home-button-secondary" href="/real-examples">
-                See Real Examples
-              </Link>
-            </div>
-            <div className="home-hero-trust" aria-label="Trust highlights">
-              <span>Private by default</span>
-              <span>Symbolic keepsake</span>
-              <span>Founder reviewed</span>
-            </div>
-          </div>
 
-          <div className="home-artifact-board" aria-label="Legacy collection preview">
-            <div className="home-board-header">
-              <HomeAsset src={`${finalHomepageAsset}/01_brand/logo-mark.webp`} size={96} />
-              <div>
-                <strong>Family Legacy Collection</strong>
-                <span>Private vault preview</span>
-              </div>
+      <section className="hv2-hero">
+        <div className="hv2-shell hv2-hero-grid">
+          <div className="hv2-hero-copy">
+            <p className="hv2-kicker">A modern family archive, made as a meaningful gift</p>
+            <h1>Give them their family story, made visible.</h1>
+            <p className="hv2-lede">
+              A private digital collection shaped from the memories, values, and details you share—
+              interpreted into one Final Crest and the story behind it.
+            </p>
+            <div className="hv2-offer-line" aria-label="Collection details">
+              <strong>USD $49</strong><span>Digital collection</span><span>Founder reviewed</span><span>Private delivery</span>
             </div>
-            <div className="home-hero-main-visual">
-              <Image
-                src={`${finalHomepageAsset}/02_homepage/hero/hero-main-crest.webp`}
-                width={900}
-                height={620}
-                alt="Personalized Family Legacy Collection with a final crest and keepsake documents"
-                priority
-              />
-              <div className="home-hero-visual-caption">
-                <span>Private collection display</span>
-                <strong>Identity, story, archive document, and vault in one keepsake.</strong>
-              </div>
+            <div className="hv2-actions">
+              <Link className="hv2-button hv2-primary" href="/create">Begin Their Legacy</Link>
+              <Link className="hv2-button hv2-secondary" href="/real-examples">View Real Examples</Link>
             </div>
-            <div className="home-artifact-grid">
-              {heroArtifacts.map(([title, description, icon]) => (
-                <article className="home-artifact-tile" key={title}>
-                  <HomeAsset className="home-card-visual" src={icon} size={220} />
-                  <div>
-                    <h2>{title}</h2>
-                    <p>{description}</p>
-                  </div>
-                </article>
-              ))}
+            <p className="hv2-disclosure">Digital collection. No physical shipping included.</p>
+          </div>
+          <div className="hv2-hero-product">
+            <div className="hv2-document-stack" aria-label="The complete Family Legacy Collection">
+              <Image className="hv2-paper hv2-paper-story" src={`${assets}/02_homepage/hero/hero-family-story.webp`} width={560} height={560} alt="Family Story cover from a Family Legacy Collection" />
+              <Image className="hv2-paper hv2-paper-meaning" src={`${assets}/02_homepage/hero/hero-symbol-guide.webp`} width={560} height={560} alt="Meaning Behind Your Crest cover" />
+              <Image className="hv2-paper hv2-paper-certificate" src={`${assets}/02_homepage/hero/hero-heritage-certificate.webp`} width={560} height={560} alt="Heritage Certificate presentation" />
+              <Image className="hv2-crest" src={`${examples}/20-parents-anniversary/final-crest.png`} width={900} height={900} priority sizes="(max-width: 560px) 138px, (max-width: 900px) 74vw, 38vw" alt="Real Parents Anniversary Final Crest" />
+            </div>
+            <div className="hv2-product-caption">
+              <span>Inside the Complete Collection</span>
+              <strong>Final Crest · Heritage Certificate · Family Story · Meaning Behind Your Crest · Complete Collection</strong>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="home-section" id="gift-ideas">
-        <div className="home-shell">
-          <div className="home-section-heading">
-            <p className="home-eyebrow">Perfect for</p>
-            <h2>Made for the moments when ordinary gifts are not enough.</h2>
-            <p>
-              When the person receiving it already has the practical things, give them something
-              that recognizes who they are to the family.
-            </p>
+      <section className="hv2-section hv2-recognition">
+        <div className="hv2-shell">
+          <div className="hv2-heading">
+            <p className="hv2-kicker">Recognition, not another object</p>
+            <h2>Ordinary gifts show what you bought.<br />A legacy collection shows what they meant.</h2>
           </div>
-          <div className="home-card-grid home-occasion-grid">
-            {occasions.map(([title, description, icon, href]) => (
-              <Link className="home-card home-occasion-card" href={href} key={title}>
-                <HomeAsset className="home-card-visual" src={icon} size={220} />
-                <h3>{title}</h3>
-                <p>{description}</p>
+          <div className="hv2-editorial-scenes">
+            {realExamples.slice(0, 3).map(([title, text, id, href], index) => (
+              <Link className={`hv2-scene ${index === 0 ? "hv2-scene-main" : ""}`} href={`/real-examples/${href}`} key={id}>
+                <Image src={`${examples}/${id}/final-crest.png`} width={700} height={700} sizes={index === 0 ? "(max-width: 800px) 90vw, 48vw" : "(max-width: 800px) 90vw, 24vw"} alt={`${title} real Final Crest`} />
+                <div><span>0{index + 1} · Real collection</span><h3>{title}</h3><p>{text}</p><strong>Read the case →</strong></div>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="home-section home-section-ivory">
-        <div className="home-shell">
-          <div className="home-section-heading">
-            <p className="home-eyebrow">What you receive</p>
-            <h2>A private collection of artifacts designed to feel recognized, not generated.</h2>
-            <p>
-              The collection is built around identity, story, symbols, and preservation, so it feels
-              like something a family can open together and keep.
-            </p>
+      <section className="hv2-section hv2-collection" id="collection">
+        <div className="hv2-shell hv2-collection-grid">
+          <div className="hv2-collection-visual">
+            <Image src={`${assets}/04_homepage/features/feature-heritage-certificate.webp`} width={760} height={760} alt="Heritage Certificate from the Complete Collection" />
+            <Image src={`${assets}/04_homepage/features/feature-family-story.webp`} width={520} height={520} alt="Family Story publication" />
+            <Image src={`${assets}/04_homepage/features/feature-symbol-guide.webp`} width={520} height={520} alt="Meaning Behind Your Crest publication" />
           </div>
-          <div className="home-card-grid">
-            {receives.map(([title, description, icon]) => (
-              <article className="home-card home-receive-card" key={title}>
-                <HomeAsset className="home-card-visual" src={icon} size={260} />
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </article>
+          <div>
+            <p className="hv2-kicker">The Complete Collection</p>
+            <h2>More than a Crest. A finished family archive.</h2>
+            <p className="hv2-intro">USD $49 includes five connected artifacts, each carrying a different part of the meaning.</p>
+            <ol className="hv2-artifact-list">
+              <li><b>01</b><div><h3>Final Crest</h3><p>The finished symbolic artwork that brings the family evidence together.</p></div></li>
+              <li><b>02</b><div><h3>Heritage Certificate</h3><p>A frameable presentation of the recipient, dedication, and Final Crest.</p></div></li>
+              <li><b>03</b><div><h3>Family Story</h3><p>A written narrative that recognizes the life and relationships behind the gift.</p></div></li>
+              <li><b>04</b><div><h3>Meaning Behind Your Crest</h3><p>The explanation of why each major symbol belongs.</p></div></li>
+              <li><b>05</b><div><h3>Complete Collection</h3><p>The private archive that keeps every finished file together.</p></div></li>
+            </ol>
+          </div>
+        </div>
+      </section>
+
+      <section className="hv2-section hv2-evidence">
+        <div className="hv2-shell">
+          <div className="hv2-heading hv2-heading-narrow">
+            <p className="hv2-kicker">Evidence creates the design</p>
+            <h2>Every major symbol begins with something the family actually shared.</h2>
+            <p>We do not randomly choose icons, add only a surname, or invent family history.</p>
+          </div>
+          <div className="hv2-evidence-flow">
+            <div className="hv2-evidence-notes">
+              <article><span>Family detail</span><strong>“He always found the way home, and helped everyone else do the same.”</strong></article>
+              <article><span>Meaning</span><strong>Guidance · resilience · belonging</strong></article>
+              <article><span>Symbol choice</span><strong>Compass · mountain path · rooted tree</strong></article>
+            </div>
+            <div className="hv2-evidence-crest">
+              <Image src={`${examples}/01-father-retirement/final-crest.png`} width={720} height={720} alt="Real Father Retirement Final Crest showing evidence-led symbols" />
+            </div>
+            <div className="hv2-evidence-output">
+              <article><b>Design Basis</b><p>The family inputs that anchor the visual direction.</p></article>
+              <article><b>Symbol Rationale</b><p>The reason each selected symbol belongs.</p></article>
+              <article><b>Family Story</b><p>The human meaning carried in written form.</p></article>
+              <article><b>Meaning Behind Your Crest</b><p>A clear guide to reading the finished artwork.</p></article>
+            </div>
+          </div>
+          <p className="hv2-boundary">This is contemporary symbolic artwork, not inherited arms, official heraldry, or genealogical proof.</p>
+        </div>
+      </section>
+
+      <section className="hv2-section hv2-examples" id="examples">
+        <div className="hv2-shell">
+          <div className="hv2-heading hv2-heading-row">
+            <div><p className="hv2-kicker">Real examples</p><h2>Different evidence. Distinctly different collections.</h2></div>
+            <Link href="/real-examples">View All Real Examples →</Link>
+          </div>
+          <div className="hv2-example-grid">
+            {realExamples.map(([title, text, id, href], index) => (
+              <Link className={index === 0 ? "hv2-example-featured" : ""} href={`/real-examples/${href}`} key={id}>
+                <Image src={`${examples}/${id}/final-crest.png`} width={760} height={760} sizes={index === 0 ? "(max-width: 760px) 90vw, 42vw" : "(max-width: 760px) 90vw, 23vw"} alt={`${title} real collection`} />
+                <div><h3>{title}</h3><p>{text}</p></div>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="home-section" id="how-it-works">
-        <div className="home-shell">
-          <div className="home-section-heading">
-            <p className="home-eyebrow">How it works</p>
-            <h2>A clear path from family details to a private legacy collection.</h2>
+      <section className="hv2-section hv2-moments" id="gift-ideas">
+        <div className="hv2-shell">
+          <div className="hv2-heading"><p className="hv2-kicker">Made for meaningful moments</p><h2>Choose the relationship. We help reveal the meaning.</h2></div>
+          <div className="hv2-moment-list">
+            <Link href="/gifts/anniversary"><span>01</span><div><h3>Parents Anniversary</h3><p>How do you honor the family two people built over a lifetime?</p></div><b>For shared devotion and continuity →</b></Link>
+            <Link href="/gifts/father-retirement"><span>02</span><div><h3>Retirement for Father</h3><p>What gift can recognize both his work and what he gave the family?</p></div><b>For guidance, resilience, and legacy →</b></Link>
+            <Link href="/gifts/grandparents"><span>03</span><div><h3>Grandparents</h3><p>How do you preserve the stories everyone assumes they will remember?</p></div><b>For memory, wisdom, and belonging →</b></Link>
+            <Link href="/gifts/wedding"><span>04</span><div><h3>Wedding</h3><p>What marks the beginning of a family without becoming another décor gift?</p></div><b>For two stories becoming one →</b></Link>
           </div>
-          <div className="home-step-line">
-            {steps.map(([number, title, description, icon]) => (
-              <article className="home-step" key={title}>
-                <span>{number}</span>
-                <HomeAsset className="home-card-visual" src={icon} size={220} />
-                <h3>{title}</h3>
-                <p>{description}</p>
-              </article>
-            ))}
+          <p className="hv2-more-moments">Also made for <Link href="/gifts/family-reunion">Family Reunions</Link>, <Link href="/gifts/christmas-family">Christmas</Link>, <Link href="/real-examples/12-memorial">Memorials</Link>, and <Link href="/real-examples/17-adoption-day">New Families</Link>.</p>
+        </div>
+      </section>
+
+      <section className="hv2-section hv2-process" id="how-it-works">
+        <div className="hv2-shell">
+          <div className="hv2-heading hv2-heading-narrow"><p className="hv2-kicker">How it works</p><h2>From the details you know to a collection they can keep.</h2><p>You provide the recipient, occasion, memories, values, and meaningful details. We handle the interpretation and presentation.</p></div>
+          <ol className="hv2-journey">
+            <li><span>01</span><h3>Tell us their story</h3><p>Share the people, moments, values, and details that matter.</p></li>
+            <li><span>02</span><h3>We interpret the evidence</h3><p>Meaning becomes a coherent visual and written direction.</p></li>
+            <li><span>03</span><h3>The collection is created</h3><p>The Crest and supporting documents are prepared together.</p></li>
+            <li><span>04</span><h3>Founder review</h3><p>The collection is checked before release.</p></li>
+            <li><span>05</span><h3>Private delivery</h3><p>The digital Complete Collection is released through your private vault.</p></li>
+          </ol>
+        </div>
+      </section>
+
+      <section className="hv2-section hv2-trust" id="faq">
+        <div className="hv2-shell hv2-trust-grid">
+          <div><p className="hv2-kicker">Private by default</p><h2>Your family story belongs to your family.</h2><p>Inputs remain private, every Founder Edition receives review before release, and delivery happens digitally through a secure private vault.</p>
+            <div className="hv2-trust-links"><Link href="/privacy">Privacy</Link><Link href="/digital-delivery">Digital Delivery</Link><Link href="/refund-policy">Refund Policy</Link><Link href="/support">Support</Link><Link href="/disclaimer">Disclaimer</Link></div>
+          </div>
+          <div className="hv2-faq">
+            {faq.map(([question, answer]) => <details key={question}><summary>{question}</summary><p>{answer}</p></details>)}
           </div>
         </div>
       </section>
 
-      <section className="home-section home-generations">
-        <div className="home-shell home-generations-grid">
-          <div className="home-section-heading">
-            <p className="home-eyebrow">Designed for generations</p>
-            <h2>Built to be opened now, understood later, and preserved for years.</h2>
-            <p>
-              A meaningful keepsake should become more valuable as the family changes, gathers,
-              remembers, and passes stories forward.
-            </p>
-          </div>
-          <div className="home-generation-stack">
-            {generationCards.map(([title, description, icon]) => (
-              <article className="home-generation-card" key={title}>
-                <HomeAsset className="home-card-visual" src={icon} size={260} />
-                <div>
-                  <h3>{title}</h3>
-                  <p>{description}</p>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="home-section">
-        <div className="home-shell home-trust-grid">
-          <article className="home-trust-block">
-            <HomeAsset
-              className="home-card-visual"
-              src={`${finalHomepageAsset}/07_homepage/trust/trust-symbolic-by-design.webp`}
-              size={300}
-            />
-            <p className="home-eyebrow">Trust and clarity</p>
-            <h2>Symbolic by design, private by default.</h2>
-            <p>
-              Your collection is made as a personal symbolic keepsake. It is not published publicly,
-              not an official coat of arms, and not a genealogy claim.
-            </p>
-          </article>
-          <article className="home-trust-block">
-            <HomeAsset
-              className="home-card-visual"
-              src={`${finalHomepageAsset}/07_homepage/trust/trust-privacy-promise.webp`}
-              size={300}
-            />
-            <p className="home-eyebrow">Privacy promise</p>
-            <h2>Your family story belongs to your family.</h2>
-            <p>
-              The collection is delivered through a private vault experience and designed for
-              personal keeping, family sharing, and trusted gifting.
-            </p>
-          </article>
-        </div>
-      </section>
-
-      <section className="home-final-cta">
-        <div className="home-shell home-final-inner">
-          <p className="home-eyebrow">Begin with confidence</p>
-          <h2>Begin a Legacy Worth Keeping</h2>
-          <p>
-            Founder Edition is a personalized digital collection, normally delivered within two
-            business days after payment and review. Support will review delivery defects,
-            incorrect recipient details, and refund eligibility under our published policy.
-          </p>
-          <Link className="home-button home-button-primary" href="/create">
-            Start Your Legacy Journey
-          </Link>
-        </div>
-      </section>
-
-      <section className="home-section home-faq" id="faq">
-        <div className="home-shell">
-          <h2>FAQ</h2>
-          <div className="home-faq-list">
-            {homeFaq.map(([question, answer]) => (
-              <div key={question}>
-                <span>{question}</span>
-                <strong>{answer}</strong>
-              </div>
-            ))}
-          </div>
+      <section className="hv2-final">
+        <div className="hv2-shell hv2-final-inner">
+          <p className="hv2-kicker">A gift made from what matters</p>
+          <h2>Give them a collection only their family could inspire.</h2>
+          <p>One Founder-reviewed digital Family Legacy Collection · USD $49 · Private delivery</p>
+          <div className="hv2-actions"><Link className="hv2-button hv2-primary" href="/create">Begin Their Legacy</Link><Link className="hv2-button hv2-secondary" href="/real-examples">View Real Examples</Link></div>
+          <small>No physical shipping included. Printing and framing are arranged separately.</small>
         </div>
       </section>
     </main>
