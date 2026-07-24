@@ -314,6 +314,17 @@ jobs:
               echo "processlist_begin"
               mysql_query "SHOW FULL PROCESSLIST;" || true
               echo "processlist_end"
+
+              echo "container_network_map_begin"
+              while read -r container_id; do
+                [ -n "$container_id" ] || continue
+                docker inspect --format \
+                  'name={{.Name}} status={{.State.Status}} running={{.State.Running}} oneoff={{index .Config.Labels "com.docker.compose.oneoff"}} service={{index .Config.Labels "com.docker.compose.service"}} created={{.Created}} ip={{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}} command={{json .Config.Cmd}}' \
+                  "$container_id" || true
+              done < <(
+                docker ps -aq --filter label=com.docker.compose.project=mykinlegacy
+              )
+              echo "container_network_map_end"
               echo "DATABASE_LOCK_EVIDENCE_END"
               ;;
             terminate_stuck_production_deployment)
