@@ -11,6 +11,7 @@ on:
           - health_check
           - inspect_production_lock
           - inspect_database_locks
+          - inspect_mysql_incident
           - terminate_stale_seed_database_sessions
           - terminate_stuck_production_deployment
           - restart_nginx
@@ -73,7 +74,7 @@ jobs:
           : "${OPS_ACTION:?Missing action}"
 
           case "$OPS_ACTION" in
-            health_check|inspect_production_lock|inspect_database_locks|terminate_stale_seed_database_sessions|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
+            health_check|inspect_production_lock|inspect_database_locks|inspect_mysql_incident|terminate_stale_seed_database_sessions|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
               ;;
             switch_stripe_live)
               : "${STRIPE_LIVE_SECRET_KEY:?Missing MYKINLEGACY_STRIPE_LIVE_SECRET_KEY}"
@@ -613,6 +614,35 @@ jobs:
 
               bash "$PROJECT_DIR/deployment/health-check.sh"
               echo "CONTROLLED_TERMINATION_COMPLETE current_production_commit=$last_successful_commit"
+              ;;
+            inspect_mysql_incident)
+              echo "READ_ONLY_ACTION inspect_mysql_incident no_git_pull=yes no_container_mutation=yes"
+              echo "MYSQL_INCIDENT_EVIDENCE_BEGIN"
+              echo "vps_time=$(date --iso-8601=seconds)"
+              echo "mysql_state_begin"
+              docker inspect --format \
+                'name={{.Name}} status={{.State.Status}} running={{.State.Running}} restarting={{.State.Restarting}} oom_killed={{.State.OOMKilled}} exit_code={{.State.ExitCode}} error={{json .State.Error}} restart_count={{.RestartCount}} started={{.State.StartedAt}} finished={{.State.FinishedAt}}' \
+                mykinlegacy_mysql || true
+              echo "mysql_state_end"
+              echo "mysql_logs_begin"
+              docker logs mykinlegacy_mysql --tail 200 2>&1 || true
+              echo "mysql_logs_end"
+              echo "host_filesystems_begin"
+              df -h / /var/lib/docker 2>&1 || true
+              df -i / /var/lib/docker 2>&1 || true
+              echo "host_filesystems_end"
+              echo "docker_storage_begin"
+              docker system df 2>&1 || true
+              mysql_volume="$(docker inspect --format '{{range .Mounts}}{{if eq .Destination "/var/lib/mysql"}}{{.Source}}{{end}}{{end}}' mykinlegacy_mysql 2>/dev/null || true)"
+              if [ -n "$mysql_volume" ] && [ -d "$mysql_volume" ]; then
+                df -h "$mysql_volume" 2>&1 || true
+                df -i "$mysql_volume" 2>&1 || true
+                du -sh "$mysql_volume" 2>&1 || true
+              else
+                echo "mysql_volume_path=unavailable"
+              fi
+              echo "docker_storage_end"
+              echo "MYSQL_INCIDENT_EVIDENCE_END"
               ;;
             safe_deploy)
               git fetch origin main
