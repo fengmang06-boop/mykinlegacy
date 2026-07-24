@@ -12,6 +12,7 @@ on:
           - inspect_production_lock
           - inspect_database_locks
           - inspect_mysql_incident
+          - reclaim_unused_docker_images
           - terminate_stale_seed_database_sessions
           - terminate_stuck_production_deployment
           - restart_nginx
@@ -74,7 +75,7 @@ jobs:
           : "${OPS_ACTION:?Missing action}"
 
           case "$OPS_ACTION" in
-            health_check|inspect_production_lock|inspect_database_locks|inspect_mysql_incident|terminate_stale_seed_database_sessions|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
+            health_check|inspect_production_lock|inspect_database_locks|inspect_mysql_incident|reclaim_unused_docker_images|terminate_stale_seed_database_sessions|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
               ;;
             switch_stripe_live)
               : "${STRIPE_LIVE_SECRET_KEY:?Missing MYKINLEGACY_STRIPE_LIVE_SECRET_KEY}"
@@ -643,6 +644,64 @@ jobs:
               fi
               echo "docker_storage_end"
               echo "MYSQL_INCIDENT_EVIDENCE_END"
+              ;;
+            reclaim_unused_docker_images)
+              echo "CONTROLLED_ACTION reclaim_unused_docker_images"
+              echo "scope=unused_images_only volumes_untouched=yes running_containers_untouched=yes"
+              rollback_image_file="$PROJECT_DIR/deployment/.last-successful-image"
+              test -s "$rollback_image_file"
+              rollback_image="$(tr -d '\r\n' < "$rollback_image_file")"
+              test -n "$rollback_image"
+              docker image inspect "$rollback_image" >/dev/null
+
+              guard_name="mykinlegacy-rollback-image-guard"
+              existing_guard_image="$(
+                docker inspect --format '{{.Config.Image}}' "$guard_name" 2>/dev/null || true
+              )"
+              if [ -n "$existing_guard_image" ] && [ "$existing_guard_image" != "$rollback_image" ]; then
+                echo "REFUSING_IMAGE_RECLAIM reason=rollback_guard_image_mismatch" >&2
+                exit 72
+              fi
+              if [ -z "$existing_guard_image" ]; then
+                docker create \
+                  --name "$guard_name" \
+                  --label com.mykinlegacy.purpose=rollback-image-guard \
+                  --entrypoint /bin/true \
+                  "$rollback_image" >/dev/null
+              fi
+
+              echo "rollback_image_protected=$rollback_image"
+              echo "disk_before_begin"
+              df -h /
+              docker system df
+              echo "disk_before_end"
+
+              docker image prune --all --force
+
+              echo "disk_after_begin"
+              df -h /
+              docker system df
+              echo "disk_after_end"
+              docker image inspect "$rollback_image" >/dev/null
+              docker inspect "$guard_name" >/dev/null
+
+              mysql_ready=no
+              for attempt in $(seq 1 60); do
+                mysql_status="$(docker inspect --format '{{.State.Status}}' mykinlegacy_mysql 2>/dev/null || true)"
+                mysql_health="$(docker inspect --format '{{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}}' mykinlegacy_mysql 2>/dev/null || true)"
+                echo "mysql_recovery_attempt=$attempt status=$mysql_status health=$mysql_health"
+                if [ "$mysql_status" = "running" ] && [ "$mysql_health" = "healthy" ]; then
+                  mysql_ready=yes
+                  break
+                fi
+                sleep 2
+              done
+              if [ "$mysql_ready" != "yes" ]; then
+                echo "MYSQL_RECOVERY_FAILED after_image_reclaim=yes" >&2
+                exit 73
+              fi
+              bash "$PROJECT_DIR/deployment/health-check.sh"
+              echo "CONTROLLED_IMAGE_RECLAIM_COMPLETE mysql_recovered=yes"
               ;;
             safe_deploy)
               git fetch origin main
