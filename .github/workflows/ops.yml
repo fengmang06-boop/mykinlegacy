@@ -201,9 +201,11 @@ jobs:
                 {
                   command -v lslocks >/dev/null 2>&1 &&
                     lslocks -n -o PID,PATH 2>/dev/null |
-                    awk -v lock="$LOCK_FILE" '$2 == lock && $1 ~ /^[0-9]+$/ { print $1 }'
+                    awk -v lock="$LOCK_FILE" '$2 == lock && $1 ~ /^[0-9]+$/ { print $1 }' ||
+                    true
                   command -v fuser >/dev/null 2>&1 &&
-                    fuser "$LOCK_FILE" 2>/dev/null | tr ' ' '\n'
+                    fuser "$LOCK_FILE" 2>/dev/null | tr ' ' '\n' ||
+                    true
                 } | awk '/^[0-9]+$/' | sort -u
               )"
 

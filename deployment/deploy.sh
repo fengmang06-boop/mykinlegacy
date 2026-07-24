@@ -212,11 +212,27 @@ phase "Starting MySQL and Redis"
 compose up -d mysql redis
 
 phase "Running database migrations"
-compose run --rm api corepack pnpm db:migrate:deploy
+if timeout --signal=TERM --kill-after=30s "${MIGRATION_TIMEOUT_SECONDS:-600}" \
+  $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" \
+  run --rm api corepack pnpm db:migrate:deploy; then
+  echo "DEPLOYMENT_STAGE_COMPLETE stage=database_migrations"
+else
+  migration_status=$?
+  echo "DEPLOYMENT_STAGE_FAILED stage=database_migrations exit_code=$migration_status" >&2
+  exit "$migration_status"
+fi
 
 if [ "${RUN_SEED:-true}" = "true" ]; then
   phase "Running seed data"
-  compose run --rm api sh -lc "corepack pnpm db:seed"
+  if timeout --signal=TERM --kill-after=30s "${SEED_TIMEOUT_SECONDS:-600}" \
+    $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" \
+    run --rm api sh -lc "corepack pnpm db:seed"; then
+    echo "DEPLOYMENT_STAGE_COMPLETE stage=seed_data"
+  else
+    seed_status=$?
+    echo "DEPLOYMENT_STAGE_FAILED stage=seed_data exit_code=$seed_status" >&2
+    exit "$seed_status"
+  fi
 fi
 
 phase "Starting application services"
