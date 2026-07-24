@@ -12,6 +12,7 @@ on:
           - inspect_production_lock
           - inspect_database_locks
           - inspect_mysql_incident
+          - inspect_storage_baseline
           - reclaim_unused_docker_images
           - terminate_stale_seed_database_sessions
           - terminate_stuck_production_deployment
@@ -75,7 +76,7 @@ jobs:
           : "${OPS_ACTION:?Missing action}"
 
           case "$OPS_ACTION" in
-            health_check|inspect_production_lock|inspect_database_locks|inspect_mysql_incident|reclaim_unused_docker_images|terminate_stale_seed_database_sessions|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
+            health_check|inspect_production_lock|inspect_database_locks|inspect_mysql_incident|inspect_storage_baseline|reclaim_unused_docker_images|terminate_stale_seed_database_sessions|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
               ;;
             switch_stripe_live)
               : "${STRIPE_LIVE_SECRET_KEY:?Missing MYKINLEGACY_STRIPE_LIVE_SECRET_KEY}"
@@ -644,6 +645,104 @@ jobs:
               fi
               echo "docker_storage_end"
               echo "MYSQL_INCIDENT_EVIDENCE_END"
+              ;;
+            inspect_storage_baseline)
+              echo "READ_ONLY_ACTION inspect_storage_baseline no_git_pull=yes no_container_mutation=yes"
+              echo "VPS_STORAGE_BASELINE_BEGIN"
+              echo "vps_time=$(date --iso-8601=seconds)"
+              echo "vps_timezone=$(timedatectl show -p Timezone --value 2>/dev/null || date +%Z)"
+              echo "host_filesystems_begin"
+              df -B1 / /var/lib/docker 2>&1 || true
+              df -i / /var/lib/docker 2>&1 || true
+              echo "host_filesystems_end"
+              echo "path_sizes_begin"
+              for path in \
+                "$PROJECT_DIR" \
+                "$PROJECT_DIR/releases" \
+                "$PROJECT_DIR/logs" \
+                /var/log/journal \
+                /var/log/nginx \
+                /var/log \
+                /tmp \
+                /var/tmp; do
+                if [ -e "$path" ]; then
+                  du -sx -B1 "$path" 2>/dev/null | awk -v path="$path" '{print "path_bytes=" $1 " path=" path}'
+                else
+                  echo "path_bytes=0 path=$path status=absent"
+                fi
+              done
+              echo "path_sizes_end"
+              echo "docker_system_df_begin"
+              docker system df --verbose 2>&1 || true
+              echo "docker_system_df_end"
+              echo "containers_begin"
+              docker ps -a --no-trunc --format \
+                'id={{.ID}} name={{.Names}} image={{.Image}} status={{.Status}} size={{.Size}}' || true
+              echo "containers_end"
+              echo "images_begin"
+              docker image ls --no-trunc --digests --format \
+                'id={{.ID}} repository={{.Repository}} tag={{.Tag}} digest={{.Digest}} created={{.CreatedAt}} size={{.Size}}' || true
+              echo "images_end"
+              echo "volumes_begin"
+              for volume in $(docker volume ls -q); do
+                docker volume inspect --format \
+                  'name={{.Name}} driver={{.Driver}} mountpoint={{.Mountpoint}} labels={{json .Labels}}' \
+                  "$volume" || true
+              done
+              echo "volumes_end"
+              echo "networks_begin"
+              docker network ls --no-trunc --format \
+                'id={{.ID}} name={{.Name}} driver={{.Driver}} scope={{.Scope}}' || true
+              echo "networks_end"
+              echo "release_state_begin"
+              for state_file in \
+                .current_revision \
+                .last-successful-commit \
+                .previous_revision \
+                .last-successful-image \
+                .previous_image; do
+                if [ -s "$PROJECT_DIR/deployment/$state_file" ]; then
+                  echo "$state_file=$(tr -d '\r\n' < "$PROJECT_DIR/deployment/$state_file")"
+                else
+                  echo "$state_file=absent"
+                fi
+              done
+              echo "git_commit=$(git -C "$PROJECT_DIR" rev-parse HEAD 2>/dev/null || echo unavailable)"
+              echo "git_branch=$(git -C "$PROJECT_DIR" rev-parse --abbrev-ref HEAD 2>/dev/null || echo unavailable)"
+              echo "release_state_end"
+              echo "lock_state_begin"
+              cat "$PROJECT_DIR/deployment/.production.lock.meta" 2>/dev/null || echo "lock_metadata=absent"
+              lslocks -n -o PID,PATH 2>/dev/null |
+                awk -v lock="$PROJECT_DIR/deployment/.production.lock" '$2 == lock {print "kernel_holder_pid=" $1}' || true
+              echo "lock_state_end"
+              echo "mysql_storage_begin"
+              mysql_volume="$(docker inspect --format '{{range .Mounts}}{{if eq .Destination "/var/lib/mysql"}}{{.Source}}{{end}}{{end}}' mykinlegacy_mysql 2>/dev/null || true)"
+              if [ -n "$mysql_volume" ] && [ -d "$mysql_volume" ]; then
+                du -sx -B1 "$mysql_volume" 2>/dev/null |
+                  awk -v path="$mysql_volume" '{print "mysql_data_bytes=" $1 " path=" path}'
+                find "$mysql_volume" -maxdepth 1 -type f \
+                  \( -name 'binlog.*' -o -name 'mysql-bin.*' \) -printf '%s\n' 2>/dev/null |
+                  awk '{sum += $1} END {print "mysql_binlog_bytes=" (sum+0)}'
+                find "$mysql_volume/#innodb_redo" -maxdepth 1 -type f -printf '%s\n' 2>/dev/null |
+                  awk '{sum += $1} END {print "innodb_redo_bytes=" (sum+0)}'
+                find "$mysql_volume" -maxdepth 1 -type f \
+                  \( -name 'ibdata*' -o -name '*.ibd' \) -printf '%s\n' 2>/dev/null |
+                  awk '{sum += $1} END {print "innodb_data_bytes=" (sum+0)}'
+              else
+                echo "mysql_volume_path=unavailable"
+              fi
+              docker inspect --format \
+                'mysql_status={{.State.Status}} mysql_health={{if .State.Health}}{{.State.Health.Status}}{{else}}none{{end}} mysql_restart_count={{.RestartCount}} mysql_started={{.State.StartedAt}}' \
+                mykinlegacy_mysql 2>/dev/null || true
+              docker exec mykinlegacy_mysql sh -lc \
+                'mysqladmin ping -h 127.0.0.1 -u"$MYSQL_USER" -p"$MYSQL_PASSWORD" --silent' \
+                >/dev/null 2>&1 && echo "mysql_ping=ok" || echo "mysql_ping=failed"
+              echo "mysql_storage_end"
+              echo "largest_paths_begin"
+              du -x -B1 -d 2 /var/lib/docker "$PROJECT_DIR" /var/log /tmp /var/tmp 2>/dev/null |
+                sort -nr | head -20 || true
+              echo "largest_paths_end"
+              echo "VPS_STORAGE_BASELINE_END"
               ;;
             reclaim_unused_docker_images)
               echo "CONTROLLED_ACTION reclaim_unused_docker_images"
