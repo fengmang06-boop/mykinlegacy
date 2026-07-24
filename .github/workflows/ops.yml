@@ -11,6 +11,7 @@ on:
           - health_check
           - inspect_production_lock
           - inspect_database_locks
+          - terminate_stale_seed_database_sessions
           - terminate_stuck_production_deployment
           - restart_nginx
           - restart_services
@@ -72,7 +73,7 @@ jobs:
           : "${OPS_ACTION:?Missing action}"
 
           case "$OPS_ACTION" in
-            health_check|inspect_production_lock|inspect_database_locks|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
+            health_check|inspect_production_lock|inspect_database_locks|terminate_stale_seed_database_sessions|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
               ;;
             switch_stripe_live)
               : "${STRIPE_LIVE_SECRET_KEY:?Missing MYKINLEGACY_STRIPE_LIVE_SECRET_KEY}"
@@ -326,6 +327,144 @@ jobs:
               )
               echo "container_network_map_end"
               echo "DATABASE_LOCK_EVIDENCE_END"
+              ;;
+            terminate_stale_seed_database_sessions)
+              echo "CONTROLLED_ACTION terminate_stale_seed_database_sessions"
+              EXPECTED_COMMIT="c71c9626f60ce9aa59db5db64f384e55c9bc7c0b"
+              set -a
+              # shellcheck disable=SC1090
+              . "$PROJECT_DIR/deployment/.env.production"
+              set +a
+              mysql_query() {
+                docker compose -p mykinlegacy --env-file "$PROJECT_DIR/deployment/.env.production" \
+                  -f "$PROJECT_DIR/deployment/docker-compose.yml" exec -T mysql \
+                  mysql --batch --raw --skip-column-names \
+                  -uroot "-p${MYSQL_ROOT_PASSWORD:-}" "${MYSQL_DATABASE:-mykinlegacy}" \
+                  -e "$1"
+              }
+
+              last_successful_commit="$(tr -d '[:space:]' < "$PROJECT_DIR/deployment/.last-successful-commit")"
+              [ "$last_successful_commit" = "$EXPECTED_COMMIT" ] || {
+                echo "REFUSE_DATABASE_SESSION_TERMINATION reason=unexpected_last_successful_commit actual=$last_successful_commit" >&2
+                exit 61
+              }
+
+              required_services=(mysql redis api worker web nginx)
+              for service in "${required_services[@]}"; do
+                container_id="$(
+                  docker compose -p mykinlegacy --env-file "$PROJECT_DIR/deployment/.env.production" \
+                    -f "$PROJECT_DIR/deployment/docker-compose.yml" ps -q "$service"
+                )"
+                [ -n "$container_id" ] || {
+                  echo "REFUSE_DATABASE_SESSION_TERMINATION reason=missing_service service=$service" >&2
+                  exit 62
+                }
+                running="$(docker inspect --format '{{.State.Running}}' "$container_id")"
+                restarting="$(docker inspect --format '{{.State.Restarting}}' "$container_id")"
+                [ "$running" = "true" ] && [ "$restarting" = "false" ] || {
+                  echo "REFUSE_DATABASE_SESSION_TERMINATION reason=unhealthy_service_state service=$service running=$running restarting=$restarting" >&2
+                  exit 63
+                }
+              done
+
+              mapfile -t seed_containers < <(
+                docker ps \
+                  --filter label=com.docker.compose.project=mykinlegacy \
+                  --filter label=com.docker.compose.oneoff=True \
+                  --filter label=com.docker.compose.service=api \
+                  --format '{{.ID}}'
+              )
+              [ "${#seed_containers[@]}" -eq 1 ] || {
+                echo "REFUSE_DATABASE_SESSION_TERMINATION reason=expected_exactly_one_running_api_oneoff actual=${#seed_containers[@]}" >&2
+                exit 64
+              }
+              seed_container="${seed_containers[0]}"
+              seed_command="$(docker inspect --format '{{json .Config.Cmd}}' "$seed_container")"
+              [[ "$seed_command" == *"corepack"*"pnpm"*"db:seed"* ]] || {
+                echo "REFUSE_DATABASE_SESSION_TERMINATION reason=oneoff_command_not_seed command=$seed_command" >&2
+                exit 65
+              }
+              seed_ip="$(docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$seed_container")"
+              [[ "$seed_ip" =~ ^[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+$ ]] || {
+                echo "REFUSE_DATABASE_SESSION_TERMINATION reason=invalid_seed_container_ip" >&2
+                exit 66
+              }
+              echo "verified_seed_container=$(docker inspect --format '{{.Name}}' "$seed_container") ip=$seed_ip command=$seed_command"
+
+              mapfile -t stale_threads < <(
+                mysql_query "
+                  SELECT p.ID
+                  FROM information_schema.PROCESSLIST p
+                  JOIN information_schema.innodb_trx t ON t.trx_mysql_thread_id = p.ID
+                  WHERE SUBSTRING_INDEX(p.HOST, ':', 1) = '${seed_ip}'
+                    AND p.COMMAND = 'Query'
+                    AND p.STATE = 'waiting for handler commit'
+                    AND TRIM(p.INFO) = 'COMMIT'
+                    AND TIMESTAMPDIFF(SECOND, t.trx_started, NOW()) >= 600
+                  ORDER BY p.ID;
+                "
+              )
+              [ "${#stale_threads[@]}" -ge 1 ] && [ "${#stale_threads[@]}" -le 4 ] || {
+                echo "REFUSE_DATABASE_SESSION_TERMINATION reason=unexpected_stale_thread_count actual=${#stale_threads[@]}" >&2
+                exit 67
+              }
+
+              for thread_id in "${stale_threads[@]}"; do
+                [[ "$thread_id" =~ ^[0-9]+$ ]] || {
+                  echo "REFUSE_DATABASE_SESSION_TERMINATION reason=invalid_thread_id" >&2
+                  exit 68
+                }
+                unexpected_locks="$(mysql_query "
+                  SELECT COUNT(*)
+                  FROM performance_schema.data_locks dl
+                  JOIN performance_schema.threads th ON th.THREAD_ID = dl.THREAD_ID
+                  WHERE th.PROCESSLIST_ID = ${thread_id}
+                    AND (
+                      dl.OBJECT_SCHEMA <> '${MYSQL_DATABASE:-mykinlegacy}'
+                      OR dl.OBJECT_NAME NOT IN ('products', 'deliverable_types')
+                    );
+                ")"
+                [ "$unexpected_locks" = "0" ] || {
+                  echo "REFUSE_DATABASE_SESSION_TERMINATION reason=unexpected_lock_scope thread_id=$thread_id count=$unexpected_locks" >&2
+                  exit 69
+                }
+                expected_locks="$(mysql_query "
+                  SELECT COUNT(*)
+                  FROM performance_schema.data_locks dl
+                  JOIN performance_schema.threads th ON th.THREAD_ID = dl.THREAD_ID
+                  WHERE th.PROCESSLIST_ID = ${thread_id}
+                    AND dl.OBJECT_SCHEMA = '${MYSQL_DATABASE:-mykinlegacy}'
+                    AND dl.OBJECT_NAME IN ('products', 'deliverable_types');
+                ")"
+                [ "$expected_locks" -ge 1 ] || {
+                  echo "REFUSE_DATABASE_SESSION_TERMINATION reason=no_expected_seed_locks thread_id=$thread_id" >&2
+                  exit 70
+                }
+                echo "verified_stale_seed_session thread_id=$thread_id expected_lock_count=$expected_locks"
+              done
+
+              for thread_id in "${stale_threads[@]}"; do
+                mysql_query "KILL CONNECTION ${thread_id};"
+                echo "terminated_stale_seed_session thread_id=$thread_id"
+              done
+              docker rm -f "$seed_container" >/dev/null
+              echo "removed_stale_seed_container=yes"
+
+              remaining="$(
+                mysql_query "
+                  SELECT COUNT(*)
+                  FROM information_schema.PROCESSLIST p
+                  LEFT JOIN information_schema.innodb_trx t ON t.trx_mysql_thread_id = p.ID
+                  WHERE SUBSTRING_INDEX(p.HOST, ':', 1) = '${seed_ip}'
+                    AND (p.STATE = 'waiting for handler commit' OR t.trx_id IS NOT NULL);
+                "
+              )"
+              [ "$remaining" = "0" ] || {
+                echo "DATABASE_SESSION_TERMINATION_FAILED reason=matching_sessions_remain count=$remaining" >&2
+                exit 71
+              }
+              bash "$PROJECT_DIR/deployment/health-check.sh"
+              echo "STALE_SEED_DATABASE_SESSION_TERMINATION_COMPLETE sessions=${#stale_threads[@]} current_production_commit=$last_successful_commit"
               ;;
             terminate_stuck_production_deployment)
               echo "CONTROLLED_ACTION terminate_stuck_production_deployment"
