@@ -404,7 +404,7 @@ jobs:
                   exit 67
                 }
                 IFS=$'\t' read -r row_id row_user row_host row_db row_command row_time row_state row_info <<<"$process_row"
-                [ "$row_id" = "$thread_id" ] &&
+                if [ "$row_id" = "$thread_id" ] &&
                   [ "$row_user" = "${MYSQL_USER:-mykinlegacy}" ] &&
                   [ "${row_host%%:*}" = "$seed_ip" ] &&
                   [ "$row_db" = "${MYSQL_DATABASE:-mykinlegacy}" ] &&
@@ -412,10 +412,12 @@ jobs:
                   [[ "$row_time" =~ ^[0-9]+$ ]] &&
                   [ "$row_time" -ge 600 ] &&
                   [ "$row_state" = "waiting for handler commit" ] &&
-                  [ "$row_info" = "COMMIT" ] || {
-                    echo "REFUSE_DATABASE_SESSION_TERMINATION reason=incident_thread_state_changed thread_id=$thread_id" >&2
-                    exit 68
-                  }
+                  [ "$row_info" = "COMMIT" ]; then
+                  :
+                else
+                  echo "REFUSE_DATABASE_SESSION_TERMINATION reason=incident_thread_state_changed thread_id=$thread_id" >&2
+                  exit 68
+                fi
                 stale_threads+=("$thread_id")
               done
               [ "${#stale_threads[@]}" -eq 2 ] || {
