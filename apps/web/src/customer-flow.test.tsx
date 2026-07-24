@@ -7,6 +7,9 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, it, vi } from "vitest";
 
 import HomePage from "./app/page";
+import CollectionPage, {
+  metadata as collectionMetadata
+} from "./app/family-legacy-collection/page";
 import { metadata as checkoutMetadata } from "./app/checkout/[order_number]/page";
 import { metadata as createMetadata } from "./app/create/page";
 import { metadata as downloadMetadata } from "./app/download/[token]/page";
@@ -67,10 +70,36 @@ describe("customer frontend flow", () => {
     );
   });
 
-  it("product page does not hardcode display price", async () => {
+  it("collection page renders the approved five-part product contract", () => {
+    const html = renderToStaticMarkup(<CollectionPage />);
+
+    expect(html).toContain("A complete family legacy collection, shaped from their real story.");
+    expect(html).toContain("USD $49");
+    expect(html).toContain("Final Crest");
+    expect(html).toContain("Heritage Certificate");
+    expect(html).toContain("Family Story");
+    expect(html).toContain("Meaning Behind Your Crest");
+    expect(html).toContain("Complete Collection");
+    expect(html).toContain("Private Vault delivery");
+    expect(html).toContain("No physical shipping included");
+    expect(html).toContain("official heraldry or genealogical proof");
+    expect(html).not.toContain("Family Legacy Certificate");
+    expect(html).not.toContain('"@type":"FAQPage"');
+    expect(collectionMetadata.alternates?.canonical).toBe(
+      "https://mykinlegacy.com/family-legacy-collection"
+    );
+    expect(collectionMetadata.title).toBe("Personalized Family Legacy Collection | MyKinLegacy");
+    expect(collectionMetadata.description).toBe(
+      "Turn their real family story into a Final Crest, Heritage Certificate, Family Story, meaning guide, and private digital Complete Collection."
+    );
+  });
+
+  it("collection page source has no limited-stock pressure", async () => {
     const source = await readFile(join(testDir, "app/family-legacy-collection/page.tsx"), "utf8");
-    expect(source).not.toContain("$49");
-    expect(source).not.toContain("price_cents");
+    expect(source).not.toContain("first 25");
+    expect(source).not.toContain("LimitedAvailability");
+    expect(source).toContain("/assets/showcase-collections/01-father-retirement/final-crest.png");
+    expect(source).toContain('className="cv2-suite-label">Family Story</span>');
   });
 
   it("confirm flow sends delivery email into order creation payload", async () => {
@@ -343,8 +372,12 @@ describe("customer frontend flow", () => {
 
   it("download vault helpers hide sample placeholder sizes without raw token data", () => {
     expect(isPlaceholderAsset({ size_bytes: 100, status: "available_for_download" })).toBe(true);
-    expect(formatArtifactSizeLabel({ size_bytes: 100, status: "available_for_download" })).toBeNull();
-    expect(formatArtifactSizeLabel({ size_bytes: 2048, status: "available_for_download" })).toBe("2.0 KB");
+    expect(
+      formatArtifactSizeLabel({ size_bytes: 100, status: "available_for_download" })
+    ).toBeNull();
+    expect(formatArtifactSizeLabel({ size_bytes: 2048, status: "available_for_download" })).toBe(
+      "2.0 KB"
+    );
   });
 
   it("download vault shell does not expose the raw token in rendered markup", () => {

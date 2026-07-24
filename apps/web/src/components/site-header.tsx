@@ -28,17 +28,13 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const dialog = useRef<HTMLDivElement>(null);
-  const restoreFocusAfterClose = useRef(false);
   const closeMenu = useCallback(({ restoreFocus }: { restoreFocus: boolean }) => {
-    restoreFocusAfterClose.current = restoreFocus;
     setOpen(false);
+    if (!restoreFocus) return;
+    window.setTimeout(() => {
+      menuButton.current?.focus({ preventScroll: true });
+    });
   }, []);
-
-  useEffect(() => {
-    if (open || !restoreFocusAfterClose.current) return;
-    restoreFocusAfterClose.current = false;
-    menuButton.current?.focus({ preventScroll: true });
-  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -104,7 +100,11 @@ export function SiteHeader() {
       </nav>
       {open ? (
         <div className="mobile-menu-layer">
-          <button className="mobile-menu-backdrop" type="button" tabIndex={-1} aria-label="Close navigation menu" onClick={() => closeMenu({ restoreFocus: true })} />
+          <div
+            className="mobile-menu-backdrop"
+            aria-hidden="true"
+            onClick={() => closeMenu({ restoreFocus: true })}
+          />
           <div className="mobile-menu-panel" id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Navigation menu" ref={dialog}>
             <div className="mobile-menu-heading">
               <span>Explore MyKinLegacy</span>
