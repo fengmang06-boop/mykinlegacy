@@ -55,6 +55,66 @@ jobs:
           echo "app_image_latest=${IMAGE_NAME}:main" >> "$GITHUB_OUTPUT"
           echo "Image: ${IMAGE_NAME}:${GITHUB_SHA}"
 
+      - name: Configure SSH for capacity preflight
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64
+          import os
+          import sys
+          from pathlib import Path
+
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid production SSH key.", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "mykinlegacy_prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keygen -y -f ~/.ssh/mykinlegacy_prod >/dev/null
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Production capacity gate before build
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -o BatchMode=yes \
+            -o IdentitiesOnly=yes \
+            -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'bash -s' -- "$PROD_PROJECT_DIR" <<'REMOTE_SCRIPT'
+          set -euo pipefail
+          PROJECT_DIR="$1"
+          cd "$PROJECT_DIR"
+          bash deployment/with-production-lock.sh "deploy-capacity-preflight" bash -lc '
+            set -euo pipefail
+            read -r total used free usage < <(df -P -B1 / | awk "NR == 2 {gsub(/%/, \"\", \$5); print \$2, \$3, \$4, \$5}")
+            read -r itotal iused ifree iusage < <(df -P -i / | awk "NR == 2 {gsub(/%/, \"\", \$5); print \$2, \$3, \$4, \$5}")
+            mysql_health="$(docker inspect --format "{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}" mykinlegacy_mysql 2>/dev/null || echo unavailable)"
+            docker info >/dev/null 2>&1 && docker_health=healthy || docker_health=unhealthy
+            echo "CAPACITY_PREFLIGHT usage_percent=$usage free_bytes=$free inode_percent=$iusage mysql=$mysql_health docker=$docker_health"
+            if [ "$usage" -ge 85 ] || [ "$free" -lt 16106127360 ] || [ "$iusage" -ge 85 ] ||
+              [ "$mysql_health" != healthy ] || [ "$docker_health" != healthy ]; then
+              echo "DEPLOYMENT_BLOCKED_LOW_DISK_CAPACITY" >&2
+              exit 78
+            fi
+            echo "CAPACITY_PREFLIGHT_PASS"
+          '
+          REMOTE_SCRIPT
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 

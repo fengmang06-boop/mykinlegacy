@@ -1,0 +1,91 @@
+name: MyKinLegacy VPS Capacity Monitor
+
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mykinlegacy-vps-capacity-monitor
+  cancel-in-progress: false
+
+jobs:
+  monitor:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${PROD_SSH_HOST:?}"
+          : "${PROD_SSH_USER:?}"
+          : "${PROD_SSH_PORT:?}"
+          : "${PROD_SSH_PRIVATE_KEY:?}"
+          : "${PROD_PROJECT_DIR:?}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$PROD_SSH_PRIVATE_KEY" > ~/.ssh/mykinlegacy_prod
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Collect read-only capacity status
+        id: capacity
+        shell: bash
+        run: |
+          set +e
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -p "$PROD_SSH_PORT" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=20 \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            "cd '$PROD_PROJECT_DIR' && bash deployment/vps-capacity-monitor.sh" \
+            > capacity-status.txt 2> capacity-monitor.stderr
+          status=$?
+          set -e
+          cat capacity-status.txt
+          if [ -s capacity-monitor.stderr ]; then
+            sed -E 's/(password|secret|token|key)=[^[:space:]]+/\1=[REDACTED]/Ig' capacity-monitor.stderr >&2
+          fi
+          level="$(awk -F= '$1 == "alert_level" {print $2}' capacity-status.txt | tail -1)"
+          allowed="$(awk -F= '$1 == "deployment_allowed" {print $2}' capacity-status.txt | tail -1)"
+          echo "alert_level=${level:-UNKNOWN}" >> "$GITHUB_OUTPUT"
+          echo "deployment_allowed=${allowed:-UNKNOWN}" >> "$GITHUB_OUTPUT"
+          if [ "$level" = "WARNING" ] || [ "$level" = "HIGH" ]; then
+            echo "::warning title=VPS capacity ${level}::Deployment allowed: ${allowed:-UNKNOWN}"
+          fi
+          exit "$status"
+
+      - name: Write workflow summary
+        if: always()
+        shell: bash
+        run: |
+          {
+            echo "## MyKinLegacy VPS capacity"
+            echo
+            echo "- Alert: ${{ steps.capacity.outputs.alert_level || 'UNKNOWN' }}"
+            echo "- Deployment allowed: ${{ steps.capacity.outputs.deployment_allowed || 'UNKNOWN' }}"
+            echo "- Read only: YES"
+            echo "- Indexing requests: 0"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload sanitized capacity evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vps-capacity-status-${{ github.run_id }}
+          path: |
+            capacity-status.txt
+            capacity-monitor.stderr
+          retention-days: 30

@@ -1,0 +1,65 @@
+name: Test VPS Storage Hardening
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "deployment/**"
+      - "scripts/*vps-capacity*.ps1"
+      - ".github/workflows/vps-capacity-monitor.yml"
+      - ".github/workflows/docker-safe-cleanup.yml"
+      - ".github/workflows/test-storage-hardening.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - name: Shell syntax
+        run: |
+          bash -n deployment/storage-capacity-lib.sh
+          bash -n deployment/deployment-capacity-gate.sh
+          bash -n deployment/vps-capacity-monitor.sh
+          bash -n deployment/docker-safe-cleanup.sh
+          bash -n deployment/test-storage-hardening.sh
+          bash -n deployment/deploy.sh
+      - name: Storage hardening tests
+        run: bash deployment/test-storage-hardening.sh
+      - name: Secret pattern scan
+        shell: bash
+        run: |
+          if grep -ERn \
+            '(rk|sk|pk)_(live|test)_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+|BEGIN (RSA|OPENSSH) PRIVATE KEY' \
+            deployment scripts .github/workflows; then
+            echo "Secret-like pattern detected." >&2
+            exit 1
+          fi
+          echo "SECRET_SCAN_PASS"
+      - name: PowerShell syntax
+        shell: pwsh
+        run: |
+          $errors = @()
+          foreach ($file in @(
+            "scripts/sync-mykinlegacy-vps-capacity.ps1",
+            "scripts/notify-mykinlegacy-vps-capacity.ps1",
+            "scripts/install-mykinlegacy-capacity-automation.ps1",
+            "scripts/run-mykinlegacy-daily-monitor.ps1"
+          )) {
+            $tokens = $null
+            $parseErrors = $null
+            [void][System.Management.Automation.Language.Parser]::ParseFile(
+              (Resolve-Path $file), [ref]$tokens, [ref]$parseErrors
+            )
+            $errors += $parseErrors
+          }
+          if ($errors.Count -gt 0) {
+            $errors | Format-List
+            exit 1
+          }
+          "POWERSHELL_SYNTAX_PASS"

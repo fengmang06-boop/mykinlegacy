@@ -165,6 +165,9 @@ if [[ "${MYSQL_PASSWORD:-}" == "auto" || "${MYSQL_ROOT_PASSWORD:-}" == "auto" ||
   exit 1
 fi
 
+phase "Deployment capacity gate"
+bash "$SCRIPT_DIR/deployment-capacity-gate.sh"
+
 compose() {
   $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "$@"
 }

@@ -1,0 +1,51 @@
+name: MyKinLegacy Docker Safe Cleanup
+
+on:
+  schedule:
+    - cron: "17 3 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-mykinlegacy
+  cancel-in-progress: false
+
+jobs:
+  dry-run:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+      PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configure SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          printf '%s\n' "$PROD_SSH_PRIVATE_KEY" > ~/.ssh/mykinlegacy_prod
+          chmod 600 ~/.ssh/mykinlegacy_prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+      - name: Run safe cleanup dry run
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/mykinlegacy_prod \
+            -p "$PROD_SSH_PORT" \
+            -o BatchMode=yes \
+            -o ConnectTimeout=20 \
+            "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            "cd '$PROD_PROJECT_DIR' && bash deployment/docker-safe-cleanup.sh --dry-run" |
+            tee docker-safe-cleanup-dry-run.txt
+      - name: Upload dry-run evidence
+        uses: actions/upload-artifact@v4
+        with:
+          name: docker-safe-cleanup-dry-run-${{ github.run_id }}
+          path: docker-safe-cleanup-dry-run.txt
+          retention-days: 30
