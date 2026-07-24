@@ -50,7 +50,7 @@ lock_status="${lock_holder:+HELD}"
 lock_status="${lock_status:-FREE}"
 largest_path="$(
   du -x -B1 -d 2 /var/lib/docker "$PROJECT_ROOT" /var/log /tmp /var/tmp 2>/dev/null |
-    sort -nr | head -1 | tr '\t' ':'
+    sort -nr | sed -n '1p' | tr '\t' ':'
 )"
 alert_level="$(capacity_alert_level "$root_usage" "$root_free" "$inode_usage" 0)"
 if deployment_capacity_allowed \

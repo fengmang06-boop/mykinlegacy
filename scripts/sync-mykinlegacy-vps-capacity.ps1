@@ -2,44 +2,31 @@
 param()
 
 $ErrorActionPreference = "Stop"
-$repo = "fengmang06-boop/mykinlegacy"
-$workflow = "vps-capacity-monitor.yml"
 $secureRoot = Join-Path $env:LOCALAPPDATA "MyKinLegacy\monitoring\vps-capacity"
 $latestPath = Join-Path $secureRoot "latest.json"
 $historyPath = Join-Path $secureRoot "history.jsonl"
+$sshKey = Join-Path $env:LOCALAPPDATA "MyKinLegacy\Monitoring\production-ops-ssh"
+$sshHost = "root@216.128.154.152"
 New-Item -ItemType Directory -Path $secureRoot -Force | Out-Null
 
-$headers = @{
-  Accept = "application/vnd.github+json"
-  "User-Agent" = "MyKinLegacy-Capacity-Monitor"
+if (-not (Test-Path -LiteralPath $sshKey)) {
+  throw "Protected production operations SSH key is unavailable."
 }
-$runs = Invoke-RestMethod -Headers $headers `
-  -Uri "https://api.github.com/repos/$repo/actions/workflows/$workflow/runs?status=completed&per_page=10"
-$run = @($runs.workflow_runs | Where-Object { $_.conclusion -in @("success", "failure") }) |
-  Select-Object -First 1
-if ($null -eq $run) { throw "No completed capacity workflow run is available." }
 
-$artifacts = Invoke-RestMethod -Headers $headers `
-  -Uri "https://api.github.com/repos/$repo/actions/runs/$($run.id)/artifacts"
-$artifact = @($artifacts.artifacts | Where-Object {
-  $_.name -eq "vps-capacity-status-$($run.id)" -and -not $_.expired
-}) | Select-Object -First 1
-if ($null -eq $artifact) { throw "The latest capacity artifact is unavailable." }
-
-$zipPath = Join-Path $secureRoot "capacity-$($run.id).zip"
-$extractPath = Join-Path $secureRoot "run-$($run.id)"
-Invoke-WebRequest -Headers $headers -Uri $artifact.archive_download_url -OutFile $zipPath
-if (Test-Path -LiteralPath $extractPath) {
-  Remove-Item -LiteralPath $extractPath -Recurse -Force
-}
-Expand-Archive -LiteralPath $zipPath -DestinationPath $extractPath -Force
-$statusFile = Join-Path $extractPath "capacity-status.txt"
-if (-not (Test-Path -LiteralPath $statusFile)) {
-  throw "capacity-status.txt is missing from the artifact."
+$remoteOutput = & ssh.exe `
+  -i $sshKey `
+  -o BatchMode=yes `
+  -o StrictHostKeyChecking=accept-new `
+  -o ConnectTimeout=15 `
+  $sshHost `
+  "cd /root/mykinlegacy && bash deployment/vps-capacity-monitor.sh" 2>&1
+$sshExit = $LASTEXITCODE
+if ($sshExit -notin @(0, 92)) {
+  throw "Read-only VPS capacity collection failed with exit code $sshExit."
 }
 
 $values = [ordered]@{}
-Get-Content -LiteralPath $statusFile | ForEach-Object {
+$remoteOutput | ForEach-Object {
   if ($_ -match '^([a-z_]+)=(.*)$') {
     $values[$matches[1]] = $matches[2]
   }
@@ -54,8 +41,7 @@ foreach ($key in $required) {
 }
 
 $snapshot = [ordered]@{
-  source_run_id = [long]$run.id
-  source_commit = [string]$run.head_sha
+  source = "read-only-ssh"
   synced_at = (Get-Date).ToString("o")
   timestamp = $values.timestamp
   root_total_bytes = [long]$values.root_total_bytes
