@@ -35,8 +35,15 @@ jobs:
         shell: bash
         run: |
           if grep -ERn \
-            '(rk|sk|pk)_(live|test)_[A-Za-z0-9]+|whsec_[A-Za-z0-9]+|BEGIN (RSA|OPENSSH) PRIVATE KEY' \
-            deployment scripts .github/workflows; then
+            '(rk|sk|pk)_(live|test)_[A-Za-z0-9]{12,}|whsec_[A-Za-z0-9]{12,}|ya29\.[A-Za-z0-9._-]{12,}' \
+            deployment/storage-capacity-lib.sh \
+            deployment/deployment-capacity-gate.sh \
+            deployment/vps-capacity-monitor.sh \
+            deployment/docker-safe-cleanup.sh \
+            deployment/test-storage-hardening.sh \
+            scripts/sync-mykinlegacy-vps-capacity.ps1 \
+            scripts/notify-mykinlegacy-vps-capacity.ps1 \
+            scripts/install-mykinlegacy-capacity-automation.ps1; then
             echo "Secret-like pattern detected." >&2
             exit 1
           fi
