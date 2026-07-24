@@ -10,6 +10,7 @@ on:
         options:
           - health_check
           - inspect_production_lock
+          - terminate_stuck_production_deployment
           - restart_nginx
           - restart_services
           - docker_ps
@@ -70,7 +71,7 @@ jobs:
           : "${OPS_ACTION:?Missing action}"
 
           case "$OPS_ACTION" in
-            health_check|inspect_production_lock|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
+            health_check|inspect_production_lock|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
               ;;
             switch_stripe_live)
               : "${STRIPE_LIVE_SECRET_KEY:?Missing MYKINLEGACY_STRIPE_LIVE_SECRET_KEY}"
@@ -246,6 +247,170 @@ jobs:
               echo "git_status_end"
               echo "release_state_end"
               echo "EVIDENCE_END"
+              ;;
+            terminate_stuck_production_deployment)
+              echo "CONTROLLED_ACTION terminate_stuck_production_deployment"
+              LOCK_FILE="$PROJECT_DIR/deployment/.production.lock"
+              EXPECTED_COMMIT="c71c9626f60ce9aa59db5db64f384e55c9bc7c0b"
+
+              holder_pid="$(
+                lslocks -n -o PID,PATH 2>/dev/null |
+                  awk -v lock="$LOCK_FILE" '$2 == lock && $1 ~ /^[0-9]+$/ { print $1; exit }'
+              )"
+              if [ -z "$holder_pid" ]; then
+                echo "CONTROLLED_TERMINATION_NOT_REQUIRED lock_holder=none"
+                exit 0
+              fi
+
+              holder_command="$(ps -o args= -p "$holder_pid" 2>/dev/null || true)"
+              holder_age="$(ps -o etimes= -p "$holder_pid" 2>/dev/null | tr -d ' ' || true)"
+              echo "termination_candidate_pid=$holder_pid"
+              echo "termination_candidate_age_seconds=${holder_age:-unknown}"
+              echo "termination_candidate_command=$holder_command"
+
+              [[ "$holder_pid" =~ ^[0-9]+$ ]] || {
+                echo "REFUSE_TERMINATION reason=invalid_pid" >&2
+                exit 41
+              }
+              [[ "$holder_age" =~ ^[0-9]+$ ]] && [ "$holder_age" -ge 1800 ] || {
+                echo "REFUSE_TERMINATION reason=deployment_not_old_enough" >&2
+                exit 42
+              }
+              [[ "$holder_command" == *"flock"*".production.lock"* ]] &&
+                [[ "$holder_command" == *"deployment/deploy.sh"* ]] || {
+                echo "REFUSE_TERMINATION reason=holder_command_not_approved" >&2
+                exit 43
+              }
+
+              last_successful_commit="$(tr -d '[:space:]' < "$PROJECT_DIR/deployment/.last-successful-commit")"
+              [ "$last_successful_commit" = "$EXPECTED_COMMIT" ] || {
+                echo "REFUSE_TERMINATION reason=unexpected_last_successful_commit actual=$last_successful_commit" >&2
+                exit 44
+              }
+
+              required_services=(mysql redis api worker web nginx)
+              for service in "${required_services[@]}"; do
+                container_id="$(
+                  docker compose -p mykinlegacy --env-file "$PROJECT_DIR/deployment/.env.production" \
+                    -f "$PROJECT_DIR/deployment/docker-compose.yml" ps -q "$service"
+                )"
+                [ -n "$container_id" ] || {
+                  echo "REFUSE_TERMINATION reason=missing_service service=$service" >&2
+                  exit 45
+                }
+                running="$(docker inspect --format '{{.State.Running}}' "$container_id")"
+                restarting="$(docker inspect --format '{{.State.Restarting}}' "$container_id")"
+                [ "$running" = "true" ] && [ "$restarting" = "false" ] || {
+                  echo "REFUSE_TERMINATION reason=unhealthy_service_state service=$service running=$running restarting=$restarting" >&2
+                  exit 46
+                }
+              done
+
+              root_pid="$holder_pid"
+              holder_parent="$(ps -o ppid= -p "$holder_pid" | tr -d ' ')"
+              holder_parent_command="$(ps -o args= -p "$holder_parent" 2>/dev/null || true)"
+              if [[ "$holder_parent_command" == *"with-production-lock.sh"*"deploy"* ]]; then
+                root_pid="$holder_parent"
+              fi
+
+              collect_tree_postorder() {
+                local pid="$1" child
+                while read -r child; do
+                  [ -n "$child" ] && collect_tree_postorder "$child"
+                done < <(pgrep -P "$pid" 2>/dev/null || true)
+                echo "$pid"
+              }
+
+              mapfile -t deployment_pids < <(collect_tree_postorder "$root_pid" | awk '/^[0-9]+$/' | awk '!seen[$0]++')
+              [ "${#deployment_pids[@]}" -gt 1 ] || {
+                echo "REFUSE_TERMINATION reason=deployment_tree_incomplete" >&2
+                exit 47
+              }
+
+              allowed_pattern='with-production-lock\.sh|flock .*\.production\.lock|deployment/deploy\.sh|docker compose .*run --rm api .*db:seed|docker-compose .*run --rm api .*db:seed|corepack pnpm db:seed|pnpm .*database db:seed|seed-cli|prisma/seed|tsx.*prisma/seed|esbuild.*service'
+              echo "verified_deployment_tree_begin"
+              for pid in "${deployment_pids[@]}"; do
+                command_line="$(ps -o args= -p "$pid" 2>/dev/null || true)"
+                [ -n "$command_line" ] || continue
+                echo "pid=$pid command=$command_line"
+                grep -Eq "$allowed_pattern" <<<"$command_line" || {
+                  echo "REFUSE_TERMINATION reason=unexpected_process pid=$pid command=$command_line" >&2
+                  exit 48
+                }
+              done
+              echo "verified_deployment_tree_end"
+
+              activity_sample() {
+                local pid="$1" stat_line cpu write_bytes
+                stat_line="$(cat "/proc/$pid/stat" 2>/dev/null || true)"
+                cpu="$(awk '{ print $14 + $15 }' <<<"$stat_line" 2>/dev/null || echo 0)"
+                write_bytes="$(awk '$1 == "write_bytes:" { print $2 }' "/proc/$pid/io" 2>/dev/null || echo 0)"
+                echo "${cpu:-0}:${write_bytes:-0}"
+              }
+
+              before_activity=""
+              for pid in "${deployment_pids[@]}"; do
+                before_activity+="$pid=$(activity_sample "$pid") "
+              done
+              sleep 5
+              for entry in $before_activity; do
+                pid="${entry%%=*}"
+                before="${entry#*=}"
+                after="$(activity_sample "$pid")"
+                [ "$before" = "$after" ] || {
+                  echo "REFUSE_TERMINATION reason=deployment_activity_detected pid=$pid before=$before after=$after" >&2
+                  exit 49
+                }
+              done
+              echo "deployment_activity_sample=idle duration_seconds=5"
+
+              echo "CONTROLLED_TERMINATION_BEGIN root_pid=$root_pid holder_pid=$holder_pid"
+              for pid in "${deployment_pids[@]}"; do
+                kill -TERM "$pid" 2>/dev/null || true
+              done
+
+              for _ in $(seq 1 20); do
+                remaining=0
+                for pid in "${deployment_pids[@]}"; do
+                  kill -0 "$pid" 2>/dev/null && remaining=$((remaining + 1))
+                done
+                [ "$remaining" -eq 0 ] && break
+                sleep 1
+              done
+
+              for pid in "${deployment_pids[@]}"; do
+                if kill -0 "$pid" 2>/dev/null; then
+                  echo "CONTROLLED_TERMINATION_FORCE pid=$pid"
+                  kill -KILL "$pid" 2>/dev/null || true
+                fi
+              done
+
+              while read -r oneoff_id oneoff_name; do
+                [ -n "$oneoff_id" ] || continue
+                oneoff_command="$(docker inspect --format '{{json .Config.Cmd}}' "$oneoff_id" 2>/dev/null || true)"
+                [[ "$oneoff_command" == *"db:seed"* ]] || {
+                  echo "REFUSE_CONTAINER_CLEANUP name=$oneoff_name reason=not_seed_container" >&2
+                  continue
+                }
+                echo "REMOVING_STUCK_ONEOFF_CONTAINER name=$oneoff_name"
+                docker rm -f "$oneoff_id" >/dev/null
+              done < <(
+                docker ps -a \
+                  --filter label=com.docker.compose.project=mykinlegacy \
+                  --filter label=com.docker.compose.oneoff=True \
+                  --filter label=com.docker.compose.service=api \
+                  --format '{{.ID}} {{.Names}}'
+              )
+
+              if lslocks -n -o PID,PATH 2>/dev/null | awk -v lock="$LOCK_FILE" '$2 == lock { found=1 } END { exit found ? 0 : 1 }'; then
+                echo "CONTROLLED_TERMINATION_FAILED reason=lock_still_held" >&2
+                exit 50
+              fi
+              echo "production_lock_kernel_holder=none"
+              echo "production_lock_file_preserved=yes reason=stable_flock_inode"
+
+              bash "$PROJECT_DIR/deployment/health-check.sh"
+              echo "CONTROLLED_TERMINATION_COMPLETE current_production_commit=$last_successful_commit"
               ;;
             safe_deploy)
               git fetch origin main
