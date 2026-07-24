@@ -140,6 +140,8 @@ jobs:
             -o BatchMode=yes \
             -o IdentitiesOnly=yes \
             -o StrictHostKeyChecking=yes \
+            -o ServerAliveInterval=30 \
+            -o ServerAliveCountMax=20 \
             -p "$PROD_SSH_PORT" \
             "$PROD_SSH_USER@$PROD_SSH_HOST" \
             'bash -s' -- "$PROD_PROJECT_DIR" "$APP_IMAGE" "$GHCR_USERNAME" "$GHCR_TOKEN" <<'REMOTE_SCRIPT'
