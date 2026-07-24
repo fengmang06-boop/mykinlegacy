@@ -158,6 +158,15 @@ const faqs = [
 ] as const;
 
 export default function FamilyLegacyCollectionPage() {
+  const webPageJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    name: "Personalized Family Legacy Collection",
+    description:
+      "Turn their real family story into a Final Crest, Heritage Certificate, Family Story, meaning guide, and private digital Complete Collection.",
+    url: `${SITE_URL}/family-legacy-collection`,
+    isPartOf: { "@type": "WebSite", name: "MyKinLegacy", url: SITE_URL }
+  };
   const productJsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
@@ -201,7 +210,7 @@ export default function FamilyLegacyCollectionPage() {
 
   return (
     <main className="collection-v2">
-      <StructuredData data={[productJsonLd, breadcrumbJsonLd]} />
+      <StructuredData data={[webPageJsonLd, productJsonLd, breadcrumbJsonLd]} />
       <FunnelStepTracker
         stepName="collection_page"
         metadata={{ page: "/family-legacy-collection", product_code: "family_legacy_collection" }}

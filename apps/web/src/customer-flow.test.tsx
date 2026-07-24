@@ -85,6 +85,7 @@ describe("customer frontend flow", () => {
     expect(html).toContain("official heraldry or genealogical proof");
     expect(html).not.toContain("Family Legacy Certificate");
     expect(html).not.toContain('"@type":"FAQPage"');
+    expect(html).toContain('"@type":"WebPage"');
     expect(collectionMetadata.alternates?.canonical).toBe(
       "https://mykinlegacy.com/family-legacy-collection"
     );
