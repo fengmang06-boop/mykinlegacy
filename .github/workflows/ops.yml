@@ -10,6 +10,7 @@ on:
         options:
           - health_check
           - inspect_production_lock
+          - inspect_database_locks
           - terminate_stuck_production_deployment
           - restart_nginx
           - restart_services
@@ -71,7 +72,7 @@ jobs:
           : "${OPS_ACTION:?Missing action}"
 
           case "$OPS_ACTION" in
-            health_check|inspect_production_lock|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
+            health_check|inspect_production_lock|inspect_database_locks|terminate_stuck_production_deployment|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
               ;;
             switch_stripe_live)
               : "${STRIPE_LIVE_SECRET_KEY:?Missing MYKINLEGACY_STRIPE_LIVE_SECRET_KEY}"
@@ -249,6 +250,84 @@ jobs:
               echo "git_status_end"
               echo "release_state_end"
               echo "EVIDENCE_END"
+              ;;
+            inspect_database_locks)
+              echo "READ_ONLY_ACTION inspect_database_locks no_git_pull=yes no_lock_mutation=yes"
+              set -a
+              # shellcheck disable=SC1090
+              . "$PROJECT_DIR/deployment/.env.production"
+              set +a
+              mysql_query() {
+                docker compose -p mykinlegacy --env-file "$PROJECT_DIR/deployment/.env.production" \
+                  -f "$PROJECT_DIR/deployment/docker-compose.yml" exec -T mysql \
+                  mysql --batch --raw --skip-column-names \
+                  "-u${MYSQL_USER:-mykinlegacy}" "-p${MYSQL_PASSWORD:-}" "${MYSQL_DATABASE:-mykinlegacy}" \
+                  -e "$1"
+              }
+
+              echo "DATABASE_LOCK_EVIDENCE_BEGIN"
+              echo "vps_time=$(date --iso-8601=seconds)"
+              echo "innodb_transactions_begin"
+              mysql_query "
+                SELECT
+                  trx_id,
+                  trx_state,
+                  TIMESTAMPDIFF(SECOND, trx_started, NOW()) AS age_seconds,
+                  trx_mysql_thread_id,
+                  trx_tables_locked,
+                  trx_rows_locked,
+                  trx_rows_modified,
+                  COALESCE(LEFT(REPLACE(REPLACE(trx_query, CHAR(10), ' '), CHAR(13), ' '), 180), '[idle]')
+                FROM information_schema.innodb_trx
+                ORDER BY trx_started;
+              " || true
+              echo "innodb_transactions_end"
+
+              echo "data_lock_waits_begin"
+              mysql_query "
+                SELECT
+                  requesting_engine_transaction_id,
+                  blocking_engine_transaction_id,
+                  requesting_thread_id,
+                  blocking_thread_id
+                FROM performance_schema.data_lock_waits;
+              " || true
+              echo "data_lock_waits_end"
+
+              echo "data_locks_begin"
+              mysql_query "
+                SELECT
+                  engine_transaction_id,
+                  thread_id,
+                  object_schema,
+                  object_name,
+                  COALESCE(index_name, '[none]'),
+                  lock_type,
+                  lock_mode,
+                  lock_status,
+                  COALESCE(LEFT(lock_data, 120), '[none]')
+                FROM performance_schema.data_locks
+                ORDER BY engine_transaction_id, object_name, index_name;
+              " || true
+              echo "data_locks_end"
+
+              echo "processlist_begin"
+              mysql_query "
+                SELECT
+                  id,
+                  user,
+                  SUBSTRING_INDEX(host, ':', 1),
+                  COALESCE(db, '[none]'),
+                  command,
+                  time,
+                  COALESCE(state, '[none]'),
+                  COALESCE(LEFT(REPLACE(REPLACE(info, CHAR(10), ' '), CHAR(13), ' '), 180), '[idle]')
+                FROM information_schema.processlist
+                WHERE command <> 'Daemon'
+                ORDER BY time DESC;
+              " || true
+              echo "processlist_end"
+              echo "DATABASE_LOCK_EVIDENCE_END"
               ;;
             terminate_stuck_production_deployment)
               echo "CONTROLLED_ACTION terminate_stuck_production_deployment"
