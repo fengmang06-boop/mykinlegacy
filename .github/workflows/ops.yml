@@ -9,6 +9,7 @@ on:
         type: choice
         options:
           - health_check
+          - inspect_production_lock
           - restart_nginx
           - restart_services
           - docker_ps
@@ -69,7 +70,7 @@ jobs:
           : "${OPS_ACTION:?Missing action}"
 
           case "$OPS_ACTION" in
-            health_check|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
+            health_check|inspect_production_lock|safe_deploy|restart_nginx|restart_services|docker_ps|nginx_logs|api_logs|web_logs|worker_logs|pause_checkout|resume_checkout|verify_stripe_checkout_branding)
               ;;
             switch_stripe_live)
               : "${STRIPE_LIVE_SECRET_KEY:?Missing MYKINLEGACY_STRIPE_LIVE_SECRET_KEY}"
@@ -158,6 +159,94 @@ jobs:
           cd "$PROJECT_DIR"
 
           case "$ACTION" in
+            inspect_production_lock)
+              echo "READ_ONLY_ACTION inspect_production_lock no_git_pull=yes no_lock_mutation=yes"
+              LOCK_FILE="$PROJECT_DIR/deployment/.production.lock"
+              echo "EVIDENCE_BEGIN"
+              echo "vps_time=$(date --iso-8601=seconds)"
+              echo "hostname=$(hostname)"
+              echo "executing_user=$(id -un)"
+              echo "project_directory=$PROJECT_DIR"
+              echo "current_commit=$(git -C "$PROJECT_DIR" rev-parse HEAD)"
+              echo "current_branch=$(git -C "$PROJECT_DIR" rev-parse --abbrev-ref HEAD)"
+              echo "lock_path=$LOCK_FILE"
+              if [ -e "$LOCK_FILE" ]; then
+                stat -c 'lock_owner=%U:%G%nlock_permissions=%A (%a)%nlock_size=%s%nlock_created=%w%nlock_modified=%y%nlock_inode=%i' "$LOCK_FILE"
+                echo "lock_sha256=$(sha256sum "$LOCK_FILE" | awk '{print $1}')"
+                if [ "$(stat -c %s "$LOCK_FILE")" -le 4096 ]; then
+                  echo "lock_content_begin"
+                  sed -E \
+                    -e 's/((TOKEN|SECRET|PASSWORD|PRIVATE_KEY|API_KEY)[=:])[[:graph:]]+/\1[REDACTED]/Ig' \
+                    "$LOCK_FILE"
+                  echo "lock_content_end"
+                else
+                  echo "lock_content_omitted=oversize"
+                fi
+              else
+                echo "lock_exists=no"
+              fi
+
+              echo "lock_kernel_holders_begin"
+              if command -v lslocks >/dev/null 2>&1; then
+                lslocks -n -o PID,PPID,COMMAND,TYPE,MODE,START,END,PATH 2>/dev/null |
+                  awk -v lock="$LOCK_FILE" '$0 ~ lock { print }' || true
+              fi
+              if command -v fuser >/dev/null 2>&1; then
+                fuser -v "$LOCK_FILE" 2>&1 || true
+              fi
+              echo "lock_kernel_holders_end"
+
+              HOLDER_PIDS="$(
+                {
+                  command -v lslocks >/dev/null 2>&1 &&
+                    lslocks -n -o PID,PATH 2>/dev/null |
+                    awk -v lock="$LOCK_FILE" '$2 == lock && $1 ~ /^[0-9]+$/ { print $1 }'
+                  command -v fuser >/dev/null 2>&1 &&
+                    fuser "$LOCK_FILE" 2>/dev/null | tr ' ' '\n'
+                } | awk '/^[0-9]+$/' | sort -u
+              )"
+
+              echo "holder_processes_begin"
+              for pid in $HOLDER_PIDS; do
+                if kill -0 "$pid" 2>/dev/null; then
+                  ps -o pid=,ppid=,user=,lstart=,etime=,stat=,pcpu=,pmem=,args= -p "$pid" || true
+                  echo "pid=${pid} cwd=$(readlink -f "/proc/$pid/cwd" 2>/dev/null || echo unavailable)"
+                  echo "pid=${pid} io_begin"
+                  awk '/^(rchar|wchar|read_bytes|write_bytes):/ { print }' "/proc/$pid/io" 2>/dev/null || true
+                  echo "pid=${pid} io_end"
+                else
+                  echo "pid=${pid} status=not_alive"
+                fi
+              done
+              echo "holder_processes_end"
+
+              echo "deployment_processes_begin"
+              ps -eo pid,ppid,user,lstart,etime,stat,pcpu,pmem,args --sort=pid |
+                grep -E '[d]eploy\\.sh|[w]ith-production-lock|[d]ocker compose|[g]it (fetch|pull|checkout)|[p]npm|[n]pm|[n]ode|[r]sync|[s]ystemctl|[s]ervice .*restart' ||
+                true
+              echo "deployment_processes_end"
+
+              echo "service_state_begin"
+              docker compose -p mykinlegacy --env-file "$PROJECT_DIR/deployment/.env.production" \
+                -f "$PROJECT_DIR/deployment/docker-compose.yml" ps || true
+              docker inspect \
+                --format '{{.Name}} status={{.State.Status}} running={{.State.Running}} restarting={{.State.Restarting}} restart_count={{.RestartCount}} started={{.State.StartedAt}} finished={{.State.FinishedAt}}' \
+                mykinlegacy_mysql mykinlegacy_redis mykinlegacy_api mykinlegacy_worker mykinlegacy_web mykinlegacy_nginx 2>/dev/null ||
+                true
+              echo "service_state_end"
+
+              echo "release_state_begin"
+              test -f "$PROJECT_DIR/deployment/.last-successful-commit" &&
+                echo "last_successful_commit=$(tr -d '[:space:]' < "$PROJECT_DIR/deployment/.last-successful-commit")"
+              test -f "$PROJECT_DIR/deployment/.current_revision" &&
+                echo "current_revision=$(tr -d '[:space:]' < "$PROJECT_DIR/deployment/.current_revision")"
+              echo "deployment_model=docker_compose_no_release_symlink"
+              echo "git_status_begin"
+              git -C "$PROJECT_DIR" status --short --untracked-files=no
+              echo "git_status_end"
+              echo "release_state_end"
+              echo "EVIDENCE_END"
+              ;;
             safe_deploy)
               git fetch origin main
               git checkout main
