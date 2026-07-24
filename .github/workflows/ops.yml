@@ -261,7 +261,7 @@ jobs:
                 docker compose -p mykinlegacy --env-file "$PROJECT_DIR/deployment/.env.production" \
                   -f "$PROJECT_DIR/deployment/docker-compose.yml" exec -T mysql \
                   mysql --batch --raw --skip-column-names \
-                  "-u${MYSQL_USER:-mykinlegacy}" "-p${MYSQL_PASSWORD:-}" "${MYSQL_DATABASE:-mykinlegacy}" \
+                  -uroot "-p${MYSQL_ROOT_PASSWORD:-}" "${MYSQL_DATABASE:-mykinlegacy}" \
                   -e "$1"
               }
 
@@ -312,20 +312,7 @@ jobs:
               echo "data_locks_end"
 
               echo "processlist_begin"
-              mysql_query "
-                SELECT
-                  id,
-                  user,
-                  SUBSTRING_INDEX(host, ':', 1),
-                  COALESCE(db, '[none]'),
-                  command,
-                  time,
-                  COALESCE(state, '[none]'),
-                  COALESCE(LEFT(REPLACE(REPLACE(info, CHAR(10), ' '), CHAR(13), ' '), 180), '[idle]')
-                FROM information_schema.processlist
-                WHERE command <> 'Daemon'
-                ORDER BY time DESC;
-              " || true
+              mysql_query "SHOW FULL PROCESSLIST;" || true
               echo "processlist_end"
               echo "DATABASE_LOCK_EVIDENCE_END"
               ;;
