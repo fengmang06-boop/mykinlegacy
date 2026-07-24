@@ -10,7 +10,7 @@ $status = if (Test-Path -LiteralPath $latestPath) {
   Get-Content -Raw -LiteralPath $latestPath | ConvertFrom-Json
 } else {
   [pscustomobject]@{
-    source_run_id = "TEST"
+    source = "TEST"
     root_usage_percent = 93
     root_free_bytes = 7GB
     mysql_health = "unhealthy"
@@ -21,8 +21,8 @@ $status = if (Test-Path -LiteralPath $latestPath) {
 if (-not $ForceTest -and $status.capacity_alert_level -eq "INFO") { exit 0 }
 
 $freeGb = [math]::Round(([double]$status.root_free_bytes / 1GB), 1)
-$title = "MyKinLegacy VPS容量 $($status.capacity_alert_level)"
-$body = "磁盘 $($status.root_usage_percent)% | 可用 ${freeGb}GB | 最大占用 $($status.largest_path) | MySQL $($status.mysql_health)"
+$title = "MyKinLegacy VPS capacity $($status.capacity_alert_level)"
+$body = "Disk $($status.root_usage_percent)% | Free ${freeGb}GB | Largest $($status.largest_path) | MySQL $($status.mysql_health)"
 
 Add-Type -AssemblyName System.Runtime.WindowsRuntime
 $null = [Windows.UI.Notifications.ToastNotificationManager, Windows.UI.Notifications, ContentType = WindowsRuntime]
@@ -45,7 +45,7 @@ $notifier.Show($toast)
 
 [ordered]@{
   dispatched_at = (Get-Date).ToString("o")
-  source_run_id = $status.source_run_id
+  source = $status.source
   alert_level = $status.capacity_alert_level
   title = $title
   content = $body
