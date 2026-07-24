@@ -391,29 +391,28 @@ jobs:
               }
               echo "verified_seed_container=$(docker inspect --format '{{.Name}}' "$seed_container") ip=$seed_ip command=$seed_command"
 
-              mapfile -t old_transaction_threads < <(
+              mapfile -t seed_commit_threads < <(
                 mysql_query "
-                  SELECT trx_mysql_thread_id
-                  FROM information_schema.innodb_trx
-                  WHERE TIMESTAMPDIFF(SECOND, trx_started, NOW()) >= 600
-                  ORDER BY trx_mysql_thread_id;
+                  SELECT ID
+                  FROM information_schema.PROCESSLIST
+                  WHERE SUBSTRING_INDEX(HOST, ':', 1) = '${seed_ip}'
+                    AND COMMAND = 'Query'
+                    AND STATE = 'waiting for handler commit'
+                    AND TRIM(INFO) = 'COMMIT';
                 "
               )
               stale_threads=()
-              for thread_id in "${old_transaction_threads[@]}"; do
+              for thread_id in "${seed_commit_threads[@]}"; do
                 [[ "$thread_id" =~ ^[0-9]+$ ]] || continue
-                matching_process="$(
+                transaction_age="$(
                   mysql_query "
-                    SELECT COUNT(*)
-                    FROM information_schema.PROCESSLIST
-                    WHERE ID = ${thread_id}
-                      AND SUBSTRING_INDEX(HOST, ':', 1) = '${seed_ip}'
-                      AND COMMAND = 'Query'
-                      AND STATE = 'waiting for handler commit'
-                      AND TRIM(INFO) = 'COMMIT';
+                    SELECT TIMESTAMPDIFF(SECOND, trx_started, NOW())
+                    FROM information_schema.innodb_trx
+                    WHERE trx_mysql_thread_id = ${thread_id};
                   "
                 )"
-                [ "$matching_process" = "1" ] && stale_threads+=("$thread_id")
+                [[ "$transaction_age" =~ ^[0-9]+$ ]] && [ "$transaction_age" -ge 600 ] &&
+                  stale_threads+=("$thread_id")
               done
               [ "${#stale_threads[@]}" -ge 1 ] && [ "${#stale_threads[@]}" -le 4 ] || {
                 echo "REFUSE_DATABASE_SESSION_TERMINATION reason=unexpected_stale_thread_count actual=${#stale_threads[@]}" >&2
@@ -425,31 +424,40 @@ jobs:
                   echo "REFUSE_DATABASE_SESSION_TERMINATION reason=invalid_thread_id" >&2
                   exit 68
                 }
+                performance_thread_id="$(
+                  mysql_query "
+                    SELECT THREAD_ID
+                    FROM performance_schema.threads
+                    WHERE PROCESSLIST_ID = ${thread_id};
+                  "
+                )"
+                [[ "$performance_thread_id" =~ ^[0-9]+$ ]] || {
+                  echo "REFUSE_DATABASE_SESSION_TERMINATION reason=performance_thread_not_found thread_id=$thread_id" >&2
+                  exit 69
+                }
                 unexpected_locks="$(mysql_query "
                   SELECT COUNT(*)
-                  FROM performance_schema.data_locks dl
-                  JOIN performance_schema.threads th ON th.THREAD_ID = dl.THREAD_ID
-                  WHERE th.PROCESSLIST_ID = ${thread_id}
+                  FROM performance_schema.data_locks
+                  WHERE THREAD_ID = ${performance_thread_id}
                     AND (
-                      dl.OBJECT_SCHEMA <> '${MYSQL_DATABASE:-mykinlegacy}'
-                      OR dl.OBJECT_NAME NOT IN ('products', 'deliverable_types')
+                      OBJECT_SCHEMA <> '${MYSQL_DATABASE:-mykinlegacy}'
+                      OR OBJECT_NAME NOT IN ('products', 'deliverable_types')
                     );
                 ")"
                 [ "$unexpected_locks" = "0" ] || {
                   echo "REFUSE_DATABASE_SESSION_TERMINATION reason=unexpected_lock_scope thread_id=$thread_id count=$unexpected_locks" >&2
-                  exit 69
+                  exit 70
                 }
                 expected_locks="$(mysql_query "
                   SELECT COUNT(*)
-                  FROM performance_schema.data_locks dl
-                  JOIN performance_schema.threads th ON th.THREAD_ID = dl.THREAD_ID
-                  WHERE th.PROCESSLIST_ID = ${thread_id}
-                    AND dl.OBJECT_SCHEMA = '${MYSQL_DATABASE:-mykinlegacy}'
-                    AND dl.OBJECT_NAME IN ('products', 'deliverable_types');
+                  FROM performance_schema.data_locks
+                  WHERE THREAD_ID = ${performance_thread_id}
+                    AND OBJECT_SCHEMA = '${MYSQL_DATABASE:-mykinlegacy}'
+                    AND OBJECT_NAME IN ('products', 'deliverable_types');
                 ")"
                 [ "$expected_locks" -ge 1 ] || {
                   echo "REFUSE_DATABASE_SESSION_TERMINATION reason=no_expected_seed_locks thread_id=$thread_id" >&2
-                  exit 70
+                  exit 71
                 }
                 echo "verified_stale_seed_session thread_id=$thread_id expected_lock_count=$expected_locks"
               done
@@ -470,7 +478,7 @@ jobs:
               )"
               [ "$remaining_processes" = "0" ] || {
                 echo "DATABASE_SESSION_TERMINATION_FAILED reason=matching_processes_remain count=$remaining_processes" >&2
-                exit 71
+                exit 72
               }
               for thread_id in "${stale_threads[@]}"; do
                 remaining_transaction="$(mysql_query "
@@ -480,7 +488,7 @@ jobs:
                 ")"
                 [ "$remaining_transaction" = "0" ] || {
                   echo "DATABASE_SESSION_TERMINATION_FAILED reason=matching_transaction_remains thread_id=$thread_id" >&2
-                  exit 72
+                  exit 73
                 }
               done
               bash "$PROJECT_DIR/deployment/health-check.sh"
