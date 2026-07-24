@@ -391,19 +391,30 @@ jobs:
               }
               echo "verified_seed_container=$(docker inspect --format '{{.Name}}' "$seed_container") ip=$seed_ip command=$seed_command"
 
-              mapfile -t stale_threads < <(
+              mapfile -t old_transaction_threads < <(
                 mysql_query "
-                  SELECT p.ID
-                  FROM information_schema.PROCESSLIST p
-                  JOIN information_schema.innodb_trx t ON t.trx_mysql_thread_id = p.ID
-                  WHERE SUBSTRING_INDEX(p.HOST, ':', 1) = '${seed_ip}'
-                    AND p.COMMAND = 'Query'
-                    AND p.STATE = 'waiting for handler commit'
-                    AND TRIM(p.INFO) = 'COMMIT'
-                    AND TIMESTAMPDIFF(SECOND, t.trx_started, NOW()) >= 600
-                  ORDER BY p.ID;
+                  SELECT trx_mysql_thread_id
+                  FROM information_schema.innodb_trx
+                  WHERE TIMESTAMPDIFF(SECOND, trx_started, NOW()) >= 600
+                  ORDER BY trx_mysql_thread_id;
                 "
               )
+              stale_threads=()
+              for thread_id in "${old_transaction_threads[@]}"; do
+                [[ "$thread_id" =~ ^[0-9]+$ ]] || continue
+                matching_process="$(
+                  mysql_query "
+                    SELECT COUNT(*)
+                    FROM information_schema.PROCESSLIST
+                    WHERE ID = ${thread_id}
+                      AND SUBSTRING_INDEX(HOST, ':', 1) = '${seed_ip}'
+                      AND COMMAND = 'Query'
+                      AND STATE = 'waiting for handler commit'
+                      AND TRIM(INFO) = 'COMMIT';
+                  "
+                )"
+                [ "$matching_process" = "1" ] && stale_threads+=("$thread_id")
+              done
               [ "${#stale_threads[@]}" -ge 1 ] && [ "${#stale_threads[@]}" -le 4 ] || {
                 echo "REFUSE_DATABASE_SESSION_TERMINATION reason=unexpected_stale_thread_count actual=${#stale_threads[@]}" >&2
                 exit 67
@@ -450,19 +461,28 @@ jobs:
               docker rm -f "$seed_container" >/dev/null
               echo "removed_stale_seed_container=yes"
 
-              remaining="$(
+              remaining_processes="$(
                 mysql_query "
                   SELECT COUNT(*)
-                  FROM information_schema.PROCESSLIST p
-                  LEFT JOIN information_schema.innodb_trx t ON t.trx_mysql_thread_id = p.ID
-                  WHERE SUBSTRING_INDEX(p.HOST, ':', 1) = '${seed_ip}'
-                    AND (p.STATE = 'waiting for handler commit' OR t.trx_id IS NOT NULL);
+                  FROM information_schema.PROCESSLIST
+                  WHERE SUBSTRING_INDEX(HOST, ':', 1) = '${seed_ip}';
                 "
               )"
-              [ "$remaining" = "0" ] || {
-                echo "DATABASE_SESSION_TERMINATION_FAILED reason=matching_sessions_remain count=$remaining" >&2
+              [ "$remaining_processes" = "0" ] || {
+                echo "DATABASE_SESSION_TERMINATION_FAILED reason=matching_processes_remain count=$remaining_processes" >&2
                 exit 71
               }
+              for thread_id in "${stale_threads[@]}"; do
+                remaining_transaction="$(mysql_query "
+                  SELECT COUNT(*)
+                  FROM information_schema.innodb_trx
+                  WHERE trx_mysql_thread_id = ${thread_id};
+                ")"
+                [ "$remaining_transaction" = "0" ] || {
+                  echo "DATABASE_SESSION_TERMINATION_FAILED reason=matching_transaction_remains thread_id=$thread_id" >&2
+                  exit 72
+                }
+              done
               bash "$PROJECT_DIR/deployment/health-check.sh"
               echo "STALE_SEED_DATABASE_SESSION_TERMINATION_COMPLETE sessions=${#stale_threads[@]} current_production_commit=$last_successful_commit"
               ;;
