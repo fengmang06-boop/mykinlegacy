@@ -130,7 +130,7 @@ jobs:
 
       - name: Deploy on production VPS
         shell: bash
-        timeout-minutes: 12
+        timeout-minutes: 25
         env:
           GHCR_USERNAME: ${{ github.actor }}
           GHCR_TOKEN: ${{ github.token }}
