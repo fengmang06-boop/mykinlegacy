@@ -1,0 +1,19 @@
+{
+  "source_run_id": 30081770297,
+  "observed_at": "2026-07-24T09:20:29Z",
+  "root_total_bytes": 79941234688,
+  "root_used_bytes": 30451154944,
+  "root_free_bytes": 45992677376,
+  "root_usage_percent": 40,
+  "inode_usage_percent": 2,
+  "docker_directory_bytes": 7355985920,
+  "mysql_data_bytes": 611500032,
+  "mysql_health": "healthy",
+  "mysql_restart_count": 23,
+  "production_lock_status": "FREE",
+  "capacity_alert_level": "INFO",
+  "deployment_allowed": "YES",
+  "contains_credentials": false,
+  "contains_customer_pii": false,
+  "indexing_requests_made": 0
+}
