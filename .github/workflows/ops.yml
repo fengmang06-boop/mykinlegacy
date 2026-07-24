@@ -445,7 +445,7 @@ jobs:
                 if awk -F '\t' -v id="$thread_id" '$1 == id { found=1 } END { exit found ? 0 : 1 }' <<<"$post_processlist"; then
                   echo "DATABASE_SESSION_TERMINATION_FAILED reason=incident_thread_remains thread_id=$thread_id" >&2
                   exit 71
-                }
+                fi
               done
               bash "$PROJECT_DIR/deployment/health-check.sh"
               echo "STALE_SEED_DATABASE_SESSION_TERMINATION_COMPLETE sessions=${#stale_threads[@]} current_production_commit=$last_successful_commit"
