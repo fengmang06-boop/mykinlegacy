@@ -1,0 +1,22 @@
+{
+  "volume": "mykinlegacy_private_storage",
+  "host_path": "/var/lib/docker/volumes/mykinlegacy_private_storage/_data",
+  "application_mount": "/app/.local-storage-production",
+  "current_allocated_bytes": 6715260928,
+  "initial_logical_bytes": 6708737148,
+  "final_logical_bytes": 6708737148,
+  "growth_bytes": 0,
+  "files_total": 4212,
+  "files_created_in_window": 0,
+  "temporary_files": 0,
+  "types": {
+    "png": {"files": 2776, "bytes": 3277694613},
+    "zip": {"files": 359, "bytes": 2277759851},
+    "pdf": {"files": 1077, "bytes": 1153282684}
+  },
+  "duplicate_size_groups": 80,
+  "duplicate_status": "DUPLICATE_CANDIDATE_ONLY_NOT_CONTENT_VERIFIED",
+  "action_taken": "READ_ONLY_NO_DELETE_NO_MOVE",
+  "contains_credentials": false,
+  "contains_customer_pii": false
+}
