@@ -224,6 +224,15 @@ jobs:
           require('fs').writeFileSync('/tmp/v3-result.json', JSON.stringify(summary, null, 2));
           process.stdout.write(`V3_SUMMARY_JSON=${JSON.stringify(summary)}\n`);
           NODE
+          COMPACT="$(node -e "const s=require('/tmp/v3-result.json'); process.stdout.write(JSON.stringify(s))")"
+          MESSAGE="$(printf '%s' "$COMPACT" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          echo "::notice title=V3 production result::$MESSAGE"
+          {
+            echo '## V3 production result'
+            echo '```json'
+            cat /tmp/v3-result.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
 
       - name: Verify final isolation and health
         if: always()
