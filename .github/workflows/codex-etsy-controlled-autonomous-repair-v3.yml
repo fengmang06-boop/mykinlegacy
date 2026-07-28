@@ -1,0 +1,249 @@
+name: Codex Etsy Controlled Autonomous Repair V3
+
+on:
+  push:
+    branches:
+      - codex/etsy-controlled-autonomous-repair-v3
+    paths:
+      - ".github/workflows/codex-etsy-controlled-autonomous-repair-v3.yml"
+      - ".codex-etsy-ai-manager-sync-v1/.env.example"
+      - ".codex-etsy-ai-manager-sync-v1/README.md"
+      - ".codex-etsy-ai-manager-sync-v1/package.json"
+      - ".codex-etsy-ai-manager-sync-v1/config/controlled-autonomous-repair-v3/**"
+      - ".codex-etsy-ai-manager-sync-v1/docs/ETSY_CONTROLLED_AUTONOMOUS_REPAIR_V3.md"
+      - ".codex-etsy-ai-manager-sync-v1/scripts/controlled-autonomous-repair-v3.ts"
+      - ".codex-etsy-ai-manager-sync-v1/scripts/fixtures/mensskull-keyword-bank.md"
+      - ".codex-etsy-ai-manager-sync-v1/scripts/test-controlled-autonomous-repair-v3.ts"
+      - ".codex-etsy-ai-manager-sync-v1/scripts/test.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/write-guard.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/opportunity/keyword-radar.ts"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  deploy-and-execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Package V3 files only
+        shell: bash
+        run: |
+          tar -czf /tmp/mensskull-etsy-v3.tgz \
+            -C .codex-etsy-ai-manager-sync-v1 \
+            .env.example \
+            README.md \
+            package.json \
+            config/controlled-autonomous-repair-v3 \
+            docs/ETSY_CONTROLLED_AUTONOMOUS_REPAIR_V3.md \
+            scripts/controlled-autonomous-repair-v3.ts \
+            scripts/fixtures/mensskull-keyword-bank.md \
+            scripts/test-controlled-autonomous-repair-v3.ts \
+            scripts/test.ts \
+            src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts \
+            src/lib/integrations/etsy/write-guard.ts \
+            src/lib/opportunity/keyword-radar.ts
+
+      - name: Back up, deploy and build isolated Etsy app
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" /tmp/mensskull-etsy-v3.tgz \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/mensskull-etsy-v3.tgz"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP=/root/mykinlegacy/mensskull-etsy-ai-manager
+          test -d "$APP"
+          test "$(realpath "$APP")" = "$APP"
+          cd "$APP"
+
+          STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+          BACKUP="/root/mensskull-etsy-backups/controlled-autonomous-repair-v3/$STAMP"
+          mkdir -p "$BACKUP/app-files"
+          cp -a .env.local "$BACKUP/.env.local"
+          cp -a prisma/dev.db "$BACKUP/dev.db"
+          pm2 jlist > "$BACKUP/pm2-jlist.json"
+          if [ -f /etc/nginx/sites-available/tools.mensskull.com ]; then
+            cp -a /etc/nginx/sites-available/tools.mensskull.com "$BACKUP/tools.mensskull.com.nginx"
+          fi
+          for ITEM in \
+            package.json \
+            scripts/controlled-autonomous-repair-v3.ts \
+            scripts/test-controlled-autonomous-repair-v3.ts \
+            scripts/test.ts \
+            src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts \
+            src/lib/integrations/etsy/write-guard.ts \
+            src/lib/opportunity/keyword-radar.ts
+          do
+            if [ -f "$ITEM" ]; then
+              mkdir -p "$BACKUP/app-files/$(dirname "$ITEM")"
+              cp -a "$ITEM" "$BACKUP/app-files/$ITEM"
+            fi
+          done
+
+          tar -xzf /tmp/mensskull-etsy-v3.tgz -C "$APP"
+          python3 - <<'PY'
+          from pathlib import Path
+          env_file = Path(".env.local")
+          values = {
+              "ETSY_CONTROLLED_AUTONOMOUS_REPAIR_V3": "true",
+              "ETSY_STANDING_AUTHORIZATION": "true",
+              "ETSY_WRITE_MAX_LISTINGS_PER_DAY": "3",
+              "ETSY_READ_ONLY_MODE": "true",
+              "ETSY_WRITE_APPROVED": "false",
+          }
+          lines = env_file.read_text().splitlines()
+          output = []
+          seen = set()
+          for line in lines:
+              key = line.split("=", 1)[0].strip() if "=" in line and not line.lstrip().startswith("#") else None
+              if key in values:
+                  if key not in seen:
+                      output.append(f"{key}={values[key]}")
+                      seen.add(key)
+              else:
+                  output.append(line)
+          for key, value in values.items():
+              if key not in seen:
+                  output.append(f"{key}={value}")
+          env_file.write_text("\n".join(output).rstrip() + "\n")
+          env_file.chmod(0o600)
+          PY
+
+          grep -Eq '^ETSY_CONTROLLED_AUTONOMOUS_REPAIR_V3=true$' .env.local
+          grep -Eq '^ETSY_STANDING_AUTHORIZATION=true$' .env.local
+          grep -Eq '^ETSY_READ_ONLY_MODE=true$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=false$' .env.local
+          python3 - <<'PY'
+          from pathlib import Path
+          values = {}
+          for line in Path(".env.local").read_text().splitlines():
+              if "=" not in line or line.lstrip().startswith("#"):
+                  continue
+              key, value = line.split("=", 1)
+              values[key.strip()] = value.strip().strip("'\"")
+          if not values.get("DATABASE_URL", "file:./dev.db").startswith("file:"):
+              raise SystemExit("Etsy DATABASE_URL is not isolated SQLite.")
+          PY
+
+          DATABASE_URL=file:./dev.db npm run test:v3
+          DATABASE_URL=file:./dev.db npx tsc --noEmit
+          npm run build
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 5
+          curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/status > /tmp/v3-status-before.json
+          node - <<'NODE'
+          const status = require('/tmp/v3-status-before.json');
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) {
+            throw new Error('Etsy guards are not read-only before V3 execution.');
+          }
+          NODE
+          printf 'V3_BACKUP_DIR=%s\n' "$BACKUP"
+          REMOTE
+
+      - name: Execute Batch 7 green candidates
+        shell: bash
+        run: |
+          set +e
+          OUTPUT="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npx tsx scripts/controlled-autonomous-repair-v3.ts --plan config/controlled-autonomous-repair-v3/batch-7-2026-07-28.json' 2>&1)"
+          STATUS="$?"
+          set -e
+          printf '%s\n' "$OUTPUT"
+          if [ "$STATUS" -ne 0 ]; then
+            MESSAGE="$(printf '%s' "$OUTPUT" | tail -n 25 | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+            echo "::error title=V3 execution stopped safely::$MESSAGE"
+            exit "$STATUS"
+          fi
+          RESULT="$(printf '%s\n' "$OUTPUT" | sed -n 's/^V3_RESULT_JSON=//p' | tail -n 1)"
+          test -n "$RESULT"
+          RESULT_JSON="$RESULT" node - <<'NODE'
+          const result = JSON.parse(process.env.RESULT_JSON);
+          if (result.version !== 'V3') throw new Error('Unexpected execution version.');
+          if (result.standingAuthorizationEffective !== true) throw new Error('Standing Authorization was not effective.');
+          if (result.readOnlyRestored !== true) throw new Error('Read-only mode was not restored.');
+          if (result.otherFieldsModified !== false) throw new Error('A protected Etsy field changed.');
+          if ((result.results || []).some((item) => !item.verified)) throw new Error('Exact verification failed.');
+          const summary = {
+            version: result.version,
+            standingAuthorizationEffective: result.standingAuthorizationEffective,
+            executedAt: result.executedAt,
+            greenCandidates: result.greenCandidates,
+            results: result.results,
+            yellowCount: result.yellowCount,
+            redCount: result.redCount,
+            rollbackStatus: result.rollbackStatus,
+            readOnlyRestored: result.readOnlyRestored,
+            rateLimit: result.rateLimit,
+            otherFieldsModified: result.otherFieldsModified,
+            trackingStarted: result.trackingStarted,
+            trackingStartTime: result.trackingStartTime,
+          };
+          require('fs').writeFileSync('/tmp/v3-result.json', JSON.stringify(summary, null, 2));
+          process.stdout.write(`V3_SUMMARY_JSON=${JSON.stringify(summary)}\n`);
+          NODE
+
+      - name: Verify final isolation and health
+        if: always()
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd /root/mykinlegacy/mensskull-etsy-ai-manager
+          grep -Eq '^ETSY_READ_ONLY_MODE=true$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=false$' .env.local
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 5
+          curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/status > /tmp/v3-status-after.json
+          node - <<'NODE'
+          const status = require('/tmp/v3-status-after.json');
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) {
+            throw new Error('Production Etsy guards were not restored.');
+          }
+          NODE
+          curl -fsS -o /dev/null --max-time 20 https://tools.mensskull.com/etsy-connection
+          curl -fsS -o /dev/null --max-time 20 https://mykinlegacy.com/health
+          REMOTE

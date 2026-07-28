@@ -7,7 +7,15 @@ import { compareCompetitor } from "../src/lib/engines/competitor-comparison-engi
 import { assertEtsyReadOnlyRequest, validateEtsyReadOnlyEnv } from "../src/lib/integrations/etsy/read-only-guard";
 import { checkEtsyEnv } from "../src/lib/integrations/etsy/env-check";
 import { etsyScopes } from "../src/lib/integrations/etsy/scopes";
-import { assertEtsyListingWriteGuard } from "../src/lib/integrations/etsy/write-guard";
+import {
+  assertEtsyListingWriteGuard,
+  hashEtsyListingWriteDiffs
+} from "../src/lib/integrations/etsy/write-guard";
+import {
+  independentlyReviewControlledRepair,
+  validateControlledRepairProposal,
+  type ControlledRepairCandidate
+} from "../src/lib/integrations/etsy/controlled-autonomous-repair-v3";
 import {
   listingBaselineTestUtils,
   validateBatchKey,
@@ -93,6 +101,7 @@ async function runDatabaseTests() {
 }
 
 async function main() {
+  process.env.MENSSKULL_KEYWORD_BANK_PATH = "scripts/fixtures/mensskull-keyword-bank.md";
   const validatedBaselineIds = validateListingIds(["1829235400", 4471142007, "1893979797"]);
   if (validatedBaselineIds.length !== 3 || validatedBaselineIds[1] !== "4471142007") {
     throw new Error("Generic listing baseline ID validation failed.");
@@ -334,6 +343,157 @@ async function main() {
     throw new Error("Write guard did not enforce max 3 listings per day.");
   }
 
+  const v3Candidate: ControlledRepairCandidate = {
+    listingId: "4516749377",
+    product: "Meteor Hammer Pants Chain",
+    sku: "SSG03",
+    currentTitle: "Meteor Hammer Pants Chain - Titanium Steel Punk Wallet Chain for Men",
+    currentTags: [
+      "pants chain", "wallet chain", "punk chain", "biker chain men", "titanium steel",
+      "meteor chain", "trouser chain", "streetwear chain", "gothic chain",
+      "y2k wallet chain", "punk accessory", "mens chain", "metal chain"
+    ],
+    proposedTitle: "Meteor Hammer Pants Chain in Titanium Steel, Punk Wallet Chain for Men, Gothic Streetwear Accessory",
+    proposedTags: [
+      "meteor hammer chain", "meteor pants chain", "titanium steel chain", "punk wallet chain",
+      "mens pants chain", "biker wallet chain", "gothic pants chain", "trouser chain",
+      "streetwear chain", "y2k wallet chain", "metal waist chain", "punk accessory", "gift for biker"
+    ],
+    searchIntent: "titanium steel Meteor Hammer pants and wallet chain",
+    evidence: ["Unique product phrase is underused.", "Generic chain synonyms consume most live tags."],
+    repairPriorityScore: 86,
+    state: "active",
+    orders: 0,
+    views: 165,
+    favorites: 16,
+    stableSeller: false,
+    modifiedWithin30Days: false,
+    activeExperiment: false,
+    materialConfirmed: true,
+    productTypeConfirmed: true,
+    structureConfirmed: true,
+    ipRisk: false,
+    authenticityRisk: false,
+    requiresOtherFieldChanges: false,
+    independentSearchAngle: true,
+    identifierReliable: true,
+    rollbackReady: true,
+    baselineSha256: "9c20eb4e243b292021b3b01b789a8f46436a99bd4cae3f7941999d3170560e1a"
+  };
+  const v3Validation = validateControlledRepairProposal(v3Candidate);
+  const v3Review = independentlyReviewControlledRepair(v3Candidate, v3Validation);
+  if (!v3Validation.passed || v3Review.zone !== "green" || v3Review.confidence < 90) {
+    throw new Error("V3 did not approve a complete low-risk green candidate.");
+  }
+
+  process.env.ETSY_CONTROLLED_AUTONOMOUS_REPAIR_V3 = "true";
+  process.env.ETSY_STANDING_AUTHORIZATION = "true";
+  const v3Diffs = [v3Validation.diff];
+  assertEtsyListingWriteGuard({
+    approval: {
+      founderApproved: false,
+      csoApproved: false,
+      approvalReference: "",
+      standingAuthorization: {
+        enabled: true,
+        version: "V3",
+        authorizationReference: "founder-standing-authorization-v3",
+        candidateZone: "green",
+        listingId: v3Candidate.listingId,
+        exactDiffSha256: hashEtsyListingWriteDiffs(v3Diffs),
+        repairPriorityScore: v3Candidate.repairPriorityScore,
+        autoReviewConfidence: v3Review.confidence,
+        deterministicValidationPassed: v3Validation.passed,
+        independentReviewPassed: v3Review.approvedForAutomaticExecution,
+        oneTimeWindowId: "test-one-time-window"
+      }
+    },
+    dryRunDiffReviewed: true,
+    rollbackBaseline: { listingId: v3Candidate.listingId },
+    diffs: v3Diffs,
+    listingsEditedToday: 0
+  });
+
+  let v3HashMismatchBlocked = false;
+  try {
+    assertEtsyListingWriteGuard({
+      approval: {
+        founderApproved: false,
+        csoApproved: false,
+        approvalReference: "",
+        standingAuthorization: {
+          enabled: true,
+          version: "V3",
+          authorizationReference: "founder-standing-authorization-v3",
+          candidateZone: "green",
+          listingId: v3Candidate.listingId,
+          exactDiffSha256: "0".repeat(64),
+          repairPriorityScore: v3Candidate.repairPriorityScore,
+          autoReviewConfidence: v3Review.confidence,
+          deterministicValidationPassed: true,
+          independentReviewPassed: true,
+          oneTimeWindowId: "test-one-time-window"
+        }
+      },
+      dryRunDiffReviewed: true,
+      rollbackBaseline: { listingId: v3Candidate.listingId },
+      diffs: v3Diffs,
+      listingsEditedToday: 0
+    });
+  } catch {
+    v3HashMismatchBlocked = true;
+  }
+  if (!v3HashMismatchBlocked) throw new Error("V3 standing authorization did not bind the exact diff hash.");
+
+  const redCandidate = { ...v3Candidate, modifiedWithin30Days: true };
+  const redReview = independentlyReviewControlledRepair(redCandidate, validateControlledRepairProposal(redCandidate));
+  if (redReview.zone !== "red" || redReview.approvedForAutomaticExecution) {
+    throw new Error("V3 did not block a listing modified within 30 days.");
+  }
+
+  const yellowCandidate = { ...v3Candidate, repairPriorityScore: 82, identifierReliable: false };
+  const yellowReview = independentlyReviewControlledRepair(yellowCandidate, validateControlledRepairProposal(yellowCandidate));
+  if (yellowReview.zone !== "yellow" || yellowReview.approvedForAutomaticExecution) {
+    throw new Error("V3 did not route a low-score identifier conflict to yellow review.");
+  }
+
+  const descriptionDiff = [{
+    listingId: v3Candidate.listingId,
+    fields: { descriptionOpening: { before: "Old", after: "New" } }
+  }];
+  let v3DescriptionBlocked = false;
+  try {
+    assertEtsyListingWriteGuard({
+      approval: {
+        founderApproved: false,
+        csoApproved: false,
+        approvalReference: "",
+        standingAuthorization: {
+          enabled: true,
+          version: "V3",
+          authorizationReference: "founder-standing-authorization-v3",
+          candidateZone: "green",
+          listingId: v3Candidate.listingId,
+          exactDiffSha256: hashEtsyListingWriteDiffs(descriptionDiff),
+          repairPriorityScore: v3Candidate.repairPriorityScore,
+          autoReviewConfidence: v3Review.confidence,
+          deterministicValidationPassed: true,
+          independentReviewPassed: true,
+          oneTimeWindowId: "test-description-window"
+        }
+      },
+      dryRunDiffReviewed: true,
+      rollbackBaseline: { listingId: v3Candidate.listingId },
+      diffs: descriptionDiff,
+      listingsEditedToday: 0
+    });
+  } catch {
+    v3DescriptionBlocked = true;
+  }
+  if (!v3DescriptionBlocked) throw new Error("V3 write guard did not forbid description changes.");
+  delete process.env.ETSY_CONTROLLED_AUTONOMOUS_REPAIR_V3;
+  delete process.env.ETSY_STANDING_AUTHORIZATION;
+
   const originalClientId = process.env.ETSY_CLIENT_ID;
   const originalClientSecret = process.env.ETSY_CLIENT_SECRET;
   const originalShopId = process.env.ETSY_SHOP_ID;
@@ -386,6 +546,7 @@ async function main() {
   if (originalReadOnlyMode) process.env.ETSY_READ_ONLY_MODE = originalReadOnlyMode;
   else delete process.env.ETSY_READ_ONLY_MODE;
   delete process.env.ETSY_WRITE_APPROVED;
+  delete process.env.MENSSKULL_KEYWORD_BANK_PATH;
 
   await runDatabaseTests();
   console.log("Engine and read-only integration tests passed.");
