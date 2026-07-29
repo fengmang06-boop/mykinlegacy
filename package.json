@@ -53,16 +53,22 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.36.0",
-    "@next/eslint-plugin-next": "15.5.4",
+    "@next/eslint-plugin-next": "15.5.21",
     "@types/node": "^24.5.2",
     "eslint": "^9.36.0",
     "playwright": "^1.61.1",
     "prettier": "^3.6.2",
-    "prisma": "^6.19.0",
+    "prisma": "^6.19.3",
     "rimraf": "^6.0.1",
     "tsx": "^4.20.5",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.44.1",
     "vitest": "^3.2.4"
+  },
+  "pnpm": {
+    "overrides": {
+      "postcss": "8.5.18",
+      "sharp": "0.35.0"
+    }
   }
 }

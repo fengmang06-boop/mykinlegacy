@@ -23,11 +23,11 @@
     "@ai-heritage/domain": "workspace:*",
     "@ai-heritage/pdf": "workspace:*",
     "@ai-heritage/storage": "workspace:*",
-    "@prisma/client": "^6.19.0",
+    "@prisma/client": "^6.19.3",
     "ulid": "^3.0.2"
   },
   "devDependencies": {
-    "prisma": "6.19.0",
+    "prisma": "6.19.3",
     "tsx": "^4.22.4"
   }
 }
