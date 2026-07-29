@@ -28,17 +28,26 @@ export function SiteHeader() {
   const [open, setOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const dialog = useRef<HTMLDivElement>(null);
+  const restoreMenuFocus = useRef(false);
   const closeMenu = useCallback(({ restoreFocus }: { restoreFocus: boolean }) => {
-    if (restoreFocus) {
-      menuButton.current?.focus({ preventScroll: true });
-    }
+    restoreMenuFocus.current = restoreFocus;
     setOpen(false);
-    if (restoreFocus) {
-      window.requestAnimationFrame(() => {
+  }, []);
+
+  useEffect(() => {
+    if (open || !restoreMenuFocus.current) return;
+    restoreMenuFocus.current = false;
+    let focusFrame = 0;
+    const commitFrame = window.requestAnimationFrame(() => {
+      focusFrame = window.requestAnimationFrame(() => {
         menuButton.current?.focus({ preventScroll: true });
       });
-    }
-  }, []);
+    });
+    return () => {
+      window.cancelAnimationFrame(commitFrame);
+      window.cancelAnimationFrame(focusFrame);
+    };
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -107,8 +116,13 @@ export function SiteHeader() {
           <div
             className="mobile-menu-backdrop"
             aria-hidden="true"
+            tabIndex={-1}
+            onPointerDown={(event) => event.preventDefault()}
             onMouseDown={(event) => event.preventDefault()}
-            onClick={() => closeMenu({ restoreFocus: true })}
+            onClick={(event) => {
+              event.preventDefault();
+              closeMenu({ restoreFocus: true });
+            }}
           />
           <div className="mobile-menu-panel" id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Navigation menu" ref={dialog}>
             <div className="mobile-menu-heading">
