@@ -188,7 +188,7 @@ jobs:
           set +e
           OUTPUT="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
             -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npx tsx scripts/controlled-autonomous-repair-v3.ts --plan config/controlled-autonomous-repair-v3/batch-7-2026-07-28.json' 2>&1)"
+            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npx tsx scripts/controlled-autonomous-repair-v3.ts --plan config/controlled-autonomous-repair-v3/batch-8-2026-07-29.json' 2>&1)"
           STATUS="$?"
           set -e
           printf '%s\n' "$OUTPUT"
