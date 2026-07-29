@@ -33,10 +33,11 @@ const testDir = dirname(fileURLToPath(import.meta.url));
 describe("customer frontend flow", () => {
   it("landing page renders CTA and disclaimer", () => {
     const html = renderToStaticMarkup(<HomePage />);
-    expect(html).toContain("Give them their family story, made visible.");
+    expect(html).toContain("Their story.");
+    expect(html).toContain("Made visible.");
     expect(html).toContain("USD $49");
     expect(html).toContain("Begin Their Legacy");
-    expect(html).toContain("View Real Examples");
+    expect(html).toContain("View Examples");
     expect(html).toContain("Heritage Certificate");
     expect(html).toContain("No physical shipping included");
     expect(html).toContain("not inherited arms, official heraldry, or genealogical proof");
@@ -73,7 +74,9 @@ describe("customer frontend flow", () => {
   it("collection page renders the approved five-part product contract", () => {
     const html = renderToStaticMarkup(<CollectionPage />);
 
-    expect(html).toContain("A complete family legacy collection, shaped from their real story.");
+    expect(html.replace(/<[^>]+>/g, "")).toContain(
+      "A complete family legacy collection, shaped from their real story."
+    );
     expect(html).toContain("USD $49");
     expect(html).toContain("Final Crest");
     expect(html).toContain("Heritage Certificate");
@@ -99,8 +102,8 @@ describe("customer frontend flow", () => {
     const source = await readFile(join(testDir, "app/family-legacy-collection/page.tsx"), "utf8");
     expect(source).not.toContain("first 25");
     expect(source).not.toContain("LimitedAvailability");
-    expect(source).toContain("/assets/showcase-collections/01-father-retirement/final-crest.png");
-    expect(source).toContain('className="cv2-suite-label">Family Story</span>');
+    expect(source).toContain("/review/official-asset-recovery/images/03a-gothic-memory-lantern.png");
+    expect(source).toContain('className="cv2-product-label">Family Story</span>');
   });
 
   it("confirm flow sends delivery email into order creation payload", async () => {

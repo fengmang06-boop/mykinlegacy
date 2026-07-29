@@ -29,11 +29,15 @@ export function SiteHeader() {
   const menuButton = useRef<HTMLButtonElement>(null);
   const dialog = useRef<HTMLDivElement>(null);
   const closeMenu = useCallback(({ restoreFocus }: { restoreFocus: boolean }) => {
-    setOpen(false);
-    if (!restoreFocus) return;
-    window.setTimeout(() => {
+    if (restoreFocus) {
       menuButton.current?.focus({ preventScroll: true });
-    });
+    }
+    setOpen(false);
+    if (restoreFocus) {
+      window.requestAnimationFrame(() => {
+        menuButton.current?.focus({ preventScroll: true });
+      });
+    }
   }, []);
 
   useEffect(() => {
@@ -103,6 +107,7 @@ export function SiteHeader() {
           <div
             className="mobile-menu-backdrop"
             aria-hidden="true"
+            onMouseDown={(event) => event.preventDefault()}
             onClick={() => closeMenu({ restoreFocus: true })}
           />
           <div className="mobile-menu-panel" id="mobile-navigation" role="dialog" aria-modal="true" aria-label="Navigation menu" ref={dialog}>

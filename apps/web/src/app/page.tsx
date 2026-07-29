@@ -17,7 +17,7 @@ export const metadata: Metadata = publicMetadata({
 const assets = "/assets/final-homepage";
 const examples = "/assets/showcase-collections";
 
-const realExamples = [
+const designStudies = [
   ["Father Retirement", "A working life interpreted through resilience, guidance, and home.", "01-father-retirement", "01-father-retirement"],
   ["Parents Anniversary", "A shared life shaped into symbols of continuity, devotion, and family.", "20-parents-anniversary", "20-parents-anniversary"],
   ["Grandparents", "The stories and values younger generations should still be able to revisit.", "06-grandfather-legacy", "06-grandfather-legacy"],
@@ -52,27 +52,32 @@ export default function HomePage() {
       <section className="hv2-hero">
         <div className="hv2-shell hv2-hero-grid">
           <div className="hv2-hero-copy">
-            <p className="hv2-kicker">A modern family archive, made as a meaningful gift</p>
-            <h1>Give them their family story, made visible.</h1>
+            <p className="hv2-kicker">A personalized digital Family Legacy Collection</p>
+            <h1>Their story.<br />Made visible.</h1>
             <p className="hv2-lede">
-              A private digital collection shaped from the memories, values, and details you share—
-              interpreted into one Final Crest and the story behind it.
+              MyKinLegacy turns a family&apos;s real stories, values, people, places, and milestones
+              into a personalized digital Family Legacy Collection.
             </p>
             <div className="hv2-offer-line" aria-label="Collection details">
               <strong>USD $49</strong><span>Digital collection</span><span>Founder reviewed</span><span>Private delivery</span>
             </div>
             <div className="hv2-actions">
               <Link className="hv2-button hv2-primary" href="/create">Begin Their Legacy</Link>
-              <Link className="hv2-button hv2-secondary" href="/real-examples">View Real Examples</Link>
+              <Link className="hv2-button hv2-secondary" href="/real-examples">View Examples</Link>
             </div>
             <p className="hv2-disclosure">Digital collection. No physical shipping included.</p>
           </div>
           <div className="hv2-hero-product">
-            <div className="hv2-document-stack" aria-label="The complete Family Legacy Collection">
-              <Image className="hv2-paper hv2-paper-story" src={`${assets}/02_homepage/hero/hero-family-story.webp`} width={560} height={560} alt="Family Story cover from a Family Legacy Collection" />
-              <Image className="hv2-paper hv2-paper-meaning" src={`${assets}/02_homepage/hero/hero-symbol-guide.webp`} width={560} height={560} alt="Meaning Behind Your Crest cover" />
-              <Image className="hv2-paper hv2-paper-certificate" src={`${assets}/02_homepage/hero/hero-heritage-certificate.webp`} width={560} height={560} alt="Heritage Certificate presentation" />
-              <Image className="hv2-crest" src={`${examples}/20-parents-anniversary/final-crest.png`} width={900} height={900} priority sizes="(max-width: 560px) 138px, (max-width: 900px) 74vw, 38vw" alt="Real Parents Anniversary Final Crest" />
+            <div className="hv2-hero-suite" aria-label="The complete Family Legacy Collection">
+              <figure className="hv2-suite-item hv2-suite-certificate">
+                <Image src={`${assets}/02_homepage/hero/hero-heritage-certificate.webp`} width={560} height={560} sizes="(max-width: 640px) 52vw, (max-width: 1000px) 44vw, 27vw" priority alt="Full Heritage Certificate presentation" />
+                <figcaption>Heritage Certificate</figcaption>
+              </figure>
+              <div className="hv2-suite-supporting">
+                <figure className="hv2-suite-item"><Image src={`${assets}/02_homepage/hero/hero-family-story.webp`} width={560} height={560} sizes="(max-width: 640px) 32vw, (max-width: 1000px) 25vw, 14vw" alt="Full Family Story cover" /><figcaption>Family Story</figcaption></figure>
+                <figure className="hv2-suite-item"><Image src={`${assets}/02_homepage/hero/hero-symbol-guide.webp`} width={560} height={560} sizes="(max-width: 640px) 32vw, (max-width: 1000px) 25vw, 14vw" alt="Full Meaning Behind Your Crest cover" /><figcaption>Meaning Behind Your Crest</figcaption></figure>
+                <figure className="hv2-suite-item hv2-suite-crest"><Image src="/review/official-asset-recovery/images/05a-compass-journey-medallion.png" width={900} height={900} sizes="(max-width: 640px) 25vw, (max-width: 1000px) 20vw, 11vw" alt="Illustrative journey Final Crest direction" /><figcaption>Final Crest</figcaption></figure>
+              </div>
             </div>
             <div className="hv2-product-caption">
               <span>Inside the Complete Collection</span>
@@ -89,10 +94,10 @@ export default function HomePage() {
             <h2>Ordinary gifts show what you bought.<br />A legacy collection shows what they meant.</h2>
           </div>
           <div className="hv2-editorial-scenes">
-            {realExamples.slice(0, 3).map(([title, text, id, href], index) => (
+            {designStudies.slice(0, 3).map(([title, text, id, href], index) => (
               <Link className={`hv2-scene ${index === 0 ? "hv2-scene-main" : ""}`} href={`/real-examples/${href}`} key={id}>
-                <Image src={`${examples}/${id}/final-crest.png`} width={700} height={700} sizes={index === 0 ? "(max-width: 800px) 90vw, 48vw" : "(max-width: 800px) 90vw, 24vw"} alt={`${title} real Final Crest`} />
-                <div><span>0{index + 1} · Real collection</span><h3>{title}</h3><p>{text}</p><strong>Read the case →</strong></div>
+                <Image src={`${examples}/${id}/final-crest.png`} width={700} height={700} sizes={index === 0 ? "(max-width: 800px) 90vw, 48vw" : "(max-width: 800px) 90vw, 24vw"} alt={`${title} illustrative Final Crest direction`} />
+                <div><span>0{index + 1} · Illustrative Design Study</span><h3>{title}</h3><p>{text}</p><strong>View the design study →</strong></div>
               </Link>
             ))}
           </div>
@@ -102,9 +107,9 @@ export default function HomePage() {
       <section className="hv2-section hv2-collection" id="collection">
         <div className="hv2-shell hv2-collection-grid">
           <div className="hv2-collection-visual">
-            <Image src={`${assets}/04_homepage/features/feature-heritage-certificate.webp`} width={760} height={760} alt="Heritage Certificate from the Complete Collection" />
-            <Image src={`${assets}/04_homepage/features/feature-family-story.webp`} width={520} height={520} alt="Family Story publication" />
-            <Image src={`${assets}/04_homepage/features/feature-symbol-guide.webp`} width={520} height={520} alt="Meaning Behind Your Crest publication" />
+            <Image src={`${assets}/04_homepage/features/feature-heritage-certificate.webp`} width={760} height={760} sizes="(max-width: 800px) 76vw, 37vw" alt="Heritage Certificate from the Complete Collection" />
+            <Image src={`${assets}/04_homepage/features/feature-family-story.webp`} width={520} height={520} sizes="(max-width: 800px) 44vw, 22vw" alt="Family Story publication" />
+            <Image src={`${assets}/04_homepage/features/feature-symbol-guide.webp`} width={520} height={520} sizes="(max-width: 800px) 44vw, 22vw" alt="Meaning Behind Your Crest publication" />
           </div>
           <div>
             <p className="hv2-kicker">The Complete Collection</p>
@@ -135,7 +140,7 @@ export default function HomePage() {
               <article><span>Symbol choice</span><strong>Compass · mountain path · rooted tree</strong></article>
             </div>
             <div className="hv2-evidence-crest">
-              <Image src={`${examples}/01-father-retirement/final-crest.png`} width={720} height={720} alt="Real Father Retirement Final Crest showing evidence-led symbols" />
+              <Image src={`${examples}/01-father-retirement/final-crest.png`} width={720} height={720} sizes="(max-width: 800px) 70vw, 30vw" alt="Illustrative Father Retirement Final Crest showing evidence-led symbols" />
             </div>
             <div className="hv2-evidence-output">
               <article><b>Design Basis</b><p>The family inputs that anchor the visual direction.</p></article>
@@ -151,13 +156,13 @@ export default function HomePage() {
       <section className="hv2-section hv2-examples" id="examples">
         <div className="hv2-shell">
           <div className="hv2-heading hv2-heading-row">
-            <div><p className="hv2-kicker">Real examples</p><h2>Different evidence. Distinctly different collections.</h2></div>
-            <Link href="/real-examples">View All Real Examples →</Link>
+            <div><p className="hv2-kicker">Illustrative design studies</p><h2>Different evidence. Distinctly different collections.</h2></div>
+            <Link href="/real-examples">View All Examples →</Link>
           </div>
           <div className="hv2-example-grid">
-            {realExamples.map(([title, text, id, href], index) => (
+            {designStudies.map(([title, text, id, href], index) => (
               <Link className={index === 0 ? "hv2-example-featured" : ""} href={`/real-examples/${href}`} key={id}>
-                <Image src={`${examples}/${id}/final-crest.png`} width={760} height={760} sizes={index === 0 ? "(max-width: 760px) 90vw, 42vw" : "(max-width: 760px) 90vw, 23vw"} alt={`${title} real collection`} />
+                <Image src={`${examples}/${id}/final-crest.png`} width={760} height={760} sizes={index === 0 ? "(max-width: 760px) 90vw, 42vw" : "(max-width: 760px) 90vw, 23vw"} alt={`${title} illustrative collection direction`} />
                 <div><h3>{title}</h3><p>{text}</p></div>
               </Link>
             ))}
@@ -185,8 +190,9 @@ export default function HomePage() {
             <li><span>01</span><h3>Tell us their story</h3><p>Share the people, moments, values, and details that matter.</p></li>
             <li><span>02</span><h3>We interpret the evidence</h3><p>Meaning becomes a coherent visual and written direction.</p></li>
             <li><span>03</span><h3>The collection is created</h3><p>The Crest and supporting documents are prepared together.</p></li>
-            <li><span>04</span><h3>Founder review</h3><p>The collection is checked before release.</p></li>
-            <li><span>05</span><h3>Private delivery</h3><p>The digital Complete Collection is released through your private vault.</p></li>
+            <li><span>04</span><h3>We build the composition</h3><p>Evidence, hierarchy, material, and tone become one coherent direction.</p></li>
+            <li><span>05</span><h3>You review</h3><p>You can confirm the direction before the collection is finalized.</p></li>
+            <li><span>06</span><h3>We refine and deliver</h3><p>Founder review precedes private delivery of the digital Complete Collection.</p></li>
           </ol>
         </div>
       </section>
@@ -207,7 +213,7 @@ export default function HomePage() {
           <p className="hv2-kicker">A gift made from what matters</p>
           <h2>Give them a collection only their family could inspire.</h2>
           <p>One Founder-reviewed digital Family Legacy Collection · USD $49 · Private delivery</p>
-          <div className="hv2-actions"><Link className="hv2-button hv2-primary" href="/create">Begin Their Legacy</Link><Link className="hv2-button hv2-secondary" href="/real-examples">View Real Examples</Link></div>
+          <div className="hv2-actions"><Link className="hv2-button hv2-primary" href="/create">Begin Their Legacy</Link><Link className="hv2-button hv2-secondary" href="/real-examples">View Examples</Link></div>
           <small>No physical shipping included. Printing and framing are arranged separately.</small>
         </div>
       </section>

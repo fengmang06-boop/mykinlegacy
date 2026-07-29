@@ -8,6 +8,9 @@ COMPOSE_FILE="$SCRIPT_DIR/docker-compose.yml"
 COMPOSE_PROJECT_NAME="mykinlegacy"
 LAST_SUCCESSFUL_FILE="$SCRIPT_DIR/.last-successful-commit"
 LAST_SUCCESSFUL_IMAGE_FILE="$SCRIPT_DIR/.last-successful-image"
+RELEASES_DIR="$SCRIPT_DIR/releases"
+CURRENT_RELEASE_LINK="$SCRIPT_DIR/current-release"
+PREVIOUS_RELEASE_LINK="$SCRIPT_DIR/previous-release"
 DEPLOY_STARTED_AT="$(date +%s)"
 
 if [ "${MYKINLEGACY_LOCK_HELD:-false}" != "true" ]; then
@@ -187,6 +190,41 @@ safe_image_cleanup() {
   df -h / || true
 }
 
+record_atomic_release() {
+  local release_commit="$1"
+  local release_image="$2"
+  local release_dir="$RELEASES_DIR/$release_commit"
+  local next_link="$SCRIPT_DIR/.current-release.next"
+  local previous_next_link="$SCRIPT_DIR/.previous-release.next"
+  local current_target=""
+
+  if [ -e "$CURRENT_RELEASE_LINK" ] && [ ! -L "$CURRENT_RELEASE_LINK" ]; then
+    echo "Release pointer path exists but is not a symlink: $CURRENT_RELEASE_LINK" >&2
+    return 1
+  fi
+  if [ -e "$PREVIOUS_RELEASE_LINK" ] && [ ! -L "$PREVIOUS_RELEASE_LINK" ]; then
+    echo "Previous release pointer path exists but is not a symlink: $PREVIOUS_RELEASE_LINK" >&2
+    return 1
+  fi
+
+  mkdir -p "$release_dir"
+  printf '%s\n' "$release_commit" > "$release_dir/commit"
+  printf '%s\n' "$release_image" > "$release_dir/image"
+  printf '%s\n' "$(date -u '+%Y-%m-%dT%H:%M:%SZ')" > "$release_dir/activated-at"
+
+  if [ -L "$CURRENT_RELEASE_LINK" ]; then
+    current_target="$(readlink -f "$CURRENT_RELEASE_LINK" 2>/dev/null || true)"
+    if [ -n "$current_target" ] && [ -d "$current_target" ]; then
+      ln -sfn "$current_target" "$previous_next_link"
+      mv -Tf "$previous_next_link" "$PREVIOUS_RELEASE_LINK"
+    fi
+  fi
+
+  ln -sfn "$release_dir" "$next_link"
+  mv -Tf "$next_link" "$CURRENT_RELEASE_LINK"
+  echo "ATOMIC_RELEASE_SWITCH commit=$(short_commit "$release_commit")"
+}
+
 phase "Creating Docker volumes"
 $SUDO docker volume create "${COMPOSE_PROJECT_NAME}_mysql_data" >/dev/null
 $SUDO docker volume create "${COMPOSE_PROJECT_NAME}_redis_data" >/dev/null
@@ -225,7 +263,7 @@ else
   exit "$migration_status"
 fi
 
-if [ "${RUN_SEED:-true}" = "true" ]; then
+if [ "${RUN_SEED:-false}" = "true" ]; then
   phase "Running seed data"
   if timeout --signal=TERM --kill-after=30s "${SEED_TIMEOUT_SECONDS:-600}" \
     $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" \
@@ -252,6 +290,7 @@ else
   SUCCESSFUL_COMMIT="unknown"
 fi
 echo "$APP_IMAGE" > "$LAST_SUCCESSFUL_IMAGE_FILE"
+record_atomic_release "$SUCCESSFUL_COMMIT" "$APP_IMAGE"
 
 safe_image_cleanup
 

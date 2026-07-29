@@ -222,6 +222,6 @@ jobs:
           git pull --ff-only origin main
 
           printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin >/dev/null
-          APP_IMAGE="$APP_IMAGE" bash deployment/deploy.sh
+          RUN_SEED=false APP_IMAGE="$APP_IMAGE" bash deployment/deploy.sh
           bash deployment/status.sh
           REMOTE_SCRIPT

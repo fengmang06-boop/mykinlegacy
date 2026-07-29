@@ -10,6 +10,9 @@ const securityHeaders = [
 /** @type {import("next").NextConfig} */
 const nextConfig = {
   outputFileTracingRoot: fileURLToPath(new URL("../..", import.meta.url)),
+  images: {
+    formats: ["image/avif", "image/webp"]
+  },
   async headers() {
     return [
       {

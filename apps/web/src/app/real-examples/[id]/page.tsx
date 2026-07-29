@@ -25,7 +25,7 @@ export async function generateMetadata({
   if (!collection) {
     return publicMetadata({
       title: "Example Collection | MyKinLegacy",
-      description: "View a MyKinLegacy real example collection.",
+      description: "View a MyKinLegacy illustrative design study.",
       path: "/real-examples"
     });
   }
@@ -64,7 +64,7 @@ export default async function ShowcaseDetailPage({ params }: ShowcaseDetailPageP
     about: [collection.occasion, collection.recipient, ...collection.tags],
     isPartOf: {
       "@type": "CollectionPage",
-      name: "MyKinLegacy Real Example Collections",
+      name: "MyKinLegacy Illustrative Design Studies",
       url: `${SITE_URL}/real-examples`
     }
   };
@@ -76,7 +76,7 @@ export default async function ShowcaseDetailPage({ params }: ShowcaseDetailPageP
       {
         "@type": "ListItem",
         position: 2,
-        name: "Real Example Collections",
+        name: "Examples",
         item: `${SITE_URL}/real-examples`
       },
       { "@type": "ListItem", position: 3, name: collection.title, item: pageUrl }
@@ -92,7 +92,7 @@ export default async function ShowcaseDetailPage({ params }: ShowcaseDetailPageP
             <nav className="seo-breadcrumb" aria-label="Breadcrumb">
               <Link href="/">Home</Link>
               <span aria-hidden="true">/</span>
-              <Link href="/real-examples">Real Examples</Link>
+              <Link href="/real-examples">Examples</Link>
             </nav>
             <p className="eyebrow">{collection.occasion}</p>
             <h1>{seo.h1}</h1>

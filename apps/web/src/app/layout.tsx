@@ -78,6 +78,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   const organizationJsonLd = {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
     name: BRAND_NAME,
     url: SITE_URL,
     email: SUPPORT_EMAIL,
@@ -86,13 +87,10 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
   const websiteJsonLd = {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": `${SITE_URL}/#website`,
     name: BRAND_NAME,
     url: SITE_URL,
-    publisher: {
-      "@type": "Organization",
-      name: BRAND_NAME,
-      url: SITE_URL
-    }
+    publisher: { "@id": `${SITE_URL}/#organization` }
   };
 
   return (
@@ -126,7 +124,7 @@ export default function RootLayout({ children }: Readonly<{ children: ReactNode 
             </p>
             <div className="footer-links">
               <Link href="/family-legacy-collection">Collection</Link>
-              <Link href="/real-examples">Real Examples</Link>
+              <Link href="/real-examples">Examples</Link>
               <Link href="/journal">Journal</Link>
               <Link href="/gifts/father-retirement">Gift Ideas</Link>
               <Link href="/support">Support</Link>

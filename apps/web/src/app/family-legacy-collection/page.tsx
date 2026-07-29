@@ -165,7 +165,7 @@ export default function FamilyLegacyCollectionPage() {
     description:
       "Turn their real family story into a Final Crest, Heritage Certificate, Family Story, meaning guide, and private digital Complete Collection.",
     url: `${SITE_URL}/family-legacy-collection`,
-    isPartOf: { "@type": "WebSite", name: "MyKinLegacy", url: SITE_URL }
+    isPartOf: { "@id": `${SITE_URL}/#website` }
   };
   const productJsonLd = {
     "@context": "https://schema.org",
@@ -221,7 +221,10 @@ export default function FamilyLegacyCollectionPage() {
           <div className="cv2-hero-copy">
             <p className="cv2-kicker">A modern family archive · made as a meaningful gift</p>
             <h1 id="collection-title">
-              A complete family legacy collection, shaped from their real story.
+              A complete family<span className="cv2-mobile-break"><br /></span>{" "}
+              legacy collection,<span className="cv2-mobile-break"><br /></span>{" "}
+              shaped from their<span className="cv2-mobile-break"><br /></span>{" "}
+              real story.
             </h1>
             <p className="cv2-lead">
               Not just a crest image. One private digital collection turns the memories, values,
@@ -239,7 +242,7 @@ export default function FamilyLegacyCollectionPage() {
                 Begin Their Legacy
               </Link>
               <Link className="cv2-button cv2-button-secondary" href="/real-examples">
-                View Real Examples
+                View Examples
               </Link>
             </div>
             <p className="cv2-delivery-note">
@@ -252,48 +255,53 @@ export default function FamilyLegacyCollectionPage() {
             </p>
           </div>
           <figure
-            className="cv2-suite"
+            className="cv2-product-board"
             aria-label="The complete five-part Family Legacy Collection"
           >
-            <div className="cv2-suite-paper cv2-suite-story">
+            <div className="cv2-product-document cv2-product-story">
               <Image
                 src={`${assets}/02_homepage/hero/hero-family-story.webp`}
                 width={560}
                 height={560}
+                sizes="(max-width: 640px) 51vw, (max-width: 1000px) 45vw, 25vw"
                 alt="Approved Family Story cover"
               />
-              <span className="cv2-suite-label">Family Story</span>
+              <span className="cv2-product-label">Family Story</span>
             </div>
-            <div className="cv2-suite-paper cv2-suite-meaning">
+            <div className="cv2-product-document cv2-product-meaning">
               <Image
                 src={`${assets}/02_homepage/hero/hero-symbol-guide.webp`}
                 width={560}
                 height={560}
+                sizes="(max-width: 640px) 36vw, (max-width: 1000px) 34vw, 18vw"
                 alt="Approved Meaning Behind Your Crest cover"
               />
-              <span className="cv2-suite-label">Meaning Behind Your Crest</span>
+              <span className="cv2-product-label">Meaning Behind Your Crest</span>
             </div>
-            <div className="cv2-suite-paper cv2-suite-certificate">
+            <div className="cv2-product-document cv2-product-certificate">
               <Image
                 src={`${assets}/02_homepage/hero/hero-heritage-certificate.webp`}
                 width={560}
                 height={560}
+                sizes="(max-width: 640px) 51vw, (max-width: 1000px) 45vw, 25vw"
                 alt="Approved Heritage Certificate presentation"
               />
-              <span className="cv2-suite-label">Heritage Certificate</span>
+              <span className="cv2-product-label">Heritage Certificate</span>
             </div>
-            <div className="cv2-suite-crest">
+            <div className="cv2-product-crest">
               <Image
-                src="/assets/showcase-collections/01-father-retirement/final-crest.png"
+                src="/review/official-asset-recovery/images/03a-gothic-memory-lantern.png"
                 width={760}
                 height={760}
-                alt="Approved Father Retirement Final Crest with a rooted tree"
+                sizes="(max-width: 640px) 22vw, (max-width: 1000px) 24vw, 13vw"
+                alt="Illustrative lantern Final Crest direction"
                 priority
               />
+              <span className="cv2-product-label">Final Crest</span>
             </div>
             <figcaption>
               <strong>The Complete Collection</strong>
-              <span>Five connected deliverables · one private Vault</span>
+              <span>Five connected deliverables, delivered privately through your secure vault.</span>
             </figcaption>
           </figure>
         </div>
@@ -357,10 +365,11 @@ export default function FamilyLegacyCollectionPage() {
               src="/assets/showcase-collections/01-father-retirement/final-crest.png"
               width={760}
               height={760}
-              alt="Father Retirement approved Final Crest"
+              sizes="(max-width: 800px) 76vw, 38vw"
+              alt="Father Retirement illustrative Final Crest direction"
             />
             <div>
-              <p className="cv2-kicker">Approved case · Father Retirement</p>
+              <p className="cv2-kicker">Illustrative Design Study · Father Retirement</p>
               <h3>Design Basis</h3>
               <p>
                 Supplied themes of steady work, protection, sacrifice, and integrity establish the
@@ -391,7 +400,7 @@ export default function FamilyLegacyCollectionPage() {
             {deliverables.map((item) => (
               <article key={item.name}>
                 <div className="cv2-deliverable-image">
-                  <Image src={item.image} width={760} height={560} alt={item.alt} />
+                  <Image src={item.image} width={760} height={560} sizes="(max-width: 760px) 88vw, 30vw" alt={item.alt} />
                 </div>
                 <div className="cv2-deliverable-copy">
                   <span>{item.number}</span>
@@ -431,7 +440,8 @@ export default function FamilyLegacyCollectionPage() {
                   src={example.image}
                   width={640}
                   height={640}
-                  alt={`${example.title} approved Final Crest`}
+                  sizes="(max-width: 760px) 88vw, 28vw"
+                  alt={`${example.title} illustrative Final Crest direction`}
                 />
                 <div>
                   <p className="cv2-kicker">{example.occasion}</p>
@@ -552,6 +562,7 @@ export default function FamilyLegacyCollectionPage() {
               src={`${assets}/04_homepage/features/feature-private-vault.webp`}
               width={760}
               height={520}
+              sizes="(max-width: 800px) 88vw, 42vw"
               alt="Approved private Vault presentation"
             />
             <ul>
@@ -629,7 +640,7 @@ export default function FamilyLegacyCollectionPage() {
                 Begin Their Legacy
               </Link>
               <Link className="cv2-button cv2-button-secondary" href="/real-examples">
-                View Real Examples
+                View Examples
               </Link>
             </div>
           </div>
@@ -664,7 +675,7 @@ export default function FamilyLegacyCollectionPage() {
               Begin Their Legacy
             </Link>
             <Link className="cv2-button cv2-button-secondary" href="/real-examples">
-              View Real Examples
+              View Examples
             </Link>
           </div>
         </div>
