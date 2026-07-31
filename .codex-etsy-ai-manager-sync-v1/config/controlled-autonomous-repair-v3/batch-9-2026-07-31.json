@@ -1,0 +1,94 @@
+{
+  "version": "V3",
+  "batchKey": "batch-9-v3-2026-07-31",
+  "baselineReportPath": "exports/low-signal-breakthrough/baseline-2026-07-31/baseline.json",
+  "candidates": [
+    {
+      "listingId": "1761152657",
+      "product": "Sterling Silver Spartan Helmet Ring",
+      "sku": "SJ84",
+      "proposedTitle": "Spartan Helmet Ring for Men in 925 Sterling Silver, Handmade Warrior Statement Jewelry",
+      "proposedTags": ["spartan helmet ring", "mens spartan ring", "warrior ring", "silver helmet ring", "925 spartan ring", "mens warrior ring", "greek helmet ring", "ancient greek ring", "soldier jewelry", "statement ring", "handmade ring", "history lover gift", "armor ring"],
+      "searchIntent": "Spartan helmet and ancient warrior sterling silver ring",
+      "evidence": ["All 13 live tags incorrectly target skull rings.", "The product supports a distinct Spartan helmet and armor search angle."],
+      "repairPriorityScore": 93,
+      "views": 60,
+      "favorites": 5,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": true
+    },
+    {
+      "listingId": "1645240872",
+      "product": "Coffee Bean Pendant Necklace",
+      "sku": "SP219",
+      "proposedTitle": "Coffee Bean Pendant Necklace in 925 Sterling Silver with Copper Inlay, Handmade Barista Gift",
+      "proposedTags": ["coffee bean pendant", "barista necklace", "coffee lover gift", "silver coffee bean", "coffee jewelry", "925 silver pendant", "copper inlay", "barista gift", "cafe lover gift", "bean necklace", "handmade pendant", "unique coffee gift", "sterling necklace"],
+      "searchIntent": "coffee bean silver pendant with copper inlay for baristas",
+      "evidence": ["The live tags include the unrelated phrase brewery charm and spend multiple slots on broad gift wording.", "Confirmed silver, copper-inlay, coffee-bean, and pendant facts support one distinct barista-gift angle."],
+      "repairPriorityScore": 88,
+      "views": 80,
+      "favorites": 7,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": true
+    },
+    {
+      "listingId": "4311735900",
+      "product": "Custom Brass Cowboy Car Emblem",
+      "sku": "CBS02",
+      "proposedTitle": "Custom Brass Cowboy Car Emblem, Handmade Western Auto Badge for Trucks and Cars",
+      "proposedTags": ["cowboy car emblem", "western auto badge", "western truck badge", "brass cowboy badge", "cowboy truck decor", "western car decor", "truck emblem", "cowboy car badge", "custom cowboy badge", "western vehicle", "handmade car badge", "brass auto emblem", "cowboy gift"],
+      "searchIntent": "custom brass cowboy and western vehicle emblem",
+      "evidence": ["The proposed wording removes the protected 3M term.", "The product supports a distinct cowboy and western vehicle-badge angle."],
+      "repairPriorityScore": 86,
+      "views": 97,
+      "favorites": 0,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": true
+    },
+    {
+      "listingId": "4311916489", "product": "Lunar Crater Bangle", "sku": "SB201", "proposedTitle": "", "proposedTags": [], "searchIntent": "lunar crater textured silver bangle", "evidence": [], "repairPriorityScore": 83, "views": 34, "favorites": 1, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4396766200", "product": "Middle Finger Pendant", "sku": "SP78", "proposedTitle": "", "proposedTags": [], "searchIntent": "rebel hand gesture silver pendant", "evidence": [], "repairPriorityScore": 81, "views": 48, "favorites": 2, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4387228641", "product": "Stainless Skull Pants Chain", "sku": null, "proposedTitle": "", "proposedTags": [], "searchIntent": "stainless skull pants chain", "evidence": [], "repairPriorityScore": 78, "views": 232, "favorites": 18, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4453447675", "product": "Cross Stud Earrings", "sku": null, "proposedTitle": "", "proposedTags": [], "searchIntent": "split cross sterling silver stud earrings", "evidence": [], "repairPriorityScore": 77, "views": 16, "favorites": 4, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4298603550", "product": "Geometric Skull Ring", "sku": null, "proposedTitle": "", "proposedTags": [], "searchIntent": "geometric sterling silver skull ring", "evidence": [], "repairPriorityScore": 74, "views": 68, "favorites": 5, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4295410951", "product": "Unicorn Pendant Necklace", "sku": null, "proposedTitle": "", "proposedTags": [], "searchIntent": "sterling silver unicorn pendant necklace", "evidence": [], "repairPriorityScore": 73, "views": 174, "favorites": 13, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4354576700", "product": "Top Hat Skull Ring", "sku": null, "proposedTitle": "", "proposedTags": [], "searchIntent": "top hat memento mori skull ring", "evidence": [], "repairPriorityScore": 72, "views": 33, "favorites": 2, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    }
+  ]
+}
