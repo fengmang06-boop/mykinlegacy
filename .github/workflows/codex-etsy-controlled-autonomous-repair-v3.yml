@@ -17,6 +17,7 @@ on:
       - ".codex-etsy-ai-manager-sync-v1/scripts/test.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/client.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/write-guard.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/opportunity/keyword-radar.ts"
 
@@ -83,6 +84,7 @@ jobs:
             scripts/test.ts \
             src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts \
             src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts \
+            src/lib/integrations/etsy/client.ts \
             src/lib/integrations/etsy/write-guard.ts \
             src/lib/opportunity/keyword-radar.ts
 
@@ -116,6 +118,7 @@ jobs:
             scripts/test.ts \
             src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts \
             src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts \
+            src/lib/integrations/etsy/client.ts \
             src/lib/integrations/etsy/write-guard.ts \
             src/lib/opportunity/keyword-radar.ts
           do
