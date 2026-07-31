@@ -286,7 +286,7 @@ export async function fetchListingDetails(listingId: string | number, options?: 
 }
 
 export async function fetchListingBaselineDetails(listingId: string | number, options?: EtsyClientOptions) {
-  return etsyFetch<EtsyListingSummary>(`/listings/${listingId}?includes=images,inventory`, {}, {
+  return etsyFetch<EtsyListingSummary>(`/listings/${listingId}?includes=images`, {}, {
     ...options,
     requestClass: "baseline",
     noRetry: true
