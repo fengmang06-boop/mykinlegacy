@@ -1,0 +1,202 @@
+name: Codex Etsy Production Channel Repair
+
+on:
+  push:
+    branches:
+      - codex/etsy-controlled-autonomous-repair-v3
+    paths:
+      - ".github/workflows/codex-etsy-production-channel-repair.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          timeout 15 ssh-keyscan -T 5 -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Diagnose and recover isolated Etsy channel
+        id: repair
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/prod \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=10 -o ServerAliveInterval=5 -o ServerAliveCountMax=2 \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP=/root/mykinlegacy/mensskull-etsy-ai-manager
+          PROCESS=mensskull-etsy-ai-manager
+          test -d "$APP"
+          test "$(realpath "$APP")" = "$APP"
+          cd "$APP"
+
+          STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+          BACKUP="/root/mensskull-etsy-backups/channel-repair/$STAMP"
+          mkdir -p "$BACKUP"
+          cp -a .env.local "$BACKUP/.env.local"
+          cp -a prisma/dev.db "$BACKUP/dev.db"
+          pm2 jlist > "$BACKUP/pm2-jlist.json"
+          if [ -f /etc/nginx/sites-available/tools.mensskull.com ]; then
+            cp -a /etc/nginx/sites-available/tools.mensskull.com "$BACKUP/tools.mensskull.com.nginx"
+          fi
+
+          # Fail closed and ensure this process cannot write to Etsy during recovery.
+          python3 - <<'PY'
+          from pathlib import Path
+          path = Path('.env.local')
+          required = {'ETSY_READ_ONLY_MODE': 'true', 'ETSY_WRITE_APPROVED': 'false'}
+          lines = path.read_text().splitlines()
+          out, seen = [], set()
+          for line in lines:
+              key = line.split('=', 1)[0].strip() if '=' in line and not line.lstrip().startswith('#') else None
+              if key in required:
+                  if key not in seen:
+                      out.append(f'{key}={required[key]}')
+                      seen.add(key)
+              else:
+                  out.append(line)
+          for key, value in required.items():
+              if key not in seen:
+                  out.append(f'{key}={value}')
+          path.write_text('\n'.join(out).rstrip() + '\n')
+          path.chmod(0o600)
+          PY
+          grep -Eq '^ETSY_READ_ONLY_MODE=true$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=false$' .env.local
+          python3 - <<'PY'
+          from pathlib import Path
+          values = {}
+          for line in Path('.env.local').read_text().splitlines():
+              if '=' in line and not line.lstrip().startswith('#'):
+                  key, value = line.split('=', 1)
+                  values[key.strip()] = value.strip().strip("'\"")
+          if not values.get('DATABASE_URL', 'file:./dev.db').startswith('file:'):
+              raise SystemExit('Etsy DATABASE_URL is not isolated SQLite')
+          PY
+
+          PM2_ACTION=none
+          LOCAL_BEFORE=000
+          if pm2 describe "$PROCESS" >/dev/null 2>&1; then
+            LOCAL_BEFORE="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 8 http://127.0.0.1:3000/api/etsy/status || true)"
+            PM2_STATUS="$(pm2 jlist | node -e 'let s="";process.stdin.on("data",d=>s+=d).on("end",()=>{const a=JSON.parse(s);const p=a.find(x=>x.name==="mensskull-etsy-ai-manager");process.stdout.write(p?.pm2_env?.status||"missing")})')"
+            if [ "$PM2_STATUS" != online ] || [ "$LOCAL_BEFORE" != 200 ]; then
+              pm2 restart "$PROCESS" --update-env
+              PM2_ACTION=restart
+            fi
+          else
+            pm2 start npm --name "$PROCESS" -- start
+            PM2_ACTION=start
+          fi
+
+          if [ "$PM2_ACTION" != none ]; then
+            sleep 8
+          fi
+          LOCAL_AFTER="$(curl -sS -o /tmp/etsy-status.json -w '%{http_code}' --max-time 15 http://127.0.0.1:3000/api/etsy/status)"
+          test "$LOCAL_AFTER" = 200
+          node - <<'NODE'
+          const status = require('/tmp/etsy-status.json');
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) {
+            throw new Error('Etsy safety guards are not restored');
+          }
+          NODE
+
+          NGINX_ACTION=none
+          if docker ps --format '{{.Names}}' | grep -Fxq mykinlegacy_nginx; then
+            docker exec mykinlegacy_nginx nginx -t
+            CONTAINER_TOOLS="$(curl -ksS --resolve tools.mensskull.com:443:127.0.0.1 -o /dev/null -w '%{http_code}' --max-time 15 https://tools.mensskull.com/api/etsy/status || true)"
+            if [ "$CONTAINER_TOOLS" != 200 ]; then
+              docker exec mykinlegacy_nginx nginx -s reload
+              NGINX_ACTION=reload
+              sleep 3
+            fi
+          else
+            echo 'mykinlegacy_nginx is not running; refusing to recreate shared infrastructure' >&2
+            exit 1
+          fi
+
+          TOOLS_STATUS="$(curl -ksS --resolve tools.mensskull.com:443:127.0.0.1 -o /tmp/tools-status.json -w '%{http_code}' --max-time 20 https://tools.mensskull.com/api/etsy/status)"
+          TOOLS_PAGE="$(curl -ksS --resolve tools.mensskull.com:443:127.0.0.1 -o /dev/null -w '%{http_code}' --max-time 20 https://tools.mensskull.com/etsy-connection)"
+          MYKIN_HEALTH="$(curl -ksS --resolve mykinlegacy.com:443:127.0.0.1 -o /dev/null -w '%{http_code}' --max-time 20 https://mykinlegacy.com/health)"
+          test "$TOOLS_STATUS" = 200
+          test "$TOOLS_PAGE" = 200
+          test "$MYKIN_HEALTH" = 200
+
+          python3 - "$BACKUP" "$PM2_ACTION" "$NGINX_ACTION" "$LOCAL_BEFORE" "$LOCAL_AFTER" "$TOOLS_STATUS" "$TOOLS_PAGE" "$MYKIN_HEALTH" <<'PY'
+          import json, sys
+          print('REPAIR_RESULT_JSON=' + json.dumps({
+              'backup': sys.argv[1],
+              'pm2Action': sys.argv[2],
+              'nginxAction': sys.argv[3],
+              'localBefore': sys.argv[4],
+              'localAfter': sys.argv[5],
+              'toolsStatus': sys.argv[6],
+              'toolsPage': sys.argv[7],
+              'mykinlegacyHealth': sys.argv[8],
+              'readOnlyMode': True,
+              'writeApproved': False,
+              'dockerRecreated': False,
+              'etsyModified': False,
+          }, separators=(',', ':')))
+          PY
+          REMOTE
+
+      - name: Verify from an independent network
+        shell: bash
+        run: |
+          set -euo pipefail
+          TOOLS_STATUS="$(curl -sS -o /tmp/public-status.json -w '%{http_code}' --connect-timeout 8 --max-time 20 https://tools.mensskull.com/api/etsy/status)"
+          TOOLS_PAGE="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 8 --max-time 20 https://tools.mensskull.com/etsy-connection)"
+          MYKIN_HEALTH="$(curl -sS -o /dev/null -w '%{http_code}' --connect-timeout 8 --max-time 20 https://mykinlegacy.com/health)"
+          test "$TOOLS_STATUS" = 200
+          test "$TOOLS_PAGE" = 200
+          test "$MYKIN_HEALTH" = 200
+          node - <<'NODE'
+          const status = require('/tmp/public-status.json');
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) {
+            throw new Error('Public status does not confirm read-only guards');
+          }
+          NODE
+          SUMMARY="$(printf '{\"toolsStatus\":%s,\"toolsPage\":%s,\"mykinlegacyHealth\":%s,\"readOnlyMode\":true,\"writeApproved\":false,\"etsyModified\":false}' "$TOOLS_STATUS" "$TOOLS_PAGE" "$MYKIN_HEALTH")"
+          echo "::notice title=Production channel repair::$SUMMARY"
+          echo "$SUMMARY" >> "$GITHUB_STEP_SUMMARY"
