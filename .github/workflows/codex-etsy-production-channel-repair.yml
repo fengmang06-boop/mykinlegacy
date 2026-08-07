@@ -70,9 +70,11 @@ jobs:
           API_INSPECT="$(docker inspect mykinlegacy_api 2>/dev/null)"
           NGINX_LOGS="$(docker logs --tail 25 mykinlegacy_nginx 2>&1 | tail -n 25)"
           NGINX_UPSTREAMS="$(grep -nE 'upstream|server +(api|web|mykinlegacy_)' /root/mykinlegacy/deployment/nginx.conf 2>/dev/null | head -n 30)"
+          PORT_OWNERS="$(ss -ltnp 2>/dev/null | grep -E ':(80|443) ' || true)"
+          CONTAINER_PORTS="$(docker ps -a --format '{{.Names}}|{{.Ports}}' 2>/dev/null | grep -E 'mykinlegacy_nginx|wg-easy-https' || true)"
           LISTENING="$(ss -ltnH 2>/dev/null | awk '{print $4}' | grep -E ':(22|80|443|3000)$' | sort -u | paste -sd, -)"
           LOCAL_STATUS="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 5 http://127.0.0.1:3000/api/etsy/status 2>/dev/null || printf 000)"
-          PM2_JSON="$PM2_JSON" DOCKER_JSON="$DOCKER_JSON" NGINX_INSPECT="$NGINX_INSPECT" API_INSPECT="$API_INSPECT" NGINX_LOGS="$NGINX_LOGS" NGINX_UPSTREAMS="$NGINX_UPSTREAMS" LISTENING="$LISTENING" LOCAL_STATUS="$LOCAL_STATUS" python3 - <<'PY'
+          PM2_JSON="$PM2_JSON" DOCKER_JSON="$DOCKER_JSON" NGINX_INSPECT="$NGINX_INSPECT" API_INSPECT="$API_INSPECT" NGINX_LOGS="$NGINX_LOGS" NGINX_UPSTREAMS="$NGINX_UPSTREAMS" PORT_OWNERS="$PORT_OWNERS" CONTAINER_PORTS="$CONTAINER_PORTS" LISTENING="$LISTENING" LOCAL_STATUS="$LOCAL_STATUS" python3 - <<'PY'
           import json, os, shutil
           try:
               pm2 = json.loads(os.environ.get('PM2_JSON') or '[]')
@@ -120,6 +122,10 @@ jobs:
               'nginxNetworks': networks(nginx),
               'apiNetworks': networks(api),
           }, separators=(',', ':')))
+          print('RECOVERY_PORT_JSON=' + json.dumps({
+              'portOwners': os.environ.get('PORT_OWNERS', ''),
+              'containerPorts': os.environ.get('CONTAINER_PORTS', ''),
+          }, separators=(',', ':')))
           PY
           REMOTE
           )"
@@ -132,6 +138,10 @@ jobs:
           test -n "$NETWORK_DIAGNOSTIC"
           NETWORK_MESSAGE="$(printf '%s' "$NETWORK_DIAGNOSTIC" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
           echo "::notice title=Production network diagnostic::$NETWORK_MESSAGE"
+          PORT_DIAGNOSTIC="$(printf '%s\n' "$OUTPUT" | sed -n 's/^RECOVERY_PORT_JSON=//p' | tail -n 1)"
+          test -n "$PORT_DIAGNOSTIC"
+          PORT_MESSAGE="$(printf '%s' "$PORT_DIAGNOSTIC" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          echo "::notice title=Production port diagnostic::$PORT_MESSAGE"
 
       - name: Diagnose and recover isolated Etsy channel
         id: repair
