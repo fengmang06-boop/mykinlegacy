@@ -116,6 +116,10 @@ jobs:
               'diskFreeGb': round(shutil.disk_usage('/').free / 1024**3, 2),
           }
           print('RECOVERY_DIAGNOSTIC_JSON=' + json.dumps(payload, separators=(',', ':')))
+          print('RECOVERY_NETWORK_JSON=' + json.dumps({
+              'nginxNetworks': networks(nginx),
+              'apiNetworks': networks(api),
+          }, separators=(',', ':')))
           PY
           REMOTE
           )"
@@ -124,6 +128,10 @@ jobs:
           test -n "$DIAGNOSTIC"
           MESSAGE="$(printf '%s' "$DIAGNOSTIC" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
           echo "::notice title=Production recovery diagnostic::$MESSAGE"
+          NETWORK_DIAGNOSTIC="$(printf '%s\n' "$OUTPUT" | sed -n 's/^RECOVERY_NETWORK_JSON=//p' | tail -n 1)"
+          test -n "$NETWORK_DIAGNOSTIC"
+          NETWORK_MESSAGE="$(printf '%s' "$NETWORK_DIAGNOSTIC" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          echo "::notice title=Production network diagnostic::$NETWORK_MESSAGE"
 
       - name: Diagnose and recover isolated Etsy channel
         id: repair
