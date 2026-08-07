@@ -14,10 +14,10 @@ const CHECKPOINTS = new Set(["D1", "D3", "D7", "D14"]);
 const BATCH_KEY_PATTERN = /^batch-[a-z0-9-]+$/;
 
 type TrackingBaseline = {
-  views: number | null;
-  favorites: number | null;
-  orders: number | null;
-  revenue: number | "UNKNOWN" | null;
+  views: number | string | null;
+  favorites: number | string | null;
+  orders: number | string | null;
+  revenue: number | string | null;
 };
 
 type TrackingFile = {
@@ -46,6 +46,9 @@ function atomicJson(file: string, value: unknown): void {
 }
 
 function safeBatchDirectory(batchKey: string): string {
+  if (batchKey === "batch-3-legacy") {
+    return path.resolve(process.cwd(), "exports", "low-signal-breakthrough", "batch-3");
+  }
   if (!BATCH_KEY_PATTERN.test(batchKey)) throw new Error("Invalid batchKey.");
   const root = path.resolve(process.cwd(), "exports", "controlled-autonomous-repair-v3");
   const directory = path.resolve(root, batchKey);
@@ -146,13 +149,17 @@ export async function GET(request: NextRequest) {
         "UNKNOWN"
     };
     const baseline = registered.baseline;
+    const baselineViews = numberValue(baseline.views);
+    const baselineFavorites = numberValue(baseline.favorites);
+    const baselineOrders = numberValue(baseline.orders);
+    const baselineRevenue = numberValue(baseline.revenue);
     const delta = {
-      views: baseline.views === null || current.views === null ? "UNKNOWN" : current.views - baseline.views,
+      views: baselineViews === null || current.views === null ? "UNKNOWN" : current.views - baselineViews,
       favorites:
-        baseline.favorites === null || current.favorites === null ? "UNKNOWN" : current.favorites - baseline.favorites,
-      orders: baseline.orders === null ? "UNKNOWN" : current.orders - baseline.orders,
+        baselineFavorites === null || current.favorites === null ? "UNKNOWN" : current.favorites - baselineFavorites,
+      orders: baselineOrders === null ? "UNKNOWN" : current.orders - baselineOrders,
       revenue:
-        typeof baseline.revenue !== "number" ? "UNKNOWN" : Number((current.revenue - baseline.revenue).toFixed(2))
+        baselineRevenue === null ? "UNKNOWN" : Number((current.revenue - baselineRevenue).toFixed(2))
     };
     const anomaly =
       current.state !== "active" ||

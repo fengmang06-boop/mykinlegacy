@@ -11,6 +11,7 @@ on:
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/rate-limit.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/listing-baseline.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/app/api/etsy/listings/baseline/route.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts"
 
 permissions:
   contents: read
@@ -69,7 +70,8 @@ jobs:
             src/lib/env-store.ts \
             src/lib/integrations/etsy/rate-limit.ts \
             src/lib/integrations/etsy/listing-baseline.ts \
-            src/app/api/etsy/listings/baseline/route.ts
+            src/app/api/etsy/listings/baseline/route.ts \
+            src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts
           scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
             -P "$PROD_SSH_PORT" /tmp/etsy-generic-baseline.tgz \
             "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-generic-baseline.tgz"
@@ -123,7 +125,8 @@ jobs:
             src/lib/env-store.ts \
             src/lib/integrations/etsy/rate-limit.ts \
             src/lib/integrations/etsy/listing-baseline.ts \
-            src/app/api/etsy/listings/baseline/route.ts
+            src/app/api/etsy/listings/baseline/route.ts \
+            src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts
           do
             [ -f "$file" ] && { mkdir -p "$BACKUP_DIR/$(dirname "$file")"; cp -a "$file" "$BACKUP_DIR/$file"; }
           done
@@ -137,6 +140,8 @@ jobs:
           cp -a "$STAGE/src/lib/integrations/etsy/rate-limit.ts" src/lib/integrations/etsy/rate-limit.ts
           cp -a "$STAGE/src/lib/integrations/etsy/listing-baseline.ts" src/lib/integrations/etsy/listing-baseline.ts
           cp -a "$STAGE/src/app/api/etsy/listings/baseline/route.ts" src/app/api/etsy/listings/baseline/route.ts
+          mkdir -p src/app/api/etsy/controlled-autonomous-repair-v3/track
+          cp -a "$STAGE/src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts" src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts
           REMOTE
 
       - name: Build Etsy application only
