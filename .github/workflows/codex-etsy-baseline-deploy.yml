@@ -4,6 +4,7 @@ on:
   push:
     branches:
       - codex/etsy-oauth-fix-20260707
+      - codex/etsy-token-refresh-persistence
     paths:
       - ".github/workflows/codex-etsy-baseline-deploy.yml"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/client.ts"
@@ -65,6 +66,7 @@ jobs:
           tar -czf /tmp/etsy-generic-baseline.tgz \
             -C .codex-etsy-ai-manager-sync-v1 \
             src/lib/integrations/etsy/client.ts \
+            src/lib/env-store.ts \
             src/lib/integrations/etsy/rate-limit.ts \
             src/lib/integrations/etsy/listing-baseline.ts \
             src/app/api/etsy/listings/baseline/route.ts
@@ -118,6 +120,7 @@ jobs:
           pm2 jlist > "$BACKUP_DIR/pm2-jlist.json"
           for file in \
             src/lib/integrations/etsy/client.ts \
+            src/lib/env-store.ts \
             src/lib/integrations/etsy/rate-limit.ts \
             src/lib/integrations/etsy/listing-baseline.ts \
             src/app/api/etsy/listings/baseline/route.ts
@@ -130,6 +133,7 @@ jobs:
           tar -xzf /tmp/etsy-generic-baseline.tgz -C "$STAGE"
           mkdir -p src/lib/integrations/etsy src/app/api/etsy/listings/baseline
           cp -a "$STAGE/src/lib/integrations/etsy/client.ts" src/lib/integrations/etsy/client.ts
+          cp -a "$STAGE/src/lib/env-store.ts" src/lib/env-store.ts
           cp -a "$STAGE/src/lib/integrations/etsy/rate-limit.ts" src/lib/integrations/etsy/rate-limit.ts
           cp -a "$STAGE/src/lib/integrations/etsy/listing-baseline.ts" src/lib/integrations/etsy/listing-baseline.ts
           cp -a "$STAGE/src/app/api/etsy/listings/baseline/route.ts" src/app/api/etsy/listings/baseline/route.ts

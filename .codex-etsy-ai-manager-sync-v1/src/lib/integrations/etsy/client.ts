@@ -1,5 +1,6 @@
 import { assertNoEtsyWriteCapability, assertEtsyReadOnlyRequest, validateEtsyReadOnlyEnv } from "./read-only-guard";
 import { refreshAccessToken } from "./oauth";
+import { saveEnvValues } from "../../env-store";
 import {
   assertEtsyRateBudget,
   isDailyRateLimitResponse,
@@ -117,9 +118,13 @@ function readAuthOptions(options?: EtsyAuthOptions): Required<EtsyAuthOptions> {
 
 function assignTokenRefresh(token: { access_token: string; refresh_token?: string; expires_in: number }): EtsyTokenRefreshResult {
   const expiresAt = new Date(Date.now() + token.expires_in * 1000).toISOString();
-  process.env.ETSY_ACCESS_TOKEN = token.access_token;
-  if (token.refresh_token) process.env.ETSY_REFRESH_TOKEN = token.refresh_token;
-  process.env.ETSY_TOKEN_EXPIRES_AT = expiresAt;
+  saveEnvValues({
+    ETSY_ACCESS_TOKEN: token.access_token,
+    ETSY_REFRESH_TOKEN: token.refresh_token ?? process.env.ETSY_REFRESH_TOKEN,
+    ETSY_TOKEN_EXPIRES_AT: expiresAt,
+    ETSY_READ_ONLY_MODE: "true",
+    ETSY_WRITE_APPROVED: "false"
+  });
   return {
     accessToken: token.access_token,
     refreshToken: token.refresh_token,
