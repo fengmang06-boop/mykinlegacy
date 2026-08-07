@@ -151,7 +151,7 @@ jobs:
           OUTPUT="$(ssh -i ~/.ssh/prod \
             -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=10 -o ServerAliveInterval=5 -o ServerAliveCountMax=2 \
-            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' 2>&1 <<'REMOTE'
           set -euo pipefail
           APP=/root/mykinlegacy/mensskull-etsy-ai-manager
           PROCESS=mensskull-etsy-ai-manager
@@ -230,6 +230,14 @@ jobs:
           NODE
 
           NGINX_ACTION=none
+          HOST_NGINX_WAS_ACTIVE=false
+          if systemctl is-active --quiet nginx \
+            && ss -ltnp 'sport = :80' 2>/dev/null | grep -q 'nginx' \
+            && docker inspect -f '{{json .HostConfig.PortBindings}}' mykinlegacy_nginx | grep -q '"80/tcp"'; then
+            tar -czf "$BACKUP/host-etc-nginx.tgz" /etc/nginx
+            systemctl stop nginx
+            HOST_NGINX_WAS_ACTIVE=true
+          fi
           NGINX_NETWORK_COUNT="$(docker inspect -f '{{len .NetworkSettings.Networks}}' mykinlegacy_nginx)"
           if [ "$NGINX_NETWORK_COUNT" = 0 ]; then
             API_NETWORK="$(docker inspect -f '{{range $name, $network := .NetworkSettings.Networks}}{{$name}}{{"\n"}}{{end}}' mykinlegacy_api | sed '/^$/d')"
@@ -242,8 +250,23 @@ jobs:
             docker stop -t 5 mykinlegacy_nginx >/dev/null 2>&1 || true
             docker network connect "$API_NETWORK" mykinlegacy_nginx
             docker update --restart="$RESTART_POLICY" mykinlegacy_nginx >/dev/null
-            docker start mykinlegacy_nginx >/dev/null
+            if ! docker start mykinlegacy_nginx >/dev/null; then
+              if [ "$HOST_NGINX_WAS_ACTIVE" = true ]; then
+                systemctl start nginx
+              fi
+              exit 1
+            fi
             NGINX_ACTION=reattach-network
+            sleep 5
+          fi
+          if ! docker ps --format '{{.Names}}' | grep -Fxq mykinlegacy_nginx; then
+            if ! docker start mykinlegacy_nginx >/dev/null; then
+              if [ "$HOST_NGINX_WAS_ACTIVE" = true ]; then
+                systemctl start nginx
+              fi
+              exit 1
+            fi
+            NGINX_ACTION=start
             sleep 5
           fi
           if docker ps --format '{{.Names}}' | grep -Fxq mykinlegacy_nginx; then
@@ -269,8 +292,11 @@ jobs:
           test "$TOOLS_STATUS" = 200
           test "$TOOLS_PAGE" = 200
           test "$MYKIN_HEALTH" = 200
+          if [ "$HOST_NGINX_WAS_ACTIVE" = true ]; then
+            systemctl disable nginx >/dev/null
+          fi
 
-          python3 - "$BACKUP" "$PM2_ACTION" "$NGINX_ACTION" "$LOCAL_BEFORE" "$LOCAL_AFTER" "$TOOLS_STATUS" "$TOOLS_PAGE" "$MYKIN_HEALTH" <<'PY'
+          python3 - "$BACKUP" "$PM2_ACTION" "$NGINX_ACTION" "$LOCAL_BEFORE" "$LOCAL_AFTER" "$TOOLS_STATUS" "$TOOLS_PAGE" "$MYKIN_HEALTH" "$HOST_NGINX_WAS_ACTIVE" <<'PY'
           import json, sys
           print('REPAIR_RESULT_JSON=' + json.dumps({
               'backup': sys.argv[1],
@@ -281,6 +307,7 @@ jobs:
               'toolsStatus': sys.argv[6],
               'toolsPage': sys.argv[7],
               'mykinlegacyHealth': sys.argv[8],
+              'conflictingHostNginxDisabled': sys.argv[9] == 'true',
               'readOnlyMode': True,
               'writeApproved': False,
               'dockerRecreated': False,
