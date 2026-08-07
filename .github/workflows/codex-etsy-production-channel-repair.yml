@@ -66,9 +66,11 @@ jobs:
           set +e
           PM2_JSON="$(pm2 jlist 2>/dev/null)"
           DOCKER_JSON="$(docker ps -a --format '{{json .}}' 2>/dev/null | python3 -c 'import json,sys; print(json.dumps([json.loads(x) for x in sys.stdin if x.strip()], separators=(",",":")))')"
+          NGINX_INSPECT="$(docker inspect mykinlegacy_nginx 2>/dev/null)"
+          NGINX_LOGS="$(docker logs --tail 25 mykinlegacy_nginx 2>&1 | tail -n 25)"
           LISTENING="$(ss -ltnH 2>/dev/null | awk '{print $4}' | grep -E ':(22|80|443|3000)$' | sort -u | paste -sd, -)"
           LOCAL_STATUS="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 5 http://127.0.0.1:3000/api/etsy/status 2>/dev/null || printf 000)"
-          PM2_JSON="$PM2_JSON" DOCKER_JSON="$DOCKER_JSON" LISTENING="$LISTENING" LOCAL_STATUS="$LOCAL_STATUS" python3 - <<'PY'
+          PM2_JSON="$PM2_JSON" DOCKER_JSON="$DOCKER_JSON" NGINX_INSPECT="$NGINX_INSPECT" NGINX_LOGS="$NGINX_LOGS" LISTENING="$LISTENING" LOCAL_STATUS="$LOCAL_STATUS" python3 - <<'PY'
           import json, os, shutil
           try:
               pm2 = json.loads(os.environ.get('PM2_JSON') or '[]')
@@ -79,6 +81,10 @@ jobs:
               containers = json.loads(os.environ.get('DOCKER_JSON') or '[]')
           except Exception:
               containers = []
+          try:
+              nginx = json.loads(os.environ.get('NGINX_INSPECT') or '[]')[0]
+          except Exception:
+              nginx = {}
           payload = {
               'etsyPm2': {
                   'present': process is not None,
@@ -89,6 +95,13 @@ jobs:
               'listening': os.environ.get('LISTENING', '').split(',') if os.environ.get('LISTENING') else [],
               'dockerService': os.popen('systemctl is-active docker 2>/dev/null').read().strip(),
               'containers': [{'name': c.get('Names'), 'state': c.get('State'), 'status': c.get('Status')} for c in containers],
+              'nginx': {
+                  'exitCode': nginx.get('State', {}).get('ExitCode'),
+                  'error': nginx.get('State', {}).get('Error'),
+                  'restartCount': nginx.get('RestartCount'),
+                  'mounts': [{'source': m.get('Source'), 'destination': m.get('Destination'), 'mode': m.get('Mode')} for m in nginx.get('Mounts', [])],
+                  'logs': os.environ.get('NGINX_LOGS', '')[-4000:],
+              },
               'diskFreeGb': round(shutil.disk_usage('/').free / 1024**3, 2),
           }
           print('RECOVERY_DIAGNOSTIC_JSON=' + json.dumps(payload, separators=(',', ':')))
