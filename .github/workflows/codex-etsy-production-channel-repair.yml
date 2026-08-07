@@ -137,8 +137,8 @@ jobs:
         id: repair
         shell: bash
         run: |
-          set -euo pipefail
-          ssh -i ~/.ssh/prod \
+          set +e
+          OUTPUT="$(ssh -i ~/.ssh/prod \
             -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
             -o ConnectTimeout=10 -o ServerAliveInterval=5 -o ServerAliveCountMax=2 \
             -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
@@ -278,6 +278,19 @@ jobs:
           }, separators=(',', ':')))
           PY
           REMOTE
+          )"
+          STATUS="$?"
+          set -e
+          printf '%s\n' "$OUTPUT"
+          if [ "$STATUS" -ne 0 ]; then
+            MESSAGE="$(printf '%s' "$OUTPUT" | tail -n 30 | sed ':a;N;$!ba;s/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+            echo "::error title=Production recovery stopped safely::$MESSAGE"
+            exit "$STATUS"
+          fi
+          RESULT="$(printf '%s\n' "$OUTPUT" | sed -n 's/^REPAIR_RESULT_JSON=//p' | tail -n 1)"
+          test -n "$RESULT"
+          MESSAGE="$(printf '%s' "$RESULT" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          echo "::notice title=Production recovery result::$MESSAGE"
 
       - name: Verify from an independent network
         shell: bash
