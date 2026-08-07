@@ -56,6 +56,51 @@ jobs:
           chmod 600 ~/.ssh/prod
           timeout 15 ssh-keyscan -T 5 -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
 
+      - name: Collect recovery diagnostics
+        shell: bash
+        run: |
+          set -euo pipefail
+          OUTPUT="$(ssh -i ~/.ssh/prod \
+            -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -o ConnectTimeout=10 -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set +e
+          PM2_JSON="$(pm2 jlist 2>/dev/null)"
+          DOCKER_JSON="$(docker ps -a --format '{{json .}}' 2>/dev/null | python3 -c 'import json,sys; print(json.dumps([json.loads(x) for x in sys.stdin if x.strip()], separators=(",",":")))')"
+          LISTENING="$(ss -ltnH 2>/dev/null | awk '{print $4}' | grep -E ':(22|80|443|3000)$' | sort -u | paste -sd, -)"
+          LOCAL_STATUS="$(curl -sS -o /dev/null -w '%{http_code}' --max-time 5 http://127.0.0.1:3000/api/etsy/status 2>/dev/null || printf 000)"
+          PM2_JSON="$PM2_JSON" DOCKER_JSON="$DOCKER_JSON" LISTENING="$LISTENING" LOCAL_STATUS="$LOCAL_STATUS" python3 - <<'PY'
+          import json, os, shutil
+          try:
+              pm2 = json.loads(os.environ.get('PM2_JSON') or '[]')
+          except Exception:
+              pm2 = []
+          process = next((p for p in pm2 if p.get('name') == 'mensskull-etsy-ai-manager'), None)
+          try:
+              containers = json.loads(os.environ.get('DOCKER_JSON') or '[]')
+          except Exception:
+              containers = []
+          payload = {
+              'etsyPm2': {
+                  'present': process is not None,
+                  'status': (process or {}).get('pm2_env', {}).get('status', 'missing'),
+                  'restarts': (process or {}).get('pm2_env', {}).get('restart_time'),
+              },
+              'localEtsyStatus': os.environ.get('LOCAL_STATUS'),
+              'listening': os.environ.get('LISTENING', '').split(',') if os.environ.get('LISTENING') else [],
+              'dockerService': os.popen('systemctl is-active docker 2>/dev/null').read().strip(),
+              'containers': [{'name': c.get('Names'), 'state': c.get('State'), 'status': c.get('Status')} for c in containers],
+              'diskFreeGb': round(shutil.disk_usage('/').free / 1024**3, 2),
+          }
+          print('RECOVERY_DIAGNOSTIC_JSON=' + json.dumps(payload, separators=(',', ':')))
+          PY
+          REMOTE
+          )"
+          printf '%s\n' "$OUTPUT"
+          DIAGNOSTIC="$(printf '%s\n' "$OUTPUT" | sed -n 's/^RECOVERY_DIAGNOSTIC_JSON=//p' | tail -n 1)"
+          test -n "$DIAGNOSTIC"
+          MESSAGE="$(printf '%s' "$DIAGNOSTIC" | sed 's/%/%25/g;s/\r/%0D/g;s/\n/%0A/g')"
+          echo "::notice title=Production recovery diagnostic::$MESSAGE"
+
       - name: Diagnose and recover isolated Etsy channel
         id: repair
         shell: bash
