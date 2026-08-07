@@ -220,12 +220,32 @@ jobs:
           NODE
 
           NGINX_ACTION=none
+          NGINX_NETWORK_COUNT="$(docker inspect -f '{{len .NetworkSettings.Networks}}' mykinlegacy_nginx)"
+          if [ "$NGINX_NETWORK_COUNT" = 0 ]; then
+            API_NETWORK="$(docker inspect -f '{{range $name, $network := .NetworkSettings.Networks}}{{$name}}{{"\n"}}{{end}}' mykinlegacy_api | sed '/^$/d')"
+            test "$(printf '%s\n' "$API_NETWORK" | wc -l)" = 1
+            test "$API_NETWORK" = mykinlegacy_default
+            docker inspect mykinlegacy_nginx > "$BACKUP/mykinlegacy_nginx-inspect-before.json"
+            RESTART_POLICY="$(docker inspect -f '{{.HostConfig.RestartPolicy.Name}}' mykinlegacy_nginx)"
+            test -n "$RESTART_POLICY"
+            docker update --restart=no mykinlegacy_nginx >/dev/null
+            docker stop -t 5 mykinlegacy_nginx >/dev/null 2>&1 || true
+            docker network connect "$API_NETWORK" mykinlegacy_nginx
+            docker update --restart="$RESTART_POLICY" mykinlegacy_nginx >/dev/null
+            docker start mykinlegacy_nginx >/dev/null
+            NGINX_ACTION=reattach-network
+            sleep 5
+          fi
           if docker ps --format '{{.Names}}' | grep -Fxq mykinlegacy_nginx; then
             docker exec mykinlegacy_nginx nginx -t
             CONTAINER_TOOLS="$(curl -ksS --resolve tools.mensskull.com:443:127.0.0.1 -o /dev/null -w '%{http_code}' --max-time 15 https://tools.mensskull.com/api/etsy/status || true)"
             if [ "$CONTAINER_TOOLS" != 200 ]; then
               docker exec mykinlegacy_nginx nginx -s reload
-              NGINX_ACTION=reload
+              if [ "$NGINX_ACTION" = none ]; then
+                NGINX_ACTION=reload
+              else
+                NGINX_ACTION="$NGINX_ACTION+reload"
+              fi
               sleep 3
             fi
           else
