@@ -49,6 +49,7 @@ export type ListingBaselineReport = {
   etsy_read_only_mode: true;
   etsy_write_approved: false;
   requested_listing_ids: string[];
+  force_api_refresh: boolean;
   api_calls_used: number;
   stopped_on_429: boolean;
   quota: {
@@ -270,7 +271,11 @@ function saveReport(report: ListingBaselineReport): string {
   return file;
 }
 
-export async function captureListingBaselines(listingIds: string[], batchKey: string): Promise<{
+export async function captureListingBaselines(
+  listingIds: string[],
+  batchKey: string,
+  options: { forceApi?: boolean } = {}
+): Promise<{
   report: ListingBaselineReport;
   savedReportPath: string;
 }> {
@@ -292,15 +297,16 @@ export async function captureListingBaselines(listingIds: string[], batchKey: st
   const baselines: ListingBaseline[] = [];
   let apiCallsUsed = 0;
   let stoppedOn429 = false;
+  const forceApi = options.forceApi === true;
 
   for (const listingId of listingIds) {
     const listing = byId.get(listingId)!;
-    if (cacheHasCompleteBaseline(listing) && cacheIsRecent(listing)) {
+    if (!forceApi && cacheHasCompleteBaseline(listing) && cacheIsRecent(listing)) {
       baselines.push(baselineFromCache(listing, capturedAt));
       continue;
     }
 
-    const savedBaseline = findSavedBaseline(listingId, capturedAt);
+    const savedBaseline = forceApi ? null : findSavedBaseline(listingId, capturedAt);
     if (savedBaseline) {
       baselines.push(savedBaseline);
       continue;
@@ -327,6 +333,7 @@ export async function captureListingBaselines(listingIds: string[], batchKey: st
     etsy_read_only_mode: true as const,
     etsy_write_approved: false as const,
     requested_listing_ids: listingIds,
+    force_api_refresh: forceApi,
     api_calls_used: apiCallsUsed,
     stopped_on_429: stoppedOn429,
     quota: {

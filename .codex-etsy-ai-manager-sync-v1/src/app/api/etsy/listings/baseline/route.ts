@@ -11,10 +11,13 @@ export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
   try {
-    const body = (await request.json()) as { listingIds?: unknown; batchKey?: unknown };
+    const body = (await request.json()) as { listingIds?: unknown; batchKey?: unknown; forceApi?: unknown };
     const listingIds = validateListingIds(body.listingIds);
     const batchKey = validateBatchKey(body.batchKey);
-    const result = await captureListingBaselines(listingIds, batchKey);
+    if (typeof body.forceApi !== "undefined" && typeof body.forceApi !== "boolean") {
+      throw new Error("forceApi must be a boolean when supplied.");
+    }
+    const result = await captureListingBaselines(listingIds, batchKey, { forceApi: body.forceApi === true });
     return NextResponse.json({ ...result.report, saved_report_path: result.savedReportPath });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

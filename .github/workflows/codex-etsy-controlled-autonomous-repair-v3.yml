@@ -16,8 +16,10 @@ on:
       - ".codex-etsy-ai-manager-sync-v1/scripts/test-controlled-autonomous-repair-v3.ts"
       - ".codex-etsy-ai-manager-sync-v1/scripts/test.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/app/api/etsy/listings/baseline/route.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/client.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/listing-baseline.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/write-guard.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/opportunity/keyword-radar.ts"
 
@@ -83,8 +85,10 @@ jobs:
             scripts/test-controlled-autonomous-repair-v3.ts \
             scripts/test.ts \
             src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts \
+            src/app/api/etsy/listings/baseline/route.ts \
             src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts \
             src/lib/integrations/etsy/client.ts \
+            src/lib/integrations/etsy/listing-baseline.ts \
             src/lib/integrations/etsy/write-guard.ts \
             src/lib/opportunity/keyword-radar.ts
 
@@ -117,8 +121,10 @@ jobs:
             scripts/test-controlled-autonomous-repair-v3.ts \
             scripts/test.ts \
             src/app/api/etsy/controlled-autonomous-repair-v3/track/route.ts \
+            src/app/api/etsy/listings/baseline/route.ts \
             src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts \
             src/lib/integrations/etsy/client.ts \
+            src/lib/integrations/etsy/listing-baseline.ts \
             src/lib/integrations/etsy/write-guard.ts \
             src/lib/opportunity/keyword-radar.ts
           do
