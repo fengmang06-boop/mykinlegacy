@@ -4,7 +4,6 @@ import Link from "next/link";
 import React from "react";
 
 import { FunnelStepTracker } from "../components/funnel-tracker";
-import { StructuredData } from "../components/structured-data";
 import { TrackedCtaLink } from "../components/tracked-cta-link";
 import { publicMetadata } from "../lib/seo";
 
@@ -35,19 +34,8 @@ const faq = [
 ] as const;
 
 export default function HomePage() {
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faq.map(([question, answer]) => ({
-      "@type": "Question",
-      name: question,
-      acceptedAnswer: { "@type": "Answer", text: answer }
-    }))
-  };
-
   return (
     <main className="home-v2">
-      <StructuredData data={faqJsonLd} />
       <FunnelStepTracker stepName="landing_page" metadata={{ page: "/" }} />
 
       <section className="hv2-hero">

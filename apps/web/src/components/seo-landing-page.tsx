@@ -27,25 +27,8 @@ export function SeoLandingPage({
   ctaLabel = "Begin Your Legacy",
   trackingSource = "seo_landing"
 }: SeoLandingPageProps) {
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: faq.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: {
-        "@type": "Answer",
-        text: item.answer
-      }
-    }))
-  };
-
   return (
     <main>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
       <section className="hero">
         <div className="section hero-grid">
           <div>

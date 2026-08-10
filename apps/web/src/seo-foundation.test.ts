@@ -73,8 +73,8 @@ describe("SEO foundation", () => {
     ]);
     const combined = sources.join("\n");
     expect(combined).toContain('"@type": "Product"');
-    expect(combined).toContain('"@type": "FAQPage"');
     expect(combined).toContain('"@type": "BreadcrumbList"');
+    expect(combined).not.toContain('"@type": "FAQPage"');
     expect(combined).not.toMatch(/aggregateRating|reviewCount|ratingValue/);
     expect(combined).not.toMatch(/"@type":\s*"CoatOfArms"/);
   });

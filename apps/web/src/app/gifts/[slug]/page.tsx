@@ -90,15 +90,6 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
       { "@type": "ListItem", position: 3, name: page.eyebrow, item: pageUrl }
     ]
   };
-  const faqJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "FAQPage",
-    mainEntity: page.faq.map((item) => ({
-      "@type": "Question",
-      name: item.question,
-      acceptedAnswer: { "@type": "Answer", text: item.answer }
-    }))
-  };
   const itemListJsonLd = {
     "@context": "https://schema.org",
     "@type": "ItemList",
@@ -117,13 +108,7 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
         stepName="gift_landing"
         metadata={{ page: `/gifts/${page.slug}`, gift_slug: page.slug }}
       />
-      <StructuredData
-        data={
-          isChristmas
-            ? [breadcrumbJsonLd, itemListJsonLd]
-            : [breadcrumbJsonLd, faqJsonLd, itemListJsonLd]
-        }
-      />
+      <StructuredData data={[breadcrumbJsonLd, itemListJsonLd]} />
       <section className="premium-hero gift-landing-hero">
         <div className="section gift-landing-hero-grid">
           <div>
