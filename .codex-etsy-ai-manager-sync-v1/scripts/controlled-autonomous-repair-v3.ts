@@ -4,6 +4,7 @@ import path from "node:path";
 import { prisma } from "../src/lib/prisma";
 import {
   applyReadinessAdjustedRepairScore,
+  hasVerifiedWriteRecord,
   independentlyReviewControlledRepair,
   validateControlledRepairProposal,
   type ControlledRepairCandidate,
@@ -264,7 +265,11 @@ function historicalWriteAndTrackingStatus(listingId: string, now = Date.now()): 
       const text = JSON.stringify(parsed);
       if (!text.includes(listingId)) continue;
       const stat = fs.statSync(file);
-      if (/execution|success|verification/i.test(path.basename(file)) && now - stat.mtimeMs < 30 * 86_400_000) {
+      if (
+        /execution|success|verification/i.test(path.basename(file)) &&
+        now - stat.mtimeMs < 30 * 86_400_000 &&
+        hasVerifiedWriteRecord(parsed, listingId)
+      ) {
         writtenWithin30Days = true;
       }
       if (/tracking/i.test(path.basename(file)) && /"status":"pending"|"status":\s*"pending"/i.test(text)) {

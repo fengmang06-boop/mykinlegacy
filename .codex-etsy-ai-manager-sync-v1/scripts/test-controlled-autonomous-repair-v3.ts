@@ -1,5 +1,6 @@
 import {
   applyReadinessAdjustedRepairScore,
+  hasVerifiedWriteRecord,
   independentlyReviewControlledRepair,
   validateControlledRepairProposal,
   type ControlledRepairCandidate
@@ -177,6 +178,23 @@ function main(): void {
   const staleCandidate = applyReadinessAdjustedRepairScore({ ...candidate, baselineFresh: false });
   const staleValidation = validateControlledRepairProposal(staleCandidate);
   assert(!staleValidation.passed, "A stale baseline was not blocked.");
+
+  const mixedExecutionReport = {
+    results: [{ listingId: "other-listing", status: "written", verified: true }],
+    redCandidates: [{ listingId: candidate.listingId, reasons: ["cooldown"] }],
+    yellowCandidates: [{ listingId: "another-listing" }]
+  };
+  assert(
+    !hasVerifiedWriteRecord(mixedExecutionReport, candidate.listingId),
+    "A red/yellow review mention was incorrectly treated as a verified write."
+  );
+  assert(
+    hasVerifiedWriteRecord(
+      { results: [{ listingId: candidate.listingId, status: "written", verified: true }] },
+      candidate.listingId
+    ),
+    "A real verified write was not detected."
+  );
   console.log("Controlled Autonomous Repair V3 safety tests passed.");
 }
 

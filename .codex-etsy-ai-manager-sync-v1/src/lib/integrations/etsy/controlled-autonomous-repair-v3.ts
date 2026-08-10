@@ -141,6 +141,24 @@ export function applyReadinessAdjustedRepairScore(candidate: ControlledRepairCan
   };
 }
 
+export function hasVerifiedWriteRecord(value: unknown, listingId: string): boolean {
+  if (!value || typeof value !== "object") return false;
+  const report = value as {
+    listingId?: unknown;
+    status?: unknown;
+    verified?: unknown;
+    results?: unknown;
+  };
+  if (
+    String(report.listingId ?? "") === listingId &&
+    report.status === "written" &&
+    report.verified === true
+  ) {
+    return true;
+  }
+  return Array.isArray(report.results) && report.results.some((result) => hasVerifiedWriteRecord(result, listingId));
+}
+
 function containsIpRisk(values: string[]): string[] {
   const text = values.join(" ").toLowerCase();
   return IP_TERMS.filter((term) => text.includes(term));
