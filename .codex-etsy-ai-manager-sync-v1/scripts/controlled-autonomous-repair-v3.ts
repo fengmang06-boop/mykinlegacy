@@ -610,7 +610,13 @@ async function main(): Promise<void> {
       greenCandidates: [],
       results: [],
       yellowCount: reviews.filter((review) => review.zone === "yellow").length,
+      yellowCandidates: reviews
+        .filter((review) => review.zone === "yellow")
+        .map((review) => ({ listingId: review.listingId, product: review.product, reasons: review.reasons })),
       redCount: reviews.filter((review) => review.zone === "red").length,
+      redCandidates: reviews
+        .filter((review) => review.zone === "red")
+        .map((review) => ({ listingId: review.listingId, product: review.product, reasons: review.reasons })),
       rollbackStatus: "NOT_REQUIRED",
       readOnlyRestored: true,
       rateLimit,
