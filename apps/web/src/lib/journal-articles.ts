@@ -65,20 +65,20 @@ const p = (...segments: JournalSegment[]): JournalSegment[] => segments;
 const contentBatch01: JournalArticle[] = [
   {
     slug: "family-legacy-gift-ideas",
-    targetKeyword: "family legacy gift ideas",
+    targetKeyword: "legacy gift ideas",
     title: "11 Family Legacy Gift Ideas for Milestones That Deserve More",
-    metaTitle: "11 Family Legacy Gift Ideas for Meaningful Milestones",
+    metaTitle: "11 Legacy Gift Ideas for Meaningful Family Milestones",
     description:
-      "Explore thoughtful family legacy gift ideas for parents, grandparents, retirements, weddings, anniversaries, Christmas, and family reunions.",
+      "Explore 11 meaningful legacy gift ideas for parents, grandparents, retirements, weddings, anniversaries, Christmas, and family reunions.",
     dek:
       "When practical gifts feel interchangeable, choose something that reflects a person, a relationship, or a family moment worth remembering.",
     publishedAt: "2026-07-14",
-    updatedAt: "2026-07-14",
+    updatedAt: "2026-08-11",
     author: "MyKinLegacy Editorial Team",
     heroId: "01-father-retirement",
     heroAlt: "Gold and black final crest created as a retirement gift for a father",
-    commercialPath: "/family-legacy-collection",
-    commercialLabel: "See what the Family Legacy Collection includes",
+    commercialPath: "/family-legacy-gift",
+    commercialLabel: "Create a family legacy gift from real memories",
     sections: [
       {
         id: "what-makes-a-legacy-gift",
@@ -97,10 +97,10 @@ const contentBatch01: JournalArticle[] = [
       },
       {
         id: "ideas",
-        heading: "11 family legacy gift ideas",
+        heading: "11 legacy gift ideas for meaningful family milestones",
         paragraphs: [
           p(
-            "The strongest option depends on whether your recipient likes to display, read, listen, gather, or quietly keep family material."
+            "The best legacy gift ideas preserve something only this family can recognize. The strongest option depends on whether your recipient likes to display, read, listen, gather, or quietly keep family material."
           )
         ],
         bullets: [
@@ -213,6 +213,11 @@ const contentBatch01: JournalArticle[] = [
               "/journal/personalized-wedding-gifts-for-couples"
             ),
             "."
+          ),
+          p(
+            "If you want one evidence-led symbolic gift rather than a do-it-yourself format, review the ",
+            link("family legacy gift experience", "/family-legacy-gift"),
+            " before beginning the guided intake."
           )
         ]
       }
@@ -415,15 +420,15 @@ const contentBatch01: JournalArticle[] = [
   },
   {
     slug: "retirement-gift-for-father",
-    targetKeyword: "retirement gift for father",
-    title: "Retirement Gifts for a Father Who Has Everything",
-    metaTitle: "Retirement Gift for Father: Personal Ideas Beyond the Plaque",
+    targetKeyword: "retirement gift ideas for father",
+    title: "Retirement Gift Ideas for a Father Who Has Everything",
+    metaTitle: "Retirement Gift Ideas for Father Beyond the Plaque",
     description:
-      "Choose a retirement gift for your father that recognizes his work, sacrifice, protection, integrity, and example without relying on generic ideas.",
+      "Compare retirement gift ideas for your father that recognize his work, sacrifice, integrity, and family contribution without relying on generic plaques.",
     dek:
       "The most memorable retirement gift may not celebrate the end of work. It may finally recognize what his work made possible.",
     publishedAt: "2026-07-14",
-    updatedAt: "2026-07-14",
+    updatedAt: "2026-08-11",
     author: "MyKinLegacy Editorial Team",
     heroId: "01-father-retirement",
     heroAlt: "Classic shield and tree crest artwork created for a father's retirement",

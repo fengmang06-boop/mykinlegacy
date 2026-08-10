@@ -26,7 +26,7 @@ const collectionContents = [
   ["Final Crest", "One finished symbolic artwork shaped around the family evidence you share."],
   ["Family Story", "A recipient-centered narrative grounded in real memories and lived values."],
   ["Meaning Behind Your Crest", "A visual guide explaining why each earned symbol belongs."],
-  ["Private Vault", "Secure digital access to the finished Complete Collection archive."]
+  ["Complete Collection", "All finished files, privately delivered through the Private Vault."]
 ] as const;
 
 const christmasCollectionContents = [
@@ -193,6 +193,11 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
             <p className="eyebrow">The gift problem</p>
             <h2>{page.buyerProblemTitle}</h2>
             <p className="lead">{page.buyerProblem}</p>
+            {page.guidePath && page.guideLabel ? (
+              <p>
+                Planning before you buy? <Link href={page.guidePath}>{page.guideLabel}</Link>.
+              </p>
+            ) : null}
           </article>
           <aside className="gift-recipient-note">
             <h2>Who this gift is for</h2>

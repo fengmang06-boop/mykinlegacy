@@ -14,15 +14,17 @@ export type GiftLandingPageSpec = {
   deliveryNote: string;
   faq: Array<{ question: string; answer: string }>;
   relatedSlugs: string[];
+  guidePath?: string;
+  guideLabel?: string;
 };
 
 export const giftLandingPages: GiftLandingPageSpec[] = [
   {
     slug: "father-retirement",
-    primaryKeyword: "retirement gift for father",
-    title: "Retirement Gift for Father | Personalized Legacy Keepsake",
+    primaryKeyword: "personalized retirement gift for father",
+    title: "Personalized Retirement Gift for Father | Legacy Keepsake",
     description:
-      "Honor Dad's work, sacrifice, and example with a personalized retirement gift: a frameable certificate, final crest, family story, and private collection.",
+      "Create a personalized retirement gift for your father with a Final Crest, Heritage Certificate, Family Story, meaning guide, and private digital collection.",
     eyebrow: "Retirement gift for father",
     h1: "A retirement gift that honors everything Dad carried for the family.",
     lead: "Retirement deserves more than another watch or bottle. MyKinLegacy turns the years he worked, the values he lived, and the family he protected into a private digital keepsake made for presentation and preservation.",
@@ -57,7 +59,9 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
           "No. It is a personalized symbolic keepsake and does not claim legal heraldry, noble status, or certified genealogy."
       }
     ],
-    relatedSlugs: ["fathers-day", "grandparents", "family-reunion"]
+    relatedSlugs: ["fathers-day", "grandparents", "family-reunion"],
+    guidePath: "/journal/retirement-gift-for-father",
+    guideLabel: "Compare retirement gift ideas for a father who has everything"
   },
   {
     slug: "fathers-day",
@@ -265,7 +269,9 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
           "Yes. Completed collections are private by default and released through a secure vault link."
       }
     ],
-    relatedSlugs: ["wedding", "grandparents", "christmas-family"]
+    relatedSlugs: ["wedding", "grandparents", "christmas-family"],
+    guidePath: "/journal/personalized-anniversary-gifts-for-parents",
+    guideLabel: "Compare anniversary gift ideas for parents"
   },
   {
     slug: "christmas-family",
@@ -336,10 +342,10 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
   },
   {
     slug: "family-reunion",
-    primaryKeyword: "personalized family reunion gift",
-    title: "Personalized Family Reunion Gift | Shared Legacy Keepsake",
+    primaryKeyword: "personalized family reunion gifts",
+    title: "Personalized Family Reunion Gifts | Shared Legacy Keepsake",
     description:
-      "Create a personalized family reunion gift that recognizes shared roots, memories, values, and the meaning of gathering again.",
+      "Explore personalized family reunion gifts and create one shared digital keepsake from the memories, values, places, and stories that bring everyone back.",
     eyebrow: "Personalized family reunion gift",
     h1: "Give the family a shared keepsake for the stories that bring everyone back.",
     lead: "A reunion is a rare chance to see the family as a whole. This collection turns the reason people gathered, the memories they share, and the values they want to continue into one private legacy keepsake.",
@@ -356,7 +362,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
     ],
     exampleIds: ["11-family-reunion", "18-immigration-anniversary", "05-christmas-family"],
     deliveryNote:
-      "The collection is digitally delivered after Founder review and can be opened together at the reunion or shared privately afterward.",
+      "The collection is digitally delivered after Founder review and can be opened together at the reunion or shared privately afterward. Nothing is physically shipped; printing and framing are arranged separately.",
     faq: [
       {
         question: "Can one collection represent the whole extended family?",
@@ -372,9 +378,21 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
         question: "How is the collection shared?",
         answer:
           "The buyer receives a private vault and Complete Collection archive for personal family sharing and preservation."
+      },
+      {
+        question: "What makes this different from a standard reunion favor?",
+        answer:
+          "It is one shared, evidence-led collection built from family memories and values, including a Final Crest, Heritage Certificate, Family Story, Meaning Behind Your Crest, and Complete Collection."
+      },
+      {
+        question: "Is a physical product shipped to the reunion?",
+        answer:
+          "No. MyKinLegacy delivers the finished files digitally through a private vault. The family can arrange its preferred printing or framing separately."
       }
     ],
-    relatedSlugs: ["christmas-family", "grandparents", "anniversary"]
+    relatedSlugs: ["christmas-family", "grandparents", "anniversary"],
+    guidePath: "/journal/family-reunion-gift-ideas",
+    guideLabel: "Compare meaningful family reunion gift ideas"
   }
 ];
 
