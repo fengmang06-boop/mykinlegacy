@@ -5,6 +5,14 @@ export const MIN_REPAIR_PRIORITY_SCORE = 85;
 export const MIN_AUTO_REVIEW_CONFIDENCE = 90;
 export const MAX_AUTONOMOUS_WRITES_PER_DAY = 3;
 
+export type RepairPriorityComponents = {
+  technicalDefect: number;
+  titleTagRepairability: number;
+  commercialPotentialAndBrandFit: number;
+  changeSafety: number;
+  dataReliability: number;
+};
+
 export type ControlledRepairCandidate = {
   listingId: string;
   product: string;
@@ -33,6 +41,8 @@ export type ControlledRepairCandidate = {
   identifierReliable: boolean;
   rollbackReady: boolean;
   baselineSha256: string;
+  baselineFresh: boolean;
+  repairPriorityComponents?: RepairPriorityComponents;
 };
 
 export type DeterministicValidation = {
@@ -71,6 +81,66 @@ function meaningfulTitle(title: string): boolean {
   return words.length >= 5 && /[a-z]/i.test(title);
 }
 
+function clampScore(value: number, maximum: number): number {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(maximum, Math.round(value)));
+}
+
+function proposalFieldsReady(candidate: ControlledRepairCandidate): boolean {
+  const tags = candidate.proposedTags.map(normalized);
+  return (
+    candidate.proposedTitle.length > 0 &&
+    candidate.proposedTitle.length <= 140 &&
+    meaningfulTitle(candidate.proposedTitle) &&
+    candidate.proposedTitle !== candidate.currentTitle &&
+    candidate.proposedTags.length === 13 &&
+    tags.every((tag) => tag.length > 0 && tag.length <= 20) &&
+    new Set(tags).size === tags.length &&
+    JSON.stringify(candidate.currentTags.map(normalized)) !== JSON.stringify(tags)
+  );
+}
+
+export function applyReadinessAdjustedRepairScore(candidate: ControlledRepairCandidate): ControlledRepairCandidate {
+  if (!candidate.repairPriorityComponents) return candidate;
+
+  const components: RepairPriorityComponents = {
+    technicalDefect: clampScore(candidate.repairPriorityComponents.technicalDefect, 30),
+    titleTagRepairability: clampScore(candidate.repairPriorityComponents.titleTagRepairability, 25),
+    commercialPotentialAndBrandFit: clampScore(candidate.repairPriorityComponents.commercialPotentialAndBrandFit, 20),
+    changeSafety: clampScore(candidate.repairPriorityComponents.changeSafety, 15),
+    dataReliability: clampScore(candidate.repairPriorityComponents.dataReliability, 10)
+  };
+
+  if (proposalFieldsReady(candidate)) components.titleTagRepairability = 25;
+  if (
+    candidate.state === "active" &&
+    candidate.orders === 0 &&
+    !candidate.stableSeller &&
+    !candidate.modifiedWithin30Days &&
+    !candidate.activeExperiment &&
+    !candidate.ipRisk &&
+    !candidate.authenticityRisk &&
+    !candidate.requiresOtherFieldChanges
+  ) {
+    components.changeSafety = 15;
+  }
+  if (
+    candidate.baselineFresh &&
+    candidate.rollbackReady &&
+    /^[a-f0-9]{64}$/i.test(candidate.baselineSha256) &&
+    candidate.identifierReliable &&
+    candidate.evidence.length >= 2
+  ) {
+    components.dataReliability = 10;
+  }
+
+  return {
+    ...candidate,
+    repairPriorityComponents: components,
+    repairPriorityScore: Object.values(components).reduce((total, value) => total + value, 0)
+  };
+}
+
 function containsIpRisk(values: string[]): string[] {
   const text = values.join(" ").toLowerCase();
   return IP_TERMS.filter((term) => text.includes(term));
@@ -105,6 +175,7 @@ export function validateControlledRepairProposal(candidate: ControlledRepairCand
   if (!candidate.rollbackReady || !/^[a-f0-9]{64}$/i.test(candidate.baselineSha256)) {
     errors.push("Complete rollback baseline and valid SHA-256 are required.");
   }
+  if (!candidate.baselineFresh) errors.push("The current baseline is stale and must be recaptured before execution.");
   if (candidate.repairPriorityScore < MIN_REPAIR_PRIORITY_SCORE) {
     warnings.push(`Repair Priority Score ${candidate.repairPriorityScore} is below ${MIN_REPAIR_PRIORITY_SCORE}.`);
   }
@@ -163,6 +234,7 @@ export function independentlyReviewControlledRepair(
     candidate.independentSearchAngle,
     candidate.identifierReliable,
     candidate.rollbackReady,
+    candidate.baselineFresh,
     candidate.evidence.length >= 2,
     candidate.searchIntent.trim().length >= 10,
     candidate.currentTitle !== candidate.proposedTitle,

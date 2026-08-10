@@ -1,4 +1,5 @@
 import {
+  applyReadinessAdjustedRepairScore,
   independentlyReviewControlledRepair,
   validateControlledRepairProposal,
   type ControlledRepairCandidate
@@ -43,7 +44,15 @@ const candidate: ControlledRepairCandidate = {
   independentSearchAngle: true,
   identifierReliable: true,
   rollbackReady: true,
-  baselineSha256: "9c20eb4e243b292021b3b01b789a8f46436a99bd4cae3f7941999d3170560e1a"
+  baselineSha256: "9c20eb4e243b292021b3b01b789a8f46436a99bd4cae3f7941999d3170560e1a",
+  baselineFresh: true,
+  repairPriorityComponents: {
+    technicalDefect: 26,
+    titleTagRepairability: 20,
+    commercialPotentialAndBrandFit: 16,
+    changeSafety: 10,
+    dataReliability: 8
+  }
 };
 
 function assert(condition: unknown, message: string): asserts condition {
@@ -51,8 +60,10 @@ function assert(condition: unknown, message: string): asserts condition {
 }
 
 function main(): void {
-  const validation = validateControlledRepairProposal(candidate);
-  const review = independentlyReviewControlledRepair(candidate, validation);
+  const scoredCandidate = applyReadinessAdjustedRepairScore(candidate);
+  assert(scoredCandidate.repairPriorityScore === 92, "Readiness evidence did not recalculate the priority score.");
+  const validation = validateControlledRepairProposal(scoredCandidate);
+  const review = independentlyReviewControlledRepair(scoredCandidate, validation);
   assert(validation.passed, validation.errors.join("; "));
   assert(review.zone === "green" && review.confidence >= 90, "Valid green candidate did not pass independent review.");
 
@@ -71,9 +82,9 @@ function main(): void {
         version: "V3",
         authorizationReference: "founder-standing-authorization-v3",
         candidateZone: "green",
-        listingId: candidate.listingId,
+        listingId: scoredCandidate.listingId,
         exactDiffSha256: hashEtsyListingWriteDiffs(diffs),
-        repairPriorityScore: candidate.repairPriorityScore,
+        repairPriorityScore: scoredCandidate.repairPriorityScore,
         autoReviewConfidence: review.confidence,
         deterministicValidationPassed: validation.passed,
         independentReviewPassed: review.approvedForAutomaticExecution,
@@ -86,13 +97,14 @@ function main(): void {
     listingsEditedToday: 0
   });
 
+  const redCandidate = applyReadinessAdjustedRepairScore({ ...candidate, modifiedWithin30Days: true });
   const red = independentlyReviewControlledRepair(
-    { ...candidate, modifiedWithin30Days: true },
-    validateControlledRepairProposal({ ...candidate, modifiedWithin30Days: true })
+    redCandidate,
+    validateControlledRepairProposal(redCandidate)
   );
   assert(red.zone === "red" && !red.approvedForAutomaticExecution, "30-day cooldown was not enforced.");
 
-  const yellowCandidate = { ...candidate, repairPriorityScore: 82, identifierReliable: false };
+  const yellowCandidate = { ...candidate, repairPriorityScore: 82, identifierReliable: false, repairPriorityComponents: undefined };
   const yellow = independentlyReviewControlledRepair(yellowCandidate, validateControlledRepairProposal(yellowCandidate));
   assert(yellow.zone === "yellow" && !yellow.approvedForAutomaticExecution, "Yellow review routing failed.");
 
@@ -110,7 +122,7 @@ function main(): void {
           candidateZone: "green",
           listingId: candidate.listingId,
           exactDiffSha256: "0".repeat(64),
-          repairPriorityScore: candidate.repairPriorityScore,
+          repairPriorityScore: scoredCandidate.repairPriorityScore,
           autoReviewConfidence: review.confidence,
           deterministicValidationPassed: true,
           independentReviewPassed: true,
@@ -145,7 +157,7 @@ function main(): void {
           candidateZone: "green",
           listingId: candidate.listingId,
           exactDiffSha256: hashEtsyListingWriteDiffs(descriptionDiff),
-          repairPriorityScore: candidate.repairPriorityScore,
+          repairPriorityScore: scoredCandidate.repairPriorityScore,
           autoReviewConfidence: review.confidence,
           deterministicValidationPassed: true,
           independentReviewPassed: true,
@@ -161,6 +173,10 @@ function main(): void {
     descriptionBlocked = true;
   }
   assert(descriptionBlocked, "V3 standing authorization did not block description changes.");
+
+  const staleCandidate = applyReadinessAdjustedRepairScore({ ...candidate, baselineFresh: false });
+  const staleValidation = validateControlledRepairProposal(staleCandidate);
+  assert(!staleValidation.passed, "A stale baseline was not blocked.");
   console.log("Controlled Autonomous Repair V3 safety tests passed.");
 }
 

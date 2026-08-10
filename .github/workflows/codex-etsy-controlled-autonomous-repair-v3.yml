@@ -188,13 +188,13 @@ jobs:
           printf 'V3_BACKUP_DIR=%s\n' "$BACKUP"
           REMOTE
 
-      - name: Execute Batch 7 green candidates
+      - name: Execute current green candidates
         shell: bash
         run: |
           set +e
           OUTPUT="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
             -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npx tsx scripts/controlled-autonomous-repair-v3.ts --plan config/controlled-autonomous-repair-v3/batch-9-2026-07-31.json' 2>&1)"
+            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npx tsx scripts/controlled-autonomous-repair-v3.ts --plan config/controlled-autonomous-repair-v3/batch-10-2026-08-10.json' 2>&1)"
           STATUS="$?"
           set -e
           printf '%s\n' "$OUTPUT"

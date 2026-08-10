@@ -3,9 +3,11 @@ import fs from "node:fs";
 import path from "node:path";
 import { prisma } from "../src/lib/prisma";
 import {
+  applyReadinessAdjustedRepairScore,
   independentlyReviewControlledRepair,
   validateControlledRepairProposal,
-  type ControlledRepairCandidate
+  type ControlledRepairCandidate,
+  type RepairPriorityComponents
 } from "../src/lib/integrations/etsy/controlled-autonomous-repair-v3";
 import {
   assertEtsyListingWriteGuard,
@@ -41,6 +43,7 @@ type PlanCandidate = {
   requiresOtherFieldChanges: boolean;
   independentSearchAngle: boolean;
   identifierReliable: boolean;
+  repairPriorityComponents?: RepairPriorityComponents;
 };
 
 type RepairPlan = {
@@ -49,6 +52,11 @@ type RepairPlan = {
   baselineReportPath: string;
   candidates: PlanCandidate[];
 };
+
+const MAX_CANDIDATE_BACKLOG = 215;
+const MAX_REVIEW_POOL = 15;
+const MIN_REVIEW_POOL = 10;
+const BASELINE_FRESHNESS_MS = 6 * 60 * 60 * 1000;
 
 type BaselineListing = {
   listing_id: string;
@@ -192,6 +200,31 @@ function epochMilliseconds(value: number | string | null): number {
 function modifiedWithin30Days(value: number | string | null, now = Date.now()): boolean {
   const modifiedAt = epochMilliseconds(value);
   return !modifiedAt || now - modifiedAt < 30 * 86_400_000;
+}
+
+function hasExactProposal(candidate: PlanCandidate): boolean {
+  const tags = candidate.proposedTags.map((tag) => tag.trim().toLowerCase().replace(/\s+/g, " "));
+  return (
+    candidate.proposedTitle.trim().length > 0 &&
+    candidate.proposedTitle.length <= 140 &&
+    candidate.proposedTags.length === 13 &&
+    tags.every((tag) => tag.length > 0 && tag.length <= 20) &&
+    new Set(tags).size === tags.length &&
+    candidate.evidence.length >= 2
+  );
+}
+
+function rankCandidateBacklog(candidates: PlanCandidate[]): PlanCandidate[] {
+  return [...candidates]
+    .sort((left, right) => {
+      const leftBlocked = Number(left.stableSeller || left.activeExperiment || left.ipRisk || left.authenticityRisk);
+      const rightBlocked = Number(right.stableSeller || right.activeExperiment || right.ipRisk || right.authenticityRisk);
+      if (leftBlocked !== rightBlocked) return leftBlocked - rightBlocked;
+      const proposalDifference = Number(hasExactProposal(right)) - Number(hasExactProposal(left));
+      if (proposalDifference) return proposalDifference;
+      return right.repairPriorityScore - left.repairPriorityScore;
+    })
+    .slice(0, MAX_REVIEW_POOL);
 }
 
 function walkJsonFiles(root: string): string[] {
@@ -458,7 +491,8 @@ function trackingPlan(trackingStartTime: string, results: Array<Record<string, u
 async function buildCandidate(plan: PlanCandidate, baseline: BaselineListing): Promise<ControlledRepairCandidate> {
   const orders = await prisma.etsyTransaction.count({ where: { etsyListingId: plan.listingId } });
   const history = historicalWriteAndTrackingStatus(plan.listingId);
-  return {
+  const capturedAt = new Date(baseline.baseline_captured_at).getTime();
+  const candidate: ControlledRepairCandidate = {
     listingId: plan.listingId,
     product: plan.product,
     sku: plan.sku,
@@ -485,8 +519,11 @@ async function buildCandidate(plan: PlanCandidate, baseline: BaselineListing): P
     independentSearchAngle: plan.independentSearchAngle,
     identifierReliable: plan.identifierReliable,
     rollbackReady: true,
-    baselineSha256: baseline.baseline_sha256
+    baselineSha256: baseline.baseline_sha256,
+    baselineFresh: Number.isFinite(capturedAt) && Date.now() - capturedAt <= BASELINE_FRESHNESS_MS,
+    repairPriorityComponents: plan.repairPriorityComponents
   };
+  return applyReadinessAdjustedRepairScore(candidate);
 }
 
 async function main(): Promise<void> {
@@ -503,14 +540,15 @@ async function main(): Promise<void> {
 
   const plan = JSON.parse(fs.readFileSync(planPath, "utf8")) as RepairPlan;
   if (plan.version !== "V3") throw new Error("Repair plan version must be V3.");
-  if (!plan.candidates.length || plan.candidates.length < 10 || plan.candidates.length > 15) {
-    throw new Error("V3 requires a candidate pool of 10 to 15 listings.");
+  if (!plan.candidates.length || plan.candidates.length < MIN_REVIEW_POOL || plan.candidates.length > MAX_CANDIDATE_BACKLOG) {
+    throw new Error(`V3 requires a candidate backlog of ${MIN_REVIEW_POOL} to ${MAX_CANDIDATE_BACKLOG} listings.`);
   }
   if (new Set(plan.candidates.map((candidate) => candidate.listingId)).size !== plan.candidates.length) {
     throw new Error("V3 candidate pool contains duplicate listing IDs.");
   }
   const baselinePath = path.resolve(plan.baselineReportPath);
   const baselines = verifyBaselineReport(baselinePath);
+  const candidatePool = rankCandidateBacklog(plan.candidates);
   const runRoot = path.join(process.cwd(), "exports", "controlled-autonomous-repair-v3", plan.batchKey);
   const successMarker = path.join(runRoot, "execution-success.json");
   if (fs.existsSync(successMarker)) {
@@ -520,7 +558,7 @@ async function main(): Promise<void> {
   }
 
   const reviews: ReviewRecord[] = [];
-  for (const item of plan.candidates) {
+  for (const item of candidatePool) {
     const baseline = baselines.byId.get(item.listingId);
     if (!baseline) {
       reviews.push({
@@ -549,7 +587,8 @@ async function main(): Promise<void> {
     version: "V3",
     batchKey: plan.batchKey,
     generatedAt: new Date().toISOString(),
-    candidatePoolCount: plan.candidates.length,
+    candidateBacklogCount: plan.candidates.length,
+    candidatePoolCount: candidatePool.length,
     greenCount: green.length,
     yellowCount: reviews.filter((review) => review.zone === "yellow").length,
     redCount: reviews.filter((review) => review.zone === "red").length,
@@ -566,7 +605,8 @@ async function main(): Promise<void> {
       executedAt: new Date().toISOString(),
       version: "V3",
       standingAuthorizationEffective: true,
-      candidatePoolCount: plan.candidates.length,
+      candidateBacklogCount: plan.candidates.length,
+      candidatePoolCount: candidatePool.length,
       greenCandidates: [],
       results: [],
       yellowCount: reviews.filter((review) => review.zone === "yellow").length,
@@ -704,7 +744,8 @@ async function main(): Promise<void> {
     executedAt: executionTime,
     version: "V3",
     standingAuthorizationEffective: true,
-    candidatePoolCount: plan.candidates.length,
+    candidateBacklogCount: plan.candidates.length,
+    candidatePoolCount: candidatePool.length,
     greenCandidates: green.map((review) => ({
       listingId: review.listingId,
       product: review.product,

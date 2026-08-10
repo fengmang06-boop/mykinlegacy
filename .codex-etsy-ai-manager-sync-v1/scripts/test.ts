@@ -378,7 +378,8 @@ async function main() {
     independentSearchAngle: true,
     identifierReliable: true,
     rollbackReady: true,
-    baselineSha256: "9c20eb4e243b292021b3b01b789a8f46436a99bd4cae3f7941999d3170560e1a"
+    baselineSha256: "9c20eb4e243b292021b3b01b789a8f46436a99bd4cae3f7941999d3170560e1a",
+    baselineFresh: true
   };
   const v3Validation = validateControlledRepairProposal(v3Candidate);
   const v3Review = independentlyReviewControlledRepair(v3Candidate, v3Validation);

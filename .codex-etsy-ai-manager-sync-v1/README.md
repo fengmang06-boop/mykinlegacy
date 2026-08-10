@@ -291,6 +291,7 @@ Getting `listings_w` only makes future approved edits technically possible. It d
 The Founder standing authorization for low-risk Etsy title/tag repairs is documented in
 [`docs/ETSY_CONTROLLED_AUTONOMOUS_REPAIR_V3.md`](docs/ETSY_CONTROLLED_AUTONOMOUS_REPAIR_V3.md).
 V3 keeps the process globally read-only and opens only a one-listing, exact-diff-bound write window after deterministic validation and independent green-zone review.
+Candidate plans may carry a 10-215 listing backlog. V3 ranks and refills the best 15, and recalculates only the repairability, change-safety, and data-reliability portions of the score when a fresh exact package and rollback baseline provide stronger evidence. The green threshold remains 85.
 
 ## Future Etsy API Integration
 
@@ -310,6 +311,7 @@ npm run build
 npm run mock:sync
 npm run etsy:sync:read-only
 npm run etsy:check-env
+npm run etsy:repair:v3 -- --plan config/controlled-autonomous-repair-v3/<plan>.json
 npm run analyze:listings
 npm run test
 ```
