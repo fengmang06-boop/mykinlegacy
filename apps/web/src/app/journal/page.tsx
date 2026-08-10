@@ -98,8 +98,12 @@ export default function JournalPage() {
           <p className="eyebrow">See the finished experience</p>
           <h2>Compare the guidance with real example collections.</h2>
           <p>
-            Browse twenty public examples for parents, grandparents, weddings, retirements,
-            anniversaries, Christmas, reunions, and other family moments.
+            If you are still deciding where to begin, compare the{" "}
+            <Link href="/heritage-gift">personalized heritage gift guide</Link>,{" "}
+            <Link href="/family-legacy-gift">family legacy gift experience</Link>, or{" "}
+            <Link href="/family-crest-generator">symbolic family crest generator</Link>. Then browse
+            twenty public examples for parents, grandparents, weddings, retirements, anniversaries,
+            Christmas, reunions, and other family moments.
           </p>
           <div className="button-row">
             <TrackedCtaLink
