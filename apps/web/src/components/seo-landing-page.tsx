@@ -1,4 +1,5 @@
 import Link from "next/link";
+import React, { type ReactNode } from "react";
 
 import { BRAND_NAME, PRODUCT_NAME } from "../lib/seo";
 
@@ -8,6 +9,7 @@ export interface SeoLandingPageProps {
   description: string;
   highlights: string[];
   faq: Array<{ question: string; answer: string }>;
+  extraContent?: ReactNode;
   ctaHref?: string;
   ctaLabel?: string;
 }
@@ -18,6 +20,7 @@ export function SeoLandingPage({
   description,
   highlights,
   faq,
+  extraContent,
   ctaHref = "/create",
   ctaLabel = "Begin Your Legacy"
 }: SeoLandingPageProps) {
@@ -36,7 +39,10 @@ export function SeoLandingPage({
 
   return (
     <main>
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="hero">
         <div className="section hero-grid">
           <div>
@@ -95,6 +101,8 @@ export function SeoLandingPage({
           ))}
         </div>
       </section>
+
+      {extraContent}
 
       <section className="band">
         <div className="section">

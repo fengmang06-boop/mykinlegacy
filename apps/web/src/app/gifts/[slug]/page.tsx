@@ -20,7 +20,7 @@ type GiftLandingPageProps = {
 
 const collectionContents = [
   [
-    "Family Legacy Certificate",
+    "Heritage Certificate",
     "The primary frameable keepsake, personalized for the recipient and occasion."
   ],
   ["Final Crest", "One finished symbolic artwork shaped around the family evidence you share."],

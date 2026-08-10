@@ -49,7 +49,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
       {
         question: "Can the certificate be printed and framed?",
         answer:
-          "Yes. The Family Legacy Certificate is the primary frameable keepsake, with the Final Crest supplied separately for personal printing."
+          "Yes. The Heritage Certificate is the primary frameable keepsake, with the Final Crest supplied separately for personal printing."
       },
       {
         question: "Is the crest an official coat of arms?",
