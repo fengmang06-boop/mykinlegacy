@@ -82,11 +82,16 @@ export function SeoLandingPage({
               <strong>Family Story</strong>
               <span>Private narrative PDF</span>
             </article>
+            <article className="mockup-item">
+              <span className="mini-guide" aria-hidden="true" />
+              <strong>Meaning Behind Your Crest</strong>
+              <span>Evidence-led symbol explanations</span>
+            </article>
             <article className="mockup-item wide">
               <span className="mini-vault" aria-hidden="true" />
               <div>
-                <strong>Private Vault</strong>
-                <span>Complete Collection archive delivery</span>
+                <strong>Complete Collection</strong>
+                <span>Private Vault digital delivery</span>
               </div>
             </article>
           </div>

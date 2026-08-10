@@ -6,9 +6,15 @@ import { showcaseCollections } from "../lib/showcase-collections";
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? "https://mykinlegacy.com";
 
+type SitemapEntry = {
+  path: string;
+  priority: number;
+  changeFrequency: "weekly" | "monthly" | "yearly";
+  lastModified?: string;
+};
+
 export default function sitemap(): MetadataRoute.Sitemap {
-  const now = new Date();
-  const publicPaths = [
+  const publicPaths: SitemapEntry[] = [
     { path: "", priority: 1, changeFrequency: "weekly" as const },
     { path: "/family-legacy-collection", priority: 0.9, changeFrequency: "weekly" as const },
     { path: "/real-examples", priority: 0.9, changeFrequency: "weekly" as const },
@@ -25,26 +31,27 @@ export default function sitemap(): MetadataRoute.Sitemap {
     { path: "/disclaimer", priority: 0.3, changeFrequency: "yearly" as const }
   ];
 
-  const giftPaths = giftLandingPages.map((page) => ({
+  const giftPaths: SitemapEntry[] = giftLandingPages.map((page) => ({
     path: `/gifts/${page.slug}`,
     priority: 0.8,
     changeFrequency: "monthly" as const
   }));
-  const examplePaths = showcaseCollections.map((collection) => ({
+  const examplePaths: SitemapEntry[] = showcaseCollections.map((collection) => ({
     path: `/real-examples/${collection.id}`,
     priority: 0.7,
     changeFrequency: "monthly" as const
   }));
-  const journalPaths = journalArticles.map((article) => ({
+  const journalPaths: SitemapEntry[] = journalArticles.map((article) => ({
     path: `/journal/${article.slug}`,
     priority: 0.75,
-    changeFrequency: "monthly" as const
+    changeFrequency: "monthly" as const,
+    lastModified: article.updatedAt
   }));
 
-  return [...publicPaths, ...giftPaths, ...examplePaths, ...journalPaths].map((entry) => ({
-    url: `${SITE_URL}${entry.path}`,
-    lastModified: now,
-    changeFrequency: entry.changeFrequency,
-    priority: entry.priority
-  }));
+  return [...publicPaths, ...giftPaths, ...examplePaths, ...journalPaths].map(
+    ({ path, ...entry }) => ({
+      url: `${SITE_URL}${path}`,
+      ...entry
+    })
+  );
 }
