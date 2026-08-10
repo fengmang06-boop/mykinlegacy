@@ -186,7 +186,9 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
           "Remembrance language stays grounded, dignified, and hopeful, without making unsupported claims about the person's life."
       }
     ],
-    relatedSlugs: ["father-retirement", "mother-birthday", "family-reunion"]
+    relatedSlugs: ["father-retirement", "mother-birthday", "family-reunion"],
+    guidePath: "/journal/personalized-gifts-for-grandparents",
+    guideLabel: "Compare personalized gift ideas for grandparents"
   },
   {
     slug: "wedding",
@@ -275,7 +277,7 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
   },
   {
     slug: "christmas-family",
-    primaryKeyword: "personalized Christmas family gift",
+    primaryKeyword: "personalized Christmas gifts for family",
     title: "Personalized Christmas Gift for the Whole Family | MyKinLegacy",
     description:
       "Create one personalized Christmas gift the whole family can keep, shaped by memories, traditions, and values and privately delivered as a digital collection.",
@@ -336,6 +338,16 @@ export const giftLandingPages: GiftLandingPageSpec[] = [
         question: "What information do we need to provide?",
         answer:
           "Share real family memories, traditions, values, recipient details, and the meaning you want the gift to carry. MyKinLegacy does not invent ancestry or family history."
+      },
+      {
+        question: "What personalized Christmas gifts work for a whole family?",
+        answer:
+          "A shared gift works best when it gives several relatives one recognizable story or tradition to open together. MyKinLegacy creates one private digital Complete Collection rather than a bundle of separate generic presents."
+      },
+      {
+        question: "Can the Christmas collection use our family name?",
+        answer:
+          "Yes, when the family supplies and approves it. The name can identify the collection, but the design still comes from real memories, traditions, and values rather than claiming surname-based arms or verified ancestry."
       }
     ],
     relatedSlugs: ["family-reunion", "grandparents", "anniversary"]

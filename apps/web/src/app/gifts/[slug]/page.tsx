@@ -6,6 +6,7 @@ import { FunnelStepTracker } from "../../../components/funnel-tracker";
 import { notFound } from "next/navigation";
 
 import { StructuredData } from "../../../components/structured-data";
+import { TrackedCtaLink } from "../../../components/tracked-cta-link";
 import {
   getGiftLandingPage,
   giftLandingPages,
@@ -153,9 +154,13 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
               </>
             ) : null}
             <div className="button-row">
-              <Link className="button" href="/create">
+              <TrackedCtaLink
+                className="button"
+                href="/create"
+                trackingSource={`gift_${page.slug}_hero_create`}
+              >
                 Create Their Collection
-              </Link>
+              </TrackedCtaLink>
               <Link
                 className="secondary-button"
                 href={isChristmas ? "/real-examples/05-christmas-family" : "/real-examples"}
@@ -356,9 +361,13 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
               Limited Early Access includes Founder review before the delivery email and private
               vault are released.
             </p>
-            <Link className="button" href="/create">
+            <TrackedCtaLink
+              className="button"
+              href="/create"
+              trackingSource={`gift_${page.slug}_final_create`}
+            >
               Begin Their Legacy
-            </Link>
+            </TrackedCtaLink>
           </article>
         </div>
       </section>

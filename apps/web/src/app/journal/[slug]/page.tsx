@@ -5,6 +5,8 @@ import type { ReactNode } from "react";
 import { notFound } from "next/navigation";
 
 import { StructuredData } from "../../../components/structured-data";
+import { FunnelStepTracker } from "../../../components/funnel-tracker";
+import { TrackedCtaLink } from "../../../components/tracked-cta-link";
 import {
   getJournalArticle,
   getJournalVisual,
@@ -179,6 +181,10 @@ export default async function JournalArticlePage({ params }: JournalArticlePageP
 
   return (
     <main className="premium-page journal-article-page">
+      <FunnelStepTracker
+        stepName="journal_article"
+        metadata={{ page: `/journal/${article.slug}`, article_slug: article.slug }}
+      />
       <StructuredData data={[articleJsonLd, breadcrumbJsonLd]} />
       <section className="premium-hero journal-article-hero">
         <div className="section journal-hero-grid">
@@ -295,8 +301,20 @@ export default async function JournalArticlePage({ params }: JournalArticlePageP
             certified genealogy, or claims of noble or ancestral status.
           </p>
           <div className="button-row">
-            <Link className="button" href={article.commercialPath}>{article.commercialLabel}</Link>
-            <Link className="secondary-button" href="/real-examples">View Real Examples</Link>
+            <TrackedCtaLink
+              className="button"
+              href={article.commercialPath}
+              trackingSource="journal_article_commercial"
+            >
+              {article.commercialLabel}
+            </TrackedCtaLink>
+            <TrackedCtaLink
+              className="secondary-button"
+              href="/real-examples"
+              trackingSource="journal_article_examples"
+            >
+              View Real Examples
+            </TrackedCtaLink>
           </div>
         </div>
       </section>

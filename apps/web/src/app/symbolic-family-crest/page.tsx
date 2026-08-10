@@ -18,6 +18,7 @@ export default function SymbolicFamilyCrestPage() {
       eyebrow="Symbolic family crest"
       title="A symbolic family crest shaped by values and story"
       description="Build a heritage-inspired collection that explains chosen symbols clearly without claiming official heraldic status."
+      trackingSource="symbolic_family_crest"
       highlights={[
         "Values-first symbols",
         "Animal and color meanings",

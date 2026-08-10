@@ -51,6 +51,8 @@ const BLOCKED_KEYS = new Set([
 export type Ga4EventName =
   | "homepage_view"
   | "real_examples_view"
+  | "journal_view"
+  | "journal_article_view"
   | "gift_landing_view"
   | "landing_cta_clicked"
   | "create_started"
@@ -167,7 +169,11 @@ export function ga4EventFor(
           ? "real_examples_view"
           : stepName === "gift_landing"
             ? "gift_landing_view"
-            : null;
+            : stepName === "journal_landing"
+              ? "journal_view"
+              : stepName === "journal_article"
+                ? "journal_article_view"
+                : null;
   } else if (eventName === "landing_cta_clicked") {
     name = "landing_cta_clicked";
   } else if (eventName === "interview_started") {
@@ -208,8 +214,18 @@ export function ga4EventFor(
   if (name === "gift_landing_view" && typeof payload.gift_slug === "string") {
     params.gift_slug = payload.gift_slug.slice(0, 80);
   }
+  if (name === "journal_article_view" && typeof payload.article_slug === "string") {
+    params.article_slug = payload.article_slug.slice(0, 80);
+  }
   if (name === "landing_cta_clicked" && typeof payload.source === "string") {
     params.source = payload.source.slice(0, 80);
+  }
+  if (
+    name === "landing_cta_clicked" &&
+    typeof payload.destination === "string" &&
+    /^\/[a-z0-9/_-]*$/i.test(payload.destination)
+  ) {
+    params.destination = payload.destination.slice(0, 80);
   }
   if (name === "interview_step_completed" && typeof payload.step_code === "string") {
     params.step_code = payload.step_code.slice(0, 80);

@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { StructuredData } from "../../components/structured-data";
+import { FunnelStepTracker } from "../../components/funnel-tracker";
+import { TrackedCtaLink } from "../../components/tracked-cta-link";
 import {
   getJournalVisual,
   journalArticles,
@@ -42,6 +44,7 @@ export default function JournalPage() {
 
   return (
     <main className="premium-page journal-page">
+      <FunnelStepTracker stepName="journal_landing" metadata={{ page: "/journal" }} />
       <StructuredData data={[itemListJsonLd, breadcrumbJsonLd]} />
       <section className="premium-hero journal-hero">
         <div className="section">
@@ -99,8 +102,20 @@ export default function JournalPage() {
             anniversaries, Christmas, reunions, and other family moments.
           </p>
           <div className="button-row">
-            <Link className="button" href="/real-examples">View Real Examples</Link>
-            <Link className="secondary-button" href="/create">Create Their Collection</Link>
+            <TrackedCtaLink
+              className="button"
+              href="/real-examples"
+              trackingSource="journal_landing_examples"
+            >
+              View Real Examples
+            </TrackedCtaLink>
+            <TrackedCtaLink
+              className="secondary-button"
+              href="/create"
+              trackingSource="journal_landing_create"
+            >
+              Create Their Collection
+            </TrackedCtaLink>
           </div>
         </div>
       </section>

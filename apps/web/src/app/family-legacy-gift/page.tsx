@@ -18,6 +18,7 @@ export default function FamilyLegacyGiftPage() {
       eyebrow="Family legacy gift"
       title="Turn family values into a lasting digital legacy gift"
       description="Capture surname, origins, values, symbols, and motto language in a private Family Legacy Collection."
+      trackingSource="family_legacy_gift"
       highlights={["One personalized Final Crest", "Family Story", "Heritage Certificate"]}
       extraContent={
         <>

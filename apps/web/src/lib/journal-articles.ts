@@ -137,7 +137,12 @@ const contentBatch01: JournalArticle[] = [
           p(
             "For a milestone birthday, choose one era, habit, or memory that relatives immediately recognize. For an anniversary or ",
             link("wedding", "/gifts/wedding"),
-            ", focus on what two people have built or are beginning together. At Christmas or a ",
+            ", focus on what two people have built or are beginning together. A ",
+            link(
+              "personalized Christmas gift for the whole family",
+              "/gifts/christmas-family"
+            ),
+            " can center shared traditions and the stories people retell when they gather. At a ",
             link("family reunion", "/gifts/family-reunion"),
             ", a shared gift can honor the whole group instead of singling out one branch of the family."
           ),
@@ -604,7 +609,9 @@ const contentBatch01: JournalArticle[] = [
         heading: "Choose a different emphasis for each occasion",
         paragraphs: [
           p(
-            "For a milestone birthday, celebrate the person in the present rather than treating the gift as a retrospective. For Christmas, focus on traditions and gathering. An anniversary can recognize what two people built together. A reunion gift may belong to the whole group."
+            "For a milestone birthday, celebrate the person in the present rather than treating the gift as a retrospective. For Christmas, focus on traditions and gathering; the ",
+            link("whole-family Christmas gift experience", "/gifts/christmas-family"),
+            " shows how one shared collection can serve that moment. An anniversary can recognize what two people built together. A reunion gift may belong to the whole group."
           ),
           p(
             "Remembrance requires extra care. Use details the family provided, avoid inventing a complete life story, and end with what continues: a habit, lesson, welcome, or love carried forward."

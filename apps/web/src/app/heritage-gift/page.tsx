@@ -18,6 +18,7 @@ export default function HeritageGiftPage() {
       eyebrow="Heritage gift"
       title="A meaningful heritage gift for family moments"
       description="Create a personalized digital collection for weddings, anniversaries, holidays, family reunions, and legacy keepsakes."
+      trackingSource="heritage_gift"
       highlights={["Gift-ready PDF files", "Symbolic family story", "Secure digital delivery"]}
       extraContent={
         <>

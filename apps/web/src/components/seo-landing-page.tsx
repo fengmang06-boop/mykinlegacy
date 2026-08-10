@@ -2,6 +2,7 @@ import Link from "next/link";
 import React, { type ReactNode } from "react";
 
 import { BRAND_NAME, PRODUCT_NAME } from "../lib/seo";
+import { TrackedCtaLink } from "./tracked-cta-link";
 
 export interface SeoLandingPageProps {
   eyebrow: string;
@@ -12,6 +13,7 @@ export interface SeoLandingPageProps {
   extraContent?: ReactNode;
   ctaHref?: string;
   ctaLabel?: string;
+  trackingSource?: string;
 }
 
 export function SeoLandingPage({
@@ -22,7 +24,8 @@ export function SeoLandingPage({
   faq,
   extraContent,
   ctaHref = "/create",
-  ctaLabel = "Begin Your Legacy"
+  ctaLabel = "Begin Your Legacy",
+  trackingSource = "seo_landing"
 }: SeoLandingPageProps) {
   const jsonLd = {
     "@context": "https://schema.org",
@@ -51,9 +54,13 @@ export function SeoLandingPage({
             <p>{description}</p>
             <div className="hero-rule" aria-hidden="true" />
             <div className="button-row">
-              <Link className="button" href={ctaHref}>
+              <TrackedCtaLink
+                className="button"
+                href={ctaHref}
+                trackingSource={`${trackingSource}_hero`}
+              >
                 {ctaLabel}
-              </Link>
+              </TrackedCtaLink>
               <Link className="secondary-button" href="/family-legacy-collection">
                 View {PRODUCT_NAME}
               </Link>
@@ -134,9 +141,13 @@ export function SeoLandingPage({
           The guided form captures surname, heritage country, values, symbols, colors, motto, and
           preferred visual style before checkout.
         </p>
-        <Link className="button" href={ctaHref}>
+        <TrackedCtaLink
+          className="button"
+          href={ctaHref}
+          trackingSource={`${trackingSource}_final`}
+        >
           {ctaLabel}
-        </Link>
+        </TrackedCtaLink>
       </section>
     </main>
   );
