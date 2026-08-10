@@ -19,10 +19,7 @@ describe("client runtime hardening", () => {
     });
 
     expect(() => trackEvent("funnel_step_viewed", { page: "/create" })).not.toThrow();
-    expect(() => {
-      const cleanup = trackFunnelStepViewed("create_page", { page: "/create" });
-      cleanup();
-    }).not.toThrow();
+    expect(() => trackFunnelStepViewed("create_page", { page: "/create" })).not.toThrow();
   });
 
   it("does not fail requests before fetch when session storage is unavailable", async () => {

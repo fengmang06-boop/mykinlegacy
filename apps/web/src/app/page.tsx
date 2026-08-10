@@ -5,6 +5,7 @@ import React from "react";
 
 import { FunnelStepTracker } from "../components/funnel-tracker";
 import { StructuredData } from "../components/structured-data";
+import { TrackedCtaLink } from "../components/tracked-cta-link";
 import { publicMetadata } from "../lib/seo";
 
 export const metadata: Metadata = publicMetadata({
@@ -62,7 +63,7 @@ export default function HomePage() {
               <strong>USD $49</strong><span>Digital collection</span><span>Founder reviewed</span><span>Private delivery</span>
             </div>
             <div className="hv2-actions">
-              <Link className="hv2-button hv2-primary" href="/create">Begin Their Legacy</Link>
+              <TrackedCtaLink className="hv2-button hv2-primary" href="/create" trackingSource="homepage_hero">Begin Their Legacy</TrackedCtaLink>
               <Link className="hv2-button hv2-secondary" href="/real-examples">View Examples</Link>
             </div>
             <p className="hv2-disclosure">Digital collection. No physical shipping included.</p>
@@ -213,7 +214,7 @@ export default function HomePage() {
           <p className="hv2-kicker">A gift made from what matters</p>
           <h2>Give them a collection only their family could inspire.</h2>
           <p>One Founder-reviewed digital Family Legacy Collection · USD $49 · Private delivery</p>
-          <div className="hv2-actions"><Link className="hv2-button hv2-primary" href="/create">Begin Their Legacy</Link><Link className="hv2-button hv2-secondary" href="/real-examples">View Examples</Link></div>
+          <div className="hv2-actions"><TrackedCtaLink className="hv2-button hv2-primary" href="/create" trackingSource="homepage_final_cta">Begin Their Legacy</TrackedCtaLink><Link className="hv2-button hv2-secondary" href="/real-examples">View Examples</Link></div>
           <small>No physical shipping included. Printing and framing are arranged separately.</small>
         </div>
       </section>

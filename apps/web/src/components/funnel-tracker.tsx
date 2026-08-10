@@ -11,6 +11,8 @@ export function FunnelStepTracker({
   stepName: string;
   metadata?: Record<string, unknown>;
 }) {
-  useEffect(() => trackFunnelStepViewed(stepName, metadata), [stepName, metadata]);
+  useEffect(() => {
+    trackFunnelStepViewed(stepName, metadata);
+  }, [stepName, metadata]);
   return null;
 }

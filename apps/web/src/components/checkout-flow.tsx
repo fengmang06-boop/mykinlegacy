@@ -1,10 +1,17 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 
 import { ApiClient, ApiClientError, type OrderStatus, type ProductDetail } from "../lib/api-client";
 import { trackEvent, trackFunnelStepViewed } from "../lib/analytics";
+import {
+  COLLECTION_DELIVERABLES,
+  COLLECTION_DELIVERY_NOTE,
+  COLLECTION_PRICE_FALLBACK,
+  COLLECTION_PRODUCT_CODE
+} from "../lib/collection-contract";
 import { formatMoneyFromCents } from "../lib/format";
 
 const finalHomepageAsset = "/assets/final-homepage";
@@ -26,14 +33,13 @@ const consentLabels: Record<(typeof REQUIRED_CONSENTS)[number], string> = {
   email_delivery_consent: "I agree to receive collection delivery updates by email."
 };
 
-const collectionArtifacts = [
-  "One frameable Family Legacy Certificate",
-  "One personalized Final Crest",
-  "One Family Story",
-  "One Meaning Behind Your Crest",
-  "One Complete Collection archive",
-  "Secure private vault"
-];
+const collectionArtifacts = [...COLLECTION_DELIVERABLES];
+
+const LEGAL_CONSENTS = [
+  "terms_accepted",
+  "privacy_policy_accepted",
+  "heritage_disclaimer_accepted"
+] as const;
 
 const founderDemoProduct: ProductDetail = {
   product_code: "family_legacy_collection",
@@ -47,7 +53,7 @@ const founderDemoProduct: ProductDetail = {
   packages: [
     {
       package_code: "family_legacy_collection_core",
-      price_cents: 6900,
+      price_cents: COLLECTION_PRICE_FALLBACK.price_cents,
       currency: "USD",
       deliverables: [
         {
@@ -89,7 +95,7 @@ function createFounderDemoOrderStatus(orderNumber: string): OrderStatus {
     order_status: "draft",
     payment_status: "unpaid",
     fulfillment_status: "not_started",
-    amount: { total_cents: 6900 },
+    amount: { total_cents: COLLECTION_PRICE_FALLBACK.price_cents },
     currency: "USD",
     download_ready: false
   };
@@ -117,9 +123,13 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
     "idle" | "checkout_creating" | "redirecting_to_stripe" | "demo_payment_creating"
   >("idle");
   const [error, setError] = useState<string | null>(null);
+  const [interviewId, setInterviewId] = useState<string | null>(null);
   const api = useMemo(() => new ApiClient(), []);
 
-  useEffect(() => trackFunnelStepViewed("checkout", { order_number: orderNumber }), [orderNumber]);
+  useEffect(() => {
+    trackFunnelStepViewed("checkout", { order_number: orderNumber });
+    setInterviewId(window.sessionStorage.getItem("ai_heritage_interview_id"));
+  }, [orderNumber]);
 
   useEffect(() => {
     if (founderDemoOrder) {
@@ -129,7 +139,7 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
     }
     void Promise.all([
       api.getOrderStatus(orderNumber),
-      api.getProductDetail("family_legacy_collection")
+      api.getProductDetail(COLLECTION_PRODUCT_CODE)
     ])
       .then(([orderResult, productResult]) => {
         setOrder(orderResult);
@@ -139,7 +149,21 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
   }, [api, founderDemoOrder, orderNumber]);
 
   const requiredAccepted = REQUIRED_CONSENTS.every((key) => consents[key]);
+  const legalAccepted = LEGAL_CONSENTS.every((key) => consents[key]);
   const primaryPackage = product?.packages[0] ?? null;
+  const checkoutPrice = formatMoneyFromCents(
+    primaryPackage?.price_cents ?? COLLECTION_PRICE_FALLBACK.price_cents,
+    primaryPackage?.currency ?? COLLECTION_PRICE_FALLBACK.currency
+  );
+
+  function setLegalAccepted(accepted: boolean) {
+    setConsents((current) => ({
+      ...current,
+      terms_accepted: accepted,
+      privacy_policy_accepted: accepted,
+      heritage_disclaimer_accepted: accepted
+    }));
+  }
 
   async function checkout() {
     if (!requiredAccepted) {
@@ -229,8 +253,8 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
               </p>
               <p className="muted">Delivery email is stored securely with your private order.</p>
               <p className="notice">
-                Digital delivery only. No physical product is shipped. Corrections and refund
-                eligibility are reviewed under the published support and refund policies.
+                {COLLECTION_DELIVERY_NOTE} Corrections and refund eligibility are reviewed under
+                the published support and refund policies.
               </p>
             </section>
             <section className="card">
@@ -243,7 +267,22 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
             </section>
           </div>
           <form className="form">
-            {REQUIRED_CONSENTS.map((key) => (
+            <p className="muted">
+              Review the <Link href="/terms">terms</Link>, <Link href="/privacy">privacy policy</Link>,
+              and <Link href="/refund-policy">refund policy</Link> before payment.
+            </p>
+            <label className="checkbox">
+              <input
+                type="checkbox"
+                checked={legalAccepted}
+                onChange={(event) => setLegalAccepted(event.target.checked)}
+              />{" "}
+              <span>
+                I accept the terms and privacy policy, and understand this is a symbolic keepsake—not
+                official arms or a genealogy claim.
+              </span>
+            </label>
+            {(["ai_generation_consent", "email_delivery_consent"] as const).map((key) => (
               <label className="checkbox" key={key}>
                 <input
                   type="checkbox"
@@ -255,26 +294,29 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
                 <span>{consentLabels[key]}</span>
               </label>
             ))}
-            <label className="checkbox">
-              <input
-                type="checkbox"
-                checked={consents.marketing_opt_in}
-                onChange={(event) =>
-                  setConsents((current) => ({ ...current, marketing_opt_in: event.target.checked }))
-                }
-              />{" "}
-              Marketing opt-in
-            </label>
-            <label className="checkbox">
-              <input
-                type="checkbox"
-                checked={consents.gallery_opt_in}
-                onChange={(event) =>
-                  setConsents((current) => ({ ...current, gallery_opt_in: event.target.checked }))
-                }
-              />{" "}
-              Gallery opt-in
-            </label>
+            <details className="optional-consents">
+              <summary>Optional preferences</summary>
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={consents.marketing_opt_in}
+                  onChange={(event) =>
+                    setConsents((current) => ({ ...current, marketing_opt_in: event.target.checked }))
+                  }
+                />{" "}
+                <span>Receive occasional MyKinLegacy news</span>
+              </label>
+              <label className="checkbox">
+                <input
+                  type="checkbox"
+                  checked={consents.gallery_opt_in}
+                  onChange={(event) =>
+                    setConsents((current) => ({ ...current, gallery_opt_in: event.target.checked }))
+                  }
+                />{" "}
+                <span>Allow a separate request about possible gallery inclusion</span>
+              </label>
+            </details>
           </form>
           <p className="notice">
             Your collection is private by default, not public, delivered digitally, and prepared as
@@ -291,8 +333,16 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
               ? "Creating checkout..."
               : state === "redirecting_to_stripe"
                 ? "Redirecting..."
-                : "Continue to Stripe"}
+                : `Secure Their Collection — ${checkoutPrice}`}
           </button>
+          <p className="muted">
+            Secure payment powered by Stripe. You will review the payment details before paying.
+          </p>
+          {interviewId ? (
+            <Link className="secondary-button" href={`/create/${interviewId}/confirm`}>
+              Return to review
+            </Link>
+          ) : null}
           {founderDemoMode ? (
             <button
               className="secondary-button"
@@ -314,6 +364,7 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
               height={360}
               alt=""
               aria-hidden="true"
+              priority
             />
           </div>
           <p className="eyebrow">Private vault</p>

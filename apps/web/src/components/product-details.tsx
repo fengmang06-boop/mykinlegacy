@@ -6,15 +6,12 @@ import Link from "next/link";
 import { ApiClient, type ProductDetail } from "../lib/api-client";
 import { formatMoneyFromCents } from "../lib/format";
 import { trackEvent } from "../lib/analytics";
+import {
+  COLLECTION_DELIVERABLES,
+  COLLECTION_PRODUCT_CODE
+} from "../lib/collection-contract";
 
-const collectionArtifacts = [
-  "One frameable Family Legacy Certificate",
-  "One personalized Final Crest",
-  "One Family Story",
-  "One Meaning Behind Your Crest",
-  "One Complete Collection archive",
-  "Secure private vault"
-];
+const collectionArtifacts = [...COLLECTION_DELIVERABLES];
 
 const confidenceNotes = [
   "Prepared as a private digital collection.",
@@ -30,7 +27,7 @@ export function ProductDetails() {
   useEffect(() => {
     let active = true;
     void api
-      .getProductDetail("family_legacy_collection")
+      .getProductDetail(COLLECTION_PRODUCT_CODE)
       .then((result) => {
         if (!active) {
           return;

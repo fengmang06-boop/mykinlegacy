@@ -4,6 +4,7 @@ import Link from "next/link";
 
 import { FunnelStepTracker } from "../../components/funnel-tracker";
 import { StructuredData } from "../../components/structured-data";
+import { TrackedCtaLink } from "../../components/tracked-cta-link";
 import { publicMetadata, SITE_URL } from "../../lib/seo";
 
 export const metadata: Metadata = publicMetadata({
@@ -193,7 +194,7 @@ export default function ExamplesPage() {
               Family Legacy Collection directions.
             </p>
             <div className="px2-actions">
-              <Link className="px2-button" href="/create">Begin Their Legacy</Link>
+              <TrackedCtaLink className="px2-button" href="/create" trackingSource="examples_hero">Begin Their Legacy</TrackedCtaLink>
               <Link className="px2-button px2-button-secondary" href="/family-legacy-collection">See the Complete Collection</Link>
             </div>
           </div>
@@ -308,7 +309,7 @@ export default function ExamplesPage() {
           <h2>Begin a collection no surname template could produce.</h2>
           <p>USD $49 · Founder reviewed · Private digital delivery · No physical shipping</p>
           <div className="px2-actions">
-            <Link className="px2-button" href="/create">Begin Their Legacy</Link>
+            <TrackedCtaLink className="px2-button" href="/create" trackingSource="examples_final_cta">Begin Their Legacy</TrackedCtaLink>
             <Link className="px2-button px2-button-secondary-light" href="/family-legacy-collection">What You Receive</Link>
           </div>
         </div>

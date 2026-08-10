@@ -57,6 +57,24 @@ describe("AnalyticsService", () => {
       service.track({ event_name: "founder_delivery_approved", step_name: "founder_delivery" })
     ).resolves.toMatchObject({ accepted: true, event_name: "founder_delivery_approved" });
   });
+
+  it("accepts the customer funnel events emitted by the web flow", async () => {
+    const service = new AnalyticsService(createPrisma() as unknown as PrismaService);
+    for (const eventName of [
+      "landing_cta_clicked",
+      "interview_started",
+      "interview_step_completed",
+      "interview_abandoned",
+      "order_created",
+      "consent_completed",
+      "checkout_cancelled"
+    ]) {
+      await expect(service.track({ event_name: eventName })).resolves.toMatchObject({
+        accepted: true,
+        event_name: eventName
+      });
+    }
+  });
 });
 
 function createPrisma() {

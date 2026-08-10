@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 
+import { CheckoutCancelledTracker } from "../../../components/checkout-cancelled-tracker";
+
 export const metadata: Metadata = {
   robots: { index: false, follow: false }
 };
@@ -13,6 +15,7 @@ export default async function PaymentCancelPage({
   const { order_number: orderNumber } = await searchParams;
   return (
     <main>
+      <CheckoutCancelledTracker orderNumber={orderNumber} />
       <section className="journey-shell">
         <div className="section">
           <div className="journey-card">

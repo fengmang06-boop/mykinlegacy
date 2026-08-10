@@ -1,75 +1,20 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { ApiClient } from "../lib/api-client";
 import { trackEvent } from "../lib/analytics";
+import { INTERVIEW_STEPS } from "../lib/interview-contract";
+import {
+  readInterviewDraft,
+  writeInterviewAnswer,
+  writeInterviewStepIndex
+} from "../lib/interview-draft";
 import { getSafetyMessage } from "../lib/safety";
 
 const finalHomepageAsset = "/assets/final-homepage";
-
-const STEPS = [
-  {
-    code: "name_your_house",
-    question: "Who is this collection for?",
-    options: [
-      "My father",
-      "My mother",
-      "My parents",
-      "A grandparent",
-      "A couple",
-      "Our whole family"
-    ],
-    required: true
-  },
-  {
-    code: "where_story_begins",
-    question: "What moment makes this gift meaningful now?",
-    options: [
-      "Father's Day",
-      "Mother's Day",
-      "Christmas",
-      "Retirement",
-      "Anniversary",
-      "Family reunion"
-    ],
-    required: true
-  },
-  {
-    code: "define_house_values",
-    question: "Which values should this collection honor?",
-    options: ["Courage", "Wisdom", "Loyalty", "Resilience", "Faith", "Creativity"],
-    required: true
-  },
-  {
-    code: "choose_guardian_symbol",
-    question: "What should they feel recognized for?",
-    options: [
-      "Protecting the family",
-      "Keeping traditions alive",
-      "Working hard for others",
-      "Holding everyone together",
-      "Teaching by example",
-      "Building a home"
-    ],
-    required: true
-  },
-  {
-    code: "select_colors_and_visual_style",
-    question: "Which symbol or style feels right for your family?",
-    options: [
-      "Deep green and gold",
-      "Black and silver",
-      "Blue and white",
-      "Medieval",
-      "Celtic",
-      "Gothic"
-    ],
-    required: true
-  }
-] as const;
 
 export function InterviewFlow({ interviewId }: { interviewId: string }) {
   const [stepIndex, setStepIndex] = useState(0);
@@ -79,17 +24,61 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
   const [saving, setSaving] = useState(false);
   const router = useRouter();
   const api = useMemo(() => new ApiClient(), []);
-  const step = STEPS[stepIndex] ?? STEPS[0];
+  const step = INTERVIEW_STEPS[stepIndex] ?? INTERVIEW_STEPS[0];
   const safetyMessage = getSafetyMessage(`${selected.join(" ")} ${freeText}`);
+  const completedRef = useRef(false);
+  const activeStepCodeRef = useRef(step.code);
   const founderDemoMode =
     process.env.NODE_ENV === "development" && interviewId.startsWith("founder-demo-");
 
   useEffect(() => {
+    const draft = readInterviewDraft(window.sessionStorage, interviewId);
+    const requestedStepValue = new URLSearchParams(window.location.search).get("step");
+    const requestedStep = requestedStepValue === null ? null : Number(requestedStepValue);
+    const initialStep = requestedStep !== null && Number.isInteger(requestedStep) && requestedStep >= 0
+      ? Math.min(requestedStep, INTERVIEW_STEPS.length - 1)
+      : Math.min(draft.current_step_index, INTERVIEW_STEPS.length - 1);
+    const initialStepDefinition = INTERVIEW_STEPS[initialStep] ?? INTERVIEW_STEPS[0]!;
+    const initialAnswer = draft.answers[initialStepDefinition.code];
+    setStepIndex(initialStep);
+    setSelected(initialAnswer?.selected_options ?? []);
+    setFreeText(initialAnswer?.free_text ?? "");
     trackEvent("funnel_step_viewed", {
       step_name: "guided_interview",
       interview_id: interviewId
     });
   }, [interviewId]);
+
+  useEffect(() => {
+    activeStepCodeRef.current = step.code;
+    trackEvent("funnel_step_viewed", {
+      step_name: `interview_${step.code}`,
+      interview_id: interviewId
+    });
+  }, [interviewId, step.code]);
+
+  useEffect(() => {
+    function recordAbandonment() {
+      if (completedRef.current) return;
+      trackEvent("interview_abandoned", {
+        interview_id: interviewId,
+        step_code: activeStepCodeRef.current
+      });
+    }
+    window.addEventListener("pagehide", recordAbandonment);
+    return () => window.removeEventListener("pagehide", recordAbandonment);
+  }, [interviewId]);
+
+  function goToStep(nextStepIndex: number) {
+    const boundedStepIndex = Math.max(0, Math.min(nextStepIndex, INTERVIEW_STEPS.length - 1));
+    const draft = writeInterviewStepIndex(window.sessionStorage, interviewId, boundedStepIndex);
+    const nextStep = INTERVIEW_STEPS[boundedStepIndex] ?? INTERVIEW_STEPS[0]!;
+    const savedAnswer = draft.answers[nextStep.code];
+    setStepIndex(boundedStepIndex);
+    setSelected(savedAnswer?.selected_options ?? []);
+    setFreeText(savedAnswer?.free_text ?? "");
+    setError(null);
+  }
 
   function toggleOption(option: string) {
     setSelected((current) =>
@@ -133,6 +122,17 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
       } else {
         await api.submitInterviewAnswer(interviewId, answer);
       }
+      const nextStepIndex = Math.min(stepIndex + 1, INTERVIEW_STEPS.length);
+      writeInterviewAnswer(
+        window.sessionStorage,
+        interviewId,
+        {
+          step_code: step.code,
+          selected_options: answer.raw_answer.selected_options,
+          free_text: answer.raw_answer.free_text
+        },
+        nextStepIndex
+      );
       if (process.env.NODE_ENV === "development") {
         console.info("[interview] step saved", {
           step_code: step.code,
@@ -150,7 +150,8 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
         { step_name: `interview_${step.code}`, interview_id: interviewId },
         { stepName: `interview_${step.code}`, durationMs }
       );
-      if (stepIndex >= STEPS.length - 1) {
+      if (stepIndex >= INTERVIEW_STEPS.length - 1) {
+        completedRef.current = true;
         trackEvent("funnel_step_completed", {
           step_name: "guided_interview",
           interview_id: interviewId
@@ -158,9 +159,7 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
         router.push(`/create/${interviewId}/confirm`);
         return;
       }
-      setStepIndex((current) => current + 1);
-      setSelected([]);
-      setFreeText("");
+      goToStep(stepIndex + 1);
     } catch {
       setError("We could not save this answer. Please retry.");
     } finally {
@@ -202,12 +201,12 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
         <div className="section interview-layout">
           <div className="journey-card">
             <p className="eyebrow">
-              Step {stepIndex + 1} of {STEPS.length}
+              Step {stepIndex + 1} of {INTERVIEW_STEPS.length}
             </p>
             <div className="progress" aria-hidden="true">
-              <span style={{ width: `${((stepIndex + 1) / STEPS.length) * 100}%` }} />
+              <span style={{ width: `${((stepIndex + 1) / INTERVIEW_STEPS.length) * 100}%` }} />
             </div>
-            <h1>{step.question}</h1>
+            <h2>{step.question}</h2>
             <div className="option-grid">
               {step.options.map((option) => (
                 <button
@@ -228,6 +227,16 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
             {safetyMessage ? <p className="notice">{safetyMessage}</p> : null}
             {error ? <p className="error">{error}</p> : null}
             <div className="button-row">
+              {stepIndex > 0 ? (
+                <button
+                  className="secondary-button"
+                  type="button"
+                  onClick={() => goToStep(stepIndex - 1)}
+                  disabled={saving}
+                >
+                  Back
+                </button>
+              ) : null}
               <button
                 className="button"
                 type="button"
@@ -247,6 +256,7 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
                 </button>
               ) : null}
             </div>
+            <p className="muted">Answers are saved in this browser session so you can review them before checkout.</p>
           </div>
           <aside className="interview-preview" aria-label="Collection preview">
             <div className="preview-cover">
@@ -265,9 +275,9 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
               </span>
             </div>
             <div className="preview-steps">
-              {STEPS.map((item, index) => (
+              {INTERVIEW_STEPS.map((item, index) => (
                 <span className="preview-step" key={item.code}>
-                  <strong>{stepLabel(item.code)}</strong>
+                  <strong>{item.label}</strong>
                   <span>
                     {index < stepIndex ? "Done" : index === stepIndex ? "In progress" : index + 1}
                   </span>
@@ -280,16 +290,4 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
       </section>
     </>
   );
-}
-
-function stepLabel(code: string): string {
-  const labels: Record<string, string> = {
-    name_your_house: "Recipient",
-    where_story_begins: "Moment",
-    define_house_values: "Values",
-    choose_guardian_symbol: "Recognition",
-    select_colors_and_visual_style: "Style",
-    create_or_refine_motto: "Words"
-  };
-  return labels[code] ?? code;
 }

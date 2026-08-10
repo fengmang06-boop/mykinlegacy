@@ -4,6 +4,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import React, { useCallback, useEffect, useRef, useState } from "react";
 
+import { TrackedCtaLink } from "./tracked-cta-link";
+
 const links = [
   ["Collection", "/family-legacy-collection"],
   ["Examples", "/real-examples"],
@@ -93,10 +95,14 @@ export function SiteHeader() {
           {links.map(([label, href]) => (
             <Link href={href} key={label} aria-current={href === pathname ? "page" : undefined}>{label}</Link>
           ))}
-          <Link className="nav-cta" href="/create">Begin Their Legacy</Link>
+          <TrackedCtaLink className="nav-cta" href="/create" trackingSource="desktop_header">
+            Begin Their Legacy
+          </TrackedCtaLink>
         </div>
         <div className="mobile-nav-actions">
-          <Link className="mobile-header-cta" href="/create">Begin Their Legacy</Link>
+          <TrackedCtaLink className="mobile-header-cta" href="/create" trackingSource="mobile_header">
+            Begin Their Legacy
+          </TrackedCtaLink>
           <button
             className="mobile-menu-button"
             type="button"
@@ -133,7 +139,14 @@ export function SiteHeader() {
               {links.map(([label, href]) => (
                 <Link href={href} key={label} aria-current={href === pathname ? "page" : undefined} onClick={() => closeMenu({ restoreFocus: false })}>{label}</Link>
               ))}
-              <Link className="mobile-menu-primary" href="/create" onClick={() => closeMenu({ restoreFocus: false })}>Begin Their Legacy</Link>
+              <TrackedCtaLink
+                className="mobile-menu-primary"
+                href="/create"
+                trackingSource="mobile_menu"
+                onClick={() => closeMenu({ restoreFocus: false })}
+              >
+                Begin Their Legacy
+              </TrackedCtaLink>
             </div>
             <p>Private digital collection · Founder reviewed · USD $49</p>
           </div>

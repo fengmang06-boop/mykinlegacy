@@ -52,9 +52,14 @@ export type Ga4EventName =
   | "homepage_view"
   | "real_examples_view"
   | "gift_landing_view"
+  | "landing_cta_clicked"
   | "create_started"
+  | "interview_step_completed"
   | "questionnaire_completed"
+  | "order_created"
+  | "consent_completed"
   | "checkout_started"
+  | "checkout_cancelled"
   | "purchase_completed"
   | "founder_delivery_approved"
   | "vault_opened"
@@ -103,6 +108,7 @@ export function trackEvent(
 
     sendGa4Event(eventName, sanitized, options);
 
+    const flowId = firstPartyFlowId();
     const body = JSON.stringify({
       data: {
         event_name: eventName,
@@ -111,7 +117,7 @@ export function trackEvent(
         step_name: options.stepName ?? stepNameForEvent(eventName, sanitized),
         duration_ms: options.durationMs,
         client_timestamp: new Date().toISOString(),
-        metadata: sanitized
+        metadata: flowId ? { ...sanitized, flow_id: flowId } : sanitized
       }
     });
 
@@ -161,13 +167,23 @@ export function ga4EventFor(
           ? "real_examples_view"
           : stepName === "gift_landing"
             ? "gift_landing_view"
-            : stepName === "create_page"
-              ? "create_started"
-              : null;
+            : null;
+  } else if (eventName === "landing_cta_clicked") {
+    name = "landing_cta_clicked";
+  } else if (eventName === "interview_started") {
+    name = "create_started";
+  } else if (eventName === "interview_step_completed") {
+    name = "interview_step_completed";
   } else if (eventName === "funnel_step_completed" && stepName === "guided_interview") {
     name = "questionnaire_completed";
+  } else if (eventName === "order_created") {
+    name = "order_created";
+  } else if (eventName === "consent_completed") {
+    name = "consent_completed";
   } else if (eventName === "checkout_started") {
     name = "checkout_started";
+  } else if (eventName === "checkout_cancelled") {
+    name = "checkout_cancelled";
   } else if (eventName === "payment_success") {
     name = "purchase_completed";
   } else if (eventName === "founder_delivery_approved") {
@@ -191,6 +207,12 @@ export function ga4EventFor(
   }
   if (name === "gift_landing_view" && typeof payload.gift_slug === "string") {
     params.gift_slug = payload.gift_slug.slice(0, 80);
+  }
+  if (name === "landing_cta_clicked" && typeof payload.source === "string") {
+    params.source = payload.source.slice(0, 80);
+  }
+  if (name === "interview_step_completed" && typeof payload.step_code === "string") {
+    params.step_code = payload.step_code.slice(0, 80);
   }
   if (typeof payload.source === "string" && /^(order_status|download_vault)$/.test(payload.source)) {
     params.source = payload.source;
@@ -218,24 +240,28 @@ function sendGa4Event(
   }
 }
 
-export function trackFunnelStepViewed(stepName: string, payload: Record<string, unknown> = {}): () => void {
-  const startedAt = safeNow();
+export function trackFunnelStepViewed(stepName: string, payload: Record<string, unknown> = {}): void {
   try {
     trackEvent("funnel_step_viewed", { ...payload, step_name: stepName }, { stepName });
   } catch {
     // Analytics must never crash customer pages.
   }
-  return () => {
-    try {
-      trackEvent(
-        "funnel_step_completed",
-        { ...payload, step_name: stepName },
-        { stepName, durationMs: Math.round(safeNow() - startedAt) }
-      );
-    } catch {
-      // Analytics must never crash customer pages.
-    }
-  };
+}
+function firstPartyFlowId(): string | undefined {
+  if (typeof window === "undefined") return undefined;
+  try {
+    const key = "mykinlegacy_conversion_flow_id";
+    const existing = window.sessionStorage.getItem(key);
+    if (existing && /^[a-zA-Z0-9-]{16,80}$/.test(existing)) return existing;
+    const created =
+      typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
+        ? crypto.randomUUID()
+        : `flow-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 14)}`;
+    window.sessionStorage.setItem(key, created);
+    return created;
+  } catch {
+    return undefined;
+  }
 }
 
 function analyticsBaseUrl(): string {
@@ -264,8 +290,4 @@ function sanitizeValue(value: unknown): unknown {
     return sanitizeAnalyticsPayload(value as Record<string, unknown>);
   }
   return undefined;
-}
-
-function safeNow(): number {
-  return typeof performance !== "undefined" ? performance.now() : Date.now();
 }

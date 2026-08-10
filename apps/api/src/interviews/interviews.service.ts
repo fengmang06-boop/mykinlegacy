@@ -119,12 +119,15 @@ export class InterviewsService {
       normalized_output: normalized.normalized_house_dna,
       maps_to_house_dna: normalized.inferred_fields
     };
+    const otherStepAnswers = answers.filter(
+      (answer) => !isRecord(answer) || answer.step_code !== stepCode
+    );
 
     await this.prisma.houseInterview.update({
       where: { id: interviewId },
       data: {
         currentStep: nextStep,
-        answersJson: [...answers, answerContract],
+        answersJson: [...otherStepAnswers, answerContract],
         houseDnaDraftJson: draft,
         normalizedInputJson: normalized,
         updatedAt: new Date()

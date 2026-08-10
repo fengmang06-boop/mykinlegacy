@@ -36,6 +36,30 @@ describe("InterviewsService", () => {
     expect(result.normalized_output.guardian_animals).toEqual(["lion"]);
   });
 
+  it("replaces an edited step instead of duplicating the answer", async () => {
+    const updates: Array<Record<string, unknown>> = [];
+    const service = new InterviewsService(
+      createPrismaServiceMock(
+        [
+          { step_code: "name_your_house", raw_answer: "My father" },
+          { step_code: "where_story_begins", raw_answer: "Christmas" }
+        ],
+        (data) => updates.push(data)
+      )
+    );
+
+    await service.submitAnswer("01H00000000000000000000000", {
+      data: {
+        step_code: "name_your_house",
+        raw_answer: { selected_options: ["My parents"], free_text: "" }
+      }
+    });
+
+    const answers = updates[0]?.answersJson as Array<{ step_code?: string }>;
+    expect(answers).toHaveLength(2);
+    expect(answers.filter((answer) => answer.step_code === "name_your_house")).toHaveLength(1);
+  });
+
   it("normalizes Germany / Irish / black gold / lion / no birds", async () => {
     const service = new InterviewsService(createPrismaServiceMock());
     const result = await service.normalizeInput("01H00000000000000000000000", {
@@ -70,7 +94,10 @@ describe("InterviewsService", () => {
   });
 });
 
-function createPrismaServiceMock(): PrismaService {
+function createPrismaServiceMock(
+  existingAnswers: unknown[] = [],
+  onUpdate?: (data: Record<string, unknown>) => void
+): PrismaService {
   const interview = {
     id: "01H00000000000000000000000",
     houseId: null,
@@ -78,7 +105,7 @@ function createPrismaServiceMock(): PrismaService {
     currentStep: "name_your_house",
     locale: "en-US",
     expiresAt: new Date(Date.now() + 60_000),
-    answersJson: [],
+    answersJson: existingAnswers,
     houseDnaDraftJson: null,
     normalizedInputJson: null
   };
@@ -106,7 +133,11 @@ function createPrismaServiceMock(): PrismaService {
       houseInterview: {
         create: async (args: { data: typeof interview }) => ({ ...args.data }),
         findUnique: async () => interview,
-        update: async () => interview
+        update: async (args: unknown) => {
+          const data = (args as { data?: Record<string, unknown> }).data ?? {};
+          onUpdate?.(data);
+          return interview;
+        }
       },
       $transaction: async <T>(handler: (client: typeof transactionClient) => Promise<T>) =>
         handler(transactionClient)

@@ -7,6 +7,7 @@ import "../collection.css";
 
 import { FunnelStepTracker } from "../../components/funnel-tracker";
 import { StructuredData } from "../../components/structured-data";
+import { TrackedCtaLink } from "../../components/tracked-cta-link";
 import { publicMetadata, SITE_URL } from "../../lib/seo";
 
 const assets = "/assets/final-homepage";
@@ -238,9 +239,9 @@ export default function FamilyLegacyCollectionPage() {
               <span>Private delivery</span>
             </div>
             <div className="cv2-actions">
-              <Link className="cv2-button" href="/create">
+              <TrackedCtaLink className="cv2-button" href="/create" trackingSource="collection_hero">
                 Begin Their Legacy
-              </Link>
+              </TrackedCtaLink>
               <Link className="cv2-button cv2-button-secondary" href="/real-examples">
                 View Examples
               </Link>
@@ -636,9 +637,9 @@ export default function FamilyLegacyCollectionPage() {
             </ul>
             <p>Printing and framing arranged separately.</p>
             <div className="cv2-actions">
-              <Link className="cv2-button" href="/create">
+              <TrackedCtaLink className="cv2-button" href="/create" trackingSource="collection_how_it_works">
                 Begin Their Legacy
-              </Link>
+              </TrackedCtaLink>
               <Link className="cv2-button cv2-button-secondary" href="/real-examples">
                 View Examples
               </Link>
@@ -671,9 +672,9 @@ export default function FamilyLegacyCollectionPage() {
           <h2 id="final-title">Give their story a form the whole family can keep.</h2>
           <p>USD $49 · Digital delivery · Founder reviewed</p>
           <div className="cv2-actions">
-            <Link className="cv2-button" href="/create">
+            <TrackedCtaLink className="cv2-button" href="/create" trackingSource="collection_final_cta">
               Begin Their Legacy
-            </Link>
+            </TrackedCtaLink>
             <Link className="cv2-button cv2-button-secondary" href="/real-examples">
               View Examples
             </Link>

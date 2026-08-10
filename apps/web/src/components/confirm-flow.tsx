@@ -1,21 +1,44 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { ApiClient } from "../lib/api-client";
+import { ApiClient, type ProductDetail } from "../lib/api-client";
 import { trackEvent, trackFunnelStepViewed } from "../lib/analytics";
+import {
+  COLLECTION_DELIVERABLES,
+  COLLECTION_DELIVERY_NOTE,
+  COLLECTION_PRICE_FALLBACK,
+  COLLECTION_PRODUCT_CODE
+} from "../lib/collection-contract";
+import { formatMoneyFromCents } from "../lib/format";
+import { INTERVIEW_STEPS } from "../lib/interview-contract";
+import {
+  formatInterviewAnswer,
+  readInterviewDraft,
+  type InterviewSessionDraft
+} from "../lib/interview-draft";
 
 export function ConfirmFlow({ interviewId }: { interviewId: string }) {
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [product, setProduct] = useState<ProductDetail | null>(null);
+  const [draft, setDraft] = useState<InterviewSessionDraft>({
+    current_step_index: 0,
+    answers: {}
+  });
   const router = useRouter();
   const api = useMemo(() => new ApiClient(), []);
   const founderDemoMode =
     process.env.NODE_ENV === "development" && interviewId.startsWith("founder-demo-");
 
-  useEffect(() => trackFunnelStepViewed("confirm_identity", { interview_id: interviewId }), [interviewId]);
+  useEffect(() => {
+    trackFunnelStepViewed("confirm_identity", { interview_id: interviewId });
+    setDraft(readInterviewDraft(window.sessionStorage, interviewId));
+    void api.getProductDetail(COLLECTION_PRODUCT_CODE).then(setProduct).catch(() => undefined);
+  }, [api, interviewId]);
 
   async function confirm() {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
@@ -53,13 +76,13 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
         return;
       }
       const identity = await api.confirmHouseDNA(interviewId);
-      const product = await api.getProductDetail("family_legacy_collection");
-      const selectedPackage = product.packages[0];
+      const confirmedProduct = product ?? await api.getProductDetail(COLLECTION_PRODUCT_CODE);
+      const selectedPackage = confirmedProduct.packages[0];
       if (!selectedPackage) {
         throw new Error("package_missing");
       }
       const order = await api.createOrder({
-        product_code: product.product_code,
+        product_code: confirmedProduct.product_code,
         package_code: selectedPackage.package_code,
         interview_id: interviewId,
         house_id: identity.house_id,
@@ -69,12 +92,12 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
       trackEvent("house_dna_confirmed", { interview_id: interviewId });
       trackEvent("order_created", {
         order_number: order.order_number,
-        product_code: product.product_code
+        product_code: confirmedProduct.product_code
       });
       trackEvent("funnel_step_completed", {
         step_name: "confirm_identity",
         order_number: order.order_number,
-        product_code: product.product_code
+        product_code: confirmedProduct.product_code
       });
       router.push(`/checkout/${order.order_number}`);
     } catch {
@@ -85,7 +108,7 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
 
   return (
     <>
-      <section className="interview-hero">
+      <section className="interview-hero confirm-hero">
         <div className="section interview-hero-grid">
           <div>
             <p className="eyebrow">Review</p>
@@ -105,41 +128,37 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
         <div className="section interview-layout">
           <div className="journey-card">
             <p className="eyebrow">Gift summary</p>
-            <h1>Confirm their Family Legacy Collection</h1>
+            <h2>Confirm their Family Legacy Collection</h2>
             {founderDemoMode ? <p className="notice">Founder Demo Mode: no backend order is created.</p> : null}
             <div className="summary-list">
-              <div className="summary-row">
-                <strong>Recipient</strong>
-                <span>The parent, grandparent, couple, or family moment from your answers</span>
-              </div>
-              <div className="summary-row">
-                <strong>Family name</strong>
-                <span>Used only to personalize this symbolic keepsake</span>
-              </div>
-              <div className="summary-row">
-                <strong>Gift moment</strong>
-                <span>Father's Day, Mother's Day, Christmas, retirement, anniversary, or reunion</span>
-              </div>
-              <div className="summary-row">
-                <strong>Values</strong>
-                <span>The qualities this collection should help them feel recognized for</span>
-              </div>
-              <div className="summary-row">
-                <strong>Symbols</strong>
-                <span>Symbolic motifs chosen to represent your family's story</span>
-              </div>
-              <div className="summary-row">
-                <strong>Colors and style</strong>
-                <span>Your selected palette and keepsake direction</span>
-              </div>
-              <div className="summary-row">
-                <strong>Words</strong>
-                <span>Your chosen motto or phrase for the collection</span>
-              </div>
+              {INTERVIEW_STEPS.map((step, index) => (
+                <div className="summary-row" key={step.code}>
+                  <strong>{step.label}</strong>
+                  <span>
+                    {formatInterviewAnswer(draft.answers[step.code])}{" "}
+                    <Link href={`/create/${interviewId}?step=${index}`}>Edit</Link>
+                  </span>
+                </div>
+              ))}
               <div className="summary-row">
                 <strong>Privacy</strong>
                 <span>Private by default and not published publicly</span>
               </div>
+            </div>
+            <div className="collection-contract" aria-label="Collection price and contents">
+              <p className="eyebrow">Complete Collection</p>
+              <p className="collection-contract-price">
+                {formatMoneyFromCents(
+                  product?.packages[0]?.price_cents ?? COLLECTION_PRICE_FALLBACK.price_cents,
+                  product?.packages[0]?.currency ?? COLLECTION_PRICE_FALLBACK.currency
+                )}
+              </p>
+              <ul className="collection-contract-list">
+                {COLLECTION_DELIVERABLES.map((deliverable) => (
+                  <li key={deliverable}>{deliverable}</li>
+                ))}
+              </ul>
+              <p className="muted">{COLLECTION_DELIVERY_NOTE}</p>
             </div>
             <p className="notice">
               This is a personalized heritage-inspired symbolic keepsake for gifting and personal
@@ -167,8 +186,8 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
             <div className="preview-cover">
               <strong>Collection Preview</strong>
               <span>
-                Frameable Family Legacy Certificate, Final Crest, story, meaning guide, and private
-                vault.
+                Final Crest, Heritage Certificate, Family Story, Meaning Behind Your Crest, and
+                private Complete Collection.
               </span>
             </div>
             <p className="notice">

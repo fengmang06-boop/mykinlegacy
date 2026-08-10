@@ -6,6 +6,12 @@ import { useRouter } from "next/navigation";
 
 import { ApiClient } from "../lib/api-client";
 import { trackEvent, trackFunnelStepViewed } from "../lib/analytics";
+import {
+  COLLECTION_DELIVERABLES,
+  COLLECTION_DELIVERY_NOTE,
+  COLLECTION_PRICE_FALLBACK
+} from "../lib/collection-contract";
+import { formatMoneyFromCents } from "../lib/format";
 
 const finalHomepageAsset = "/assets/final-homepage";
 
@@ -75,6 +81,7 @@ export function CreateStart() {
               <span>Made for gifting</span>
               <span>Digital delivery</span>
             </div>
+            <p className="create-offer-line">USD $49 · Five-part digital collection · No physical shipping</p>
           </div>
           <div className="create-hero-visual" aria-label="Private legacy collection preview">
             <Image
@@ -102,6 +109,21 @@ export function CreateStart() {
               Answer a few focused questions so the collection can reflect who it is for, what they
               mean to your family, and what should be remembered.
             </p>
+            <div className="collection-contract" aria-label="Collection price and contents">
+              <p className="eyebrow">One complete private digital collection</p>
+              <p className="collection-contract-price">
+                {formatMoneyFromCents(
+                  COLLECTION_PRICE_FALLBACK.price_cents,
+                  COLLECTION_PRICE_FALLBACK.currency
+                )}
+              </p>
+              <ul className="collection-contract-list">
+                {COLLECTION_DELIVERABLES.map((deliverable) => (
+                  <li key={deliverable}>{deliverable}</li>
+                ))}
+              </ul>
+              <p className="muted">{COLLECTION_DELIVERY_NOTE}</p>
+            </div>
             {error ? <p className="error">{error}</p> : null}
             <button className="button" type="button" onClick={begin} disabled={loading}>
               {loading ? "Starting..." : "Begin Their Legacy"}
@@ -157,7 +179,7 @@ export function CreateStart() {
                   aria-hidden="true"
                   unoptimized
                 />
-                Story
+                Family Story
               </span>
               <span>
                 <Image
@@ -168,7 +190,7 @@ export function CreateStart() {
                   aria-hidden="true"
                   unoptimized
                 />
-                Vault
+                Complete Collection
               </span>
             </div>
             <div className="preview-steps">

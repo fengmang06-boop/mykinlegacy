@@ -111,6 +111,19 @@ describe("customer frontend flow", () => {
 
     expect(source).toContain("customer_email: email");
     expect(source).toContain("Delivery email");
+    expect(source).toContain("formatInterviewAnswer");
+  });
+
+  it("shows the collection contract before payment and reduces required consent controls", async () => {
+    const createSource = await readFile(join(testDir, "components/create-start.tsx"), "utf8");
+    const checkoutSource = await readFile(join(testDir, "components/checkout-flow.tsx"), "utf8");
+
+    expect(createSource).toContain("COLLECTION_PRICE_FALLBACK");
+    expect(createSource).toContain("COLLECTION_DELIVERABLES");
+    expect(checkoutSource).not.toContain("Family Legacy Certificate");
+    expect(checkoutSource).toContain("Secure Their Collection");
+    expect(checkoutSource).toContain("Optional preferences");
+    expect(checkoutSource).not.toContain("Continue to Stripe");
   });
 
   it("API client sends Idempotency-Key on interview answer submit", async () => {
@@ -255,6 +268,8 @@ describe("customer frontend flow", () => {
         asset_id: "private-asset-id"
       })
     ).toEqual({ name: "collection_downloaded", params: {} });
+    expect(ga4EventFor("funnel_step_viewed", { step_name: "create_page" })).toBeNull();
+    expect(ga4EventFor("interview_started")).toEqual({ name: "create_started", params: {} });
   });
 
   it("private pages include noindex", () => {
@@ -323,7 +338,7 @@ describe("customer frontend flow", () => {
     expect(html).toContain("complete collection archive");
     expect(html).not.toContain("Files will be prepared next");
     expect(html).not.toContain("Download files will be available in the next delivery step.");
-    expect(html).toContain("Family Legacy Certificate");
+    expect(html).toContain("Heritage Certificate");
     expect(html).toContain("Family Story");
     expect(html).toContain("Meaning Behind Your Crest");
     expect(html).not.toContain("House Meaning Summary");
