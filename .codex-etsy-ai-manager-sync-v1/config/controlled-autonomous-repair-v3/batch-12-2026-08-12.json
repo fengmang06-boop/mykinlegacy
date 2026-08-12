@@ -1,0 +1,39 @@
+{
+  "version": "V3",
+  "batchKey": "batch-12-v3-2026-08-12",
+  "baselineReportPath": "exports/low-signal-breakthrough/batch-12-2026-08-12/baseline.json",
+  "candidates": [
+    {
+      "listingId": "4513547844",
+      "product": "Hippo Ring for Men",
+      "sku": "SJ349",
+      "proposedTitle": "Hippo Ring for Men in 925 Sterling Silver, Heavy Hippopotamus Animal Statement Jewelry",
+      "proposedTags": ["hippo ring", "hippopotamus ring", "silver hippo ring", "mens animal ring", "925 silver ring", "wildlife jewelry", "heavy statement ring", "hippo jewelry", "animal lover gift", "handmade mens ring", "nature jewelry", "unique mens ring", "gift for him"],
+      "searchIntent": "heavy 925 sterling silver hippopotamus statement ring for men",
+      "evidence": ["The official current title contains a visible encoding defect and does not lead cleanly with the distinctive hippo product phrase.", "The official tags include the misspelled phrase oxided silver ring and broad overlapping animal-ring terms, while the confirmed hippopotamus motif supports a distinct search angle."],
+      "repairPriorityScore": 82,
+      "repairPriorityComponents": { "technicalDefect": 26, "titleTagRepairability": 20, "commercialPotentialAndBrandFit": 16, "changeSafety": 12, "dataReliability": 8 },
+      "views": 32,
+      "favorites": 2,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": true
+    },
+    { "listingId": "4515032622", "product": "Ram Ring for Men", "sku": "SJ351", "proposedTitle": "", "proposedTags": [], "searchIntent": "925 sterling silver ram horn ring", "evidence": ["The official current title and all 13 tags are already complete and relevant.", "The listing was updated on 2026-07-20 and remains inside the 30-day cooldown."], "repairPriorityScore": 39, "views": 22, "favorites": 4, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "1777163250", "product": "Wolf Clan Ring", "sku": "SJ132", "proposedTitle": "", "proposedTags": [], "searchIntent": "925 silver fantasy wolf warrior ring", "evidence": ["The official current title and tags already establish the wolf warrior search angle.", "The listing was updated on 2026-08-10 and is protected by the 30-day cooldown."], "repairPriorityScore": 55, "views": 110, "favorites": 6, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "4295410951", "product": "Unicorn Pendant Necklace", "sku": "SP84", "proposedTitle": "", "proposedTags": [], "searchIntent": "sterling silver unicorn pendant necklace", "evidence": ["The identifier mapping is reliable and the listing has zero orders.", "Even with a complete package, the evidence-adjusted score would remain below the green threshold because core-brand fit is limited."], "repairPriorityScore": 73, "views": 174, "favorites": 13, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "1822724358", "product": "Lucky Horseshoe Necklace", "sku": "SP171", "proposedTitle": "", "proposedTags": [], "searchIntent": "sterling silver lucky horseshoe necklace", "evidence": ["Saved evidence records zero orders and reliable mapping.", "The saved primary weakness is freshness rather than a clear title/tag-only defect."], "repairPriorityScore": 67, "views": 92, "favorites": 4, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "1795913803", "product": "Carved Heart Pendant", "sku": "SP229", "proposedTitle": "", "proposedTags": [], "searchIntent": "carved sterling silver heart pendant", "evidence": ["Saved evidence records zero orders.", "The SKU mapping has a duplicate conflict and the candidate cannot pass identifier reliability."], "repairPriorityScore": 68, "views": 77, "favorites": 6, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": false },
+    { "listingId": "4387228641", "product": "Stainless Skull Pants Chain", "sku": "SS01", "proposedTitle": "", "proposedTags": [], "searchIntent": "stainless skull biker wallet chain", "evidence": ["Saved evidence records zero orders.", "The SKU mapping has a duplicate conflict and remains unreliable."], "repairPriorityScore": 78, "views": 232, "favorites": 18, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": false },
+    { "listingId": "4311916489", "product": "Lunar Crater Bangle", "sku": "SB201", "proposedTitle": "", "proposedTags": [], "searchIntent": "lunar crater textured silver bangle", "evidence": ["Batch 10 write was verified on 2026-08-10.", "The listing is inside its 30-day cooldown and active tracking window."], "repairPriorityScore": 83, "views": 40, "favorites": 1, "stableSeller": false, "activeExperiment": true, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "4396766200", "product": "Middle Finger Pendant", "sku": "SP78", "proposedTitle": "", "proposedTags": [], "searchIntent": "rebel hand gesture silver pendant", "evidence": ["Batch 10 write was verified on 2026-08-10.", "The listing is inside its 30-day cooldown and active tracking window."], "repairPriorityScore": 81, "views": 52, "favorites": 2, "stableSeller": false, "activeExperiment": true, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "4298603550", "product": "Geometric Skull Ring", "sku": "SJ112", "proposedTitle": "", "proposedTags": [], "searchIntent": "angular geometric silver skull ring", "evidence": ["Batch 11 write was verified on 2026-08-11.", "The listing is inside its 30-day cooldown and active tracking window."], "repairPriorityScore": 87, "views": 68, "favorites": 5, "stableSeller": false, "activeExperiment": true, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true }
+  ]
+}
