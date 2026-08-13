@@ -26,8 +26,8 @@ export type ControlledRepairCandidate = {
   repairPriorityScore: number;
   state: string;
   orders: number;
-  views: number;
-  favorites: number;
+  views: number | null;
+  favorites: number | null;
   stableSeller: boolean;
   modifiedWithin30Days: boolean;
   activeExperiment: boolean;
@@ -223,8 +223,12 @@ export function independentlyReviewControlledRepair(
   if (candidate.ipRisk || candidate.authenticityRisk) redReasons.push("IP or authenticity risk is unresolved.");
 
   if (candidate.orders >= 1) yellowReasons.push(`Listing has ${candidate.orders} recorded order(s).`);
-  if (candidate.views >= 500) yellowReasons.push(`Listing has ${candidate.views} views.`);
-  if (candidate.favorites >= 30) yellowReasons.push(`Listing has ${candidate.favorites} favorites.`);
+  if (candidate.views === null || candidate.favorites === null) {
+    yellowReasons.push("Current views or favorites are unavailable; high-signal protection cannot be verified.");
+  } else {
+    if (candidate.views >= 500) yellowReasons.push(`Listing has ${candidate.views} views.`);
+    if (candidate.favorites >= 30) yellowReasons.push(`Listing has ${candidate.favorites} favorites.`);
+  }
   if (!candidate.materialConfirmed || !candidate.productTypeConfirmed || !candidate.structureConfirmed) {
     yellowReasons.push("Product facts are incomplete or conflicting.");
   }

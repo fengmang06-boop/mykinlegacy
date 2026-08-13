@@ -28,6 +28,8 @@ export type ListingBaseline = {
   title: string;
   tags: string[];
   state: string;
+  views: number | null;
+  favorites: number | null;
   price: unknown;
   quantity: number;
   taxonomy_id: number | string | null;
@@ -197,6 +199,8 @@ function baselineFromCache(listing: CachedListing, capturedAt: string): ListingB
     title: listing.title,
     tags: parseJson<string[]>(listing.tags, []),
     state: listing.state,
+    views: typeof raw.views === "number" ? raw.views : null,
+    favorites: typeof raw.num_favorers === "number" ? raw.num_favorers : null,
     price: { amount: listing.price, currency_code: listing.currency ?? null },
     quantity: listing.quantity,
     taxonomy_id: (raw.taxonomy_id as number | string | null | undefined) ?? null,
@@ -245,6 +249,8 @@ function baselineFromApi(listing: EtsyListingSummary, capturedAt: string): Listi
     title: listing.title,
     tags: listing.tags,
     state: listing.state,
+    views: typeof listing.views === "number" ? listing.views : null,
+    favorites: typeof listing.num_favorers === "number" ? listing.num_favorers : null,
     price: listing.price ?? null,
     quantity,
     taxonomy_id: listing.taxonomy_id,

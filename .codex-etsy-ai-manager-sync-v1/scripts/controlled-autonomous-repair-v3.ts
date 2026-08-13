@@ -32,8 +32,8 @@ type PlanCandidate = {
   searchIntent: string;
   evidence: string[];
   repairPriorityScore: number;
-  views: number;
-  favorites: number;
+  views: number | null;
+  favorites: number | null;
   stableSeller: boolean;
   activeExperiment: boolean;
   materialConfirmed: boolean;
@@ -64,6 +64,8 @@ type BaselineListing = {
   title: string;
   tags: string[];
   state: string;
+  views?: number | null;
+  favorites?: number | null;
   price: unknown;
   quantity: number;
   taxonomy_id: number | string | null;

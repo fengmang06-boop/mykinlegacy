@@ -28,6 +28,8 @@ type EtsyAuthOptions = Omit<EtsyClientOptions, "shopId" | "requestClass" | "noRe
 
 export type EtsyListingSummary = {
   listing_id: number;
+  views?: number;
+  num_favorers?: number;
   title?: string;
   description?: string;
   price?: { amount?: number; divisor?: number; currency_code?: string } | string | number;

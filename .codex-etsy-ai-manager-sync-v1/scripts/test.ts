@@ -121,6 +121,8 @@ async function main() {
   const apiBaseline = listingBaselineTestUtils.baselineFromApi(
     {
       listing_id: 1829235400,
+      views: 42,
+      num_favorers: 7,
       title: "Rabbit Pendant",
       tags: ["rabbit pendant"],
       state: "active",
@@ -136,6 +138,8 @@ async function main() {
   );
   if (
     apiBaseline.baseline_source !== "etsy_api" ||
+    apiBaseline.views !== 42 ||
+    apiBaseline.favorites !== 7 ||
     apiBaseline.images[0]?.listing_image_id !== "99" ||
     apiBaseline.baseline_sha256.length !== 64
   ) {

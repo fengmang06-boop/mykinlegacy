@@ -109,6 +109,17 @@ function main(): void {
   const yellow = independentlyReviewControlledRepair(yellowCandidate, validateControlledRepairProposal(yellowCandidate));
   assert(yellow.zone === "yellow" && !yellow.approvedForAutomaticExecution, "Yellow review routing failed.");
 
+  const unknownMetricsCandidate = { ...scoredCandidate, views: null, favorites: null };
+  const unknownMetricsReview = independentlyReviewControlledRepair(
+    unknownMetricsCandidate,
+    validateControlledRepairProposal(unknownMetricsCandidate)
+  );
+  assert(
+    unknownMetricsReview.zone === "yellow" &&
+      unknownMetricsReview.reasons.some((reason) => reason.includes("views or favorites are unavailable")),
+    "Missing current views/favorites were not routed to human review."
+  );
+
   let hashMismatchBlocked = false;
   try {
     assertEtsyListingWriteGuard({
