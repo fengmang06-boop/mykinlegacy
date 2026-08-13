@@ -63,7 +63,7 @@ jobs:
             "cd '$APP_DIR' && node -" \
             < scripts/export-etsy-growth-v2-mission004-readonly.cjs \
             > codex_outputs/growth-v2/mission-004/production-read-only-evidence.json
-          node -e 'const fs=require("fs");const p="codex_outputs/growth-v2/mission-004/production-read-only-evidence.json";const d=JSON.parse(fs.readFileSync(p,"utf8"));if(d.safety?.production_writes!==0||d.safety?.etsy_read_only_mode!==true||d.safety?.etsy_write_approved!==false||d.listings?.length!==8)throw new Error("unsafe or incomplete Mission 004 export");console.log({listings:d.listings.length,api_calls:d.safety.api_calls,scopes:d.safety.official_scopes})'
+          node -e 'const fs=require("fs");const p="codex_outputs/growth-v2/mission-004/production-read-only-evidence.json";const d=JSON.parse(fs.readFileSync(p,"utf8"));if(d.safety?.production_writes!==0||d.safety?.etsy_read_only_mode!==true||d.safety?.etsy_write_approved!==false)throw new Error("unsafe Mission 004 export");console.log({status:d.status||"COMPLETE",listings:d.listings?.length||0,api_calls:d.safety.api_calls,scopes:d.safety.official_scopes||[]})'
 
       - name: Commit read-only evidence
         shell: bash

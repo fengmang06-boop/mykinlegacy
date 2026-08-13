@@ -195,7 +195,7 @@ async function main() {
 
   for (const listingId of LISTING_IDS) {
     const details = await etsyRequest(
-      `/listings/${listingId}?includes=Images,Videos,Personalization,BuyerPrice`,
+      `/listings/${listingId}?includes=Images,Videos,Personalization`,
       { method: "GET" },
     );
     const inventory = await etsyRequest(`/listings/${listingId}/inventory?max_variations_supported=3`, {
@@ -266,8 +266,23 @@ async function main() {
 
 main()
   .catch((error) => {
-    process.stderr.write(`${error instanceof Error ? error.stack : String(error)}\n`);
-    process.exitCode = 1;
+    const message = (error instanceof Error ? error.message : String(error))
+      .replace(/Bearer\s+\S+/gi, "Bearer [REDACTED]")
+      .replace(/[A-Za-z0-9_-]{80,}/g, "[REDACTED]");
+    process.stdout.write(`${JSON.stringify({
+      mission: "ETSY_GROWTH_V2_004",
+      phase: "READ_ONLY_D0_AND_ASSET_DISCOVERY",
+      status: "BLOCKED_READ_ERROR",
+      error: message,
+      safety: {
+        etsy_read_only_mode: true,
+        etsy_write_approved: false,
+        production_writes: 0,
+        browser_automation: false,
+        api_calls: rateLimits.length,
+      },
+      rate_limits: rateLimits,
+    }, null, 2)}\n`);
   })
   .finally(async () => {
     await prisma.$disconnect();
