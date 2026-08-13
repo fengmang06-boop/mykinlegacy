@@ -1,0 +1,4025 @@
+{
+  "mission": "ETSY_GROWTH_V2_001",
+  "exported_at": "2026-08-13T01:37:46.316Z",
+  "source": "production experiment files, read-only",
+  "safety": {
+    "etsy_read_only_mode": true,
+    "etsy_write_approved": false,
+    "etsy_api_calls": 0,
+    "production_writes": 0,
+    "customer_pii_exported": false
+  },
+  "file_count": 36,
+  "evidence": [
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-10-v3-2026-08-10/execution-success.json",
+      "modified_at": "2026-08-10T13:59:05.934Z",
+      "data": {
+        "executedAt": "2026-08-10T13:59:05.935Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidateBacklogCount": 10,
+        "candidatePoolCount": 10,
+        "greenCandidates": [],
+        "results": [],
+        "yellowCount": 7,
+        "redCount": 3,
+        "rollbackStatus": "NOT_REQUIRED",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": null,
+          "remainingToday": null,
+          "reserve": null
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": false
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-10b-v3-2026-08-10/execution-success.json",
+      "modified_at": "2026-08-10T14:02:54.566Z",
+      "data": {
+        "executedAt": "2026-08-10T14:02:54.566Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidateBacklogCount": 10,
+        "candidatePoolCount": 10,
+        "greenCandidates": [],
+        "results": [],
+        "yellowCount": 7,
+        "yellowCandidates": [
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4473194563",
+            "product": "Biker Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4367385488",
+            "product": "Triangle Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 3,
+        "redCandidates": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          }
+        ],
+        "rollbackStatus": "NOT_REQUIRED",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": null,
+          "remainingToday": null,
+          "reserve": null
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": false
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/checkpoint-D1.json",
+      "modified_at": "2026-08-12T01:33:41.648Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-10c-v3-2026-08-10",
+        "checkpoint": "D1",
+        "trackingStartedAt": "2026-08-10T14:06:18.173Z",
+        "eligibleAt": "2026-08-11T14:06:18.173Z",
+        "capturedAt": "2026-08-12T01:33:40.790Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 3,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-12T01:33:41.643Z",
+          "requestPath": "/listings/4453447675",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 3,
+          "limitPerDay": 5000,
+          "remainingToday": 4989,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "baseline": {
+              "views": 40,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 40,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1786374215
+            },
+            "delta": {
+              "views": 0,
+              "favorites": 0,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "baseline": {
+              "views": 52,
+              "favorites": 2,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 52,
+              "favorites": 2,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1786374370
+            },
+            "delta": {
+              "views": 0,
+              "favorites": 0,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "baseline": {
+              "views": 23,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 23,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1786373948
+            },
+            "delta": {
+              "views": 0,
+              "favorites": 0,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/execution-2026-08-10T14-06-13-856Z/execution-report.json",
+      "modified_at": "2026-08-10T14:06:18.173Z",
+      "data": {
+        "executedAt": "2026-08-10T14:06:13.856Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidateBacklogCount": 10,
+        "candidatePoolCount": 10,
+        "greenCandidates": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "confidence": 100,
+            "repairPriorityScore": 93
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "confidence": 100,
+            "repairPriorityScore": 92
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "confidence": 100,
+            "repairPriorityScore": 87
+          }
+        ],
+        "results": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Hammered Sterling Silver Bangle: Lunar Crater Texture, Adjustable Boho Cuff",
+              "tags": [
+                "Halloween accessory",
+                "custom size bracelet",
+                "devilish bracelet",
+                "chunky silver bangle",
+                "Hammered Bangle",
+                "Organic Jewelry Gift",
+                "Unisex Hammered",
+                "Luxury Silver Bangle",
+                "Artisan Bracelet",
+                "Textured Bracelet",
+                "Boho Silver Jewelry",
+                "Hammered Gift",
+                "celestial jewelry"
+              ]
+            },
+            "after": {
+              "title": "Lunar Crater Bangle in Sterling Silver, Hand-Hammered Textured Artisan Bracelet",
+              "tags": [
+                "lunar crater bangle",
+                "hammered bangle",
+                "silver bangle",
+                "textured bracelet",
+                "artisan bracelet",
+                "celestial jewelry",
+                "moon texture bangle",
+                "unisex bangle",
+                "statement bracelet",
+                "sculptural jewelry",
+                "silver artisan gift",
+                "crater texture",
+                "boho silver jewelry"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 93,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/execution-2026-08-10T14-06-13-856Z/4311916489-rollback.json",
+            "rollbackSha256": "e5671ec327bad4eabdc0fcc59a4e218509597552f794a1fde92e04480b6f02cc",
+            "oneTimeWindowId": "ba24d834-758e-4ad2-bd78-df805e87d736",
+            "trackingBaseline": {
+              "views": 40,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0
+            }
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Middle Finger Pendant Necklace – 925 Sterling Silver Rebel Hand Necklace",
+              "tags": [
+                "middle fingerpendant",
+                "punk silver necklace",
+                "attitude jewelry",
+                "rebel hand pendant",
+                "925 silver pendant",
+                "biker style necklace",
+                "rocker jewelry gift",
+                "edgy mens necklace",
+                "hand gesture pendant",
+                "bold mens jewelry",
+                "solid silver charm",
+                "statement pendant",
+                "tattoo style jewelry"
+              ]
+            },
+            "after": {
+              "title": "Middle Finger Pendant Necklace in 925 Sterling Silver, Rebel Hand Gesture Jewelry for Men",
+              "tags": [
+                "middle finger charm",
+                "rebel hand pendant",
+                "silver hand pendant",
+                "gesture necklace",
+                "rebel necklace",
+                "punk silver necklace",
+                "biker pendant",
+                "edgy mens necklace",
+                "attitude jewelry",
+                "rocker jewelry gift",
+                "925 silver pendant",
+                "statement pendant",
+                "bold mens jewelry"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 92,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/execution-2026-08-10T14-06-13-856Z/4396766200-rollback.json",
+            "rollbackSha256": "3ef331407e4cdcd3cda33df9d20fd84295fb690b61cf4addb0acc689f56385b6",
+            "oneTimeWindowId": "3c5446c3-3caf-47a3-a785-fcf629d29d4d",
+            "trackingBaseline": {
+              "views": 52,
+              "favorites": 2,
+              "orders": 0,
+              "revenue": 0
+            }
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Sterling Silver Cross Stud Earrings - Split Cross Earrings for Women",
+              "tags": [
+                "cross earrings",
+                "silver earrings",
+                "stud earrings",
+                "split cross",
+                "gothic earrings",
+                "womens earrings",
+                "925 earrings",
+                "cross studs",
+                "silver studs",
+                "gift for her",
+                "gothic jewelry",
+                "unisex earrings",
+                "punk earrings"
+              ]
+            },
+            "after": {
+              "title": "Split Cross Stud Earrings in 925 Sterling Silver, Gothic Jewelry for Women",
+              "tags": [
+                "split cross studs",
+                "cross stud earrings",
+                "925 silver studs",
+                "silver cross studs",
+                "gothic earrings",
+                "womens silver studs",
+                "split cross jewelry",
+                "punk earrings",
+                "cross jewelry",
+                "small silver studs",
+                "sterling earrings",
+                "everyday earrings",
+                "gift for her"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 87,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/execution-2026-08-10T14-06-13-856Z/4453447675-rollback.json",
+            "rollbackSha256": "e093b508d85133dd4fd0eb3d8a619aaa876e964ee1d68fce2c932d04d6f4b366",
+            "oneTimeWindowId": "0391b206-2fad-447a-94dd-f2731e0f597e",
+            "trackingBaseline": {
+              "views": 23,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 7,
+        "yellowCandidates": [
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4473194563",
+            "product": "Biker Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4367385488",
+            "product": "Triangle Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 0,
+        "redCandidates": [],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": false
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4987,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-08-10T14:06:18.173Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/execution-success.json",
+      "modified_at": "2026-08-10T14:06:18.174Z",
+      "data": {
+        "executedAt": "2026-08-10T14:06:13.856Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidateBacklogCount": 10,
+        "candidatePoolCount": 10,
+        "greenCandidates": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "confidence": 100,
+            "repairPriorityScore": 93
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "confidence": 100,
+            "repairPriorityScore": 92
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "confidence": 100,
+            "repairPriorityScore": 87
+          }
+        ],
+        "results": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Hammered Sterling Silver Bangle: Lunar Crater Texture, Adjustable Boho Cuff",
+              "tags": [
+                "Halloween accessory",
+                "custom size bracelet",
+                "devilish bracelet",
+                "chunky silver bangle",
+                "Hammered Bangle",
+                "Organic Jewelry Gift",
+                "Unisex Hammered",
+                "Luxury Silver Bangle",
+                "Artisan Bracelet",
+                "Textured Bracelet",
+                "Boho Silver Jewelry",
+                "Hammered Gift",
+                "celestial jewelry"
+              ]
+            },
+            "after": {
+              "title": "Lunar Crater Bangle in Sterling Silver, Hand-Hammered Textured Artisan Bracelet",
+              "tags": [
+                "lunar crater bangle",
+                "hammered bangle",
+                "silver bangle",
+                "textured bracelet",
+                "artisan bracelet",
+                "celestial jewelry",
+                "moon texture bangle",
+                "unisex bangle",
+                "statement bracelet",
+                "sculptural jewelry",
+                "silver artisan gift",
+                "crater texture",
+                "boho silver jewelry"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 93,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/execution-2026-08-10T14-06-13-856Z/4311916489-rollback.json",
+            "rollbackSha256": "e5671ec327bad4eabdc0fcc59a4e218509597552f794a1fde92e04480b6f02cc",
+            "oneTimeWindowId": "ba24d834-758e-4ad2-bd78-df805e87d736",
+            "trackingBaseline": {
+              "views": 40,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0
+            }
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Middle Finger Pendant Necklace – 925 Sterling Silver Rebel Hand Necklace",
+              "tags": [
+                "middle fingerpendant",
+                "punk silver necklace",
+                "attitude jewelry",
+                "rebel hand pendant",
+                "925 silver pendant",
+                "biker style necklace",
+                "rocker jewelry gift",
+                "edgy mens necklace",
+                "hand gesture pendant",
+                "bold mens jewelry",
+                "solid silver charm",
+                "statement pendant",
+                "tattoo style jewelry"
+              ]
+            },
+            "after": {
+              "title": "Middle Finger Pendant Necklace in 925 Sterling Silver, Rebel Hand Gesture Jewelry for Men",
+              "tags": [
+                "middle finger charm",
+                "rebel hand pendant",
+                "silver hand pendant",
+                "gesture necklace",
+                "rebel necklace",
+                "punk silver necklace",
+                "biker pendant",
+                "edgy mens necklace",
+                "attitude jewelry",
+                "rocker jewelry gift",
+                "925 silver pendant",
+                "statement pendant",
+                "bold mens jewelry"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 92,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/execution-2026-08-10T14-06-13-856Z/4396766200-rollback.json",
+            "rollbackSha256": "3ef331407e4cdcd3cda33df9d20fd84295fb690b61cf4addb0acc689f56385b6",
+            "oneTimeWindowId": "3c5446c3-3caf-47a3-a785-fcf629d29d4d",
+            "trackingBaseline": {
+              "views": 52,
+              "favorites": 2,
+              "orders": 0,
+              "revenue": 0
+            }
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Sterling Silver Cross Stud Earrings - Split Cross Earrings for Women",
+              "tags": [
+                "cross earrings",
+                "silver earrings",
+                "stud earrings",
+                "split cross",
+                "gothic earrings",
+                "womens earrings",
+                "925 earrings",
+                "cross studs",
+                "silver studs",
+                "gift for her",
+                "gothic jewelry",
+                "unisex earrings",
+                "punk earrings"
+              ]
+            },
+            "after": {
+              "title": "Split Cross Stud Earrings in 925 Sterling Silver, Gothic Jewelry for Women",
+              "tags": [
+                "split cross studs",
+                "cross stud earrings",
+                "925 silver studs",
+                "silver cross studs",
+                "gothic earrings",
+                "womens silver studs",
+                "split cross jewelry",
+                "punk earrings",
+                "cross jewelry",
+                "small silver studs",
+                "sterling earrings",
+                "everyday earrings",
+                "gift for her"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 87,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/execution-2026-08-10T14-06-13-856Z/4453447675-rollback.json",
+            "rollbackSha256": "e093b508d85133dd4fd0eb3d8a619aaa876e964ee1d68fce2c932d04d6f4b366",
+            "oneTimeWindowId": "0391b206-2fad-447a-94dd-f2731e0f597e",
+            "trackingBaseline": {
+              "views": 23,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 7,
+        "yellowCandidates": [
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4473194563",
+            "product": "Biker Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4367385488",
+            "product": "Triangle Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 0,
+        "redCandidates": [],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": false
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4987,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-08-10T14:06:18.173Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-10c-v3-2026-08-10/tracking.json",
+      "modified_at": "2026-08-10T14:06:18.173Z",
+      "data": {
+        "tracking_start_time": "2026-08-10T14:06:18.173Z",
+        "mode": "read_only_checkpoints",
+        "listings": [
+          {
+            "listing_id": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "baseline": {
+              "views": 40,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-08-11T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-08-13T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-08-17T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-24T14:06:18.173Z",
+                "status": "pending"
+              }
+            ]
+          },
+          {
+            "listing_id": "4396766200",
+            "product": "Middle Finger Pendant",
+            "baseline": {
+              "views": 52,
+              "favorites": 2,
+              "orders": 0,
+              "revenue": 0
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-08-11T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-08-13T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-08-17T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-24T14:06:18.173Z",
+                "status": "pending"
+              }
+            ]
+          },
+          {
+            "listing_id": "4453447675",
+            "product": "Cross Stud Earrings",
+            "baseline": {
+              "views": 23,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-08-11T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-08-13T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-08-17T14:06:18.173Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-24T14:06:18.173Z",
+                "status": "pending"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-11-v3-2026-08-11/checkpoint-D1.json",
+      "modified_at": "2026-08-12T09:39:19.416Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-11-v3-2026-08-11",
+        "checkpoint": "D1",
+        "trackingStartedAt": "2026-08-11T09:39:05.923Z",
+        "eligibleAt": "2026-08-12T09:39:05.923Z",
+        "capturedAt": "2026-08-12T09:39:19.284Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-12T09:39:19.412Z",
+          "requestPath": "/listings/4298603550",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4986,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "baseline": {
+              "views": 112,
+              "favorites": 8,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 112,
+              "favorites": 8,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1786444246
+            },
+            "delta": {
+              "views": 0,
+              "favorites": 0,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-11-v3-2026-08-11/execution-2026-08-11T09-39-04-481Z/execution-report.json",
+      "modified_at": "2026-08-11T09:39:05.924Z",
+      "data": {
+        "executedAt": "2026-08-11T09:39:04.481Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidateBacklogCount": 11,
+        "candidatePoolCount": 11,
+        "greenCandidates": [
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "confidence": 100,
+            "repairPriorityScore": 87
+          }
+        ],
+        "results": [
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Geometric Skull Ring: 925 Sterling Silver Gothic Statement",
+              "tags": [
+                "mens rings",
+                "skull ring",
+                "skull rings for men",
+                "mens skull ring",
+                "punk rock jewelry",
+                "handmade men's ring",
+                "macabre gift",
+                "men's biker ring",
+                "edgy statement ring",
+                "christmas gift",
+                "geometric skull",
+                "gothic jewelry",
+                "skeleton ring"
+              ]
+            },
+            "after": {
+              "title": "Geometric Skull Ring for Men in 925 Sterling Silver, Angular Gothic Statement Jewelry",
+              "tags": [
+                "geometric skull ring",
+                "angular skull ring",
+                "925 silver ring",
+                "mens gothic ring",
+                "geometric mens ring",
+                "skull statement ring",
+                "modern skull jewelry",
+                "biker skull jewelry",
+                "sterling skull ring",
+                "mens silver ring",
+                "punk statement ring",
+                "skull lover gift",
+                "handmade skull ring"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 87,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-11-v3-2026-08-11/execution-2026-08-11T09-39-04-481Z/4298603550-rollback.json",
+            "rollbackSha256": "8e6a64b1f6aaa052c8e784d01c9567bdf532d5c72675294b090eb0e9a12daf49",
+            "oneTimeWindowId": "784c04e8-af25-4088-ad1d-4825280ac11d",
+            "trackingBaseline": {
+              "views": 112,
+              "favorites": 8,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 10,
+        "yellowCandidates": [
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "The main problem is not title/tags-only.",
+              "Title length must be between 1 and 140 characters; received 0.",
+              "Title is not naturally descriptive.",
+              "Exactly 13 tags are required; received 0.",
+              "The primary problem requires changes outside title/tags.",
+              "Repair Priority Score is below 85."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4473194563",
+            "product": "Biker Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4367385488",
+            "product": "Triangle Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Split Cross Stud Earrings",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 0,
+        "redCandidates": [],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": false
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4978,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-08-11T09:39:05.923Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-11-v3-2026-08-11/execution-success.json",
+      "modified_at": "2026-08-11T09:39:05.924Z",
+      "data": {
+        "executedAt": "2026-08-11T09:39:04.481Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidateBacklogCount": 11,
+        "candidatePoolCount": 11,
+        "greenCandidates": [
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "confidence": 100,
+            "repairPriorityScore": 87
+          }
+        ],
+        "results": [
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Geometric Skull Ring: 925 Sterling Silver Gothic Statement",
+              "tags": [
+                "mens rings",
+                "skull ring",
+                "skull rings for men",
+                "mens skull ring",
+                "punk rock jewelry",
+                "handmade men's ring",
+                "macabre gift",
+                "men's biker ring",
+                "edgy statement ring",
+                "christmas gift",
+                "geometric skull",
+                "gothic jewelry",
+                "skeleton ring"
+              ]
+            },
+            "after": {
+              "title": "Geometric Skull Ring for Men in 925 Sterling Silver, Angular Gothic Statement Jewelry",
+              "tags": [
+                "geometric skull ring",
+                "angular skull ring",
+                "925 silver ring",
+                "mens gothic ring",
+                "geometric mens ring",
+                "skull statement ring",
+                "modern skull jewelry",
+                "biker skull jewelry",
+                "sterling skull ring",
+                "mens silver ring",
+                "punk statement ring",
+                "skull lover gift",
+                "handmade skull ring"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 87,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-11-v3-2026-08-11/execution-2026-08-11T09-39-04-481Z/4298603550-rollback.json",
+            "rollbackSha256": "8e6a64b1f6aaa052c8e784d01c9567bdf532d5c72675294b090eb0e9a12daf49",
+            "oneTimeWindowId": "784c04e8-af25-4088-ad1d-4825280ac11d",
+            "trackingBaseline": {
+              "views": 112,
+              "favorites": 8,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 10,
+        "yellowCandidates": [
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "The main problem is not title/tags-only.",
+              "Title length must be between 1 and 140 characters; received 0.",
+              "Title is not naturally descriptive.",
+              "Exactly 13 tags are required; received 0.",
+              "The primary problem requires changes outside title/tags.",
+              "Repair Priority Score is below 85."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4473194563",
+            "product": "Biker Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4367385488",
+            "product": "Triangle Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Split Cross Stud Earrings",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 0,
+        "redCandidates": [],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": false
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4978,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-08-11T09:39:05.923Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-11-v3-2026-08-11/tracking.json",
+      "modified_at": "2026-08-11T09:39:05.923Z",
+      "data": {
+        "tracking_start_time": "2026-08-11T09:39:05.923Z",
+        "mode": "read_only_checkpoints",
+        "listings": [
+          {
+            "listing_id": "4298603550",
+            "product": "Geometric Skull Ring",
+            "baseline": {
+              "views": 112,
+              "favorites": 8,
+              "orders": 0,
+              "revenue": 0
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-08-12T09:39:05.923Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-08-14T09:39:05.923Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-08-18T09:39:05.923Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-25T09:39:05.923Z",
+                "status": "pending"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-12-v3-2026-08-12/execution-2026-08-12T09-36-29-740Z/execution-report.json",
+      "modified_at": "2026-08-12T09:36:31.123Z",
+      "data": {
+        "executedAt": "2026-08-12T09:36:29.740Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidateBacklogCount": 10,
+        "candidatePoolCount": 10,
+        "greenCandidates": [
+          {
+            "listingId": "4513547844",
+            "product": "Hippo Ring for Men",
+            "confidence": 100,
+            "repairPriorityScore": 92
+          }
+        ],
+        "results": [
+          {
+            "listingId": "4513547844",
+            "product": "Hippo Ring for Men",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Hippo Ring for Men – Solid 925 Sterling Silver Hippopotamus Statement Jewelry",
+              "tags": [
+                "hippo ring",
+                "hippopotamus ring",
+                "animal ring men",
+                "wildlife jewelry",
+                "925 silver ring",
+                "statement ring",
+                "mens animal ring",
+                "handmade ring",
+                "nature jewelry",
+                "heavy silver ring",
+                "unique mens ring",
+                "oxided silver ring",
+                "gift for him"
+              ]
+            },
+            "after": {
+              "title": "Hippo Ring for Men in 925 Sterling Silver, Heavy Hippopotamus Animal Statement Jewelry",
+              "tags": [
+                "hippo ring",
+                "hippopotamus ring",
+                "silver hippo ring",
+                "mens animal ring",
+                "925 silver ring",
+                "wildlife jewelry",
+                "heavy statement ring",
+                "hippo jewelry",
+                "animal lover gift",
+                "handmade mens ring",
+                "nature jewelry",
+                "unique mens ring",
+                "gift for him"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 92,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-12-v3-2026-08-12/execution-2026-08-12T09-36-29-740Z/4513547844-rollback.json",
+            "rollbackSha256": "d11a9daaaa97cc4c656d3e1fb6608dabc84fba8d191332a2ee1bee684a66592c",
+            "oneTimeWindowId": "ebdad339-4cf0-486f-a812-c4fa41839b4d",
+            "trackingBaseline": {
+              "views": 55,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 7,
+        "yellowCandidates": [
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 2,
+        "redCandidates": [
+          {
+            "listingId": "1777163250",
+            "product": "Wolf Clan Ring",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          },
+          {
+            "listingId": "4515032622",
+            "product": "Ram Ring for Men",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          }
+        ],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": false
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4989,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-08-12T09:36:31.122Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-12-v3-2026-08-12/execution-success.json",
+      "modified_at": "2026-08-12T09:36:31.123Z",
+      "data": {
+        "executedAt": "2026-08-12T09:36:29.740Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidateBacklogCount": 10,
+        "candidatePoolCount": 10,
+        "greenCandidates": [
+          {
+            "listingId": "4513547844",
+            "product": "Hippo Ring for Men",
+            "confidence": 100,
+            "repairPriorityScore": 92
+          }
+        ],
+        "results": [
+          {
+            "listingId": "4513547844",
+            "product": "Hippo Ring for Men",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Hippo Ring for Men – Solid 925 Sterling Silver Hippopotamus Statement Jewelry",
+              "tags": [
+                "hippo ring",
+                "hippopotamus ring",
+                "animal ring men",
+                "wildlife jewelry",
+                "925 silver ring",
+                "statement ring",
+                "mens animal ring",
+                "handmade ring",
+                "nature jewelry",
+                "heavy silver ring",
+                "unique mens ring",
+                "oxided silver ring",
+                "gift for him"
+              ]
+            },
+            "after": {
+              "title": "Hippo Ring for Men in 925 Sterling Silver, Heavy Hippopotamus Animal Statement Jewelry",
+              "tags": [
+                "hippo ring",
+                "hippopotamus ring",
+                "silver hippo ring",
+                "mens animal ring",
+                "925 silver ring",
+                "wildlife jewelry",
+                "heavy statement ring",
+                "hippo jewelry",
+                "animal lover gift",
+                "handmade mens ring",
+                "nature jewelry",
+                "unique mens ring",
+                "gift for him"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 92,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-12-v3-2026-08-12/execution-2026-08-12T09-36-29-740Z/4513547844-rollback.json",
+            "rollbackSha256": "d11a9daaaa97cc4c656d3e1fb6608dabc84fba8d191332a2ee1bee684a66592c",
+            "oneTimeWindowId": "ebdad339-4cf0-486f-a812-c4fa41839b4d",
+            "trackingBaseline": {
+              "views": 55,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 7,
+        "yellowCandidates": [
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 2,
+        "redCandidates": [
+          {
+            "listingId": "1777163250",
+            "product": "Wolf Clan Ring",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          },
+          {
+            "listingId": "4515032622",
+            "product": "Ram Ring for Men",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          }
+        ],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": false
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4989,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-08-12T09:36:31.122Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-12-v3-2026-08-12/tracking.json",
+      "modified_at": "2026-08-12T09:36:31.122Z",
+      "data": {
+        "tracking_start_time": "2026-08-12T09:36:31.122Z",
+        "mode": "read_only_checkpoints",
+        "listings": [
+          {
+            "listing_id": "4513547844",
+            "product": "Hippo Ring for Men",
+            "baseline": {
+              "views": 55,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-08-13T09:36:31.122Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-08-15T09:36:31.122Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-08-19T09:36:31.122Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-26T09:36:31.122Z",
+                "status": "pending"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/checkpoint-D1.json",
+      "modified_at": "2026-07-31T04:15:16.918Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-7-v3-2026-07-28",
+        "checkpoint": "D1",
+        "trackingStartedAt": "2026-07-28T10:09:41.171Z",
+        "eligibleAt": "2026-07-29T10:09:41.171Z",
+        "capturedAt": "2026-07-31T04:15:16.548Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-07-31T04:15:16.911Z",
+          "requestPath": "/listings/4516749377",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4999,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "baseline": {
+              "views": 284,
+              "favorites": 25,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 292,
+              "favorites": 27,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785236617
+            },
+            "delta": {
+              "views": 8,
+              "favorites": 2,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/checkpoint-D14.json",
+      "modified_at": "2026-08-12T01:33:31.847Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-7-v3-2026-07-28",
+        "checkpoint": "D14",
+        "trackingStartedAt": "2026-07-28T10:09:41.171Z",
+        "eligibleAt": "2026-08-11T10:09:41.171Z",
+        "capturedAt": "2026-08-12T01:33:31.463Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-12T01:33:31.840Z",
+          "requestPath": "/listings/4516749377",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4992,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "baseline": {
+              "views": 284,
+              "favorites": 25,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 337,
+              "favorites": 31,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785236617
+            },
+            "delta": {
+              "views": 53,
+              "favorites": 6,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/checkpoint-D3.json",
+      "modified_at": "2026-08-01T01:38:25.228Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-7-v3-2026-07-28",
+        "checkpoint": "D3",
+        "trackingStartedAt": "2026-07-28T10:09:41.171Z",
+        "eligibleAt": "2026-07-31T10:09:41.171Z",
+        "capturedAt": "2026-08-01T01:38:24.782Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-01T01:38:25.160Z",
+          "requestPath": "/listings/4516749377",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4999,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "baseline": {
+              "views": 284,
+              "favorites": 25,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 298,
+              "favorites": 27,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785236617
+            },
+            "delta": {
+              "views": 14,
+              "favorites": 2,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/checkpoint-D7.json",
+      "modified_at": "2026-08-07T05:29:52.583Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-7-v3-2026-07-28",
+        "checkpoint": "D7",
+        "trackingStartedAt": "2026-07-28T10:09:41.171Z",
+        "eligibleAt": "2026-08-04T10:09:41.171Z",
+        "capturedAt": "2026-08-07T05:29:52.363Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-07T05:29:52.563Z",
+          "requestPath": "/listings/4516749377",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4998,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "baseline": {
+              "views": 284,
+              "favorites": 25,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 312,
+              "favorites": 28,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785236617
+            },
+            "delta": {
+              "views": 28,
+              "favorites": 3,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/execution-2026-07-28T10-09-39-657Z/execution-report.json",
+      "modified_at": "2026-07-28T10:09:41.171Z",
+      "data": {
+        "executedAt": "2026-07-28T10:09:39.657Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidatePoolCount": 15,
+        "greenCandidates": [
+          {
+            "listingId": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "confidence": 100,
+            "repairPriorityScore": 86
+          }
+        ],
+        "results": [
+          {
+            "listingId": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Meteor Hammer Pants Chain - Titanium Steel Punk Wallet Chain for Men",
+              "tags": [
+                "pants chain",
+                "wallet chain",
+                "punk chain",
+                "biker chain men",
+                "titanium steel",
+                "meteor chain",
+                "trouser chain",
+                "streetwear chain",
+                "gothic chain",
+                "y2k wallet chain",
+                "punk accessory",
+                "mens chain",
+                "metal chain"
+              ]
+            },
+            "after": {
+              "title": "Meteor Hammer Pants Chain in Titanium Steel, Punk Wallet Chain for Men, Gothic Streetwear Accessory",
+              "tags": [
+                "meteor hammer chain",
+                "meteor pants chain",
+                "titanium steel chain",
+                "punk wallet chain",
+                "mens pants chain",
+                "biker wallet chain",
+                "gothic pants chain",
+                "trouser chain",
+                "streetwear chain",
+                "y2k wallet chain",
+                "metal waist chain",
+                "punk accessory",
+                "gift for biker"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 86,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/execution-2026-07-28T10-09-39-657Z/4516749377-rollback.json",
+            "rollbackSha256": "9c20eb4e243b292021b3b01b789a8f46436a99bd4cae3f7941999d3170560e1a",
+            "oneTimeWindowId": "f53b0ef0-0063-4da9-a5bf-d60bfd97899b",
+            "trackingBaseline": {
+              "views": 284,
+              "favorites": 25,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 12,
+        "yellowCandidates": [
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1891104150",
+            "product": "Horseshoe Buckle Skull Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4367358606",
+            "product": "Arrowhead Feather Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1798035964",
+            "product": "Pitbull Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1849040351",
+            "product": "Hook Chain Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1904326413",
+            "product": "Interlocking Nail Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1813612661",
+            "product": "Jaguar Claw Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4340029964",
+            "product": "Jeep Wrangler Badge",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4323472729",
+            "product": "Eagle Motorcycle Emblem",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1810073067",
+            "product": "Lion Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4321899485",
+            "product": "999 Silver Meteorite Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 2,
+        "redCandidates": [
+          {
+            "listingId": "1757662487",
+            "product": "Brutalist Scar Necklace",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          },
+          {
+            "listingId": "1871739460",
+            "product": "Skull S-Buckle Bracelet",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          }
+        ],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": true,
+          "expiresAt": "2026-07-28T11:09:39.560Z",
+          "backupDir": "/root/mensskull-etsy-backups/controlled-autonomous-repair-v3-token-refresh/2026-07-28T10-09-39-560Z"
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4993,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-07-28T10:09:41.171Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/execution-success.json",
+      "modified_at": "2026-07-28T10:09:41.171Z",
+      "data": {
+        "executedAt": "2026-07-28T10:09:39.657Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidatePoolCount": 15,
+        "greenCandidates": [
+          {
+            "listingId": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "confidence": 100,
+            "repairPriorityScore": 86
+          }
+        ],
+        "results": [
+          {
+            "listingId": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Meteor Hammer Pants Chain - Titanium Steel Punk Wallet Chain for Men",
+              "tags": [
+                "pants chain",
+                "wallet chain",
+                "punk chain",
+                "biker chain men",
+                "titanium steel",
+                "meteor chain",
+                "trouser chain",
+                "streetwear chain",
+                "gothic chain",
+                "y2k wallet chain",
+                "punk accessory",
+                "mens chain",
+                "metal chain"
+              ]
+            },
+            "after": {
+              "title": "Meteor Hammer Pants Chain in Titanium Steel, Punk Wallet Chain for Men, Gothic Streetwear Accessory",
+              "tags": [
+                "meteor hammer chain",
+                "meteor pants chain",
+                "titanium steel chain",
+                "punk wallet chain",
+                "mens pants chain",
+                "biker wallet chain",
+                "gothic pants chain",
+                "trouser chain",
+                "streetwear chain",
+                "y2k wallet chain",
+                "metal waist chain",
+                "punk accessory",
+                "gift for biker"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 86,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/execution-2026-07-28T10-09-39-657Z/4516749377-rollback.json",
+            "rollbackSha256": "9c20eb4e243b292021b3b01b789a8f46436a99bd4cae3f7941999d3170560e1a",
+            "oneTimeWindowId": "f53b0ef0-0063-4da9-a5bf-d60bfd97899b",
+            "trackingBaseline": {
+              "views": 284,
+              "favorites": 25,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 12,
+        "yellowCandidates": [
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1891104150",
+            "product": "Horseshoe Buckle Skull Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4367358606",
+            "product": "Arrowhead Feather Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1798035964",
+            "product": "Pitbull Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1849040351",
+            "product": "Hook Chain Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1904326413",
+            "product": "Interlocking Nail Bracelet",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1813612661",
+            "product": "Jaguar Claw Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4340029964",
+            "product": "Jeep Wrangler Badge",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4323472729",
+            "product": "Eagle Motorcycle Emblem",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1810073067",
+            "product": "Lion Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4321899485",
+            "product": "999 Silver Meteorite Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 2,
+        "redCandidates": [
+          {
+            "listingId": "1757662487",
+            "product": "Brutalist Scar Necklace",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          },
+          {
+            "listingId": "1871739460",
+            "product": "Skull S-Buckle Bracelet",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          }
+        ],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": true,
+          "expiresAt": "2026-07-28T11:09:39.560Z",
+          "backupDir": "/root/mensskull-etsy-backups/controlled-autonomous-repair-v3-token-refresh/2026-07-28T10-09-39-560Z"
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4993,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-07-28T10:09:41.171Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-7-v3-2026-07-28/tracking.json",
+      "modified_at": "2026-07-28T10:09:41.171Z",
+      "data": {
+        "tracking_start_time": "2026-07-28T10:09:41.171Z",
+        "mode": "read_only_checkpoints",
+        "listings": [
+          {
+            "listing_id": "4516749377",
+            "product": "Meteor Hammer Pants Chain",
+            "baseline": {
+              "views": 284,
+              "favorites": 25,
+              "orders": 0,
+              "revenue": 0
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-07-29T10:09:41.171Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-07-31T10:09:41.171Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-08-04T10:09:41.171Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-11T10:09:41.171Z",
+                "status": "pending"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/checkpoint-D1.json",
+      "modified_at": "2026-07-31T04:15:23.596Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-8-v3-2026-07-29",
+        "checkpoint": "D1",
+        "trackingStartedAt": "2026-07-29T09:35:46.804Z",
+        "eligibleAt": "2026-07-30T09:35:46.804Z",
+        "capturedAt": "2026-07-31T04:15:23.460Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-07-31T04:15:23.589Z",
+          "requestPath": "/listings/1798014796",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4998,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "1798014796",
+            "product": "Monkey King Ring",
+            "baseline": {
+              "views": 64,
+              "favorites": 3,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 64,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785321728
+            },
+            "delta": {
+              "views": 0,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/checkpoint-D14.json",
+      "modified_at": "2026-08-12T09:39:18.663Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-8-v3-2026-07-29",
+        "checkpoint": "D14",
+        "trackingStartedAt": "2026-07-29T09:35:46.804Z",
+        "eligibleAt": "2026-08-12T09:35:46.804Z",
+        "capturedAt": "2026-08-12T09:39:18.497Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-12T09:39:18.659Z",
+          "requestPath": "/listings/1798014796",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4987,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "1798014796",
+            "product": "Monkey King Ring",
+            "baseline": {
+              "views": 64,
+              "favorites": 3,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 68,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785321728
+            },
+            "delta": {
+              "views": 4,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/checkpoint-D3.json",
+      "modified_at": "2026-08-02T01:32:00.640Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-8-v3-2026-07-29",
+        "checkpoint": "D3",
+        "trackingStartedAt": "2026-07-29T09:35:46.804Z",
+        "eligibleAt": "2026-08-01T09:35:46.804Z",
+        "capturedAt": "2026-08-02T01:32:00.327Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-02T01:32:00.615Z",
+          "requestPath": "/listings/1798014796",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4998,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "1798014796",
+            "product": "Monkey King Ring",
+            "baseline": {
+              "views": 64,
+              "favorites": 3,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 65,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785321728
+            },
+            "delta": {
+              "views": 1,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/checkpoint-D7.json",
+      "modified_at": "2026-08-07T05:29:54.602Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-8-v3-2026-07-29",
+        "checkpoint": "D7",
+        "trackingStartedAt": "2026-07-29T09:35:46.804Z",
+        "eligibleAt": "2026-08-05T09:35:46.804Z",
+        "capturedAt": "2026-08-07T05:29:54.459Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-07T05:29:54.596Z",
+          "requestPath": "/listings/1798014796",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4997,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "1798014796",
+            "product": "Monkey King Ring",
+            "baseline": {
+              "views": 64,
+              "favorites": 3,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 65,
+              "favorites": 4,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785321728
+            },
+            "delta": {
+              "views": 1,
+              "favorites": 1,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/execution-2026-07-29T09-35-45-295Z/execution-report.json",
+      "modified_at": "2026-07-29T09:35:46.805Z",
+      "data": {
+        "executedAt": "2026-07-29T09:35:45.295Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidatePoolCount": 10,
+        "greenCandidates": [
+          {
+            "listingId": "1798014796",
+            "product": "Monkey King Ring",
+            "confidence": 100,
+            "repairPriorityScore": 85
+          }
+        ],
+        "results": [
+          {
+            "listingId": "1798014796",
+            "product": "Monkey King Ring",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Monkey King Ring - Handcrafted Sterling Silver Angry Monkey Art",
+              "tags": [
+                "mens rings",
+                "monkey king ring",
+                "monkey ring",
+                "monkey rings",
+                "monkey king",
+                "silver monkey",
+                "monkey rings for men",
+                "monkey ring silver",
+                "Monkey king rings",
+                "Monkey ring for men",
+                "monkey art",
+                "monkey decor",
+                "monkey outline"
+              ]
+            },
+            "after": {
+              "title": "Monkey King Ring for Men in Sterling Silver, Handcrafted Angry Monkey Statement Jewelry",
+              "tags": [
+                "monkey king ring",
+                "mens monkey ring",
+                "silver animal ring",
+                "angry monkey ring",
+                "monkey king jewelry",
+                "handcrafted ring",
+                "primate jewelry",
+                "bold mens ring",
+                "monkey lover gift",
+                "sterling silver ring",
+                "animal totem ring",
+                "statement jewelry",
+                "animal jewelry men"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 85,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/execution-2026-07-29T09-35-45-295Z/1798014796-rollback.json",
+            "rollbackSha256": "114093de842ffc665a16fde357c1b23dbf778c4544636fd6b3d430280eaf0708",
+            "oneTimeWindowId": "cc049d46-cf8b-4d78-a4d4-f252d86e5285",
+            "trackingBaseline": {
+              "views": 64,
+              "favorites": 3,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 9,
+        "yellowCandidates": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 0,
+        "redCandidates": [],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": true,
+          "expiresAt": "2026-07-29T10:35:45.196Z",
+          "backupDir": "/root/mensskull-etsy-backups/controlled-autonomous-repair-v3-token-refresh/2026-07-29T09-35-45-196Z"
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4991,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-07-29T09:35:46.804Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/execution-success.json",
+      "modified_at": "2026-07-29T09:35:46.805Z",
+      "data": {
+        "executedAt": "2026-07-29T09:35:45.295Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidatePoolCount": 10,
+        "greenCandidates": [
+          {
+            "listingId": "1798014796",
+            "product": "Monkey King Ring",
+            "confidence": 100,
+            "repairPriorityScore": 85
+          }
+        ],
+        "results": [
+          {
+            "listingId": "1798014796",
+            "product": "Monkey King Ring",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Monkey King Ring - Handcrafted Sterling Silver Angry Monkey Art",
+              "tags": [
+                "mens rings",
+                "monkey king ring",
+                "monkey ring",
+                "monkey rings",
+                "monkey king",
+                "silver monkey",
+                "monkey rings for men",
+                "monkey ring silver",
+                "Monkey king rings",
+                "Monkey ring for men",
+                "monkey art",
+                "monkey decor",
+                "monkey outline"
+              ]
+            },
+            "after": {
+              "title": "Monkey King Ring for Men in Sterling Silver, Handcrafted Angry Monkey Statement Jewelry",
+              "tags": [
+                "monkey king ring",
+                "mens monkey ring",
+                "silver animal ring",
+                "angry monkey ring",
+                "monkey king jewelry",
+                "handcrafted ring",
+                "primate jewelry",
+                "bold mens ring",
+                "monkey lover gift",
+                "sterling silver ring",
+                "animal totem ring",
+                "statement jewelry",
+                "animal jewelry men"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 85,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/execution-2026-07-29T09-35-45-295Z/1798014796-rollback.json",
+            "rollbackSha256": "114093de842ffc665a16fde357c1b23dbf778c4544636fd6b3d430280eaf0708",
+            "oneTimeWindowId": "cc049d46-cf8b-4d78-a4d4-f252d86e5285",
+            "trackingBaseline": {
+              "views": 64,
+              "favorites": 3,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 9,
+        "yellowCandidates": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1795913803",
+            "product": "Carved Heart Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "1822724358",
+            "product": "Lucky Horseshoe Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 0,
+        "redCandidates": [],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": true,
+          "expiresAt": "2026-07-29T10:35:45.196Z",
+          "backupDir": "/root/mensskull-etsy-backups/controlled-autonomous-repair-v3-token-refresh/2026-07-29T09-35-45-196Z"
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4991,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-07-29T09:35:46.804Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-8-v3-2026-07-29/tracking.json",
+      "modified_at": "2026-07-29T09:35:46.805Z",
+      "data": {
+        "tracking_start_time": "2026-07-29T09:35:46.804Z",
+        "mode": "read_only_checkpoints",
+        "listings": [
+          {
+            "listing_id": "1798014796",
+            "product": "Monkey King Ring",
+            "baseline": {
+              "views": 64,
+              "favorites": 3,
+              "orders": 0,
+              "revenue": 0
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-07-30T09:35:46.804Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-08-01T09:35:46.804Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-08-05T09:35:46.804Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-12T09:35:46.804Z",
+                "status": "pending"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-9-v3-2026-07-31/checkpoint-D1.json",
+      "modified_at": "2026-08-02T01:32:00.920Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-9-v3-2026-07-31",
+        "checkpoint": "D1",
+        "trackingStartedAt": "2026-07-31T09:41:25.177Z",
+        "eligibleAt": "2026-08-01T09:41:25.177Z",
+        "capturedAt": "2026-08-02T01:32:00.318Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-02T01:32:00.914Z",
+          "requestPath": "/listings/1645240872",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 3,
+          "limitPerDay": 5000,
+          "remainingToday": 4997,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "1645240872",
+            "product": "Coffee Bean Pendant Necklace",
+            "baseline": {
+              "views": 97,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 97,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785493918
+            },
+            "delta": {
+              "views": 0,
+              "favorites": 0,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-9-v3-2026-07-31/checkpoint-D3.json",
+      "modified_at": "2026-08-04T01:32:37.747Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-9-v3-2026-07-31",
+        "checkpoint": "D3",
+        "trackingStartedAt": "2026-07-31T09:41:25.177Z",
+        "eligibleAt": "2026-08-03T09:41:25.177Z",
+        "capturedAt": "2026-08-04T01:32:36.331Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-04T01:32:37.741Z",
+          "requestPath": "/listings/1645240872",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4999,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "1645240872",
+            "product": "Coffee Bean Pendant Necklace",
+            "baseline": {
+              "views": 97,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 98,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785493918
+            },
+            "delta": {
+              "views": 1,
+              "favorites": 0,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-9-v3-2026-07-31/checkpoint-D7.json",
+      "modified_at": "2026-08-07T09:41:31.814Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-9-v3-2026-07-31",
+        "checkpoint": "D7",
+        "trackingStartedAt": "2026-07-31T09:41:25.177Z",
+        "eligibleAt": "2026-08-07T09:41:25.177Z",
+        "capturedAt": "2026-08-07T09:41:31.649Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 1,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-07T09:41:31.808Z",
+          "requestPath": "/listings/1645240872",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 4,
+          "limitPerDay": 5000,
+          "remainingToday": 4993,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "1645240872",
+            "product": "Coffee Bean Pendant Necklace",
+            "baseline": {
+              "views": 97,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0
+            },
+            "current": {
+              "views": 98,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1785493918
+            },
+            "delta": {
+              "views": 1,
+              "favorites": 0,
+              "orders": 0,
+              "revenue": 0
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-9-v3-2026-07-31/execution-2026-07-31T09-41-23-649Z/execution-report.json",
+      "modified_at": "2026-07-31T09:41:25.177Z",
+      "data": {
+        "executedAt": "2026-07-31T09:41:23.649Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidatePoolCount": 10,
+        "greenCandidates": [
+          {
+            "listingId": "1645240872",
+            "product": "Coffee Bean Pendant Necklace",
+            "confidence": 100,
+            "repairPriorityScore": 88
+          }
+        ],
+        "results": [
+          {
+            "listingId": "1645240872",
+            "product": "Coffee Bean Pendant Necklace",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Coffee Bean Pendant Necklace 925 Sterling Silver and Copper Inlay, Barista Gift",
+              "tags": [
+                "Coffee Necklace",
+                "Barista Gift",
+                "Coffee Lover",
+                "Bean Pendant",
+                "Copper Jewelry",
+                "Cafe Jewelry",
+                "Barista Jewelry",
+                "Coffee Bean Charm",
+                "Barista Necklace",
+                "Caffeine Gift",
+                "Coffee Gift",
+                "Brewery Charm",
+                "Coffee Obsessed"
+              ]
+            },
+            "after": {
+              "title": "Coffee Bean Pendant Necklace in 925 Sterling Silver with Copper Inlay, Handmade Barista Gift",
+              "tags": [
+                "coffee bean pendant",
+                "barista necklace",
+                "coffee lover gift",
+                "silver coffee bean",
+                "coffee jewelry",
+                "925 silver pendant",
+                "copper inlay",
+                "barista gift",
+                "cafe lover gift",
+                "bean necklace",
+                "handmade pendant",
+                "unique coffee gift",
+                "sterling necklace"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 88,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-9-v3-2026-07-31/execution-2026-07-31T09-41-23-649Z/1645240872-rollback.json",
+            "rollbackSha256": "d432a5feb1eb91b60e90b43492e86a102ccc0a7a20ee9768a6f790f191e73c31",
+            "oneTimeWindowId": "3e9b457d-487c-44c0-8a80-fe2cda612131",
+            "trackingBaseline": {
+              "views": 97,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 7,
+        "yellowCandidates": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 2,
+        "redCandidates": [
+          {
+            "listingId": "1761152657",
+            "product": "Sterling Silver Spartan Helmet Ring",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          },
+          {
+            "listingId": "4311735900",
+            "product": "Custom Brass Cowboy Car Emblem",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          }
+        ],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": true,
+          "expiresAt": "2026-07-31T10:41:23.567Z",
+          "backupDir": "/root/mensskull-etsy-backups/controlled-autonomous-repair-v3-token-refresh/2026-07-31T09-41-23-568Z"
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4991,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-07-31T09:41:25.177Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-9-v3-2026-07-31/execution-success.json",
+      "modified_at": "2026-07-31T09:41:25.178Z",
+      "data": {
+        "executedAt": "2026-07-31T09:41:23.649Z",
+        "version": "V3",
+        "standingAuthorizationEffective": true,
+        "candidatePoolCount": 10,
+        "greenCandidates": [
+          {
+            "listingId": "1645240872",
+            "product": "Coffee Bean Pendant Necklace",
+            "confidence": 100,
+            "repairPriorityScore": 88
+          }
+        ],
+        "results": [
+          {
+            "listingId": "1645240872",
+            "product": "Coffee Bean Pendant Necklace",
+            "status": "written",
+            "verified": true,
+            "before": {
+              "title": "Coffee Bean Pendant Necklace 925 Sterling Silver and Copper Inlay, Barista Gift",
+              "tags": [
+                "Coffee Necklace",
+                "Barista Gift",
+                "Coffee Lover",
+                "Bean Pendant",
+                "Copper Jewelry",
+                "Cafe Jewelry",
+                "Barista Jewelry",
+                "Coffee Bean Charm",
+                "Barista Necklace",
+                "Caffeine Gift",
+                "Coffee Gift",
+                "Brewery Charm",
+                "Coffee Obsessed"
+              ]
+            },
+            "after": {
+              "title": "Coffee Bean Pendant Necklace in 925 Sterling Silver with Copper Inlay, Handmade Barista Gift",
+              "tags": [
+                "coffee bean pendant",
+                "barista necklace",
+                "coffee lover gift",
+                "silver coffee bean",
+                "coffee jewelry",
+                "925 silver pendant",
+                "copper inlay",
+                "barista gift",
+                "cafe lover gift",
+                "bean necklace",
+                "handmade pendant",
+                "unique coffee gift",
+                "sterling necklace"
+              ]
+            },
+            "autoReviewConfidence": 100,
+            "repairPriorityScore": 88,
+            "verification": {
+              "titleExact": true,
+              "tagsExact": true,
+              "forbiddenFieldsUnchanged": true,
+              "stateActive": true
+            },
+            "rollbackFile": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/controlled-autonomous-repair-v3/batch-9-v3-2026-07-31/execution-2026-07-31T09-41-23-649Z/1645240872-rollback.json",
+            "rollbackSha256": "d432a5feb1eb91b60e90b43492e86a102ccc0a7a20ee9768a6f790f191e73c31",
+            "oneTimeWindowId": "3e9b457d-487c-44c0-8a80-fe2cda612131",
+            "trackingBaseline": {
+              "views": 97,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0
+            }
+          }
+        ],
+        "yellowCount": 7,
+        "yellowCandidates": [
+          {
+            "listingId": "4311916489",
+            "product": "Lunar Crater Bangle",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4396766200",
+            "product": "Middle Finger Pendant",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4387228641",
+            "product": "Stainless Skull Pants Chain",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4453447675",
+            "product": "Cross Stud Earrings",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4298603550",
+            "product": "Geometric Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4295410951",
+            "product": "Unicorn Pendant Necklace",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          },
+          {
+            "listingId": "4354576700",
+            "product": "Top Hat Skull Ring",
+            "reasons": [
+              "Current complete baseline is unavailable in the supplied baseline report."
+            ]
+          }
+        ],
+        "redCount": 2,
+        "redCandidates": [
+          {
+            "listingId": "1761152657",
+            "product": "Sterling Silver Spartan Helmet Ring",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          },
+          {
+            "listingId": "4311735900",
+            "product": "Custom Brass Cowboy Car Emblem",
+            "reasons": [
+              "Title/tags or listing state changed within 30 days."
+            ]
+          }
+        ],
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": true,
+          "expiresAt": "2026-07-31T10:41:23.567Z",
+          "backupDir": "/root/mensskull-etsy-backups/controlled-autonomous-repair-v3-token-refresh/2026-07-31T09-41-23-568Z"
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4991,
+          "reserve": 1000
+        },
+        "otherFieldsModified": false,
+        "trackingStarted": true,
+        "trackingStartTime": "2026-07-31T09:41:25.177Z"
+      }
+    },
+    {
+      "path": "exports/controlled-autonomous-repair-v3/batch-9-v3-2026-07-31/tracking.json",
+      "modified_at": "2026-07-31T09:41:25.177Z",
+      "data": {
+        "tracking_start_time": "2026-07-31T09:41:25.177Z",
+        "mode": "read_only_checkpoints",
+        "listings": [
+          {
+            "listing_id": "1645240872",
+            "product": "Coffee Bean Pendant Necklace",
+            "baseline": {
+              "views": 97,
+              "favorites": 7,
+              "orders": 0,
+              "revenue": 0
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-08-01T09:41:25.177Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-08-03T09:41:25.177Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-08-07T09:41:25.177Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-14T09:41:25.177Z",
+                "status": "pending"
+              }
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "path": "exports/low-signal-breakthrough/batch-3/checkpoint-D14.json",
+      "modified_at": "2026-08-07T05:33:59.906Z",
+      "data": {
+        "status": "captured",
+        "batchKey": "batch-3-legacy",
+        "checkpoint": "D14",
+        "trackingStartedAt": "2026-07-21T12:25:47.183Z",
+        "eligibleAt": "2026-08-04T12:25:47.183Z",
+        "capturedAt": "2026-08-07T05:33:59.454Z",
+        "mode": "read-only",
+        "etsyReadOnlyMode": true,
+        "etsyWriteApproved": false,
+        "apiCallsUsed": 2,
+        "writeEndpointCalled": false,
+        "rateLimit": {
+          "capturedAt": "2026-08-07T05:33:59.895Z",
+          "requestPath": "/listings/4471142007",
+          "status": 200,
+          "limitPerSecond": 5,
+          "remainingThisSecond": 3,
+          "limitPerDay": 5000,
+          "remainingToday": 4995,
+          "retryAfterSeconds": null,
+          "reserveRequired": 1000
+        },
+        "listings": [
+          {
+            "listingId": "1829235400",
+            "product": "Rabbit Pendant Necklace",
+            "baseline": {
+              "views": 82,
+              "favorites": 13,
+              "orders": "UNKNOWN_PENDING_CHECKPOINT_SYNC",
+              "revenue": "UNKNOWN_PENDING_CHECKPOINT_SYNC"
+            },
+            "current": {
+              "views": 83,
+              "favorites": 13,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1784640246
+            },
+            "delta": {
+              "views": 1,
+              "favorites": 0,
+              "orders": "UNKNOWN",
+              "revenue": "UNKNOWN"
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          },
+          {
+            "listingId": "4471142007",
+            "product": "Pegasus Brooch",
+            "baseline": {
+              "views": 48,
+              "favorites": 10,
+              "orders": "UNKNOWN_PENDING_CHECKPOINT_SYNC",
+              "revenue": "UNKNOWN_PENDING_CHECKPOINT_SYNC"
+            },
+            "current": {
+              "views": 53,
+              "favorites": 11,
+              "orders": 0,
+              "revenue": 0,
+              "state": "active",
+              "lastUpdatedTime": 1784640439
+            },
+            "delta": {
+              "views": 5,
+              "favorites": 1,
+              "orders": "UNKNOWN",
+              "revenue": "UNKNOWN"
+            },
+            "anomaly": false,
+            "evidence": {
+              "listingMetrics": "Etsy official listing read",
+              "ordersAndRevenue": "Local synced EtsyTransaction records",
+              "transactionEvidenceAt": "UNKNOWN",
+              "controlDelta": "UNKNOWN"
+            }
+          }
+        ],
+        "anomalies": []
+      }
+    },
+    {
+      "path": "exports/low-signal-breakthrough/batch-3/execution-2026-07-21T12-25-44-411Z/execution-report.json",
+      "modified_at": "2026-07-21T12:25:47.184Z",
+      "data": {
+        "executedAt": "2026-07-21T12:25:44.411Z",
+        "allSuccessful": true,
+        "officialScopes": [
+          "cart_r",
+          "listings_r",
+          "listings_w",
+          "profile_r",
+          "shops_r",
+          "transactions_r"
+        ],
+        "tokenRefresh": {
+          "refreshed": true,
+          "expiresAt": "2026-07-21T13:25:43.785Z",
+          "backupDir": "/root/mensskull-etsy-backups/batch-3-token-refresh/2026-07-21T12-25-43-785Z"
+        },
+        "baselineReportSha256": "02ec80933b4a53ba075aa2301d6af0b13958355c56cef142ec81befe473fa880",
+        "results": [
+          {
+            "listingId": "1829235400",
+            "product": "Rabbit Pendant Necklace",
+            "status": "written",
+            "verified": true,
+            "verification": {
+              "title_exact": true,
+              "tags_exact": true,
+              "forbidden_fields_unchanged": true,
+              "state_active": true
+            },
+            "approved_title": "Rabbit Pendant Necklace in 925 Sterling Silver with Pearl Accent, Handmade Animal Jewelry Gift",
+            "approved_tags": [
+              "rabbit pendant",
+              "rabbit necklace",
+              "silver rabbit",
+              "bunny necklace",
+              "rabbit jewelry",
+              "pearl pendant",
+              "animal necklace",
+              "925 silver pendant",
+              "handmade pendant",
+              "bunny lover gift",
+              "woodland jewelry",
+              "pearl rabbit charm",
+              "rabbit charm"
+            ],
+            "rollback_file": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/low-signal-breakthrough/batch-3/execution-2026-07-21T12-25-44-411Z/1829235400-rollback.json",
+            "rollback_sha256": "fbf3df22ef3a3edafe997cb60c3536e3affc141c253ba492d3c1bc568626a959",
+            "live_last_updated_timestamp": 1784636745,
+            "trackingBaseline": {
+              "views": 82,
+              "favorites": 13,
+              "orders": "UNKNOWN_PENDING_CHECKPOINT_SYNC",
+              "revenue": "UNKNOWN_PENDING_CHECKPOINT_SYNC"
+            }
+          },
+          {
+            "listingId": "4471142007",
+            "product": "Pegasus Brooch",
+            "status": "written",
+            "verified": true,
+            "verification": {
+              "title_exact": true,
+              "tags_exact": true,
+              "forbidden_fields_unchanged": true,
+              "state_active": true
+            },
+            "approved_title": "Pegasus Brooch in 925 Sterling Silver, Mythical Flying Horse Pin, Handmade Fantasy Jewelry",
+            "approved_tags": [
+              "pegasus brooch",
+              "pegasus pin",
+              "flying horse pin",
+              "silver pegasus",
+              "mythical horse pin",
+              "fantasy brooch",
+              "horse lover gift",
+              "925 silver brooch",
+              "winged horse pin",
+              "handmade brooch",
+              "mythology jewelry",
+              "lapel pin",
+              "fantasy gift"
+            ],
+            "rollback_file": "/root/mykinlegacy/mensskull-etsy-ai-manager/exports/low-signal-breakthrough/batch-3/execution-2026-07-21T12-25-44-411Z/4471142007-rollback.json",
+            "rollback_sha256": "84a8979431d4bd6de36ebd3f4a4658baba6e8c8ce37023990937f6a219ba363a",
+            "live_last_updated_timestamp": 1784636746,
+            "trackingBaseline": {
+              "views": 48,
+              "favorites": 10,
+              "orders": "UNKNOWN_PENDING_CHECKPOINT_SYNC",
+              "revenue": "UNKNOWN_PENDING_CHECKPOINT_SYNC"
+            }
+          }
+        ],
+        "weaveVerification": {
+          "listing_id": "1893979797",
+          "product": "Sterling Silver Weave Bracelet",
+          "baseline_sha256": "a2bcacc993601acc7206a6c24783fdd1585c1b85a52d4160b183e80abc790466",
+          "live_title": "Men&#39;s Sterling Silver Weave Bracelet: Adjustable Handmade Jewelry",
+          "live_tags": [
+            "mens Bracelet",
+            "silver Bracelet",
+            "925 bracelet",
+            "Bracelet for men",
+            "999 Bracelet",
+            "men silver bracelet",
+            "bracelet for women",
+            "gold bracelet",
+            "bracelet silver",
+            "silver bracelets",
+            "gift for him",
+            "handmade jewelry",
+            "silver star bracelet"
+          ],
+          "materials": [
+            "silver",
+            "International standard Sterling Silver",
+            "Sterling Silver",
+            "999 sterling silver",
+            "999 silver",
+            "gold",
+            "24k",
+            "24k gold",
+            "990 silver",
+            "990 sterling silver",
+            "gold 24k",
+            "sterling silver 999",
+            "sterling silver 990"
+          ],
+          "purity": "UNRESOLVED_CONFLICT",
+          "structure": "flexible woven bracelet",
+          "adjustment_method": "described as adjustable; method not explicit",
+          "woven_accuracy": "SUPPORTED_BY_LISTING_TEXT",
+          "material_evidence": [
+            "Men&#39;s Sterling Silver Weave Bracelet: Adjustable Handmade Jewelry silver International standard Sterl",
+            "ustable Handmade Jewelry silver International standard Sterling Silver Sterling Silver 999 sterling silver 999 silver gold 24k 24k gold 990 silver 990",
+            "Jewelry silver International standard Sterling Silver Sterling Silver 999 sterling silver 999 silver gold 24k 24k gold 990 silver 990 sterling silver",
+            "International standard Sterling Silver Sterling Silver 999 sterling silver 999 silver gold 24k 24k gold 990 silver 990 sterling silver gol",
+            "rnational standard Sterling Silver Sterling Silver 999 sterling silver 999 silver gold 24k 24k gold 990 silver 990 sterling silver gold 24k sterling s",
+            "rd Sterling Silver Sterling Silver 999 sterling silver 999 silver gold 24k 24k gold 990 silver 990 sterling silver gold 24k sterling silve",
+            "ing silver 999 silver gold 24k 24k gold 990 silver 990 sterling silver gold 24k sterling silver 999 sterling silver 990 mens Bracelet silver Bracelet",
+            "d 24k 24k gold 990 silver 990 sterling silver gold 24k sterling silver 999 sterling silver 990 mens Bracelet silver Bracelet 925 bracelet Bracelet for"
+          ],
+          "construction_evidence": [
+            "Men&#39;s Sterling Silver Weave Bracelet: Adjustable Handmade Jewelry silver International standard Sterling Si",
+            "Men&#39;s Sterling Silver Weave Bracelet: Adjustable Handmade Jewelry silver International standard Sterling Silver Sterling Silver",
+            "your everyday style with the Men&#39;s Sterling Silver Weave Bracelet, a masterclass in craftsmanship and understated masculinity. Designed",
+            "sign & Craftsmanship The bracelet features a handwoven chain pattern, inspired by traditional Nordic metalwork yet refined for contemporary",
+            "ibility without compromising structural integrity. The adjustable clasp (ranging from 5.9&quot; to 7.9&quot;) accommodates most wrist sizes, maki",
+            "hout compromising structural integrity. The adjustable clasp (ranging from 5.9&quot; to 7.9&quot;) accommodates most wrist sizes, making it",
+            "ost wrist sizes, making it ideal for men seeking &quot;adjustable silver jewelry for men&quot; that combines comfort with precision. The matte fi",
+            "omfort with precision. The matte finish highlights the weave’s texture, while the polished edges add subtle sophistication—perfect for those"
+          ],
+          "hold_status": "HOLD",
+          "etsy_modified": false,
+          "captured_at": "2026-07-21T12:25:44.411Z"
+        },
+        "rollbackStatus": "COMPLETE",
+        "readOnlyRestored": true,
+        "trackingStartTime": "2026-07-21T12:25:47.183Z",
+        "rateLimit": {
+          "limitPerDay": 5000,
+          "remainingToday": 4988,
+          "reserve": 1000
+        },
+        "otherListingsModified": false,
+        "otherFieldsModified": false
+      }
+    },
+    {
+      "path": "exports/low-signal-breakthrough/batch-3/tracking.json",
+      "modified_at": "2026-07-21T12:25:47.184Z",
+      "data": {
+        "tracking_start_time": "2026-07-21T12:25:47.183Z",
+        "mode": "read_only_checkpoints",
+        "listings": [
+          {
+            "listing_id": "1829235400",
+            "product": "Rabbit Pendant Necklace",
+            "baseline": {
+              "views": 82,
+              "favorites": 13,
+              "orders": "UNKNOWN_PENDING_CHECKPOINT_SYNC",
+              "revenue": "UNKNOWN_PENDING_CHECKPOINT_SYNC"
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-07-22T12:25:47.183Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-07-24T12:25:47.183Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-07-28T12:25:47.183Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-04T12:25:47.183Z",
+                "status": "pending"
+              }
+            ]
+          },
+          {
+            "listing_id": "4471142007",
+            "product": "Pegasus Brooch",
+            "baseline": {
+              "views": 48,
+              "favorites": 10,
+              "orders": "UNKNOWN_PENDING_CHECKPOINT_SYNC",
+              "revenue": "UNKNOWN_PENDING_CHECKPOINT_SYNC"
+            },
+            "checkpoints": [
+              {
+                "checkpoint": "D1",
+                "due_at": "2026-07-22T12:25:47.183Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D3",
+                "due_at": "2026-07-24T12:25:47.183Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D7",
+                "due_at": "2026-07-28T12:25:47.183Z",
+                "status": "pending"
+              },
+              {
+                "checkpoint": "D14",
+                "due_at": "2026-08-04T12:25:47.183Z",
+                "status": "pending"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  ]
+}
