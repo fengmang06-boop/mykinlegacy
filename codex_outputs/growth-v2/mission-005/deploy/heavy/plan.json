@@ -1,0 +1,133 @@
+{
+  "mission": "ETSY_GROWTH_V2_005",
+  "authorization": "MISSION_005_USER_AUTHORIZED_IMAGE_ONLY",
+  "listing_id": "878616671",
+  "listing_title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+  "expected_shop_id": "25333110",
+  "exact_allowed_field": "IMAGES_ONLY",
+  "baseline": {
+    "captured_at": "2026-08-13T04:57:47.839Z",
+    "updated_timestamp": 1785083125,
+    "protected_snapshot": {
+      "state": "active",
+      "title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "tags": [
+        "skull ring men",
+        "silver skull ring",
+        "biker ring",
+        "gothic ring",
+        "mens biker ring",
+        "solid silver ring",
+        "heavy ring men",
+        "punk ring",
+        "rocker jewelry",
+        "biker jewelry",
+        "skull jewelry",
+        "mens gothic ring",
+        "925 skull ring"
+      ],
+      "description_sha256": "9583781f5aa498af2902c3f890f80d86e3b2b47a7593274d79742fd0e19bf69f",
+      "price": 206,
+      "buyer_price": null,
+      "sale_price": null,
+      "quantity": 9,
+      "shipping_profile_id": 110055637324,
+      "processing_profile_id": null,
+      "readiness_state_id": 1402598242018,
+      "processing_min": 3,
+      "processing_max": 7,
+      "taxonomy_id": 1240,
+      "inventory_sha256": "ccf4f3e29ba0a507333af5234669f5446083be8d4cec02898e35ea8eaedb29aa",
+      "personalization_sha256": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02"
+    },
+    "protected_snapshot_sha256": "e88252b9b6494aa6b1c19bcfc8a0263cef345a24a0d334b3ab095ae9b10a11f4",
+    "image_stack": [
+      {
+        "listing_image_id": "7935714924",
+        "rank": 1
+      },
+      {
+        "listing_image_id": "7961515489",
+        "rank": 2
+      },
+      {
+        "listing_image_id": "7861252213",
+        "rank": 3
+      },
+      {
+        "listing_image_id": "7813308230",
+        "rank": 4
+      },
+      {
+        "listing_image_id": "7813308590",
+        "rank": 5
+      },
+      {
+        "listing_image_id": "7813308320",
+        "rank": 6
+      },
+      {
+        "listing_image_id": "7861252137",
+        "rank": 7
+      },
+      {
+        "listing_image_id": "7861252455",
+        "rank": 8
+      },
+      {
+        "listing_image_id": "7861252163",
+        "rank": 9
+      },
+      {
+        "listing_image_id": "7861252415",
+        "rank": 10
+      },
+      {
+        "listing_image_id": "2989606265",
+        "rank": 11
+      },
+      {
+        "listing_image_id": "2941907282",
+        "rank": 12
+      },
+      {
+        "listing_image_id": "7813308294",
+        "rank": 13
+      },
+      {
+        "listing_image_id": "7813308482",
+        "rank": 14
+      },
+      {
+        "listing_image_id": "2989603011",
+        "rank": 15
+      },
+      {
+        "listing_image_id": "2941906456",
+        "rank": 16
+      },
+      {
+        "listing_image_id": "6150590817",
+        "rank": 17
+      }
+    ]
+  },
+  "images": [
+    {
+      "rank": 1,
+      "filename": "T2_NEW_IMAGE_1.jpg",
+      "sha256": "080ac46b3075e62db411398b0b4e926d621f4a831623f5b41911d1086ef1fe2e",
+      "alt_text": "Heavy 925 sterling silver skull ring front carving detail"
+    },
+    {
+      "rank": 3,
+      "filename": "T2_NEW_IMAGE_3.jpg",
+      "sha256": "17460c271a120fdd5976f174626764c1f5197e005539ee8f5d0f9eb71ec833c0",
+      "alt_text": "Heavy sterling silver skull ring shown worn on hand for scale"
+    }
+  ],
+  "rollback_manifest": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\ROLLBACK\\878616671-original-image-stack.json",
+  "gate": "GREEN_IMAGE1_IMAGE3",
+  "deployment_order": 1,
+  "integrity_sha256": "8cc80f57f4b675be38cb73c99f2e7f5dc67293f2ba742000e2e56d6af348cc20"
+}

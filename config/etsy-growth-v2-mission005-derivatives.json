@@ -1,0 +1,48 @@
+{
+  "derivatives": [
+    {
+      "key": "T1_NEW_IMAGE_1",
+      "listing_id": "4432511462",
+      "source": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\SOURCE_IMAGES\\4432511462\\ORIGINAL_ETSY\\rank_02_8039466880.jpg",
+      "destination": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\DERIVED_IMAGES\\4432511462\\T1_NEW_IMAGE_1.jpg",
+      "crop_box": null,
+      "exposure": 1.08,
+      "contrast": 1.08,
+      "color": 0.98,
+      "sharpness": 1.25
+    },
+    {
+      "key": "T1_NEW_IMAGE_3",
+      "listing_id": "4432511462",
+      "source": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\SOURCE_IMAGES\\4432511462\\ORIGINAL_ETSY\\rank_05_8039466942.jpg",
+      "destination": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\DERIVED_IMAGES\\4432511462\\T1_NEW_IMAGE_3.jpg",
+      "crop_box": [300, 320, 1120, 1140],
+      "exposure": 1.03,
+      "contrast": 1.06,
+      "color": 0.98,
+      "sharpness": 1.2
+    },
+    {
+      "key": "T2_NEW_IMAGE_1",
+      "listing_id": "878616671",
+      "source": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\SOURCE_IMAGES\\878616671\\ORIGINAL_ETSY\\rank_16_2941906456.jpg",
+      "destination": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\DERIVED_IMAGES\\878616671\\T2_NEW_IMAGE_1.jpg",
+      "crop_box": [430, 350, 1570, 1490],
+      "exposure": 1.0,
+      "contrast": 1.08,
+      "color": 0.98,
+      "sharpness": 1.2
+    },
+    {
+      "key": "T2_NEW_IMAGE_3",
+      "listing_id": "878616671",
+      "source": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\SOURCE_IMAGES\\878616671\\ORIGINAL_ETSY\\rank_03_7861252213.jpg",
+      "destination": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\DERIVED_IMAGES\\878616671\\T2_NEW_IMAGE_3.jpg",
+      "crop_box": [330, 260, 1690, 1620],
+      "exposure": 1.03,
+      "contrast": 1.05,
+      "color": 0.98,
+      "sharpness": 1.15
+    }
+  ]
+}
