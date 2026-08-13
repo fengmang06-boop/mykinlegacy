@@ -1,0 +1,893 @@
+{
+  "mission": "ETSY_GROWTH_V2_005",
+  "listing_id": "4432511462",
+  "started_at": "2026-08-13T05:15:43.187Z",
+  "status": "WRITTEN_AND_API_VERIFIED",
+  "write_log": [
+    {
+      "timestamp": "2026-08-13T05:15:49.936Z",
+      "listing_id": "4432511462",
+      "operation": "NON_DESTRUCTIVE_INSERT",
+      "rank": 1,
+      "image_sha256": "f2dca4b176140625d7168f3daa0949a050e4641a2de249dbd182e3b4f7e39215",
+      "new_listing_image_id": "8375520218",
+      "status": "WRITTEN",
+      "api_status": 201
+    },
+    {
+      "timestamp": "2026-08-13T05:15:51.057Z",
+      "listing_id": "4432511462",
+      "operation": "NON_DESTRUCTIVE_INSERT",
+      "rank": 3,
+      "image_sha256": "11312ee153725e8e28d4806c989970f8f0cfee1b04c6a083282ad7f545ccbfa2",
+      "new_listing_image_id": "8375520276",
+      "status": "WRITTEN",
+      "api_status": 201
+    }
+  ],
+  "rate_limits": [
+    {
+      "timestamp": "2026-08-13T05:15:43.494Z",
+      "operation": "SCOPE_PROBE",
+      "path": "/scopes",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4961,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:15:44.796Z",
+      "operation": "SAFE_LISTING_READ",
+      "path": "/listings/4432511462?includes=Videos,Personalization,BuyerPrice",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4960,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:15:45.965Z",
+      "operation": "SAFE_IMAGE_READ",
+      "path": "/listings/4432511462/images",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4959,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:15:47.242Z",
+      "operation": "SAFE_INVENTORY_READ",
+      "path": "/listings/4432511462/inventory?max_variations_supported=3",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4958,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:15:49.932Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/4432511462/images",
+      "attempt": 1,
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4957,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:15:51.056Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/4432511462/images",
+      "attempt": 1,
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4956,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:15:51.302Z",
+      "operation": "SAFE_LISTING_READ",
+      "path": "/listings/4432511462?includes=Videos,Personalization,BuyerPrice",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4955,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:15:52.509Z",
+      "operation": "SAFE_IMAGE_READ",
+      "path": "/listings/4432511462/images",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4954,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:15:53.782Z",
+      "operation": "SAFE_INVENTORY_READ",
+      "path": "/listings/4432511462/inventory?max_variations_supported=3",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4953,
+      "retry_after_seconds": null
+    }
+  ],
+  "protected_field_diff": [
+    {
+      "listing_id": "4432511462",
+      "field": "state",
+      "before": "active",
+      "after": "active",
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "title",
+      "before": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "after": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "tags",
+      "before": [
+        "wallet chain",
+        "pants chain",
+        "punk chain",
+        "gothic chain",
+        "biker chain men",
+        "fishbone chain",
+        "trouser chain",
+        "streetwear chain",
+        "steel chain",
+        "spiked chain",
+        "y2k wallet chain",
+        "punk accessory",
+        "gothic accessory"
+      ],
+      "after": [
+        "wallet chain",
+        "pants chain",
+        "punk chain",
+        "gothic chain",
+        "biker chain men",
+        "fishbone chain",
+        "trouser chain",
+        "streetwear chain",
+        "steel chain",
+        "spiked chain",
+        "y2k wallet chain",
+        "punk accessory",
+        "gothic accessory"
+      ],
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "description_sha256",
+      "before": "cc2d7d46b08e5c754c5d53f7a1a924316d90973a9deff08b16f4b42c20cd72db",
+      "after": "cc2d7d46b08e5c754c5d53f7a1a924316d90973a9deff08b16f4b42c20cd72db",
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "price",
+      "before": 136,
+      "after": 136,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "buyer_price",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "sale_price",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "quantity",
+      "before": 13,
+      "after": 13,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "shipping_profile_id",
+      "before": 300691303877,
+      "after": 300691303877,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "processing_profile_id",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "readiness_state_id",
+      "before": 1406177971240,
+      "after": 1406177971240,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "processing_min",
+      "before": 4,
+      "after": 4,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "processing_max",
+      "before": 9,
+      "after": 9,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "taxonomy_id",
+      "before": 165,
+      "after": 165,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "inventory_sha256",
+      "before": "d71c724a47c8067178c161468cb8d4ec78584a6126e37e5dcbd12ffdcf4b13cc",
+      "after": "d71c724a47c8067178c161468cb8d4ec78584a6126e37e5dcbd12ffdcf4b13cc",
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "4432511462",
+      "field": "personalization_sha256",
+      "before": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02",
+      "after": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02",
+      "changed": false,
+      "expected": "UNCHANGED"
+    }
+  ],
+  "rollback": {
+    "attempted": false,
+    "successful": null
+  },
+  "write_window": [
+    {
+      "timestamp": "2026-08-13T05:15:43.402Z",
+      "purpose": "token-refresh",
+      "values": {
+        "ETSY_ACCESS_TOKEN": "[REDACTED]",
+        "ETSY_REFRESH_TOKEN": "[REDACTED]",
+        "ETSY_TOKEN_EXPIRES_AT": "[REDACTED]",
+        "ETSY_TOKEN_SCOPE": "[REDACTED]"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/growth-v2-mission005-image-only/2026-08-13T05-15-43-398Z-token-refresh"
+    },
+    {
+      "timestamp": "2026-08-13T05:15:47.250Z",
+      "purpose": "exact-image-write-open",
+      "values": {
+        "ETSY_READ_ONLY_MODE": "false",
+        "ETSY_WRITE_APPROVED": "true"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/growth-v2-mission005-image-only/2026-08-13T05-15-47-249Z-exact-image-write-open"
+    },
+    {
+      "timestamp": "2026-08-13T05:15:51.058Z",
+      "purpose": "exact-image-write-close",
+      "values": {
+        "ETSY_READ_ONLY_MODE": "true",
+        "ETSY_WRITE_APPROVED": "false"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/growth-v2-mission005-image-only/2026-08-13T05-15-51-057Z-exact-image-write-close"
+    }
+  ],
+  "token": {
+    "refreshed": true,
+    "expires_at": "2026-08-13T06:15:43.398Z",
+    "scope": "shops_r listings_r listings_w transactions_r cart_r profile_r"
+  },
+  "official_scopes": [
+    "cart_r",
+    "listings_r",
+    "listings_w",
+    "profile_r",
+    "shops_r",
+    "transactions_r"
+  ],
+  "prewrite": {
+    "captured_at": "2026-08-13T05:15:47.248Z",
+    "protected_snapshot": {
+      "state": "active",
+      "title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "tags": [
+        "wallet chain",
+        "pants chain",
+        "punk chain",
+        "gothic chain",
+        "biker chain men",
+        "fishbone chain",
+        "trouser chain",
+        "streetwear chain",
+        "steel chain",
+        "spiked chain",
+        "y2k wallet chain",
+        "punk accessory",
+        "gothic accessory"
+      ],
+      "description_sha256": "cc2d7d46b08e5c754c5d53f7a1a924316d90973a9deff08b16f4b42c20cd72db",
+      "price": 136,
+      "buyer_price": null,
+      "sale_price": null,
+      "quantity": 13,
+      "shipping_profile_id": 300691303877,
+      "processing_profile_id": null,
+      "readiness_state_id": 1406177971240,
+      "processing_min": 4,
+      "processing_max": 9,
+      "taxonomy_id": 165,
+      "inventory_sha256": "d71c724a47c8067178c161468cb8d4ec78584a6126e37e5dcbd12ffdcf4b13cc",
+      "personalization_sha256": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02"
+    },
+    "image_stack": [
+      {
+        "listing_image_id": "8062024936",
+        "rank": 1
+      },
+      {
+        "listing_image_id": "8039466880",
+        "rank": 2
+      },
+      {
+        "listing_image_id": "8087379115",
+        "rank": 3
+      },
+      {
+        "listing_image_id": "8039466876",
+        "rank": 4
+      },
+      {
+        "listing_image_id": "8039466942",
+        "rank": 5
+      },
+      {
+        "listing_image_id": "8039466856",
+        "rank": 6
+      },
+      {
+        "listing_image_id": "8039466944",
+        "rank": 7
+      },
+      {
+        "listing_image_id": "8087379089",
+        "rank": 8
+      },
+      {
+        "listing_image_id": "8087379121",
+        "rank": 9
+      }
+    ],
+    "updated_timestamp": 1785801100,
+    "daily_quota": {
+      "limit_per_day": 5000,
+      "remaining_today": 4958,
+      "limit_per_second": 5
+    }
+  },
+  "postwrite": {
+    "captured_at": "2026-08-13T05:15:53.789Z",
+    "protected_snapshot": {
+      "state": "active",
+      "title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "tags": [
+        "wallet chain",
+        "pants chain",
+        "punk chain",
+        "gothic chain",
+        "biker chain men",
+        "fishbone chain",
+        "trouser chain",
+        "streetwear chain",
+        "steel chain",
+        "spiked chain",
+        "y2k wallet chain",
+        "punk accessory",
+        "gothic accessory"
+      ],
+      "description_sha256": "cc2d7d46b08e5c754c5d53f7a1a924316d90973a9deff08b16f4b42c20cd72db",
+      "price": 136,
+      "buyer_price": null,
+      "sale_price": null,
+      "quantity": 13,
+      "shipping_profile_id": 300691303877,
+      "processing_profile_id": null,
+      "readiness_state_id": 1406177971240,
+      "processing_min": 4,
+      "processing_max": 9,
+      "taxonomy_id": 165,
+      "inventory_sha256": "d71c724a47c8067178c161468cb8d4ec78584a6126e37e5dcbd12ffdcf4b13cc",
+      "personalization_sha256": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02"
+    },
+    "image_stack": [
+      {
+        "listing_image_id": "8062024936",
+        "rank": 1
+      },
+      {
+        "listing_image_id": "8375520218",
+        "rank": 1
+      },
+      {
+        "listing_image_id": "8039466880",
+        "rank": 2
+      },
+      {
+        "listing_image_id": "8087379115",
+        "rank": 3
+      },
+      {
+        "listing_image_id": "8375520276",
+        "rank": 3
+      },
+      {
+        "listing_image_id": "8039466876",
+        "rank": 4
+      },
+      {
+        "listing_image_id": "8039466942",
+        "rank": 5
+      },
+      {
+        "listing_image_id": "8039466856",
+        "rank": 6
+      },
+      {
+        "listing_image_id": "8039466944",
+        "rank": 7
+      },
+      {
+        "listing_image_id": "8087379089",
+        "rank": 8
+      },
+      {
+        "listing_image_id": "8087379121",
+        "rank": 9
+      }
+    ],
+    "raw_listing": {
+      "listing_id": 4432511462,
+      "user_id": 364270962,
+      "shop_id": 25333110,
+      "title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "description": "This spiked fishbone wallet chain is made from solid 316L stainless steel for punk, gothic, biker, and streetwear styling. Wear it with jeans, cargo pants, or a leather jacket when you want a heavy chain accessory with real weight and presence.\n\nThe design has a sharp fishbone / spine-like structure with a rugged industrial look. It works as a wallet chain, pants chain, trouser chain, or statement streetwear accessory.\n\nGOTHIC STREETWEAR STYLE\n\nMade for:\n- Punk fashion\n- Gothic streetwear\n- Biker outfits\n- Y2K alternative styling\n- Rock and metal looks\n- Jeans, cargo pants, leather jackets, and layered accessories\n\nDETAILS AND CONSTRUCTION\n\n- Fishbone-inspired linked structure\n- Solid 316L stainless steel\n- Silver-tone polished metal finish\n- Secure clip attachment for pants or wallet use\n- Strong enough for daily wear\n\nMATERIAL YOU CAN TRUST\n\nThis chain is made from solid 316L stainless steel for strength, corrosion resistance, and long-term durability. It is not a plated fashion alloy, so it is built for real wear and regular styling.\n\nKEY SPECS\n\n- Material: Solid 316L stainless steel\n- Length: Approx. 67 cm / 26.3 inches\n- Weight: Approx. 50g+\n- Style: Gothic / Punk / Biker / Streetwear\n- SKU: SSG02\n\nWHAT YOU GET\n\n- 1 stainless steel fishbone wallet chain\n- Gift box\n- Care cloth and packaging\n- Ready-to-gift presentation\n\nCARE INSTRUCTIONS\n\nAvoid prolonged exposure to chemicals, perfume, and saltwater. Wipe gently with a soft cloth after wear to maintain the finish and shine.\n\nSHIPPING AND DELIVERY\n\n- Processing time: 2-5 business days\n- Fast worldwide shipping via YunExpress / FedEx\n- Estimated delivery: 3-7 business days after dispatch\n- Tracking included\n\nFAQ\n\nQ: Is the chain heavy?\nA: Yes. It has a solid stainless steel feel with noticeable weight and presence.\n\nQ: Can it attach to jeans or wallets?\nA: Yes. It is designed for pants, wallet, and streetwear styling.\n\nQ: Will it fade or peel?\nA: No. It is made from solid 316L stainless steel, not plated fashion alloy.\n\nQ: Is it suitable as a gift?\nA: Yes. It comes with gift-ready packaging and a care cloth.",
+      "rich_description": null,
+      "state": "active",
+      "creation_timestamp": 1785801100,
+      "created_timestamp": 1785801100,
+      "ending_timestamp": 1796345500,
+      "original_creation_timestamp": 1767020079,
+      "last_modified_timestamp": 1786598149,
+      "updated_timestamp": 1786598149,
+      "state_timestamp": 1785801099,
+      "quantity": 13,
+      "shop_section_id": 54119661,
+      "featured_rank": -1,
+      "url": "https://www.etsy.com/listing/4432511462/fishbone-pants-chain-gothic-fish-bone",
+      "num_favorers": 365,
+      "non_taxable": false,
+      "is_taxable": true,
+      "is_customizable": false,
+      "is_personalizable": false,
+      "listing_type": "physical",
+      "tags": [
+        "wallet chain",
+        "pants chain",
+        "punk chain",
+        "gothic chain",
+        "biker chain men",
+        "fishbone chain",
+        "trouser chain",
+        "streetwear chain",
+        "steel chain",
+        "spiked chain",
+        "y2k wallet chain",
+        "punk accessory",
+        "gothic accessory"
+      ],
+      "materials": [
+        "stainless steel",
+        "metal chain",
+        "steel buckle",
+        "bull head clasp",
+        "engraved steel",
+        "polished steel",
+        "heavy chain",
+        "carved metal",
+        "skull clasp",
+        "chain accessory",
+        "biker chain",
+        "streetwear chain",
+        "punk hardware"
+      ],
+      "shipping_profile_id": 300691303877,
+      "return_policy_id": 1373815074823,
+      "processing_min": 4,
+      "processing_max": 9,
+      "who_made": "i_did",
+      "when_made": "made_to_order",
+      "is_supply": false,
+      "item_weight": null,
+      "item_weight_unit": null,
+      "item_length": null,
+      "item_width": null,
+      "item_height": null,
+      "item_dimensions_unit": null,
+      "is_private": false,
+      "style": [],
+      "file_data": null,
+      "has_variations": false,
+      "should_auto_renew": true,
+      "language": "en-US",
+      "price": {
+        "amount": 13600,
+        "divisor": 100,
+        "currency_code": "USD"
+      },
+      "taxonomy_id": 165,
+      "production_partners": [],
+      "skus": [
+        "SSG02"
+      ],
+      "views": 2485,
+      "readiness_state_id": 1406177971240,
+      "suggested_title": null,
+      "shipping_profile": null,
+      "shop": null,
+      "images": null,
+      "videos": [],
+      "user": null,
+      "translations": null,
+      "inventory": null,
+      "personalization": {
+        "personalization_questions": []
+      },
+      "buyer_price": null
+    },
+    "raw_images": [
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8062024936,
+        "hex_code": "261E26",
+        "red": 38,
+        "green": 30,
+        "blue": 38,
+        "hue": 300,
+        "saturation": 21,
+        "brightness": 14,
+        "is_black_and_white": false,
+        "creation_tsz": 1779768521,
+        "created_timestamp": 1779768521,
+        "rank": 1,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/4b0ba0/8062024936/il_75x75.8062024936_b0bd.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/4b0ba0/8062024936/il_170x135.8062024936_b0bd.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/4b0ba0/8062024936/il_570xN.8062024936_b0bd.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/4b0ba0/8062024936/il_fullxfull.8062024936_b0bd.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8375520218,
+        "hex_code": null,
+        "red": null,
+        "green": null,
+        "blue": null,
+        "hue": null,
+        "saturation": null,
+        "brightness": null,
+        "is_black_and_white": null,
+        "creation_tsz": 1786598149,
+        "created_timestamp": 1786598149,
+        "rank": 1,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/a8bd1a/8375520218/il_75x75.8375520218_9usv.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/a8bd1a/8375520218/il_170x135.8375520218_9usv.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/a8bd1a/8375520218/il_570xN.8375520218_9usv.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/a8bd1a/8375520218/il_fullxfull.8375520218_9usv.jpg",
+        "full_height": 2000,
+        "full_width": 2000,
+        "alt_text": "Spiked fishbone stainless steel wallet chain full product view"
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8039466880,
+        "hex_code": "121210",
+        "red": 18,
+        "green": 18,
+        "blue": 16,
+        "hue": 60,
+        "saturation": 11,
+        "brightness": 7,
+        "is_black_and_white": false,
+        "creation_tsz": 1779246264,
+        "created_timestamp": 1779246264,
+        "rank": 2,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/036d48/8039466880/il_75x75.8039466880_m3kq.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/036d48/8039466880/il_170x135.8039466880_m3kq.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/036d48/8039466880/il_570xN.8039466880_m3kq.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/036d48/8039466880/il_fullxfull.8039466880_m3kq.jpg",
+        "full_height": 1800,
+        "full_width": 1800,
+        "alt_text": null
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8087379115,
+        "hex_code": "20212B",
+        "red": 32,
+        "green": 33,
+        "blue": 43,
+        "hue": 234,
+        "saturation": 25,
+        "brightness": 16,
+        "is_black_and_white": false,
+        "creation_tsz": 1779246264,
+        "created_timestamp": 1779246264,
+        "rank": 3,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/dda517/8087379115/il_75x75.8087379115_7evi.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/dda517/8087379115/il_170x135.8087379115_7evi.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/dda517/8087379115/il_570xN.8087379115_7evi.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/dda517/8087379115/il_fullxfull.8087379115_7evi.jpg",
+        "full_height": 1200,
+        "full_width": 1200,
+        "alt_text": null
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8375520276,
+        "hex_code": null,
+        "red": null,
+        "green": null,
+        "blue": null,
+        "hue": null,
+        "saturation": null,
+        "brightness": null,
+        "is_black_and_white": null,
+        "creation_tsz": 1786598150,
+        "created_timestamp": 1786598150,
+        "rank": 3,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/537e72/8375520276/il_75x75.8375520276_n85p.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/537e72/8375520276/il_170x135.8375520276_n85p.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/537e72/8375520276/il_570xN.8375520276_n85p.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/537e72/8375520276/il_fullxfull.8375520276_n85p.jpg",
+        "full_height": 2000,
+        "full_width": 2000,
+        "alt_text": "Spiked fishbone wallet chain shown worn on jeans for scale"
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8039466876,
+        "hex_code": "0E0E0C",
+        "red": 14,
+        "green": 14,
+        "blue": 12,
+        "hue": 60,
+        "saturation": 14,
+        "brightness": 5,
+        "is_black_and_white": false,
+        "creation_tsz": 1779246264,
+        "created_timestamp": 1779246264,
+        "rank": 4,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/2cd947/8039466876/il_75x75.8039466876_t2wl.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/2cd947/8039466876/il_170x135.8039466876_t2wl.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/2cd947/8039466876/il_570xN.8039466876_t2wl.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/2cd947/8039466876/il_fullxfull.8039466876_t2wl.jpg",
+        "full_height": 1600,
+        "full_width": 1600,
+        "alt_text": null
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8039466942,
+        "hex_code": "312C2A",
+        "red": 49,
+        "green": 44,
+        "blue": 42,
+        "hue": 17,
+        "saturation": 14,
+        "brightness": 19,
+        "is_black_and_white": false,
+        "creation_tsz": 1779246264,
+        "created_timestamp": 1779246264,
+        "rank": 5,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/56e6db/8039466942/il_75x75.8039466942_4wav.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/56e6db/8039466942/il_170x135.8039466942_4wav.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/56e6db/8039466942/il_570xN.8039466942_4wav.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/56e6db/8039466942/il_fullxfull.8039466942_4wav.jpg",
+        "full_height": 1400,
+        "full_width": 1400,
+        "alt_text": null
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8039466856,
+        "hex_code": "151614",
+        "red": 21,
+        "green": 22,
+        "blue": 20,
+        "hue": 90,
+        "saturation": 9,
+        "brightness": 8,
+        "is_black_and_white": false,
+        "creation_tsz": 1779246264,
+        "created_timestamp": 1779246264,
+        "rank": 6,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/ca424c/8039466856/il_75x75.8039466856_6jc3.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/ca424c/8039466856/il_170x135.8039466856_6jc3.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/ca424c/8039466856/il_570xN.8039466856_6jc3.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/ca424c/8039466856/il_fullxfull.8039466856_6jc3.jpg",
+        "full_height": 1500,
+        "full_width": 1500,
+        "alt_text": null
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8039466944,
+        "hex_code": "2A2729",
+        "red": 42,
+        "green": 39,
+        "blue": 41,
+        "hue": 320,
+        "saturation": 7,
+        "brightness": 16,
+        "is_black_and_white": false,
+        "creation_tsz": 1779246264,
+        "created_timestamp": 1779246264,
+        "rank": 7,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/dbb087/8039466944/il_75x75.8039466944_hcw0.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/dbb087/8039466944/il_170x135.8039466944_hcw0.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/dbb087/8039466944/il_570xN.8039466944_hcw0.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/dbb087/8039466944/il_fullxfull.8039466944_hcw0.jpg",
+        "full_height": 1600,
+        "full_width": 1600,
+        "alt_text": null
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8087379089,
+        "hex_code": "141412",
+        "red": 20,
+        "green": 20,
+        "blue": 18,
+        "hue": 60,
+        "saturation": 10,
+        "brightness": 7,
+        "is_black_and_white": false,
+        "creation_tsz": 1779246264,
+        "created_timestamp": 1779246264,
+        "rank": 8,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/d13572/8087379089/il_75x75.8087379089_ro9l.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/d13572/8087379089/il_170x135.8087379089_ro9l.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/d13572/8087379089/il_570xN.8087379089_ro9l.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/d13572/8087379089/il_fullxfull.8087379089_ro9l.jpg",
+        "full_height": 1500,
+        "full_width": 1500,
+        "alt_text": null
+      },
+      {
+        "listing_id": 4432511462,
+        "listing_image_id": 8087379121,
+        "hex_code": "242421",
+        "red": 36,
+        "green": 36,
+        "blue": 33,
+        "hue": 60,
+        "saturation": 8,
+        "brightness": 14,
+        "is_black_and_white": false,
+        "creation_tsz": 1779246264,
+        "created_timestamp": 1779246264,
+        "rank": 9,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/c810af/8087379121/il_75x75.8087379121_kkfc.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/c810af/8087379121/il_170x135.8087379121_kkfc.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/c810af/8087379121/il_570xN.8087379121_kkfc.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/c810af/8087379121/il_fullxfull.8087379121_kkfc.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      }
+    ],
+    "raw_inventory": {
+      "products": [
+        {
+          "product_id": 28523385089,
+          "sku": "SSG02",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 28803496098,
+              "quantity": 13,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 13600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1406177971240
+            }
+          ],
+          "property_values": []
+        }
+      ],
+      "price_on_property": [],
+      "quantity_on_property": [],
+      "sku_on_property": [],
+      "readiness_state_on_property": [],
+      "listing": null
+    }
+  },
+  "finished_at": "2026-08-13T05:15:53.789Z",
+  "safety": {
+    "exact_fields_modified": [
+      "IMAGES"
+    ],
+    "protected_unexpected_diffs": 0,
+    "etsy_read_only_mode": true,
+    "etsy_write_approved": false,
+    "production_image_writes": 2,
+    "http_429_count": 0,
+    "quota_final": {
+      "limit_per_day": 5000,
+      "remaining_today": 4953,
+      "limit_per_second": 5
+    }
+  },
+  "integrity_sha256": "b0b5a5fdb0eb00a418e776a70838f56d1b95c59f3376f7305fe3c4b27cb8e2ef"
+}
