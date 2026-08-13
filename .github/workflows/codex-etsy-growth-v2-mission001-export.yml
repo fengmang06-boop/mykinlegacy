@@ -1,0 +1,80 @@
+name: Codex Etsy Growth V2 Mission 001 Export
+
+on:
+  push:
+    branches:
+      - codex/etsy-token-refresh-persistence
+    paths:
+      - ".github/workflows/codex-etsy-growth-v2-mission001-export.yml"
+      - ".codex-etsy-ai-manager-sync-v1/scripts/export-growth-v2-mission001.cjs"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mensskull-etsy-growth-v2-mission001-read-only
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Export sanitized production data with zero Etsy API calls
+        shell: bash
+        run: |
+          mkdir -p codex_outputs/growth-v2/mission-001
+          APP_DIR="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'pm2 jlist | node -e '\''let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>{const a=JSON.parse(d||"[]");const p=a.find(x=>x.name==="mensskull-etsy-ai-manager");if(!p?.pm2_env?.pm_cwd)process.exit(2);process.stdout.write(p.pm2_env.pm_cwd)})'\''')"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            "cd '$APP_DIR' && node -" \
+            < .codex-etsy-ai-manager-sync-v1/scripts/export-growth-v2-mission001.cjs \
+            > codex_outputs/growth-v2/mission-001/production-read-only-export.json
+          node -e 'const fs=require("fs");const p="codex_outputs/growth-v2/mission-001/production-read-only-export.json";const d=JSON.parse(fs.readFileSync(p,"utf8"));if(d.safety?.production_writes!==0||d.safety?.etsy_api_calls!==0)throw new Error("unsafe export");console.log(d.counts)'
+
+      - name: Commit export
+        shell: bash
+        run: |
+          git config user.name "codex-analysis-bot"
+          git config user.email "codex-analysis-bot@users.noreply.github.com"
+          git add codex_outputs/growth-v2/mission-001/production-read-only-export.json
+          git commit -m "Export Etsy Growth V2 Mission 001 data" || exit 0
+          git push
