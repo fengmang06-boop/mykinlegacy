@@ -1,0 +1,104 @@
+name: Codex Etsy Growth V2 Mission 005 Spiked Image Write
+
+on:
+  push:
+    branches:
+      - codex/etsy-token-refresh-persistence
+    paths:
+      - ".github/workflows/codex-etsy-growth-v2-mission005-spiked-write.yml"
+      - "codex_outputs/growth-v2/mission-005/deploy/spiked/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mensskull-etsy-growth-v2-mission005-image-write
+  cancel-in-progress: false
+
+jobs:
+  write-spiked:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          Path.home().joinpath(".ssh", "prod").write_text(key if key.endswith("\n") else key + "\n")
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Execute Spiked Fishbone exact image-only plan
+        shell: bash
+        run: |
+          set -u
+          mkdir -p codex_outputs/growth-v2/mission-005
+          REMOTE_TMP="/tmp/mensskull-etsy-mission005-${GITHUB_RUN_ID}"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" "mkdir -p '$REMOTE_TMP/assets'"
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" \
+            codex_outputs/growth-v2/mission-005/deploy/spiked/plan.json \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:$REMOTE_TMP/plan.json"
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" \
+            codex_outputs/growth-v2/mission-005/deploy/spiked/T1_NEW_IMAGE_1.jpg \
+            codex_outputs/growth-v2/mission-005/deploy/spiked/T1_NEW_IMAGE_3.jpg \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:$REMOTE_TMP/assets/"
+          APP_DIR="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'pm2 jlist | node -e '\''let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>{const a=JSON.parse(d||"[]");const p=a.find(x=>x.name==="mensskull-etsy-ai-manager");if(!p?.pm2_env?.pm_cwd)process.exit(2);process.stdout.write(p.pm2_env.pm_cwd)})'\''')"
+          set +e
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            "cd '$APP_DIR' && node - --plan '$REMOTE_TMP/plan.json' --asset-dir '$REMOTE_TMP/assets'" \
+            < scripts/execute-etsy-growth-v2-mission005-image-only.cjs \
+            > codex_outputs/growth-v2/mission-005/spiked-write-report.json
+          EXEC_CODE=$?
+          set -e
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" "rm -rf '$REMOTE_TMP'"
+          echo "$EXEC_CODE" > codex_outputs/growth-v2/mission-005/spiked-write-exit-code.txt
+
+      - name: Commit Spiked Fishbone execution evidence
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "codex-analysis-bot"
+          git config user.email "codex-analysis-bot@users.noreply.github.com"
+          git add codex_outputs/growth-v2/mission-005/spiked-write-report.json codex_outputs/growth-v2/mission-005/spiked-write-exit-code.txt
+          git commit -m "Record Mission 005 Spiked Fishbone image deployment" || exit 0
+          git push
+
+      - name: Verify Spiked Fishbone execution result
+        if: always()
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require("fs");
+          const report = JSON.parse(fs.readFileSync("codex_outputs/growth-v2/mission-005/spiked-write-report.json", "utf8"));
+          if (report.status !== "WRITTEN_AND_API_VERIFIED") throw new Error(`Spiked deployment halted: ${report.error || report.status}`);
+          if (report.safety?.protected_unexpected_diffs !== 0) throw new Error("Protected field diff detected");
+          if (report.safety?.etsy_read_only_mode !== true || report.safety?.etsy_write_approved !== false) throw new Error("Write mode was not restored");
+          if (report.safety?.production_image_writes !== 2) throw new Error("Unexpected Spiked image write count");
+          console.log({ status: report.status, image_writes: 2, protected_diffs: 0, quota: report.safety.quota_final });
+          NODE

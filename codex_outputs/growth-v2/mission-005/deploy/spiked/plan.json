@@ -1,0 +1,101 @@
+{
+  "mission": "ETSY_GROWTH_V2_005",
+  "authorization": "MISSION_005_USER_AUTHORIZED_IMAGE_ONLY",
+  "listing_id": "4432511462",
+  "listing_title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+  "expected_shop_id": "25333110",
+  "exact_allowed_field": "IMAGES_ONLY",
+  "baseline": {
+    "captured_at": "2026-08-13T04:57:44.037Z",
+    "updated_timestamp": 1785801100,
+    "protected_snapshot": {
+      "state": "active",
+      "title": "Spiked Fishbone Wallet Chain - Stainless Steel Gothic Punk Biker Pants Chain",
+      "tags": [
+        "wallet chain",
+        "pants chain",
+        "punk chain",
+        "gothic chain",
+        "biker chain men",
+        "fishbone chain",
+        "trouser chain",
+        "streetwear chain",
+        "steel chain",
+        "spiked chain",
+        "y2k wallet chain",
+        "punk accessory",
+        "gothic accessory"
+      ],
+      "description_sha256": "cc2d7d46b08e5c754c5d53f7a1a924316d90973a9deff08b16f4b42c20cd72db",
+      "price": 136,
+      "buyer_price": null,
+      "sale_price": null,
+      "quantity": 13,
+      "shipping_profile_id": 300691303877,
+      "processing_profile_id": null,
+      "readiness_state_id": 1406177971240,
+      "processing_min": 4,
+      "processing_max": 9,
+      "taxonomy_id": 165,
+      "inventory_sha256": "d71c724a47c8067178c161468cb8d4ec78584a6126e37e5dcbd12ffdcf4b13cc",
+      "personalization_sha256": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02"
+    },
+    "protected_snapshot_sha256": "6cb6e904cc166aafeee5bbb56c13cf1f0bfda4ae1d51538cfa7f24e86fb91407",
+    "image_stack": [
+      {
+        "listing_image_id": "8062024936",
+        "rank": 1
+      },
+      {
+        "listing_image_id": "8039466880",
+        "rank": 2
+      },
+      {
+        "listing_image_id": "8087379115",
+        "rank": 3
+      },
+      {
+        "listing_image_id": "8039466876",
+        "rank": 4
+      },
+      {
+        "listing_image_id": "8039466942",
+        "rank": 5
+      },
+      {
+        "listing_image_id": "8039466856",
+        "rank": 6
+      },
+      {
+        "listing_image_id": "8039466944",
+        "rank": 7
+      },
+      {
+        "listing_image_id": "8087379089",
+        "rank": 8
+      },
+      {
+        "listing_image_id": "8087379121",
+        "rank": 9
+      }
+    ]
+  },
+  "images": [
+    {
+      "rank": 1,
+      "filename": "T1_NEW_IMAGE_1.jpg",
+      "sha256": "f2dca4b176140625d7168f3daa0949a050e4641a2de249dbd182e3b4f7e39215",
+      "alt_text": "Spiked fishbone stainless steel wallet chain full product view"
+    },
+    {
+      "rank": 3,
+      "filename": "T1_NEW_IMAGE_3.jpg",
+      "sha256": "11312ee153725e8e28d4806c989970f8f0cfee1b04c6a083282ad7f545ccbfa2",
+      "alt_text": "Spiked fishbone wallet chain shown worn on jeans for scale"
+    }
+  ],
+  "rollback_manifest": "F:\\CodexStorage\\Documents\\Codex\\2026-07-07\\vultr-vps-tools-mensskull-com-https\\outputs\\mensskull-etsy-growth-v2\\2026-08-13\\mission-005\\ROLLBACK\\4432511462-original-image-stack.json",
+  "gate": "GREEN_IMAGE1_IMAGE3",
+  "deployment_order": 2,
+  "integrity_sha256": "769bf67c0f14e2d16e0633e8001867b777123463e76a193fc304383b26a8f017"
+}
