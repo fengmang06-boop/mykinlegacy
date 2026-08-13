@@ -1,0 +1,51 @@
+{
+  "mission": "ETSY_GROWTH_V2_004",
+  "phase": "READ_ONLY_D0_AND_ASSET_DISCOVERY",
+  "status": "BLOCKED_READ_ERROR",
+  "error": "Immediate-stop HTTP 429 for /listings/878616671?includes=Images,Videos,Personalization: {\"error\":\"Exceeded per second rate limit\"}\n",
+  "safety": {
+    "etsy_read_only_mode": true,
+    "etsy_write_approved": false,
+    "production_writes": 0,
+    "browser_automation": false,
+    "api_calls": 6
+  },
+  "rate_limits": [
+    {
+      "path": "/scopes",
+      "status": 200,
+      "limit_per_day": 5000,
+      "remaining_today": 4984
+    },
+    {
+      "path": "/listings/4432511462?includes=Images,Videos,Personalization",
+      "status": 200,
+      "limit_per_day": 5000,
+      "remaining_today": 4983
+    },
+    {
+      "path": "/listings/4432511462/inventory?max_variations_supported=3",
+      "status": 200,
+      "limit_per_day": 5000,
+      "remaining_today": 4982
+    },
+    {
+      "path": "/listings/1865435490?includes=Images,Videos,Personalization",
+      "status": 200,
+      "limit_per_day": 5000,
+      "remaining_today": 4981
+    },
+    {
+      "path": "/listings/1865435490/inventory?max_variations_supported=3",
+      "status": 200,
+      "limit_per_day": 5000,
+      "remaining_today": 4980
+    },
+    {
+      "path": "/listings/878616671?includes=Images,Videos,Personalization",
+      "status": 429,
+      "limit_per_day": 5000,
+      "remaining_today": 4980
+    }
+  ]
+}
