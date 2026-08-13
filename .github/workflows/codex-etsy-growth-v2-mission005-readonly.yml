@@ -1,0 +1,88 @@
+name: Codex Etsy Growth V2 Mission 005 Read Only
+
+on:
+  push:
+    branches:
+      - codex/etsy-token-refresh-persistence
+    paths:
+      - ".github/workflows/codex-etsy-growth-v2-mission005-readonly.yml"
+      - "scripts/export-etsy-growth-v2-mission005-readonly.cjs"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mensskull-etsy-growth-v2-mission005-readonly
+  cancel-in-progress: false
+
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure SSH
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          Path.home().joinpath(".ssh", "prod").write_text(key if key.endswith("\n") else key + "\n")
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Capture paced Mission 005 read-only evidence
+        shell: bash
+        run: |
+          mkdir -p codex_outputs/growth-v2/mission-005
+          APP_DIR="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'pm2 jlist | node -e '\''let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>{const a=JSON.parse(d||"[]");const p=a.find(x=>x.name==="mensskull-etsy-ai-manager");if(!p?.pm2_env?.pm_cwd)process.exit(2);process.stdout.write(p.pm2_env.pm_cwd)})'\''')"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            "cd '$APP_DIR' && node -" \
+            < scripts/export-etsy-growth-v2-mission005-readonly.cjs \
+            > codex_outputs/growth-v2/mission-005/production-read-only-evidence.json
+          node - <<'NODE'
+          const fs = require("fs");
+          const file = "codex_outputs/growth-v2/mission-005/production-read-only-evidence.json";
+          const data = JSON.parse(fs.readFileSync(file, "utf8"));
+          if (data.safety?.production_writes !== 0 || data.safety?.etsy_read_only_mode !== true || data.safety?.etsy_write_approved !== false) {
+            throw new Error("Unsafe Mission 005 read-only export");
+          }
+          if (!["API_HEALTHY", "API_RATE_LIMIT_RECOVERED"].includes(data.status)) {
+            throw new Error(`Mission 005 read blocked: ${data.status} ${data.error || ""}`);
+          }
+          if ((data.listings || []).length !== 3) throw new Error("Mission 005 did not capture all three required listings");
+          console.log({ status: data.status, listings: data.listings.length, api_calls: data.safety.api_calls, remaining: data.latest_rate_limit?.remaining_today });
+          NODE
+
+      - name: Commit read-only evidence
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "codex-analysis-bot"
+          git config user.email "codex-analysis-bot@users.noreply.github.com"
+          git add codex_outputs/growth-v2/mission-005/production-read-only-evidence.json
+          git commit -m "Export Etsy Mission 005 paced evidence" || exit 0
+          git push
