@@ -1,0 +1,5698 @@
+{
+  "mission": "ETSY_GROWTH_V2_005",
+  "listing_id": "878616671",
+  "started_at": "2026-08-13T05:12:01.030Z",
+  "status": "WRITTEN_AND_API_VERIFIED",
+  "write_log": [
+    {
+      "timestamp": "2026-08-13T05:12:07.320Z",
+      "listing_id": "878616671",
+      "operation": "NON_DESTRUCTIVE_INSERT",
+      "rank": 1,
+      "image_sha256": "080ac46b3075e62db411398b0b4e926d621f4a831623f5b41911d1086ef1fe2e",
+      "new_listing_image_id": "8423384909",
+      "status": "WRITTEN",
+      "api_status": 201
+    },
+    {
+      "timestamp": "2026-08-13T05:12:08.850Z",
+      "listing_id": "878616671",
+      "operation": "NON_DESTRUCTIVE_INSERT",
+      "rank": 3,
+      "image_sha256": "17460c271a120fdd5976f174626764c1f5197e005539ee8f5d0f9eb71ec833c0",
+      "new_listing_image_id": "8375511562",
+      "status": "WRITTEN",
+      "api_status": 201
+    }
+  ],
+  "rate_limits": [
+    {
+      "timestamp": "2026-08-13T05:12:01.324Z",
+      "operation": "SCOPE_PROBE",
+      "path": "/scopes",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4970,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:12:02.631Z",
+      "operation": "SAFE_LISTING_READ",
+      "path": "/listings/878616671?includes=Videos,Personalization,BuyerPrice",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4969,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:12:03.822Z",
+      "operation": "SAFE_IMAGE_READ",
+      "path": "/listings/878616671/images",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4968,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:12:05.197Z",
+      "operation": "SAFE_INVENTORY_READ",
+      "path": "/listings/878616671/inventory?max_variations_supported=3",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4967,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:12:07.320Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/878616671/images",
+      "attempt": 1,
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4966,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:12:08.849Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/878616671/images",
+      "attempt": 1,
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4965,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:12:08.978Z",
+      "operation": "SAFE_LISTING_READ",
+      "path": "/listings/878616671?includes=Videos,Personalization,BuyerPrice",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4964,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:12:10.183Z",
+      "operation": "SAFE_IMAGE_READ",
+      "path": "/listings/878616671/images",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4963,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-08-13T05:12:11.493Z",
+      "operation": "SAFE_INVENTORY_READ",
+      "path": "/listings/878616671/inventory?max_variations_supported=3",
+      "attempt": 1,
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4962,
+      "retry_after_seconds": null
+    }
+  ],
+  "protected_field_diff": [
+    {
+      "listing_id": "878616671",
+      "field": "state",
+      "before": "active",
+      "after": "active",
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "title",
+      "before": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "after": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "tags",
+      "before": [
+        "skull ring men",
+        "silver skull ring",
+        "biker ring",
+        "gothic ring",
+        "mens biker ring",
+        "solid silver ring",
+        "heavy ring men",
+        "punk ring",
+        "rocker jewelry",
+        "biker jewelry",
+        "skull jewelry",
+        "mens gothic ring",
+        "925 skull ring"
+      ],
+      "after": [
+        "skull ring men",
+        "silver skull ring",
+        "biker ring",
+        "gothic ring",
+        "mens biker ring",
+        "solid silver ring",
+        "heavy ring men",
+        "punk ring",
+        "rocker jewelry",
+        "biker jewelry",
+        "skull jewelry",
+        "mens gothic ring",
+        "925 skull ring"
+      ],
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "description_sha256",
+      "before": "9583781f5aa498af2902c3f890f80d86e3b2b47a7593274d79742fd0e19bf69f",
+      "after": "9583781f5aa498af2902c3f890f80d86e3b2b47a7593274d79742fd0e19bf69f",
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "price",
+      "before": 206,
+      "after": 206,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "buyer_price",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "sale_price",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "quantity",
+      "before": 9,
+      "after": 9,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "shipping_profile_id",
+      "before": 110055637324,
+      "after": 110055637324,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "processing_profile_id",
+      "before": null,
+      "after": null,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "readiness_state_id",
+      "before": 1402598242018,
+      "after": 1402598242018,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "processing_min",
+      "before": 3,
+      "after": 3,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "processing_max",
+      "before": 7,
+      "after": 7,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "taxonomy_id",
+      "before": 1240,
+      "after": 1240,
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "inventory_sha256",
+      "before": "ccf4f3e29ba0a507333af5234669f5446083be8d4cec02898e35ea8eaedb29aa",
+      "after": "ccf4f3e29ba0a507333af5234669f5446083be8d4cec02898e35ea8eaedb29aa",
+      "changed": false,
+      "expected": "UNCHANGED"
+    },
+    {
+      "listing_id": "878616671",
+      "field": "personalization_sha256",
+      "before": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02",
+      "after": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02",
+      "changed": false,
+      "expected": "UNCHANGED"
+    }
+  ],
+  "rollback": {
+    "attempted": false,
+    "successful": null
+  },
+  "write_window": [
+    {
+      "timestamp": "2026-08-13T05:12:01.240Z",
+      "purpose": "token-refresh",
+      "values": {
+        "ETSY_ACCESS_TOKEN": "[REDACTED]",
+        "ETSY_REFRESH_TOKEN": "[REDACTED]",
+        "ETSY_TOKEN_EXPIRES_AT": "[REDACTED]",
+        "ETSY_TOKEN_SCOPE": "[REDACTED]"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/growth-v2-mission005-image-only/2026-08-13T05-12-01-238Z-token-refresh"
+    },
+    {
+      "timestamp": "2026-08-13T05:12:05.203Z",
+      "purpose": "exact-image-write-open",
+      "values": {
+        "ETSY_READ_ONLY_MODE": "false",
+        "ETSY_WRITE_APPROVED": "true"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/growth-v2-mission005-image-only/2026-08-13T05-12-05-202Z-exact-image-write-open"
+    },
+    {
+      "timestamp": "2026-08-13T05:12:08.851Z",
+      "purpose": "exact-image-write-close",
+      "values": {
+        "ETSY_READ_ONLY_MODE": "true",
+        "ETSY_WRITE_APPROVED": "false"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/growth-v2-mission005-image-only/2026-08-13T05-12-08-850Z-exact-image-write-close"
+    }
+  ],
+  "token": {
+    "refreshed": true,
+    "expires_at": "2026-08-13T06:12:01.238Z",
+    "scope": "shops_r listings_r listings_w transactions_r cart_r profile_r"
+  },
+  "official_scopes": [
+    "cart_r",
+    "listings_r",
+    "listings_w",
+    "profile_r",
+    "shops_r",
+    "transactions_r"
+  ],
+  "prewrite": {
+    "captured_at": "2026-08-13T05:12:05.201Z",
+    "protected_snapshot": {
+      "state": "active",
+      "title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "tags": [
+        "skull ring men",
+        "silver skull ring",
+        "biker ring",
+        "gothic ring",
+        "mens biker ring",
+        "solid silver ring",
+        "heavy ring men",
+        "punk ring",
+        "rocker jewelry",
+        "biker jewelry",
+        "skull jewelry",
+        "mens gothic ring",
+        "925 skull ring"
+      ],
+      "description_sha256": "9583781f5aa498af2902c3f890f80d86e3b2b47a7593274d79742fd0e19bf69f",
+      "price": 206,
+      "buyer_price": null,
+      "sale_price": null,
+      "quantity": 9,
+      "shipping_profile_id": 110055637324,
+      "processing_profile_id": null,
+      "readiness_state_id": 1402598242018,
+      "processing_min": 3,
+      "processing_max": 7,
+      "taxonomy_id": 1240,
+      "inventory_sha256": "ccf4f3e29ba0a507333af5234669f5446083be8d4cec02898e35ea8eaedb29aa",
+      "personalization_sha256": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02"
+    },
+    "image_stack": [
+      {
+        "listing_image_id": "7935714924",
+        "rank": 1
+      },
+      {
+        "listing_image_id": "7961515489",
+        "rank": 2
+      },
+      {
+        "listing_image_id": "7861252213",
+        "rank": 3
+      },
+      {
+        "listing_image_id": "7813308230",
+        "rank": 4
+      },
+      {
+        "listing_image_id": "7813308590",
+        "rank": 5
+      },
+      {
+        "listing_image_id": "7813308320",
+        "rank": 6
+      },
+      {
+        "listing_image_id": "7861252137",
+        "rank": 7
+      },
+      {
+        "listing_image_id": "7861252455",
+        "rank": 8
+      },
+      {
+        "listing_image_id": "7861252163",
+        "rank": 9
+      },
+      {
+        "listing_image_id": "7861252415",
+        "rank": 10
+      },
+      {
+        "listing_image_id": "2989606265",
+        "rank": 11
+      },
+      {
+        "listing_image_id": "2941907282",
+        "rank": 12
+      },
+      {
+        "listing_image_id": "7813308294",
+        "rank": 13
+      },
+      {
+        "listing_image_id": "7813308482",
+        "rank": 14
+      },
+      {
+        "listing_image_id": "2989603011",
+        "rank": 15
+      },
+      {
+        "listing_image_id": "2941906456",
+        "rank": 16
+      },
+      {
+        "listing_image_id": "6150590817",
+        "rank": 17
+      }
+    ],
+    "updated_timestamp": 1785083125,
+    "daily_quota": {
+      "limit_per_day": 5000,
+      "remaining_today": 4967,
+      "limit_per_second": 5
+    }
+  },
+  "postwrite": {
+    "captured_at": "2026-08-13T05:12:11.498Z",
+    "protected_snapshot": {
+      "state": "active",
+      "title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "tags": [
+        "skull ring men",
+        "silver skull ring",
+        "biker ring",
+        "gothic ring",
+        "mens biker ring",
+        "solid silver ring",
+        "heavy ring men",
+        "punk ring",
+        "rocker jewelry",
+        "biker jewelry",
+        "skull jewelry",
+        "mens gothic ring",
+        "925 skull ring"
+      ],
+      "description_sha256": "9583781f5aa498af2902c3f890f80d86e3b2b47a7593274d79742fd0e19bf69f",
+      "price": 206,
+      "buyer_price": null,
+      "sale_price": null,
+      "quantity": 9,
+      "shipping_profile_id": 110055637324,
+      "processing_profile_id": null,
+      "readiness_state_id": 1402598242018,
+      "processing_min": 3,
+      "processing_max": 7,
+      "taxonomy_id": 1240,
+      "inventory_sha256": "ccf4f3e29ba0a507333af5234669f5446083be8d4cec02898e35ea8eaedb29aa",
+      "personalization_sha256": "bd296024c238f37c29b880a170536296f774abe636a0121014d6cd34cd0a5b02"
+    },
+    "image_stack": [
+      {
+        "listing_image_id": "7935714924",
+        "rank": 1
+      },
+      {
+        "listing_image_id": "8423384909",
+        "rank": 1
+      },
+      {
+        "listing_image_id": "7961515489",
+        "rank": 2
+      },
+      {
+        "listing_image_id": "7861252213",
+        "rank": 3
+      },
+      {
+        "listing_image_id": "8375511562",
+        "rank": 3
+      },
+      {
+        "listing_image_id": "7813308230",
+        "rank": 4
+      },
+      {
+        "listing_image_id": "7813308590",
+        "rank": 5
+      },
+      {
+        "listing_image_id": "7813308320",
+        "rank": 6
+      },
+      {
+        "listing_image_id": "7861252137",
+        "rank": 7
+      },
+      {
+        "listing_image_id": "7861252455",
+        "rank": 8
+      },
+      {
+        "listing_image_id": "7861252163",
+        "rank": 9
+      },
+      {
+        "listing_image_id": "7861252415",
+        "rank": 10
+      },
+      {
+        "listing_image_id": "2989606265",
+        "rank": 11
+      },
+      {
+        "listing_image_id": "2941907282",
+        "rank": 12
+      },
+      {
+        "listing_image_id": "7813308294",
+        "rank": 13
+      },
+      {
+        "listing_image_id": "7813308482",
+        "rank": 14
+      },
+      {
+        "listing_image_id": "2989603011",
+        "rank": 15
+      },
+      {
+        "listing_image_id": "2941906456",
+        "rank": 16
+      },
+      {
+        "listing_image_id": "6150590817",
+        "rank": 17
+      }
+    ],
+    "raw_listing": {
+      "listing_id": 878616671,
+      "user_id": 364270962,
+      "shop_id": 25333110,
+      "title": "Heavy Skull Ring for Men - Solid 925 Silver Gothic Biker Ring",
+      "description": "This solid 925 sterling silver skull ring is a heavy men&#39;s biker ring with a bold gothic look. It is handmade for buyers who want real silver, strong detail, and a ring that feels substantial on the hand.\n\n💀 HEAVY. SOLID. BUILT TO LAST.\n\nThis is a heavyweight, solid 925 sterling silver skull ring — not hollow, not plated — made for those who don’t follow trends, they define them.\n\n• Approx. 26g+ weight — solid, substantial feel\n• Size: 24 × 19 mm — compact but powerful presence\n• Made from real 925 sterling silver — no plating, no fading\n• Oxidized + polished finish for deep contrast\n\n⚔️ BUILT FOR REAL WEAR\n\nDesigned for daily use, with a smooth inner band for comfort and a bold exterior that stands out.\n\nYou don’t just wear it — it becomes part of your identity.\n\n🔥 FOR THOSE WHO LIVE LOUD\n\nWorn by those who ride hard, think independently, and don’t ask for permission.\n\nPerfect for:\n• Biker style\n• Gothic fashion\n• Punk / rock culture\n• Men who want bold, no-compromise jewelry\n\n🛠️ HANDCRAFTED DETAIL\n\nEach ring is hand-finished, bringing out:\n\n• Deep shadows and aggressive skull details\n• Unique texture and character\n• Slight variations — no two rings are identical\n\n✅ MATERIAL YOU CAN TRUST\n\nMade from real 925 sterling silver (not plated or coated), built to last for years without fading or peeling.\n\n🎁 GIFT READY\n\nA powerful gift for him — perfect for birthdays, anniversaries, or anyone who appreciates bold, masculine jewelry.\n\n📏 SIZING NOTE\n\nAvailable in multiple sizes.\nPlease refer to the size chart before ordering.\n\nIf you prefer a tighter fit, consider sizing down.\nIf you like a looser feel, size up.\n\n⚠️ IMPORTANT\n\nThis is a heavy ring (~26g+).\nIf you’re used to lightweight rings, expect a noticeable difference.\n\nKEY SPECS\n\n• Material: Solid 925 sterling silver\n• Size: Approx. 24 × 19 mm\n• Weight: Approx. 26g+ (varies slightly)\n• Finish: Oxidized / polished\n\nWHAT YOU GET\n\n• 1 × 925 sterling silver skull ring\n• Premium gift box\n• Polishing cloth\n\nCRAFT & CARE\n\nEach ring is handmade and finished by artisans.\n\nTo maintain its look:\nAvoid harsh chemicals and saltwater. Clean gently with a soft cloth.\n\nSHIPPING & DELIVERY\n\n• Processing time: 2–5 business days\n• Fast worldwide shipping via YunExpress / FedEx\n• Estimated delivery: 3–7 business days after dispatch\n• Tracking included\n\n⭐ CUSTOMER FEEDBACK\n\n“Heavier than expected — feels amazing.”\n“Exactly what I was looking for. Solid and badass.”\n\n✔ 30-day satisfaction guarantee\n✔ Real customer support — no bots, no hassle",
+      "rich_description": null,
+      "state": "active",
+      "creation_timestamp": 1785083125,
+      "created_timestamp": 1785083125,
+      "ending_timestamp": 1795713925,
+      "original_creation_timestamp": 1601374114,
+      "last_modified_timestamp": 1786597927,
+      "updated_timestamp": 1786597927,
+      "state_timestamp": 1743746469,
+      "quantity": 9,
+      "shop_section_id": 54063045,
+      "featured_rank": -1,
+      "url": "https://www.etsy.com/listing/878616671/handcrafted-sterling-silver-skull-ring",
+      "num_favorers": 325,
+      "non_taxable": false,
+      "is_taxable": true,
+      "is_customizable": false,
+      "is_personalizable": false,
+      "listing_type": "physical",
+      "tags": [
+        "skull ring men",
+        "silver skull ring",
+        "biker ring",
+        "gothic ring",
+        "mens biker ring",
+        "solid silver ring",
+        "heavy ring men",
+        "punk ring",
+        "rocker jewelry",
+        "biker jewelry",
+        "skull jewelry",
+        "mens gothic ring",
+        "925 skull ring"
+      ],
+      "materials": [],
+      "shipping_profile_id": 110055637324,
+      "return_policy_id": 1373815074823,
+      "processing_min": 3,
+      "processing_max": 7,
+      "who_made": "i_did",
+      "when_made": "made_to_order",
+      "is_supply": false,
+      "item_weight": null,
+      "item_weight_unit": null,
+      "item_length": null,
+      "item_width": null,
+      "item_height": null,
+      "item_dimensions_unit": null,
+      "is_private": false,
+      "style": [],
+      "file_data": null,
+      "has_variations": true,
+      "should_auto_renew": true,
+      "language": "en-US",
+      "price": {
+        "amount": 20600,
+        "divisor": 100,
+        "currency_code": "USD"
+      },
+      "taxonomy_id": 1240,
+      "production_partners": [],
+      "skus": [
+        "SJ141"
+      ],
+      "views": 5756,
+      "readiness_state_id": 1402598242018,
+      "suggested_title": null,
+      "shipping_profile": null,
+      "shop": null,
+      "images": null,
+      "videos": [
+        {
+          "video_id": 832985098,
+          "video_url": "https://v.etsystatic.com/video/upload/ac_none,du_15,q_auto:good/osrzd9cricxvzionvxbe.mp4",
+          "thumbnail_url": "https://v.etsystatic.com/video/upload/ar_1:1,c_fill,h_105,q_auto,w_105/osrzd9cricxvzionvxbe.jpg",
+          "height": 1280,
+          "width": 1024,
+          "video_state": "active"
+        }
+      ],
+      "user": null,
+      "translations": null,
+      "inventory": null,
+      "personalization": {
+        "personalization_questions": []
+      },
+      "buyer_price": null
+    },
+    "raw_images": [
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7935714924,
+        "hex_code": "1A1511",
+        "red": 26,
+        "green": 21,
+        "blue": 17,
+        "hue": 26,
+        "saturation": 34,
+        "brightness": 10,
+        "is_black_and_white": false,
+        "creation_tsz": 1776770090,
+        "created_timestamp": 1776770090,
+        "rank": 1,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/c92355/7935714924/il_75x75.7935714924_s740.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/c92355/7935714924/il_170x135.7935714924_s740.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/c92355/7935714924/il_570xN.7935714924_s740.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/c92355/7935714924/il_fullxfull.7935714924_s740.jpg",
+        "full_height": 1000,
+        "full_width": 1000,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 8423384909,
+        "hex_code": null,
+        "red": null,
+        "green": null,
+        "blue": null,
+        "hue": null,
+        "saturation": null,
+        "brightness": null,
+        "is_black_and_white": null,
+        "creation_tsz": 1786597927,
+        "created_timestamp": 1786597927,
+        "rank": 1,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/1de9e9/8423384909/il_75x75.8423384909_1p38.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/1de9e9/8423384909/il_170x135.8423384909_1p38.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/1de9e9/8423384909/il_570xN.8423384909_1p38.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/1de9e9/8423384909/il_fullxfull.8423384909_1p38.jpg",
+        "full_height": 2000,
+        "full_width": 2000,
+        "alt_text": "Heavy 925 sterling silver skull ring front carving detail"
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7961515489,
+        "hex_code": "2E231A",
+        "red": 46,
+        "green": 35,
+        "blue": 26,
+        "hue": 27,
+        "saturation": 43,
+        "brightness": 18,
+        "is_black_and_white": false,
+        "creation_tsz": 1776216849,
+        "created_timestamp": 1776216849,
+        "rank": 2,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/87a809/7961515489/il_75x75.7961515489_dab7.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/87a809/7961515489/il_170x135.7961515489_dab7.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/87a809/7961515489/il_570xN.7961515489_dab7.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/87a809/7961515489/il_fullxfull.7961515489_dab7.jpg",
+        "full_height": 1000,
+        "full_width": 1000,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7861252213,
+        "hex_code": "3A2F27",
+        "red": 58,
+        "green": 47,
+        "blue": 39,
+        "hue": 25,
+        "saturation": 32,
+        "brightness": 22,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 3,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/a1e12d/7861252213/il_75x75.7861252213_hle1.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/a1e12d/7861252213/il_170x135.7861252213_hle1.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/a1e12d/7861252213/il_570xN.7861252213_hle1.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/a1e12d/7861252213/il_fullxfull.7861252213_hle1.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 8375511562,
+        "hex_code": "392A20",
+        "red": 57,
+        "green": 42,
+        "blue": 32,
+        "hue": 24,
+        "saturation": 43,
+        "brightness": 22,
+        "is_black_and_white": false,
+        "creation_tsz": 1786597928,
+        "created_timestamp": 1786597928,
+        "rank": 3,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/05f4b8/8375511562/il_75x75.8375511562_dqy9.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/05f4b8/8375511562/il_170x135.8375511562_dqy9.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/05f4b8/8375511562/il_570xN.8375511562_dqy9.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/05f4b8/8375511562/il_fullxfull.8375511562_dqy9.jpg",
+        "full_height": 2000,
+        "full_width": 2000,
+        "alt_text": "Heavy sterling silver skull ring shown worn on hand for scale"
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7813308230,
+        "hex_code": "312922",
+        "red": 49,
+        "green": 41,
+        "blue": 34,
+        "hue": 28,
+        "saturation": 30,
+        "brightness": 19,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 4,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/b29ea3/7813308230/il_75x75.7813308230_91iu.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/b29ea3/7813308230/il_170x135.7813308230_91iu.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/b29ea3/7813308230/il_570xN.7813308230_91iu.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/b29ea3/7813308230/il_fullxfull.7813308230_91iu.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7813308590,
+        "hex_code": "292723",
+        "red": 41,
+        "green": 39,
+        "blue": 35,
+        "hue": 40,
+        "saturation": 14,
+        "brightness": 16,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 5,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/d26687/7813308590/il_75x75.7813308590_brxf.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/d26687/7813308590/il_170x135.7813308590_brxf.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/d26687/7813308590/il_570xN.7813308590_brxf.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/d26687/7813308590/il_fullxfull.7813308590_brxf.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7813308320,
+        "hex_code": "2E261E",
+        "red": 46,
+        "green": 38,
+        "blue": 30,
+        "hue": 30,
+        "saturation": 34,
+        "brightness": 18,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 6,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/e33769/7813308320/il_75x75.7813308320_g7nf.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/e33769/7813308320/il_170x135.7813308320_g7nf.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/e33769/7813308320/il_570xN.7813308320_g7nf.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/e33769/7813308320/il_fullxfull.7813308320_g7nf.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7861252137,
+        "hex_code": "252219",
+        "red": 37,
+        "green": 34,
+        "blue": 25,
+        "hue": 45,
+        "saturation": 32,
+        "brightness": 14,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 7,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/974187/7861252137/il_75x75.7861252137_3bn4.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/974187/7861252137/il_170x135.7861252137_3bn4.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/974187/7861252137/il_570xN.7861252137_3bn4.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/974187/7861252137/il_fullxfull.7861252137_3bn4.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7861252455,
+        "hex_code": "382413",
+        "red": 56,
+        "green": 36,
+        "blue": 19,
+        "hue": 27,
+        "saturation": 66,
+        "brightness": 21,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 8,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/181f6b/7861252455/il_75x75.7861252455_dmig.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/181f6b/7861252455/il_170x135.7861252455_dmig.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/181f6b/7861252455/il_570xN.7861252455_dmig.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/181f6b/7861252455/il_fullxfull.7861252455_dmig.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7861252163,
+        "hex_code": "2E2720",
+        "red": 46,
+        "green": 39,
+        "blue": 32,
+        "hue": 30,
+        "saturation": 30,
+        "brightness": 18,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 9,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/876b59/7861252163/il_75x75.7861252163_auib.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/876b59/7861252163/il_170x135.7861252163_auib.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/876b59/7861252163/il_570xN.7861252163_auib.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/876b59/7861252163/il_fullxfull.7861252163_auib.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7861252415,
+        "hex_code": "271D14",
+        "red": 39,
+        "green": 29,
+        "blue": 20,
+        "hue": 28,
+        "saturation": 48,
+        "brightness": 15,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 10,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/5ce73f/7861252415/il_75x75.7861252415_mnej.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/5ce73f/7861252415/il_170x135.7861252415_mnej.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/5ce73f/7861252415/il_570xN.7861252415_mnej.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/5ce73f/7861252415/il_fullxfull.7861252415_mnej.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 2989606265,
+        "hex_code": "706F6C",
+        "red": 112,
+        "green": 111,
+        "blue": 108,
+        "hue": 45,
+        "saturation": 3,
+        "brightness": 43,
+        "is_black_and_white": false,
+        "creation_tsz": 1615766210,
+        "created_timestamp": 1615766210,
+        "rank": 11,
+        "url_75x75": "https://i.etsystatic.com/25333110/c/1612/1282/385/627/il/28892b/2989606265/il_75x75.2989606265_1jvp.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/c/1612/1282/385/627/il/28892b/2989606265/il_170x135.2989606265_1jvp.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/28892b/2989606265/il_570xN.2989606265_1jvp.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/28892b/2989606265/il_fullxfull.2989606265_1jvp.jpg",
+        "full_height": 2000,
+        "full_width": 2000,
+        "alt_text": "Skull Rings"
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 2941907282,
+        "hex_code": "5F5B59",
+        "red": 95,
+        "green": 91,
+        "blue": 89,
+        "hue": 20,
+        "saturation": 6,
+        "brightness": 37,
+        "is_black_and_white": false,
+        "creation_tsz": 1615766210,
+        "created_timestamp": 1615766210,
+        "rank": 12,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/6b1b56/2941907282/il_75x75.2941907282_dqeb.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/6b1b56/2941907282/il_170x135.2941907282_dqeb.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/6b1b56/2941907282/il_570xN.2941907282_dqeb.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/6b1b56/2941907282/il_fullxfull.2941907282_dqeb.jpg",
+        "full_height": 2000,
+        "full_width": 2000,
+        "alt_text": "mens skull rings"
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7813308294,
+        "hex_code": "2E2E2E",
+        "red": 46,
+        "green": 46,
+        "blue": 46,
+        "hue": 0,
+        "saturation": 0,
+        "brightness": 18,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 13,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/663bc1/7813308294/il_75x75.7813308294_8d4b.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/663bc1/7813308294/il_170x135.7813308294_8d4b.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/663bc1/7813308294/il_570xN.7813308294_8d4b.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/663bc1/7813308294/il_fullxfull.7813308294_8d4b.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 7813308482,
+        "hex_code": "171717",
+        "red": 23,
+        "green": 23,
+        "blue": 23,
+        "hue": 0,
+        "saturation": 0,
+        "brightness": 9,
+        "is_black_and_white": false,
+        "creation_tsz": 1773717386,
+        "created_timestamp": 1773717386,
+        "rank": 14,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/9e2c4f/7813308482/il_75x75.7813308482_17hu.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/9e2c4f/7813308482/il_170x135.7813308482_17hu.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/9e2c4f/7813308482/il_570xN.7813308482_17hu.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/9e2c4f/7813308482/il_fullxfull.7813308482_17hu.jpg",
+        "full_height": 2048,
+        "full_width": 2048,
+        "alt_text": null
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 2989603011,
+        "hex_code": "5F5E5C",
+        "red": 95,
+        "green": 94,
+        "blue": 92,
+        "hue": 40,
+        "saturation": 3,
+        "brightness": 37,
+        "is_black_and_white": false,
+        "creation_tsz": 1615766210,
+        "created_timestamp": 1615766210,
+        "rank": 15,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/a50e5b/2989603011/il_75x75.2989603011_p8az.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/a50e5b/2989603011/il_170x135.2989603011_p8az.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/a50e5b/2989603011/il_570xN.2989603011_p8az.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/a50e5b/2989603011/il_fullxfull.2989603011_p8az.jpg",
+        "full_height": 2000,
+        "full_width": 2000,
+        "alt_text": "Gothic Jewelry"
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 2941906456,
+        "hex_code": "706D6A",
+        "red": 112,
+        "green": 109,
+        "blue": 106,
+        "hue": 30,
+        "saturation": 5,
+        "brightness": 43,
+        "is_black_and_white": false,
+        "creation_tsz": 1615766210,
+        "created_timestamp": 1615766210,
+        "rank": 16,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/88927f/2941906456/il_75x75.2941906456_9qk4.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/88927f/2941906456/il_170x135.2941906456_9qk4.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/88927f/2941906456/il_570xN.2941906456_9qk4.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/88927f/2941906456/il_fullxfull.2941906456_9qk4.jpg",
+        "full_height": 2000,
+        "full_width": 2000,
+        "alt_text": "silver skull rings"
+      },
+      {
+        "listing_id": 878616671,
+        "listing_image_id": 6150590817,
+        "hex_code": "000000",
+        "red": 0,
+        "green": 0,
+        "blue": 0,
+        "hue": 0,
+        "saturation": 0,
+        "brightness": 0,
+        "is_black_and_white": false,
+        "creation_tsz": 1720084559,
+        "created_timestamp": 1720084559,
+        "rank": 17,
+        "url_75x75": "https://i.etsystatic.com/25333110/r/il/fe276c/6150590817/il_75x75.6150590817_es7c.jpg",
+        "url_170x135": "https://i.etsystatic.com/25333110/r/il/fe276c/6150590817/il_170x135.6150590817_es7c.jpg",
+        "url_570xN": "https://i.etsystatic.com/25333110/r/il/fe276c/6150590817/il_570xN.6150590817_es7c.jpg",
+        "url_fullxfull": "https://i.etsystatic.com/25333110/r/il/fe276c/6150590817/il_fullxfull.6150590817_es7c.jpg",
+        "full_height": 800,
+        "full_width": 800,
+        "alt_text": "skull rings"
+      }
+    ],
+    "raw_inventory": {
+      "products": [
+        {
+          "product_id": 21558661901,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879242,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55029384009
+              ],
+              "values": [
+                "5"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023794,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879248,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55029384009
+              ],
+              "values": [
+                "5"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661911,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685233,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55029384009
+              ],
+              "values": [
+                "5"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023802,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879252,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                62836393775
+              ],
+              "values": [
+                "5 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023804,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879260,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                62836393775
+              ],
+              "values": [
+                "5 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023806,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879264,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                62836393775
+              ],
+              "values": [
+                "5 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023810,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685243,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                62122484668
+              ],
+              "values": [
+                "5 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023812,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685247,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                62122484668
+              ],
+              "values": [
+                "5 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661935,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879268,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                62122484668
+              ],
+              "values": [
+                "5 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661941,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879274,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55029384029
+              ],
+              "values": [
+                "6"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023818,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879278,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55029384029
+              ],
+              "values": [
+                "6"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023822,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879284,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55029384029
+              ],
+              "values": [
+                "6"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661953,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879288,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                54353773812
+              ],
+              "values": [
+                "6 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661959,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879292,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                54353773812
+              ],
+              "values": [
+                "6 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661963,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685273,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                54353773812
+              ],
+              "values": [
+                "6 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023834,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879302,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59773872337
+              ],
+              "values": [
+                "6 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023838,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879306,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59773872337
+              ],
+              "values": [
+                "6 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661977,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879312,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59773872337
+              ],
+              "values": [
+                "6 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023844,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685283,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                52919025088
+              ],
+              "values": [
+                "7"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023846,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685287,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                52919025088
+              ],
+              "values": [
+                "7"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023852,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879324,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                52919025088
+              ],
+              "values": [
+                "7"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023858,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879330,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55098023127
+              ],
+              "values": [
+                "7 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023864,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879334,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55098023127
+              ],
+              "values": [
+                "7 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661995,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879338,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55098023127
+              ],
+              "values": [
+                "7 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558661997,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879344,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56457589743
+              ],
+              "values": [
+                "7 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023882,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685303,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56457589743
+              ],
+              "values": [
+                "7 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023888,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685309,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56457589743
+              ],
+              "values": [
+                "7 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023892,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685315,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018489106
+              ],
+              "values": [
+                "8"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662009,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879356,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018489106
+              ],
+              "values": [
+                "8"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662017,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879360,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018489106
+              ],
+              "values": [
+                "8"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662027,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879366,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031042407
+              ],
+              "values": [
+                "8 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023906,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879374,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031042407
+              ],
+              "values": [
+                "8 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023910,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685337,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031042407
+              ],
+              "values": [
+                "8 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662041,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879382,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836524706
+              ],
+              "values": [
+                "8 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662047,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879386,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836524706
+              ],
+              "values": [
+                "8 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023916,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685347,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836524706
+              ],
+              "values": [
+                "8 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023926,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685353,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55130847673
+              ],
+              "values": [
+                "9"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023928,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685355,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55130847673
+              ],
+              "values": [
+                "9"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023932,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879404,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                55130847673
+              ],
+              "values": [
+                "9"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023940,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685363,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525070
+              ],
+              "values": [
+                "9 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662067,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685365,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525070
+              ],
+              "values": [
+                "9 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662075,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685371,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525070
+              ],
+              "values": [
+                "9 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662081,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685375,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                58836670481
+              ],
+              "values": [
+                "9 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023956,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879432,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                58836670481
+              ],
+              "values": [
+                "9 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023958,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685383,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                58836670481
+              ],
+              "values": [
+                "9 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023966,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685389,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018490448
+              ],
+              "values": [
+                "10"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662093,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879444,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018490448
+              ],
+              "values": [
+                "10"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023974,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685397,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018490448
+              ],
+              "values": [
+                "10"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023976,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879446,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525380
+              ],
+              "values": [
+                "10 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023982,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879454,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525380
+              ],
+              "values": [
+                "10 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662101,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879456,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525380
+              ],
+              "values": [
+                "10 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023990,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685413,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525300
+              ],
+              "values": [
+                "10 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023994,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879460,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525300
+              ],
+              "values": [
+                "10 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927023998,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685419,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525300
+              ],
+              "values": [
+                "10 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662115,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879464,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018490678
+              ],
+              "values": [
+                "11"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662119,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879472,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018490678
+              ],
+              "values": [
+                "11"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662123,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685429,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53018490678
+              ],
+              "values": [
+                "11"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024014,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685435,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031043405
+              ],
+              "values": [
+                "11 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024022,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879488,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031043405
+              ],
+              "values": [
+                "11 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662135,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685445,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031043405
+              ],
+              "values": [
+                "11 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662139,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685451,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525660
+              ],
+              "values": [
+                "11 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024034,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879498,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525660
+              ],
+              "values": [
+                "11 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662145,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879502,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836525660
+              ],
+              "values": [
+                "11 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024042,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685457,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405264
+              ],
+              "values": [
+                "12"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024046,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879508,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405264
+              ],
+              "values": [
+                "12"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024052,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879512,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405264
+              ],
+              "values": [
+                "12"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662153,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879514,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526328
+              ],
+              "values": [
+                "12 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662155,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685471,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526328
+              ],
+              "values": [
+                "12 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662163,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685475,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526328
+              ],
+              "values": [
+                "12 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024056,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879518,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526248
+              ],
+              "values": [
+                "12 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662169,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879524,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526248
+              ],
+              "values": [
+                "12 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024062,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685481,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526248
+              ],
+              "values": [
+                "12 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024068,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685485,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405324
+              ],
+              "values": [
+                "13"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662177,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685491,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405324
+              ],
+              "values": [
+                "13"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024070,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879530,
+              "quantity": 9,
+              "is_enabled": true,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405324
+              ],
+              "values": [
+                "13"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662183,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685499,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044429
+              ],
+              "values": [
+                "13 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024076,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685503,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044429
+              ],
+              "values": [
+                "13 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662191,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879534,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044429
+              ],
+              "values": [
+                "13 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024078,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879536,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044325
+              ],
+              "values": [
+                "13 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662195,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879538,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044325
+              ],
+              "values": [
+                "13 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024082,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879542,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044325
+              ],
+              "values": [
+                "13 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662205,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685517,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405444
+              ],
+              "values": [
+                "14"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662211,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685523,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405444
+              ],
+              "values": [
+                "14"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662217,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879546,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53517405444
+              ],
+              "values": [
+                "14"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024084,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685529,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526978
+              ],
+              "values": [
+                "14 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662223,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685535,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526978
+              ],
+              "values": [
+                "14 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024088,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685537,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526978
+              ],
+              "values": [
+                "14 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662229,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879552,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526946
+              ],
+              "values": [
+                "14 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662231,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685541,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526946
+              ],
+              "values": [
+                "14 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024094,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879556,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836526946
+              ],
+              "values": [
+                "14 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024096,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879560,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53672356606
+              ],
+              "values": [
+                "15"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662239,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879564,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53672356606
+              ],
+              "values": [
+                "15"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024104,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685551,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                53672356606
+              ],
+              "values": [
+                "15"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024110,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879572,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044821
+              ],
+              "values": [
+                "15 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024112,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685555,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044821
+              ],
+              "values": [
+                "15 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024114,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879578,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044821
+              ],
+              "values": [
+                "15 1/2"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024116,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685557,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044791
+              ],
+              "values": [
+                "15 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024118,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879586,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044791
+              ],
+              "values": [
+                "15 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662257,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685563,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                59031044791
+              ],
+              "values": [
+                "15 1/4"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024120,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21685685569,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836527256
+              ],
+              "values": [
+                "16"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355228851
+              ],
+              "values": [
+                "SILVER PRIMARY COLOR"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21927024122,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879588,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836527256
+              ],
+              "values": [
+                "16"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229045
+              ],
+              "values": [
+                "SILVER HALF BLACK"
+              ]
+            }
+          ]
+        },
+        {
+          "product_id": 21558662271,
+          "sku": "SJ141",
+          "is_deleted": false,
+          "offerings": [
+            {
+              "offering_id": 21887879594,
+              "quantity": 9,
+              "is_enabled": false,
+              "is_deleted": false,
+              "price": {
+                "amount": 20600,
+                "divisor": 100,
+                "currency_code": "USD"
+              },
+              "readiness_state_id": 1402598242018
+            }
+          ],
+          "property_values": [
+            {
+              "property_id": 54142602013,
+              "property_name": "Ring size",
+              "scale_id": 20,
+              "scale_name": "US/CA",
+              "value_ids": [
+                56836527256
+              ],
+              "values": [
+                "16"
+              ]
+            },
+            {
+              "property_id": 513,
+              "property_name": "Choose color",
+              "scale_id": null,
+              "scale_name": null,
+              "value_ids": [
+                1285355229175
+              ],
+              "values": [
+                "SILVER ALL BLACK"
+              ]
+            }
+          ]
+        }
+      ],
+      "price_on_property": [],
+      "quantity_on_property": [],
+      "sku_on_property": [],
+      "readiness_state_on_property": [],
+      "listing": null
+    }
+  },
+  "finished_at": "2026-08-13T05:12:11.499Z",
+  "safety": {
+    "exact_fields_modified": [
+      "IMAGES"
+    ],
+    "protected_unexpected_diffs": 0,
+    "etsy_read_only_mode": true,
+    "etsy_write_approved": false,
+    "production_image_writes": 2,
+    "http_429_count": 0,
+    "quota_final": {
+      "limit_per_day": 5000,
+      "remaining_today": 4962,
+      "limit_per_second": 5
+    }
+  },
+  "integrity_sha256": "16657c88ed17dda5c3a2a3ea4895d12a4646bf8c57cfaac03c7cf44917c990df"
+}
