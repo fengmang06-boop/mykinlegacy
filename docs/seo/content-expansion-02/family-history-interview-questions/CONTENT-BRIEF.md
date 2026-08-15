@@ -2,12 +2,12 @@
 
 ## Release status
 
-- Status: `LOCAL_DRAFT_ONLY`
+- Status: `LOCAL_INDEXABLE_IMPLEMENTATION_READY`
 - Draft date: 2026-08-15
 - Earliest release review: on or after 2026-08-26
 - Proposed route: `/journal/family-history-interview-questions`
-- Production publication: prohibited in this round
-- Sitemap inclusion: prohibited in this round
+- Production publication: not authorized in this round
+- Local Sitemap inclusion: implemented on 2026-08-15
 - Indexing request: prohibited in this round
 
 ## Search intent
@@ -83,4 +83,4 @@ It must not compete with:
 - Exactly 40 numbered interview questions plus a clearly marked 10-question starter subset.
 - At least four authoritative sources.
 - Natural links to the existing keepsake guide, disclaimer, Real Examples, and Collection page.
-- No route, article registry, sitemap, canonical, or production change before approval.
+- Local route, article registry, Sitemap, canonical, and schema checks pass before any production approval.

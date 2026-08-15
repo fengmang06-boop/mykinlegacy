@@ -19,9 +19,15 @@
 | `/journal/how-to-preserve-family-history` | Oral-context section, if published | plan a respectful family-history interview |
 | `/journal` | Standard article card | 40 Family History Interview Questions |
 
+## Implementation status
+
+- The candidate now links to the existing keepsake guide, disclaimer, Real Examples, and Collection page.
+- The unpublished preservation candidate is not linked from the implemented article.
+- Proposed inbound links from existing production articles remain deferred to avoid widening this release.
+
 ## Link constraints
 
-- Do not add any live inbound link during the freeze.
+- Do not add additional live inbound links without release review.
 - Do not link to the unpublished preservation candidate from production.
 - Do not use exact-match anchors repeatedly.
 - Do not add links from unrelated Gift Pages solely to increase link count.

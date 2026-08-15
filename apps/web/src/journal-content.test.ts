@@ -32,13 +32,13 @@ function linksFromBlock(block: JournalBlock): string[] {
 }
 
 describe("SEO journal content", () => {
-  it("publishes exactly nine substantial, uniquely targeted articles", () => {
-    expect(journalArticles).toHaveLength(9);
-    expect(new Set(journalArticles.map((article) => article.slug)).size).toBe(9);
-    expect(new Set(journalArticles.map((article) => article.targetKeyword)).size).toBe(9);
-    expect(new Set(journalArticles.map((article) => article.title)).size).toBe(9);
-    expect(new Set(journalArticles.map((article) => article.metaTitle)).size).toBe(9);
-    expect(new Set(journalArticles.map((article) => article.description)).size).toBe(9);
+  it("publishes exactly ten substantial, uniquely targeted articles", () => {
+    expect(journalArticles).toHaveLength(10);
+    expect(new Set(journalArticles.map((article) => article.slug)).size).toBe(10);
+    expect(new Set(journalArticles.map((article) => article.targetKeyword)).size).toBe(10);
+    expect(new Set(journalArticles.map((article) => article.title)).size).toBe(10);
+    expect(new Set(journalArticles.map((article) => article.metaTitle)).size).toBe(10);
+    expect(new Set(journalArticles.map((article) => article.description)).size).toBe(10);
 
     for (const article of journalArticles) {
       expect(article.metaTitle.length).toBeLessThanOrEqual(60);
@@ -89,6 +89,8 @@ describe("SEO journal content", () => {
       "www.archives.gov",
       "www.college-of-arms.gov.uk",
       "www.loc.gov",
+      "oralhistory.org",
+      "siarchives.si.edu",
       "time.com",
       "www.timeanddate.com"
     ]);

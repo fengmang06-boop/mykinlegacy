@@ -12,7 +12,7 @@ describe("SEO existing-query uplift round 04", () => {
     const second = sitemap();
 
     expect(first).toEqual(second);
-    expect(first).toHaveLength(51);
+    expect(first).toHaveLength(52);
 
     const homepage = first.find((entry) => entry.url === "https://mykinlegacy.com");
     expect(homepage?.lastModified).toBeUndefined();

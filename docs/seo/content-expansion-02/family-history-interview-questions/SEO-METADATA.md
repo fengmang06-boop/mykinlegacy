@@ -27,4 +27,4 @@ Good family history interview questions are short, open-ended, and specific enou
 
 ## Release note
 
-Metadata is a local candidate. It must not be registered in the live journal, sitemap, or canonical graph during the current freeze.
+The metadata is now registered in the local Journal implementation. The generated route, Canonical, Article schema, Breadcrumb schema, Journal listing, and Sitemap entry remain local until a separate production deployment is authorized.

@@ -2,9 +2,9 @@
 
 ## Current decision
 
-`LOCAL_AUTHORITY_ARTICLE_CANDIDATE_READY`
+`LOCAL_INDEXABLE_IMPLEMENTATION_READY`
 
-This is not approval to publish.
+The user authorized inclusion in the local indexable site graph on 2026-08-15. This is not approval to deploy production or submit an indexing request to Google.
 
 ## Content checks
 
@@ -39,25 +39,51 @@ This is not approval to publish.
 - [x] Internal link plan is conservative
 - [x] FAQPage schema is not pre-authorized
 
-## Production checks
+## Implementation and production checks
 
-- [x] Live journal registry unchanged
-- [x] Route not created
-- [x] Sitemap unchanged
-- [x] Canonical graph unchanged
+- [x] Local Journal registry includes the article
+- [x] Generated local route exists
+- [x] Local Sitemap includes the article and totals 52 URLs
+- [x] Canonical resolves to the proposed article URL
+- [x] Article and Breadcrumb structured data use the shared truthful renderer
+- [x] FAQPage schema remains absent
 - [x] Production unchanged
 - [x] Indexing requests: 0
 - [x] Sitemap submissions: 0
 
 ## Release blockers
 
-1. Complete the current SEO freeze review on or after 2026-08-26.
-2. Decide whether the existing archive-preservation candidate or this interview candidate should publish first; do not publish both on the same day.
-3. Recheck live SERP intent and first-party GSC queries at release review.
-4. Perform editorial review for clarity, cultural breadth, sensitive-story language, and source attribution.
-5. Select an approved real MyKinLegacy visual with no false interview or customer implication.
-6. If approved, implement one article route, run the full web test suite, validate Article/Breadcrumb schema, and perform a production-readiness review before any deployment.
+1. Obtain explicit production deployment approval.
+2. Recheck the final production diff contains only the scoped article, registry, tests, and documentation.
+3. Deploy through the controlled production workflow and verify HTTP 200, Canonical, Article/Breadcrumb schema, Journal listing, and the 52-URL Sitemap.
+4. Do not submit a manual indexing request unless separately authorized.
 
 ## Exact next action
 
-Keep the candidate local through the freeze. On or after 2026-08-26, compare it with `how-to-preserve-family-history` using fresh GSC evidence and publish at most one first.
+Stop for explicit controlled-production approval. If approved, deploy the scoped commit through the controlled workflow, verify the production article and 52-URL Sitemap, and continue passive discovery monitoring without a manual indexing request unless separately authorized.
+
+## Completed local implementation QA — 2026-08-15
+
+- Generated article word count: 2,611
+- Sections: 10
+- FAQs visible in body: 6
+- FAQPage schema: 0
+- Authoritative sources: 5
+- Related articles: 3
+- Article route: HTTP 200
+- Journal hub: HTTP 200 and article link present
+- Sitemap: HTTP 200, 52 URLs, article present, `lastmod` present
+- H1: 1
+- Canonical: exact proposed article URL
+- Article schema: 1
+- BreadcrumbList schema: 1
+- `noindex`: absent
+- Targeted tests: 19/19 PASS
+- Complete tests: 385/385 PASS
+- Typecheck: PASS
+- Lint: PASS
+- Build: PASS
+- Build warnings: two pre-existing dynamic-require warnings in database orchestration plus the existing ESLint-plugin notice; no article or indexing build failure
+- Production modified: NO
+- Google indexing requests: 0
+- Sitemap submissions: 0

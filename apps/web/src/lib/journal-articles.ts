@@ -1,5 +1,6 @@
 import { getShowcaseCollection } from "./showcase-collections";
 import contentBatch02 from "./journal-articles-batch-02.json";
+import contentBatch03 from "./journal-articles-batch-03.json";
 
 export type JournalSegment = string | { text: string; href: string };
 
@@ -918,7 +919,8 @@ const contentBatch01: JournalArticle[] = [
 
 export const journalArticles: JournalArticle[] = [
   ...contentBatch01,
-  ...(contentBatch02 as JournalArticle[])
+  ...(contentBatch02 as JournalArticle[]),
+  ...(contentBatch03 as JournalArticle[])
 ];
 
 export function getJournalArticle(slug: string): JournalArticle | undefined {
