@@ -20,6 +20,7 @@ on:
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/client.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/listing-baseline.ts"
+      - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/identifier-resolution.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/integrations/etsy/write-guard.ts"
       - ".codex-etsy-ai-manager-sync-v1/src/lib/opportunity/keyword-radar.ts"
 
@@ -89,6 +90,7 @@ jobs:
             src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts \
             src/lib/integrations/etsy/client.ts \
             src/lib/integrations/etsy/listing-baseline.ts \
+            src/lib/integrations/etsy/identifier-resolution.ts \
             src/lib/integrations/etsy/write-guard.ts \
             src/lib/opportunity/keyword-radar.ts
 
@@ -125,6 +127,7 @@ jobs:
             src/lib/integrations/etsy/controlled-autonomous-repair-v3.ts \
             src/lib/integrations/etsy/client.ts \
             src/lib/integrations/etsy/listing-baseline.ts \
+            src/lib/integrations/etsy/identifier-resolution.ts \
             src/lib/integrations/etsy/write-guard.ts \
             src/lib/opportunity/keyword-radar.ts
           do
@@ -200,7 +203,7 @@ jobs:
           set +e
           OUTPUT="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
             -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npx tsx scripts/controlled-autonomous-repair-v3.ts --plan config/controlled-autonomous-repair-v3/batch-14-2026-08-14.json' 2>&1)"
+            'cd /root/mykinlegacy/mensskull-etsy-ai-manager && npx tsx scripts/controlled-autonomous-repair-v3.ts --plan config/controlled-autonomous-repair-v3/batch-15-2026-08-24.json' 2>&1)"
           STATUS="$?"
           set -e
           printf '%s\n' "$OUTPUT"

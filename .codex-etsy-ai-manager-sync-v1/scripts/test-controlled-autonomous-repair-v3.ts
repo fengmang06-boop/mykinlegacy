@@ -9,6 +9,7 @@ import {
   assertEtsyListingWriteGuard,
   hashEtsyListingWriteDiffs
 } from "../src/lib/integrations/etsy/write-guard";
+import { applyEtsyIdentifierResolution } from "../src/lib/integrations/etsy/identifier-resolution";
 
 const candidate: ControlledRepairCandidate = {
   listingId: "4516749377",
@@ -108,6 +109,32 @@ function main(): void {
   const yellowCandidate = { ...candidate, repairPriorityScore: 82, identifierReliable: false, repairPriorityComponents: undefined };
   const yellow = independentlyReviewControlledRepair(yellowCandidate, validateControlledRepairProposal(yellowCandidate));
   assert(yellow.zone === "yellow" && !yellow.approvedForAutomaticExecution, "Yellow review routing failed.");
+
+  const duplicateSkuCandidate = {
+    listingId: "4387228641",
+    product: "Stainless Skull Pants Chain",
+    sku: "SS01",
+    identifierReliable: false,
+    evidence: ["SKU mapping conflict remains unresolved."]
+  };
+  const identifierResolution = {
+    listingId: "4387228641",
+    canonicalKey: "etsy-listing:4387228641",
+    sourceSku: "SS01",
+    sourceSkuUnique: false as const,
+    productAliases: ["Stainless Skull Pants Chain"],
+    orderAttribution: "etsy_listing_id" as const,
+    rollbackIdentity: "etsy_listing_id" as const,
+    etsySkuWriteAuthorized: false as const,
+    status: "resolved" as const,
+    evidence: ["Exact listing identity is confirmed.", "Order attribution uses listing ID."]
+  };
+  const resolvedIdentifier = applyEtsyIdentifierResolution(duplicateSkuCandidate, [identifierResolution]);
+  assert(resolvedIdentifier.identifierReliable, "Exact listing-ID resolution did not clear the identifier gate.");
+  assert(
+    !applyEtsyIdentifierResolution({ ...duplicateSkuCandidate, sku: "WRONG" }, [identifierResolution]).identifierReliable,
+    "A mismatched source SKU incorrectly cleared the identifier gate."
+  );
 
   const unknownMetricsCandidate = { ...scoredCandidate, views: null, favorites: null };
   const unknownMetricsReview = independentlyReviewControlledRepair(

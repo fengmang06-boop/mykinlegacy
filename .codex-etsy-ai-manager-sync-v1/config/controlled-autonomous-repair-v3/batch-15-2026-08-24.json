@@ -1,0 +1,52 @@
+{
+  "version": "V3",
+  "batchKey": "batch-15-v3-2026-08-24",
+  "baselineReportPath": "exports/low-signal-breakthrough/baseline-2026-08-24-ss01/baseline.json",
+  "candidates": [
+    {
+      "listingId": "4387228641",
+      "product": "Stainless Skull Pants Chain",
+      "sku": "SS01",
+      "proposedTitle": "Stainless Steel Skull Wallet Chain for Men, Gothic Biker Pants Chain, Punk Trouser Chain",
+      "proposedTags": ["skull wallet chain", "biker wallet chain", "mens pants chain", "steel wallet chain", "gothic wallet chain", "punk trouser chain", "skull pants chain", "biker pants chain", "gothic pants chain", "punk wallet chain", "mens wallet chain", "skull chain", "gothic accessory"],
+      "searchIntent": "stainless steel skull biker wallet chain for men",
+      "evidence": [
+        "The fresh Etsy baseline shows 279 listing views, 19 favorites, and zero verified orders for exact listing 4387228641, while the duplicate SS01 source SKU is isolated by canonical Etsy listing ID.",
+        "The current tags fragment buyer intent across broad chain and accessory terms; the exact package consolidates truthful skull wallet chain, biker wallet chain, pants chain, and steel wallet chain phrases without changing product facts or protected fields."
+      ],
+      "repairPriorityScore": 78,
+      "repairPriorityComponents": {
+        "technicalDefect": 22,
+        "titleTagRepairability": 20,
+        "commercialPotentialAndBrandFit": 18,
+        "changeSafety": 10,
+        "dataReliability": 8
+      },
+      "views": 279,
+      "favorites": 19,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": false
+    },
+    { "listingId": "1681075317", "product": "Gothic Key Necklace", "sku": "SP218", "proposedTitle": "", "proposedTags": [], "searchIntent": "sterling silver gothic key necklace", "evidence": ["The saved priority review identifies a visual and value-trust gap, not a deterministic title/tag defect.", "A separate exact Founder-authorized visual package is still unavailable."], "repairPriorityScore": 73.43, "views": 81, "favorites": 13, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": true, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "868314062", "product": "Custom Size Skull Ring", "sku": "SJ255", "proposedTitle": "", "proposedTags": [], "searchIntent": "sterling silver custom size skull ring", "evidence": ["The listing was updated on 2026-08-13 and remains inside the 30-day cooldown.", "The proven opportunity is visual and requires separate exact authorization."], "repairPriorityScore": 76.8, "views": 20, "favorites": 0, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": true, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "970539130", "product": "Hand-Chiseled Skull Ring", "sku": "SJ161", "proposedTitle": "", "proposedTags": [], "searchIntent": "hand chiseled sterling silver skull ring", "evidence": ["The listing was updated on 2026-08-13 and remains inside the 30-day cooldown.", "Image-order drift leaves the visual rollback package incomplete."], "repairPriorityScore": 73.6, "views": 20, "favorites": 1, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": true, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "1756185464", "product": "Chunky Skull Ring", "sku": "SJ321", "proposedTitle": "", "proposedTags": [], "searchIntent": "chunky sterling silver skull ring", "evidence": ["Authoritative size-specific data has not resolved 32-42g versus 35g wording.", "The duplicate SJ321 mapping remains unresolved."], "repairPriorityScore": 74.2, "views": 13, "favorites": 1, "stableSeller": false, "activeExperiment": false, "materialConfirmed": false, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": true, "independentSearchAngle": false, "identifierReliable": false },
+    { "listingId": "4465182574", "product": "Sterling Silver Bone Cross Pendant Necklace", "sku": "SP95", "proposedTitle": "", "proposedTags": [], "searchIntent": "sterling silver bone cross pendant necklace", "evidence": ["Batch 14 tracking remains active.", "The listing is protected by the 30-day cooldown."], "repairPriorityScore": 98, "views": 78, "favorites": 14, "stableSeller": false, "activeExperiment": true, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "4298603550", "product": "Geometric Skull Ring", "sku": "SJ112", "proposedTitle": "", "proposedTags": [], "searchIntent": "angular geometric silver skull ring", "evidence": ["Batch 11 tracking remains active.", "The listing is protected by the 30-day cooldown."], "repairPriorityScore": 87, "views": 68, "favorites": 5, "stableSeller": false, "activeExperiment": true, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "4311916489", "product": "Lunar Crater Bangle", "sku": "SB201", "proposedTitle": "", "proposedTags": [], "searchIntent": "lunar crater textured silver bangle", "evidence": ["Batch 10 tracking remains active.", "The listing is protected by the 30-day cooldown."], "repairPriorityScore": 83, "views": 40, "favorites": 1, "stableSeller": false, "activeExperiment": true, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "4295410951", "product": "Unicorn Pendant Necklace", "sku": "SP84", "proposedTitle": "", "proposedTags": [], "searchIntent": "sterling silver unicorn pendant necklace", "evidence": ["The exact listing mapping is reliable and no orders are recorded.", "Commercial and brand-fit evidence remains below the Green threshold."], "repairPriorityScore": 73, "views": 174, "favorites": 13, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "1795913803", "product": "Carved Heart Pendant", "sku": "SP229", "proposedTitle": "", "proposedTags": [], "searchIntent": "carved sterling silver heart pendant", "evidence": ["No verified order is recorded.", "The duplicate SKU mapping conflict remains unresolved."], "repairPriorityScore": 68, "views": 77, "favorites": 6, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": false },
+    { "listingId": "1822724358", "product": "Lucky Horseshoe Necklace", "sku": "SP171", "proposedTitle": "", "proposedTags": [], "searchIntent": "sterling silver lucky horseshoe necklace", "evidence": ["No verified order is recorded.", "No deterministic title/tag-only defect is proven."], "repairPriorityScore": 67, "views": 92, "favorites": 4, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "1777163250", "product": "Wolf Clan Ring", "sku": "SJ132", "proposedTitle": "", "proposedTags": [], "searchIntent": "925 silver fantasy wolf warrior ring", "evidence": ["The current title and tags already establish the search angle.", "The listing remains inside the 30-day cooldown."], "repairPriorityScore": 55, "views": 110, "favorites": 6, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "4515032622", "product": "Ram Ring for Men", "sku": "SJ351", "proposedTitle": "", "proposedTags": [], "searchIntent": "925 sterling silver ram horn ring", "evidence": ["The current title and tags are healthy.", "The listing remains inside the 30-day cooldown."], "repairPriorityScore": 39, "views": 22, "favorites": 4, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true },
+    { "listingId": "1893979797", "product": "Sterling Silver Weave Bracelet", "sku": null, "proposedTitle": "", "proposedTags": [], "searchIntent": "woven silver bracelet", "evidence": ["Material purity wording remains conflicting.", "Physical construction remains unresolved."], "repairPriorityScore": 60, "views": 0, "favorites": 0, "stableSeller": false, "activeExperiment": false, "materialConfirmed": false, "productTypeConfirmed": true, "structureConfirmed": false, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": true, "independentSearchAngle": false, "identifierReliable": false }
+  ]
+}

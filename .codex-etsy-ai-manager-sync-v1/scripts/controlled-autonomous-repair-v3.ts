@@ -11,6 +11,10 @@ import {
   type RepairPriorityComponents
 } from "../src/lib/integrations/etsy/controlled-autonomous-repair-v3";
 import {
+  applyEtsyIdentifierResolution,
+  type EtsyIdentifierResolution
+} from "../src/lib/integrations/etsy/identifier-resolution";
+import {
   assertEtsyListingWriteGuard,
   hashEtsyListingWriteDiffs,
   isControlledAutonomousRepairV3Enabled
@@ -52,6 +56,11 @@ type RepairPlan = {
   batchKey: string;
   baselineReportPath: string;
   candidates: PlanCandidate[];
+};
+
+type IdentifierResolutionRegistry = {
+  version: "V3";
+  resolutions: EtsyIdentifierResolution[];
 };
 
 const MAX_CANDIDATE_BACKLOG = 215;
@@ -228,6 +237,24 @@ function rankCandidateBacklog(candidates: PlanCandidate[]): PlanCandidate[] {
       return right.repairPriorityScore - left.repairPriorityScore;
     })
     .slice(0, MAX_REVIEW_POOL);
+}
+
+function applyRegisteredIdentifierResolutions(candidates: PlanCandidate[]): PlanCandidate[] {
+  const registryPath = path.join(
+    process.cwd(),
+    "config",
+    "controlled-autonomous-repair-v3",
+    "identifier-resolutions.json"
+  );
+  if (!fs.existsSync(registryPath)) return candidates;
+  const registry = JSON.parse(fs.readFileSync(registryPath, "utf8")) as IdentifierResolutionRegistry;
+  if (registry.version !== "V3" || !Array.isArray(registry.resolutions)) {
+    throw new Error("V3 identifier resolution registry is invalid.");
+  }
+  if (new Set(registry.resolutions.map((item) => item.listingId)).size !== registry.resolutions.length) {
+    throw new Error("V3 identifier resolution registry contains duplicate listing IDs.");
+  }
+  return candidates.map((candidate) => applyEtsyIdentifierResolution(candidate, registry.resolutions));
 }
 
 function walkJsonFiles(root: string): string[] {
@@ -555,7 +582,8 @@ async function main(): Promise<void> {
   }
   const baselinePath = path.resolve(plan.baselineReportPath);
   const baselines = verifyBaselineReport(baselinePath);
-  const candidatePool = rankCandidateBacklog(plan.candidates);
+  const resolvedCandidates = applyRegisteredIdentifierResolutions(plan.candidates);
+  const candidatePool = rankCandidateBacklog(resolvedCandidates);
   const runRoot = path.join(process.cwd(), "exports", "controlled-autonomous-repair-v3", plan.batchKey);
   const successMarker = path.join(runRoot, "execution-success.json");
   if (fs.existsSync(successMarker)) {

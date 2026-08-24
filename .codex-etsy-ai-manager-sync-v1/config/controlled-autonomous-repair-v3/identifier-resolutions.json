@@ -1,0 +1,43 @@
+{
+  "version": "V3",
+  "updatedAt": "2026-08-22T00:00:00.000Z",
+  "policy": "A duplicate source SKU is never used as a join key. Exact Etsy listing ID is the canonical identity for orders, baselines, writes, verification, and rollback.",
+  "resolutions": [
+    {
+      "listingId": "4387228641",
+      "canonicalKey": "etsy-listing:4387228641",
+      "sourceSku": "SS01",
+      "sourceSkuUnique": false,
+      "productAliases": [
+        "Stainless Skull Pants Chain",
+        "Gothic Skull Pants Chain - Stainless Steel Biker Wallet Chain"
+      ],
+      "orderAttribution": "etsy_listing_id",
+      "rollbackIdentity": "etsy_listing_id",
+      "etsySkuWriteAuthorized": false,
+      "status": "resolved",
+      "evidence": [
+        "Production read-only export identifies Etsy listing 4387228641 as the stainless steel skull pants chain with source SKU SS01.",
+        "Verified order history contains no order for listing 4387228641."
+      ]
+    },
+    {
+      "listingId": "4387570273",
+      "canonicalKey": "etsy-listing:4387570273",
+      "sourceSku": "SS01",
+      "sourceSkuUnique": false,
+      "productAliases": [
+        "Gothic Cross Pants Chain",
+        "Gothic Cross Pants Chain - Titanium Steel Punk Wallet Chain for Men"
+      ],
+      "orderAttribution": "etsy_listing_id",
+      "rollbackIdentity": "etsy_listing_id",
+      "etsySkuWriteAuthorized": false,
+      "status": "resolved",
+      "evidence": [
+        "Production read-only export identifies Etsy listing 4387570273 as the titanium steel cross pants chain with source SKU SS01.",
+        "Verified order history attributes the 2026-02-01 sale to exact listing 4387570273, not to listing 4387228641."
+      ]
+    }
+  ]
+}
