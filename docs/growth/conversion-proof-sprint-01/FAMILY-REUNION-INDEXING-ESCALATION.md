@@ -16,8 +16,14 @@ Target: `https://mykinlegacy.com/journal/family-reunion-gift-ideas`
 
 ## Escalation decision
 
-The technical gates are clean, so the approved escalation is exactly one GSC manual indexing request for this URL. No content rewrite, metadata change, duplicate request, or bulk indexing action is authorized. The request counter remains zero until the GSC interface returns a successful acknowledgement; an attempted click is not counted twice.
+The technical gates were clean, so exactly one GSC manual indexing request was submitted for this URL.
+
+- Submitted: 2026-08-29 23:13:29 Asia/Shanghai (2026-08-29T15:13:29.546Z).
+- Request count: 1.
+- GSC acknowledgement: `Indexing requested` / `URL was added to a priority crawl queue. Submitting a page multiple times will not change its queue position or priority.`
+- Scope: only `/journal/family-reunion-gift-ideas`.
+- Content, Title, Meta, H1, sitemap, Modern Crest, and Family Legacy: unchanged.
 
 ## Follow-up
 
-Recheck crawl/index status during Day 7 and Day 14 reviews. Do not resubmit within this sprint. If the page remains discovered but not indexed, retain evidence and escalate via content-quality/internal-demand review rather than another manual request.
+Enter the seven-day observation period immediately. Recheck crawl/index status on 2026-09-05 and again during the Day 14 review. Do not resubmit within this sprint. If the page remains discovered but not indexed, retain evidence and escalate via content-quality/internal-demand review rather than another manual request.
