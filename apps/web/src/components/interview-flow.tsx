@@ -51,11 +51,15 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
 
   useEffect(() => {
     activeStepCodeRef.current = step.code;
+    trackEvent("intake_stage_started", {
+      stage_code: step.code,
+      stage_number: stepIndex + 1
+    });
     trackEvent("funnel_step_viewed", {
       step_name: `interview_${step.code}`,
       interview_id: interviewId
     });
-  }, [interviewId, step.code]);
+  }, [interviewId, step.code, stepIndex]);
 
   useEffect(() => {
     function recordAbandonment() {
@@ -144,6 +148,11 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
         JSON.stringify({ current_step: step.code, selected })
       );
       const durationMs = Math.round(performance.now() - startedAt);
+      trackEvent(
+        "intake_stage_completed",
+        { stage_code: step.code, stage_number: stepIndex + 1 },
+        { durationMs, stepName: `interview_${step.code}` }
+      );
       trackEvent("interview_step_completed", { step_code: step.code }, { durationMs });
       trackEvent(
         "funnel_step_completed",
@@ -152,6 +161,9 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
       );
       if (stepIndex >= INTERVIEW_STEPS.length - 1) {
         completedRef.current = true;
+        trackEvent("questionnaire_completed", {
+          stage_count: INTERVIEW_STEPS.length
+        });
         trackEvent("funnel_step_completed", {
           step_name: "guided_interview",
           interview_id: interviewId

@@ -75,6 +75,55 @@ describe("AnalyticsService", () => {
       });
     }
   });
+
+  it("stores the unified funnel contract with explicit internal classification", async () => {
+    const prisma = createPrisma();
+    const service = new AnalyticsService(prisma as unknown as PrismaService);
+
+    await service.track({
+      event_name: "stripe_checkout_created",
+      metadata: {
+        session_id: "90b50a1b-94d1-4f85-96af-c900c4f1371a",
+        source: "chatgpt.com",
+        medium: "referral",
+        landing_page: "/",
+        device_category: "desktop",
+        traffic_type: "CODEX_QA",
+        traffic_type_reason: "explicit_cookie_marker"
+      }
+    });
+
+    const created = vi.mocked(prisma.db.auditLog.create).mock.calls[0]?.[0].data;
+    expect(created?.metadataJson).toMatchObject({
+      contract_version: "2.0",
+      traffic_type: "CODEX_QA",
+      reporting: {
+        RAW: true,
+        EXCLUDED_INTERNAL: true,
+        ESTIMATED_EXTERNAL: false
+      }
+    });
+  });
+
+  it("classifies automation from user agent without using IP as identity", async () => {
+    const prisma = createPrisma();
+    const service = new AnalyticsService(prisma as unknown as PrismaService);
+
+    await service.track(
+      {
+        event_name: "landing_view",
+        metadata: { traffic_type: "REAL_VISITOR" }
+      },
+      { ip: "203.0.113.10", userAgent: "MyKinLegacyReadOnlyMonitor/1.0" }
+    );
+
+    const created = vi.mocked(prisma.db.auditLog.create).mock.calls[0]?.[0].data;
+    expect(created?.ipHash).toMatch(/^[a-f0-9]{64}$/);
+    expect(created?.metadataJson).toMatchObject({
+      traffic_type: "AUTOMATED_MONITOR",
+      traffic_type_reason: "automated_user_agent"
+    });
+  });
 });
 
 function createPrisma() {

@@ -14,6 +14,16 @@ interface AnalyticsDb {
 }
 
 const ALLOWED_EVENTS = new Set([
+  "landing_view",
+  "collection_view",
+  "examples_view",
+  "create_started",
+  "intake_stage_started",
+  "intake_stage_completed",
+  "questionnaire_completed",
+  "stripe_checkout_created",
+  "payment_submitted",
+  "purchase_completed",
   "funnel_step_viewed",
   "funnel_step_completed",
   "landing_cta_clicked",
@@ -42,6 +52,19 @@ const ALLOWED_EVENTS = new Set([
   "vault_opened",
   "email_sent_confirmed",
   "artifact_downloaded"
+]);
+
+const INTERNAL_TRAFFIC_TYPES = new Set([
+  "OWNER_INTERNAL",
+  "CODEX_QA",
+  "AUTOMATED_MONITOR",
+  "DEVELOPMENT"
+]);
+
+const TRAFFIC_TYPES = new Set([
+  "REAL_VISITOR",
+  ...INTERNAL_TRAFFIC_TYPES,
+  "UNKNOWN"
 ]);
 
 const BLOCKED_KEYS = new Set([
@@ -98,6 +121,9 @@ export class AnalyticsService {
     const inputOrderId = stringValue(input.order_id);
     const durationMs = numberValue(input.duration_ms);
     const clientTimestamp = stringValue(input.client_timestamp);
+    const sanitizedMetadata = sanitizeRecord(input.metadata);
+    const traffic = classifyTraffic(sanitizedMetadata, signals.userAgent);
+    const excludedInternal = INTERNAL_TRAFFIC_TYPES.has(traffic.type);
     const order = await this.findOrder(inputOrderId, orderNumber);
     const now = new Date();
 
@@ -113,7 +139,7 @@ export class AnalyticsService {
         beforeJson: null,
         afterJson: null,
         metadataJson: {
-          contract_version: "1.0",
+          contract_version: "2.0",
           order_id: order?.id ?? (isUlid(inputOrderId) ? inputOrderId : null),
           order_number: order?.orderNumber ?? orderNumber ?? null,
           timestamp: now.toISOString(),
@@ -121,7 +147,21 @@ export class AnalyticsService {
           step_name: stepName,
           duration_ms: durationMs,
           user_agent_hash: signals.userAgent ? sha256(signals.userAgent) : null,
-          metadata: sanitizeRecord(input.metadata)
+          traffic_type: traffic.type,
+          traffic_type_reason: traffic.reason,
+          reporting: {
+            RAW: true,
+            EXCLUDED_INTERNAL: excludedInternal,
+            ESTIMATED_EXTERNAL: !excludedInternal && traffic.type !== "UNKNOWN"
+          },
+          metadata: {
+            ...sanitizedMetadata,
+            traffic_type: traffic.type,
+            traffic_type_reason: traffic.reason,
+            reporting_raw: true,
+            reporting_excluded_internal: excludedInternal,
+            reporting_estimated_external: !excludedInternal && traffic.type !== "UNKNOWN"
+          }
         },
         createdAt: now
       }
@@ -196,6 +236,26 @@ function numberValue(value: unknown): number | undefined {
 
 function isUlid(value: string | undefined): value is string {
   return Boolean(value && /^[0-9A-HJKMNP-TV-Z]{26}$/.test(value));
+}
+
+function classifyTraffic(
+  metadata: Record<string, unknown>,
+  userAgent?: string
+): { type: string; reason: string } {
+  const claimed = stringValue(metadata.traffic_type)?.toUpperCase();
+  const automatedUserAgent = Boolean(
+    userAgent && /MyKinLegacyReadOnlyMonitor|Lighthouse|Playwright|HeadlessChrome|bot\b|crawler|spider/i.test(userAgent)
+  );
+  if (automatedUserAgent) {
+    return { type: "AUTOMATED_MONITOR", reason: "automated_user_agent" };
+  }
+  if (claimed && TRAFFIC_TYPES.has(claimed)) {
+    return {
+      type: claimed,
+      reason: stringValue(metadata.traffic_type_reason) ?? "validated_client_classification"
+    };
+  }
+  return { type: "UNKNOWN", reason: "missing_or_invalid_classification" };
 }
 
 function sha256(value: string): string {

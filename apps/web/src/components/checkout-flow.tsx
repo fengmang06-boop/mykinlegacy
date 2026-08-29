@@ -186,8 +186,13 @@ export function CheckoutFlow({ orderNumber }: { orderNumber: string }) {
       });
       setState("redirecting_to_stripe");
       const durationMs = Math.round(performance.now() - startedAt);
-      trackEvent("checkout_started", { order_number: orderNumber }, { durationMs, stepName: "checkout" });
+      trackEvent(
+        "stripe_checkout_created",
+        { order_number: orderNumber },
+        { durationMs, stepName: "stripe_checkout" }
+      );
       trackEvent("funnel_step_completed", { step_name: "checkout", order_number: orderNumber }, { durationMs, stepName: "checkout" });
+      trackEvent("payment_submitted", { order_number: orderNumber }, { stepName: "stripe_checkout" });
       window.location.assign(session.checkout_url);
     } catch (checkoutError) {
       setError(

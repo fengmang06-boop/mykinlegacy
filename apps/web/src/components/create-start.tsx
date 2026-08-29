@@ -31,7 +31,7 @@ export function CreateStart() {
       `mykinlegacy_founder_demo_interview_${interview.interview_id}`,
       JSON.stringify({ interview_id: interview.interview_id, answers: [] })
     );
-    trackEvent("interview_started", {
+    trackEvent("create_started", {
       interview_id: interview.interview_id,
       mode: "founder_demo"
     });
@@ -49,7 +49,7 @@ export function CreateStart() {
     try {
       const interview = await api.createInterview();
       window.sessionStorage.setItem("ai_heritage_interview_id", interview.interview_id);
-      trackEvent("interview_started", { interview_id: interview.interview_id });
+      trackEvent("create_started", { interview_id: interview.interview_id });
       trackEvent("funnel_step_completed", {
         step_name: "create_page",
         interview_id: interview.interview_id

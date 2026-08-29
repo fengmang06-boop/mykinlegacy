@@ -36,7 +36,7 @@ export function PaymentSuccess() {
       trackEvent("founder_demo_collection_ready", { order_number: orderNumber });
       if (!paymentSuccessTracked.current) {
         paymentSuccessTracked.current = true;
-        trackEvent("payment_success", { order_number: orderNumber, mode: "founder_demo" }, { stepName: "payment" });
+        trackEvent("purchase_completed", { order_number: orderNumber, mode: "founder_demo" }, { stepName: "payment" });
         trackEvent("checkout_completed", { order_number: orderNumber, mode: "founder_demo" }, { stepName: "stripe_checkout" });
       }
       return;
@@ -55,7 +55,7 @@ export function PaymentSuccess() {
               trackEvent("payment_verified", { order_number: orderNumber });
               if (!paymentSuccessTracked.current) {
                 paymentSuccessTracked.current = true;
-                trackEvent("payment_success", { order_number: orderNumber }, { stepName: "payment" });
+                trackEvent("purchase_completed", { order_number: orderNumber }, { stepName: "payment" });
                 trackEvent("checkout_completed", { order_number: orderNumber }, { stepName: "stripe_checkout" });
               }
             } else {

@@ -272,6 +272,25 @@ describe("customer frontend flow", () => {
     expect(ga4EventFor("interview_started")).toEqual({ name: "create_started", params: {} });
   });
 
+  it("maps the conversion-proof funnel events to their exact GA4 names", () => {
+    expect(ga4EventFor("landing_view")).toEqual({ name: "landing_view", params: {} });
+    expect(ga4EventFor("collection_view")).toEqual({ name: "collection_view", params: {} });
+    expect(ga4EventFor("examples_view")).toEqual({ name: "examples_view", params: {} });
+    expect(ga4EventFor("intake_stage_started", { stage_code: "recipient" })).toEqual({
+      name: "intake_stage_started",
+      params: { stage_code: "recipient" }
+    });
+    expect(ga4EventFor("stripe_checkout_created")).toEqual({
+      name: "stripe_checkout_created",
+      params: {}
+    });
+    expect(ga4EventFor("payment_submitted")).toEqual({ name: "payment_submitted", params: {} });
+    expect(ga4EventFor("purchase_completed")).toEqual({
+      name: "purchase_completed",
+      params: {}
+    });
+  });
+
   it("private pages include noindex", () => {
     expect(createMetadata.robots).toMatchObject({ index: false, follow: false });
     expect(checkoutMetadata.robots).toMatchObject({ index: false, follow: false });
