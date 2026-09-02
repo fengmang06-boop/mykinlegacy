@@ -1,0 +1,70 @@
+{
+  "mission": "SK02_EXACT_MATERIAL_TAG_REPAIR",
+  "batch_key": "batch-16-sk02-2026-09-02",
+  "shop_id": "25333110",
+  "listing_id": "4330006796",
+  "sku": "SK02",
+  "product": "Sterling Silver Skull Pants Chain",
+  "authorization": {
+    "founder_authorized": true,
+    "approval_reference": "Founder message: 授权, 2026-09-02 Asia/Shanghai",
+    "scope": "materials_and_two_tags_only",
+    "all_other_fields": "FROZEN"
+  },
+  "expected_before": {
+    "baseline_sha256": "457dfffc67eacca451f8c004a2b38ac1786c94aae4dbfc4112d4add3cc2af3b7",
+    "updated_timestamp": 1783399290,
+    "title": "Sterling Silver Skull Pants Chain: Gothic Biker Wallet Chain, Motorcycle Accessory",
+    "tags": [
+      "chain for men",
+      "trouser chain",
+      "wallet chain",
+      "gifts for her",
+      "gothic jewelry",
+      "friend gift",
+      "tactical keychain",
+      "silver keychain",
+      "Skull Pants Chain",
+      "Biker Wallet Chain",
+      "Gift for Him",
+      "Men's Biker Jewelry",
+      "Mens Fashion Chain"
+    ],
+    "required_material_conflict": ["999 Pure Silver", "925_or_sterling_claim"],
+    "image_ids": ["6991084082", "7039062429", "7039062425", "6991084076", "7039062405", "6991084078", "7039062403", "6991084100", "6991084096", "6991084080"]
+  },
+  "proposed": {
+    "title": "Sterling Silver Skull Pants Chain: Gothic Biker Wallet Chain, Motorcycle Accessory",
+    "tags": [
+      "chain for men",
+      "trouser chain",
+      "wallet chain",
+      "gifts for her",
+      "gothic jewelry",
+      "friend gift",
+      "silver waist chain",
+      "motorcycle chain",
+      "Skull Pants Chain",
+      "Biker Wallet Chain",
+      "Gift for Him",
+      "Men's Biker Jewelry",
+      "Mens Fashion Chain"
+    ],
+    "materials": ["925 sterling silver"]
+  },
+  "validation": {
+    "engine": "DETERMINISTIC_VALIDATOR",
+    "repair_priority_score": 91,
+    "exactly_13_unique_tags": true,
+    "tag_length_limit_pass": true,
+    "material_truth_confirmed_by_founder": true,
+    "orders_saved": 0
+  },
+  "review": {
+    "engine": "INDEPENDENT_REVIEWER",
+    "reviewer_confidence": 96,
+    "decision": "GREEN",
+    "reason": "Founder confirmed SK02 is 925 silver; exact patch removes the false 999 material claim and two keychain product-type tags while freezing title and all protected fields."
+  },
+  "integrity_sha256": "2dfdf6c5c91374396a83e9b0adfca6d4f51b7768262d2257f1c003c2931a85de"
+}
