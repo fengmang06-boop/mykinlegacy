@@ -1,0 +1,67 @@
+name: Codex Etsy SKU Report Diagnostic
+
+on:
+  push:
+    branches:
+      - codex/etsy-tag-error-repair-2026-09-02
+    paths:
+      - ".github/workflows/codex-etsy-sku-report-diagnostic.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          mkdir -p ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Read fail-closed report
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/sj345-sku-repair-report.json" \
+            /tmp/report.json
+          node - <<'NODE'
+          const report = require('/tmp/report.json');
+          const summary = JSON.stringify({
+            status: report.status,
+            error: report.error || null,
+            requests: report.requests,
+            prewrite: report.prewrite || null,
+            postwrite: report.postwrite || null,
+            verification: report.verification || null,
+            rollback: report.rollback,
+            safety: report.safety
+          });
+          console.log(`::error title=SKU repair fail-closed report::${summary}`);
+          process.exit(1);
+          NODE
