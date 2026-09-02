@@ -1121,3 +1121,12 @@ Evidence: A fresh Etsy baseline captured at `2026-09-02T11:17:44.140Z` showed th
 Decision: Repair score 98, deterministic validation passed, independent-review confidence 100 and Green. The title changed from `Sterling Silver Monkey Necklace: Handmade Animal Totem Pendant` to `Monkey Pendant Necklace in 925 Sterling Silver, Handmade Animal Totem Jewelry`; `monkey keychain` was replaced by `animal totem jewelry`, with the other 12 tags unchanged. GitHub Actions run `33624268812` completed successfully and asserted one exactly verified result for listing `1815479817`.
 Safety: One exact-diff-bound write was executed. Exact title, all 13 tags, active state and protected fields were verified; rollback evidence was retained. No HTTP 429 occurred. Final production guards were `ETSY_READ_ONLY_MODE=true`, `ETSY_WRITE_APPROVED=false`, valid `listings_w`, and 4,983/5,000 quota remaining.
 Notes: Batch 17 tracking started at `2026-09-02T11:22:54.238Z`. D1 is due `2026-09-03T11:22:54.238Z`, D3 `2026-09-05T11:22:54.238Z`, D7 `2026-09-09T11:22:54.238Z`, and D14 `2026-09-16T11:22:54.238Z`. SK03 and SJ104-2 remain Yellow because their cross-field material or gemstone facts are unresolved; the remaining confirmed-error listings retain history, identity or assay protections.
+
+## 2026-09-02 - Founder Weight, Material And SKU Rules Updated
+
+Module: MENSSKULL Etsy product-fact and identifier repair
+Listing or scope: Current titles, duplicate SKUs, SJ321, SJ345 and SK03.
+Evidence: The Founder confirmed that current titles are authoritative; ring weight varies by selected size; SJ321 should state 32g+; SJ345 is 925 sterling silver and 35g+; and SK03 is 925 sterling silver. The saved 215-listing snapshot contains 28 duplicate-SKU groups covering 60 listings. Literal +1 targets are already occupied for priority sequences including SJ321/SJ322, SJ345/SJ346 and SSB129/SSB130/SSB131.
+Decision: Product facts are accepted and the previous weight/material blockers are resolved. SKU writes remain blocked until each exact listing-to-new-SKU mapping is collision-free and identifies which listing retains the original value. Titles remain frozen.
+Safety: No Etsy API call or production write was made. No SKU, inventory, price, quantity, title, description, material or tag field changed. Any later SKU repair must preserve the complete inventory structure and carry an exact rollback.
+Notes: Updated fact and collision record saved at `outputs/mensskull-etsy-growth-v2/2026-09-02/priority-content-repair/FOUNDER_FACT_RESOLUTION_AND_EXACT_FIELDS.md`.
