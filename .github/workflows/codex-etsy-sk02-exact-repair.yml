@@ -132,6 +132,8 @@ jobs:
           cd /root/mykinlegacy/mensskull-etsy-ai-manager
           grep -Eq '^ETSY_READ_ONLY_MODE=true$' .env.local
           grep -Eq '^ETSY_WRITE_APPROVED=false$' .env.local
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 5
           curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/status > /tmp/sk02-final-status.json
           node - <<'NODE'
           const status = require('/tmp/sk02-final-status.json');

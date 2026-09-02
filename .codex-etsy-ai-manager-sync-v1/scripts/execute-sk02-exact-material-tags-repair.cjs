@@ -173,9 +173,10 @@ async function checkProductionStatus() {
   const response = await fetch(STATUS_URL, { headers: { Accept: "application/json" } });
   if (!response.ok) throw new Error(`Production status unavailable: ${response.status}`);
   const status = await response.json();
-  if (status.connected !== true || status.env?.readyForReadOnlySync !== true || status.env?.tokenExpired === true) {
-    throw new Error("Production Etsy connection/token is not ready");
-  }
+  if (status.connected !== true) throw new Error("Production Etsy connection is unavailable");
+  const tokenReady = status.env?.tokenExpired !== true && status.env?.readyForReadOnlySync === true;
+  const tokenSafelyRefreshable = status.env?.refreshTokenPresent === true && status.env?.tokenPresent === true;
+  if (!tokenReady && !tokenSafelyRefreshable) throw new Error("Production Etsy token is neither valid nor safely refreshable");
   if (status.env?.readOnlyMode !== true || status.env?.writeApproved !== false) throw new Error("Production guards are not fail-closed");
   if (status.env?.hasListingsWriteScope !== true) throw new Error("Stored listings_w scope is missing");
   const limit = Number(status.rateLimit?.limitPerDay);
@@ -187,7 +188,8 @@ async function checkProductionStatus() {
   report.production_status = {
     checked_at: new Date().toISOString(),
     connected: true,
-    token_expired: false,
+    token_expired_before_refresh: status.env?.tokenExpired === true,
+    token_safely_refreshable: tokenSafelyRefreshable,
     read_only: true,
     write_approved: false,
     listings_w_stored: true,

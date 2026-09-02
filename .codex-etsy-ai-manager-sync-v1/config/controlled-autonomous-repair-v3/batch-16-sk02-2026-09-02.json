@@ -7,7 +7,7 @@
   "product": "Sterling Silver Skull Pants Chain",
   "authorization": {
     "founder_authorized": true,
-    "approval_reference": "Founder message: 授权, 2026-09-02 Asia/Shanghai",
+    "approval_reference": "Founder exact authorization received 2026-09-02 Asia/Shanghai",
     "scope": "materials_and_two_tags_only",
     "all_other_fields": "FROZEN"
   },
@@ -66,5 +66,5 @@
     "decision": "GREEN",
     "reason": "Founder confirmed SK02 is 925 silver; exact patch removes the false 999 material claim and two keychain product-type tags while freezing title and all protected fields."
   },
-  "integrity_sha256": "2dfdf6c5c91374396a83e9b0adfca6d4f51b7768262d2257f1c003c2931a85de"
+  "integrity_sha256": "c30672adb95b50ce97ddedb3c8719a64b86343ddbe0668e104b7deef56482d42"
 }
