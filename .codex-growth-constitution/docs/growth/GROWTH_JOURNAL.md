@@ -1130,3 +1130,12 @@ Evidence: The Founder confirmed that current titles are authoritative; ring weig
 Decision: Product facts are accepted and the previous weight/material blockers are resolved. SKU writes remain blocked until each exact listing-to-new-SKU mapping is collision-free and identifies which listing retains the original value. Titles remain frozen.
 Safety: No Etsy API call or production write was made. No SKU, inventory, price, quantity, title, description, material or tag field changed. Any later SKU repair must preserve the complete inventory structure and carry an exact rollback.
 Notes: Updated fact and collision record saved at `outputs/mensskull-etsy-growth-v2/2026-09-02/priority-content-repair/FOUNDER_FACT_RESOLUTION_AND_EXACT_FIELDS.md`.
+
+## 2026-09-02 - Batch 18 SJ345 SKU Repair Halted Before Write
+
+Module: MENSSKULL Etsy exact SKU-only repair
+Listing or scope: Heavy Lynx Ring `4493860774`; proposed `SJ345` to `SJ345-1` so Viking Wolf Ring `4497064699` can retain canonical SKU `SJ345`.
+Evidence: The collision-free suffix policy was Founder-confirmed and the full saved snapshot showed `SJ345-1` unoccupied. Production scope verification, one target listing read and one target inventory read succeeded with no HTTP 429. The live target title or state did not match the saved exact baseline, triggering `Live identity/state drift` before the canonical-listing read or any write window.
+Decision: `HALTED_PREWRITE`. No retry or continuation on 2026-09-02. Rebuild this exact package only from a fresh live title, state and full inventory baseline on a later eligible run.
+Safety: Zero Etsy writes, zero fields modified and rollback not required. Final guards were read-only true and write-approved false. Quota after the stopped run was 4,977/5,000.
+Notes: Run `33628674031`; fail-closed evidence saved at `outputs/mensskull-etsy-growth-v2/2026-09-02/sku-repair/BATCH_18_SJ345_PREWRITE_HALT.md`.
