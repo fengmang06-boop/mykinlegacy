@@ -1,0 +1,38 @@
+{
+  "mission": "EXACT_SKU_ONLY_REPAIR",
+  "batch_key": "batch-18-sj345-lynx-2026-09-02",
+  "shop_id": "25333110",
+  "listing_id": "4493860774",
+  "product": "Heavy Lynx Ring",
+  "expected_before": {
+    "title": "Heavy Lynx Ring for Men – Solid 925 Sterling Silver Bobcat Head Ring, Gothic Biker Statement Jewelry",
+    "state": "active",
+    "sku": "SJ345"
+  },
+  "proposed": {
+    "sku": "SJ345-1"
+  },
+  "canonical_listing": {
+    "listing_id": "4497064699",
+    "sku": "SJ345",
+    "product": "Viking Wolf Ring"
+  },
+  "authorization": {
+    "founder_authorized": true,
+    "scope": "sku_only",
+    "approval_reference": "Founder confirmed duplicate SKU suffix policy in the active Codex task on 2026-09-02"
+  },
+  "limits": {
+    "listings_written_today_before": 2,
+    "max_listings_per_day": 3
+  },
+  "validation": {
+    "source_sku_duplicated": true,
+    "target_sku_unoccupied_in_complete_snapshot": true,
+    "title_frozen": true,
+    "inventory_non_sku_fields_frozen": true,
+    "rollback_required": true,
+    "postwrite_readback_required": true
+  },
+  "integrity_sha256": "58c91af516e37a47f28929b7d8de4be0fad9420cfe9225554169c291f44e5ef0"
+}

@@ -1,0 +1,153 @@
+name: Codex Etsy SJ345 Exact SKU Repair
+
+on:
+  push:
+    branches:
+      - codex/etsy-tag-error-repair-2026-09-02
+    paths:
+      - ".github/workflows/codex-etsy-sj345-sku-repair.yml"
+      - ".codex-etsy-ai-manager-sync-v1/scripts/execute-exact-sku-only-repair.cjs"
+      - ".codex-etsy-ai-manager-sync-v1/config/sku-repair/batch-18-sj345-lynx-2026-09-02.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  execute-exact-sku-repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Package exact SKU-only repair
+        shell: bash
+        run: |
+          tar -czf /tmp/sj345-sku-repair.tgz \
+            -C .codex-etsy-ai-manager-sync-v1 \
+            scripts/execute-exact-sku-only-repair.cjs \
+            config/sku-repair/batch-18-sj345-lynx-2026-09-02.json
+
+      - name: Execute exact SKU-only repair
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" /tmp/sj345-sku-repair.tgz \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/sj345-sku-repair.tgz"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP=/root/mykinlegacy/mensskull-etsy-ai-manager
+          PACKAGE=/tmp/sj345-sku-repair-package
+          REPORT=/tmp/sj345-sku-repair-report.json
+          test -d "$APP"
+          test "$(realpath "$APP")" = "$APP"
+          rm -rf "$PACKAGE"
+          mkdir -p "$PACKAGE"
+          rm -f "$REPORT"
+          tar -xzf /tmp/sj345-sku-repair.tgz -C "$PACKAGE"
+          cd "$APP"
+          NODE_PATH="$APP/node_modules" node "$PACKAGE/scripts/execute-exact-sku-only-repair.cjs" \
+            --plan "$PACKAGE/config/sku-repair/batch-18-sj345-lynx-2026-09-02.json" \
+            --report "$REPORT"
+          node - <<'NODE'
+          const result = require('/tmp/sj345-sku-repair-report.json');
+          if (result.status !== 'WRITTEN_AND_EXACTLY_VERIFIED') throw new Error('SKU repair did not verify');
+          if (result.listing_id !== '4493860774') throw new Error('Wrong listing was modified');
+          if (result.verification?.sku_exact !== true || result.verification?.non_sku_inventory_unchanged !== true ||
+              result.verification?.title_unchanged !== true || result.verification?.state_active !== true) {
+            throw new Error('A post-write verification gate failed');
+          }
+          if (result.safety?.other_inventory_fields_modified !== false || result.safety?.read_only_restored !== true) {
+            throw new Error('Final safety state is invalid');
+          }
+          process.stdout.write(`SJ345_SKU_REPAIR_SUCCESS=${JSON.stringify({
+            listing_id: result.listing_id,
+            before: result.prewrite.skus,
+            after: result.postwrite.skus,
+            product_count: result.prewrite.product_count,
+            verification: result.verification,
+            quota_final: result.safety.quota_final,
+            http_429_count: result.safety.http_429_count,
+            integrity_sha256: result.integrity_sha256
+          })}\n`);
+          NODE
+          REMOTE
+
+      - name: Retrieve audit report
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/sj345-sku-repair-report.json" \
+            /tmp/sj345-sku-repair-report.json
+
+      - name: Upload audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: sj345-sku-repair-report
+          path: /tmp/sj345-sku-repair-report.json
+          if-no-files-found: warn
+          retention-days: 30
+
+      - name: Verify final production guards
+        if: always()
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd /root/mykinlegacy/mensskull-etsy-ai-manager
+          grep -Eq '^ETSY_READ_ONLY_MODE=true$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=false$' .env.local
+          pm2 restart mensskull-etsy-ai-manager --update-env
+          sleep 5
+          curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/status > /tmp/sj345-final-status.json
+          node - <<'NODE'
+          const status = require('/tmp/sj345-final-status.json');
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) throw new Error('Production guards are not restored');
+          if (status?.connected !== true || status?.env?.tokenExpired === true) throw new Error('Production Etsy status is unhealthy');
+          const limit = Number(status?.rateLimit?.limitPerDay);
+          const remaining = Number(status?.rateLimit?.remainingToday);
+          if (!Number.isFinite(limit) || !Number.isFinite(remaining) || remaining < Math.ceil(limit * 0.2)) throw new Error('Quota reserve is below 20%');
+          NODE
+          REMOTE
