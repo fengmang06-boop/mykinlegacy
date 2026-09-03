@@ -1,0 +1,542 @@
+{
+  "operation": "ETERNAL_GUARDIAN_ETSY_PUBLISH",
+  "started_at": "2026-09-03T06:25:41.775Z",
+  "status": "PUBLISHED_AND_API_VERIFIED",
+  "listing_id": "4567824728",
+  "listing_url": "https://www.etsy.com/listing/4567824728/winged-ankh-pendant-necklace-in-925",
+  "token": {
+    "refreshed": true,
+    "refresh_token_rotated": true,
+    "expires_at": "2026-09-03T07:25:42.405Z",
+    "scope": "shops_r listings_r listings_w transactions_r cart_r profile_r",
+    "backup_dir": "/root/mensskull-etsy-backups/eternal-guardian-publish/2026-09-03T06-25-42-405Z-token-refresh"
+  },
+  "official_scopes": [
+    "cart_r",
+    "listings_r",
+    "listings_w",
+    "profile_r",
+    "shops_r",
+    "transactions_r"
+  ],
+  "local_sku_collision_count": 0,
+  "source_listing": {
+    "listing_id": "4449012621",
+    "taxonomy_id": 1229,
+    "shipping_profile_id": 258015663340,
+    "readiness_state_id": 1402502990108,
+    "return_policy_id": 1373815074823,
+    "state": "active"
+  },
+  "readiness_definition": {
+    "readiness_state_id": 1402502990108,
+    "readiness_state": "made_to_order",
+    "min_processing_time": null,
+    "max_processing_time": null,
+    "processing_time_unit": null
+  },
+  "draft_verification": {
+    "passed": true,
+    "checks": {
+      "listing_id_exact": true,
+      "state_exact": true,
+      "title_exact": true,
+      "description_exact": true,
+      "tags_exact": true,
+      "materials_exact": true,
+      "quantity_exact": true,
+      "price_exact": true,
+      "taxonomy_exact": true,
+      "shipping_profile_exact": true,
+      "return_policy_exact": true,
+      "who_made_exact": true,
+      "when_made_exact": true,
+      "sku_exact": true,
+      "inventory_quantity_exact": true,
+      "inventory_price_exact": true,
+      "image_count_exact": true,
+      "image_ids_and_order_exact": true
+    },
+    "image_stack": [
+      {
+        "id": "8517838421",
+        "rank": 1
+      },
+      {
+        "id": "8469930248",
+        "rank": 2
+      },
+      {
+        "id": "8517838515",
+        "rank": 3
+      },
+      {
+        "id": "8517838559",
+        "rank": 4
+      },
+      {
+        "id": "8469930412",
+        "rank": 5
+      },
+      {
+        "id": "8469930462",
+        "rank": 6
+      }
+    ],
+    "skus": [
+      "246"
+    ]
+  },
+  "active_verification": {
+    "passed": true,
+    "checks": {
+      "listing_id_exact": true,
+      "state_exact": true,
+      "title_exact": true,
+      "description_exact": true,
+      "tags_exact": true,
+      "materials_exact": true,
+      "quantity_exact": true,
+      "price_exact": true,
+      "taxonomy_exact": true,
+      "shipping_profile_exact": true,
+      "return_policy_exact": true,
+      "who_made_exact": true,
+      "when_made_exact": true,
+      "sku_exact": true,
+      "inventory_quantity_exact": true,
+      "inventory_price_exact": true,
+      "image_count_exact": true,
+      "image_ids_and_order_exact": true
+    },
+    "image_stack": [
+      {
+        "id": "8517838421",
+        "rank": 1
+      },
+      {
+        "id": "8469930248",
+        "rank": 2
+      },
+      {
+        "id": "8517838515",
+        "rank": 3
+      },
+      {
+        "id": "8517838559",
+        "rank": 4
+      },
+      {
+        "id": "8469930412",
+        "rank": 5
+      },
+      {
+        "id": "8469930462",
+        "rank": 6
+      }
+    ],
+    "skus": [
+      "246"
+    ]
+  },
+  "uploaded_images": [
+    {
+      "rank": 1,
+      "filename": "01-eternal-guardian-lifestyle-primary.png",
+      "sha256": "82c6130007585c9d398c36398d62374c3132ff0902108e2a3f9cf8604148ac63",
+      "listing_image_id": "8517838421"
+    },
+    {
+      "rank": 2,
+      "filename": "02-winged-ankh-front-bright.png",
+      "sha256": "b447ffd180a082542a8d194278583fadf36a1b685e74aec5a3f39f83cdde12bd",
+      "listing_image_id": "8469930248"
+    },
+    {
+      "rank": 3,
+      "filename": "03-winged-ankh-front-oxidized.png",
+      "sha256": "43aca64cbc38d15c7cdf87e6c823e895630efd32cac65a8ecb782381745d5abd",
+      "listing_image_id": "8517838515"
+    },
+    {
+      "rank": 4,
+      "filename": "04-necklace-scale-display.png",
+      "sha256": "80fdbdd59fa593878708970fbe59d127de5f0d9789362260f05696defb705def",
+      "listing_image_id": "8517838559"
+    },
+    {
+      "rank": 5,
+      "filename": "05-eternal-guardian-lifestyle-front.png",
+      "sha256": "7e97af6f3b8abfc9428e85f09ebb8570385c958ba50fff60485db2cf8ea2abfb",
+      "listing_image_id": "8469930412"
+    },
+    {
+      "rank": 6,
+      "filename": "06-eternal-guardian-lifestyle-side.png",
+      "sha256": "958b47ce3273b77984466a88f6689ca22baa2d984ae318d0e4bdfaf0a2c7dc46",
+      "listing_image_id": "8469930462"
+    }
+  ],
+  "write_log": [
+    {
+      "timestamp": "2026-09-03T06:25:48.034Z",
+      "operation": "CREATE_DRAFT",
+      "listing_id": "4567824728",
+      "status": "WRITTEN"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:48.881Z",
+      "operation": "SET_INVENTORY",
+      "listing_id": "4567824728",
+      "sku": "246",
+      "status": "WRITTEN"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:51.460Z",
+      "operation": "UPLOAD_IMAGE",
+      "listing_id": "4567824728",
+      "rank": 1,
+      "filename": "01-eternal-guardian-lifestyle-primary.png",
+      "sha256": "82c6130007585c9d398c36398d62374c3132ff0902108e2a3f9cf8604148ac63",
+      "listing_image_id": "8517838421",
+      "status": "WRITTEN"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:52.545Z",
+      "operation": "UPLOAD_IMAGE",
+      "listing_id": "4567824728",
+      "rank": 2,
+      "filename": "02-winged-ankh-front-bright.png",
+      "sha256": "b447ffd180a082542a8d194278583fadf36a1b685e74aec5a3f39f83cdde12bd",
+      "listing_image_id": "8469930248",
+      "status": "WRITTEN"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:54.173Z",
+      "operation": "UPLOAD_IMAGE",
+      "listing_id": "4567824728",
+      "rank": 3,
+      "filename": "03-winged-ankh-front-oxidized.png",
+      "sha256": "43aca64cbc38d15c7cdf87e6c823e895630efd32cac65a8ecb782381745d5abd",
+      "listing_image_id": "8517838515",
+      "status": "WRITTEN"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:55.243Z",
+      "operation": "UPLOAD_IMAGE",
+      "listing_id": "4567824728",
+      "rank": 4,
+      "filename": "04-necklace-scale-display.png",
+      "sha256": "80fdbdd59fa593878708970fbe59d127de5f0d9789362260f05696defb705def",
+      "listing_image_id": "8517838559",
+      "status": "WRITTEN"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:57.007Z",
+      "operation": "UPLOAD_IMAGE",
+      "listing_id": "4567824728",
+      "rank": 5,
+      "filename": "05-eternal-guardian-lifestyle-front.png",
+      "sha256": "7e97af6f3b8abfc9428e85f09ebb8570385c958ba50fff60485db2cf8ea2abfb",
+      "listing_image_id": "8469930412",
+      "status": "WRITTEN"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:58.262Z",
+      "operation": "UPLOAD_IMAGE",
+      "listing_id": "4567824728",
+      "rank": 6,
+      "filename": "06-eternal-guardian-lifestyle-side.png",
+      "sha256": "958b47ce3273b77984466a88f6689ca22baa2d984ae318d0e4bdfaf0a2c7dc46",
+      "listing_image_id": "8469930462",
+      "status": "WRITTEN"
+    },
+    {
+      "timestamp": "2026-09-03T06:26:02.629Z",
+      "operation": "ACTIVATE_LISTING",
+      "listing_id": "4567824728",
+      "status": "WRITTEN"
+    }
+  ],
+  "rate_limits": [
+    {
+      "timestamp": "2026-09-03T06:25:42.517Z",
+      "operation": "SCOPE_PROBE",
+      "path": "/scopes",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4974,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:43.772Z",
+      "operation": "SOURCE_LISTING_READ",
+      "path": "/listings/4449012621",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4973,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:45.000Z",
+      "operation": "SOURCE_INVENTORY_READ",
+      "path": "/listings/4449012621/inventory?max_variations_supported=3",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4972,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:46.215Z",
+      "operation": "READINESS_DEFINITION_READ",
+      "path": "/shops/25333110/readiness-state-definitions",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4971,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:48.032Z",
+      "operation": "CREATE_DRAFT",
+      "path": "/shops/25333110/listings",
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4970,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:48.880Z",
+      "operation": "SET_INVENTORY",
+      "path": "/listings/4567824728/inventory?max_variations_supported=3",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4969,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:51.459Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/4567824728/images",
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4968,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:52.544Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/4567824728/images",
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4967,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:54.172Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/4567824728/images",
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4966,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:55.242Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/4567824728/images",
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4965,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:57.006Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/4567824728/images",
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4964,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:58.261Z",
+      "operation": "UPLOAD_IMAGE",
+      "path": "/shops/25333110/listings/4567824728/images",
+      "status": 201,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4963,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:58.356Z",
+      "operation": "VERIFY_LISTING_READ",
+      "path": "/listings/4567824728",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4962,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:25:59.587Z",
+      "operation": "VERIFY_IMAGES_READ",
+      "path": "/listings/4567824728/images",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4961,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:26:00.844Z",
+      "operation": "VERIFY_INVENTORY_READ",
+      "path": "/listings/4567824728/inventory?max_variations_supported=3",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4960,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:26:02.627Z",
+      "operation": "ACTIVATE_LISTING",
+      "path": "/shops/25333110/listings/4567824728",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4959,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:26:03.355Z",
+      "operation": "VERIFY_LISTING_READ",
+      "path": "/listings/4567824728",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4958,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:26:04.580Z",
+      "operation": "VERIFY_IMAGES_READ",
+      "path": "/listings/4567824728/images",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4957,
+      "retry_after_seconds": null
+    },
+    {
+      "timestamp": "2026-09-03T06:26:05.859Z",
+      "operation": "VERIFY_INVENTORY_READ",
+      "path": "/listings/4567824728/inventory?max_variations_supported=3",
+      "status": 200,
+      "limit_per_second": 5,
+      "remaining_this_second": 4,
+      "limit_per_day": 5000,
+      "remaining_today": 4956,
+      "retry_after_seconds": null
+    }
+  ],
+  "write_windows": [
+    {
+      "timestamp": "2026-09-03T06:25:42.409Z",
+      "purpose": "token-refresh",
+      "values": {
+        "ETSY_ACCESS_TOKEN": "[REDACTED]",
+        "ETSY_REFRESH_TOKEN": "[REDACTED]",
+        "ETSY_TOKEN_EXPIRES_AT": "[REDACTED]",
+        "ETSY_TOKEN_SCOPE": "[REDACTED]"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/eternal-guardian-publish/2026-09-03T06-25-42-405Z-token-refresh"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:46.218Z",
+      "purpose": "draft-construction-open",
+      "values": {
+        "ETSY_READ_ONLY_MODE": "false",
+        "ETSY_WRITE_APPROVED": "true"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/eternal-guardian-publish/2026-09-03T06-25-46-217Z-draft-construction-open"
+    },
+    {
+      "timestamp": "2026-09-03T06:25:58.264Z",
+      "purpose": "draft-construction-close",
+      "values": {
+        "ETSY_READ_ONLY_MODE": "true",
+        "ETSY_WRITE_APPROVED": "false"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/eternal-guardian-publish/2026-09-03T06-25-58-262Z-draft-construction-close"
+    },
+    {
+      "timestamp": "2026-09-03T06:26:00.847Z",
+      "purpose": "activation-open",
+      "values": {
+        "ETSY_READ_ONLY_MODE": "false",
+        "ETSY_WRITE_APPROVED": "true"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/eternal-guardian-publish/2026-09-03T06-26-00-846Z-activation-open"
+    },
+    {
+      "timestamp": "2026-09-03T06:26:02.630Z",
+      "purpose": "activation-close",
+      "values": {
+        "ETSY_READ_ONLY_MODE": "true",
+        "ETSY_WRITE_APPROVED": "false"
+      },
+      "backup_dir": "/root/mensskull-etsy-backups/eternal-guardian-publish/2026-09-03T06-26-02-629Z-activation-close"
+    }
+  ],
+  "rollback": {
+    "attempted": false,
+    "successful": null
+  },
+  "local_sku_collisions": [],
+  "finished_at": "2026-09-03T06:26:05.861Z",
+  "safety": {
+    "exact_new_listing_only": true,
+    "production_listing_creates": 1,
+    "production_image_uploads": 6,
+    "production_activations": 1,
+    "http_429_count": 0,
+    "final_quota": {
+      "limit_per_day": 5000,
+      "remaining_today": 4956,
+      "limit_per_second": 5
+    },
+    "etsy_read_only_mode": true,
+    "etsy_write_approved": false
+  },
+  "integrity_sha256": "afad61ea2369ffd6d0cf2bd07d3a17d3b0e9e1e0e7b1aa803b81bbed04e28c27"
+}
