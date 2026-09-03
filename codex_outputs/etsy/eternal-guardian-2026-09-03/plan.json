@@ -1,0 +1,85 @@
+{
+  "operation": "ETERNAL_GUARDIAN_ETSY_PUBLISH",
+  "authorization": "USER_AUTHORIZED_NEW_LISTING_AND_SIX_IMAGES_2026_09_03",
+  "shop_id": "25333110",
+  "source_listing_id": "4449012621",
+  "expected_source": {
+    "taxonomy_id": 1229,
+    "shipping_profile_id": 258015663340
+  },
+  "create_draft": {
+    "quantity": 8,
+    "title": "Winged Ankh Pendant Necklace in 925 Sterling Silver, Egyptian Key of Life",
+    "description": "Eternal Guardian is a substantial 925 sterling silver winged ankh pendant necklace inspired by the Egyptian Key of Life. Broad feathered wings frame the central ankh, creating a sculptural statement piece with a balanced unisex profile.\n\nThe pendant measures approximately 45 x 46 mm (1.77 x 1.81 in) and weighs approximately 33 g, giving it a solid, noticeable presence. It is paired with a 2 mm wide, 60 cm (23.6 in) long 925 sterling silver chain.\n\nPRODUCT DETAILS\n\n- Name: Eternal Guardian\n- Design: winged ankh / Egyptian Key of Life\n- Pendant material: 925 sterling silver\n- Chain material: 925 sterling silver\n- Pendant size: approximately 45 x 46 mm (1.77 x 1.81 in)\n- Pendant weight: approximately 33 g\n- Chain width: approximately 2 mm\n- Chain length: 60 cm (23.6 in)\n- Style: statement, symbolic, Egyptian-inspired\n- Fit: unisex; designed for men and women\n- SKU: 246\n\nThe ankh is an ancient Egyptian symbol commonly associated with life. Here, the traditional form is surrounded by layered wings, giving the necklace a bold guardian-like silhouette without relying on supernatural or protective claims.\n\nCARE\n\nStore the necklace dry and separately when it is not being worn. Wipe it gently with a soft jewelry cloth after use. Sterling silver naturally develops patina over time; avoid harsh chemicals, chlorine, and abrasive cleaners.\n\nPlease review the measurements before ordering. The enlarged close-up photographs are intended to show the design details; the stated dimensions provide the most reliable guide to physical size.",
+    "price": 236,
+    "who_made": "collective",
+    "when_made": "made_to_order",
+    "taxonomy_id": 1229,
+    "shipping_profile_id": 258015663340,
+    "materials": [
+      "925 Sterling Silver"
+    ],
+    "tags": [
+      "winged ankh pendant",
+      "ankh necklace",
+      "egyptian necklace",
+      "key of life pendant",
+      "sterling silver ankh",
+      "925 silver necklace",
+      "egyptian jewelry",
+      "mens silver pendant",
+      "womens ankh necklace",
+      "unisex necklace",
+      "ancient egypt gift",
+      "gothic ankh jewelry",
+      "statement necklace"
+    ],
+    "is_supply": false,
+    "should_auto_renew": true,
+    "type": "physical"
+  },
+  "inventory": {
+    "sku": "246",
+    "quantity": 8,
+    "price": 236
+  },
+  "images": [
+    {
+      "rank": 1,
+      "filename": "01-eternal-guardian-lifestyle-primary.png",
+      "sha256": "82c6130007585c9d398c36398d62374c3132ff0902108e2a3f9cf8604148ac63",
+      "alt_text": "Eternal Guardian winged ankh pendant necklace worn at the center of the chest"
+    },
+    {
+      "rank": 2,
+      "filename": "02-winged-ankh-front-bright.png",
+      "sha256": "b447ffd180a082542a8d194278583fadf36a1b685e74aec5a3f39f83cdde12bd",
+      "alt_text": "Front view of a polished 925 sterling silver winged ankh pendant"
+    },
+    {
+      "rank": 3,
+      "filename": "03-winged-ankh-front-oxidized.png",
+      "sha256": "43aca64cbc38d15c7cdf87e6c823e895630efd32cac65a8ecb782381745d5abd",
+      "alt_text": "Oxidized front detail of the Egyptian Key of Life pendant and feathered wings"
+    },
+    {
+      "rank": 4,
+      "filename": "04-necklace-scale-display.png",
+      "sha256": "80fdbdd59fa593878708970fbe59d127de5f0d9789362260f05696defb705def",
+      "alt_text": "Winged ankh necklace displayed on a black bust to show its statement scale"
+    },
+    {
+      "rank": 5,
+      "filename": "05-eternal-guardian-lifestyle-front.png",
+      "sha256": "7e97af6f3b8abfc9428e85f09ebb8570385c958ba50fff60485db2cf8ea2abfb",
+      "alt_text": "Front lifestyle view of the unisex sterling silver winged ankh necklace"
+    },
+    {
+      "rank": 6,
+      "filename": "06-eternal-guardian-lifestyle-side.png",
+      "sha256": "958b47ce3273b77984466a88f6689ca22baa2d984ae318d0e4bdfaf0a2c7dc46",
+      "alt_text": "Side lifestyle view of the 60 cm silver chain and winged ankh pendant"
+    }
+  ],
+  "integrity_sha256": "cbaa82b5f5ca110380dd9326e81bb1248ae40247e7b9056e813cca957eebeb7b"
+}

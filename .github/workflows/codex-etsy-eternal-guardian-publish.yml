@@ -1,0 +1,103 @@
+name: Codex Etsy Eternal Guardian Publish
+
+on:
+  push:
+    branches:
+      - codex/etsy-eternal-guardian-publish-2026-09-03
+    paths:
+      - ".github/workflows/codex-etsy-eternal-guardian-publish.yml"
+      - "scripts/execute-eternal-guardian-listing-publish.cjs"
+      - "codex_outputs/etsy/eternal-guardian-2026-09-03/plan.json"
+      - "codex_outputs/etsy/eternal-guardian-2026-09-03/assets/**"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mensskull-etsy-eternal-guardian-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          Path.home().joinpath(".ssh", "prod").write_text(key if key.endswith("\n") else key + "\n")
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Execute exact listing package
+        shell: bash
+        run: |
+          set -u
+          PACKAGE="codex_outputs/etsy/eternal-guardian-2026-09-03"
+          REMOTE_TMP="/tmp/mensskull-eternal-guardian-${GITHUB_RUN_ID}"
+          mkdir -p "$PACKAGE/execution"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" "mkdir -p '$REMOTE_TMP/assets'"
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" "$PACKAGE/plan.json" "$PROD_SSH_USER@$PROD_SSH_HOST:$REMOTE_TMP/plan.json"
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -P "$PROD_SSH_PORT" "$PACKAGE"/assets/*.png "$PROD_SSH_USER@$PROD_SSH_HOST:$REMOTE_TMP/assets/"
+          APP_DIR="$(ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'pm2 jlist | node -e '\''let d="";process.stdin.on("data",c=>d+=c);process.stdin.on("end",()=>{const a=JSON.parse(d||"[]");const p=a.find(x=>x.name==="mensskull-etsy-ai-manager");if(!p?.pm2_env?.pm_cwd)process.exit(2);process.stdout.write(p.pm2_env.pm_cwd)})'\''')"
+          set +e
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" \
+            "cd '$APP_DIR' && node - --plan '$REMOTE_TMP/plan.json' --asset-dir '$REMOTE_TMP/assets'" \
+            < scripts/execute-eternal-guardian-listing-publish.cjs \
+            > "$PACKAGE/execution/report.json"
+          EXEC_CODE=$?
+          set -e
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" "test -n '$REMOTE_TMP' && case '$REMOTE_TMP' in /tmp/mensskull-eternal-guardian-*) rm -rf -- '$REMOTE_TMP' ;; *) exit 2 ;; esac"
+          echo "$EXEC_CODE" > "$PACKAGE/execution/exit-code.txt"
+
+      - name: Commit execution evidence
+        if: always()
+        shell: bash
+        run: |
+          git config user.name "codex-analysis-bot"
+          git config user.email "codex-analysis-bot@users.noreply.github.com"
+          git add codex_outputs/etsy/eternal-guardian-2026-09-03/execution/report.json codex_outputs/etsy/eternal-guardian-2026-09-03/execution/exit-code.txt
+          git commit -m "Record Eternal Guardian Etsy publication" || exit 0
+          git push
+
+      - name: Verify publication result
+        if: always()
+        shell: bash
+        run: |
+          node - <<'NODE'
+          const fs = require("fs");
+          const report = JSON.parse(fs.readFileSync("codex_outputs/etsy/eternal-guardian-2026-09-03/execution/report.json", "utf8"));
+          if (report.status !== "PUBLISHED_AND_API_VERIFIED") throw new Error(`Publication halted: ${report.error || report.status}`);
+          if (!report.draft_verification?.passed || !report.active_verification?.passed) throw new Error("Exact verification did not pass");
+          if (report.safety?.production_listing_creates !== 1 || report.safety?.production_image_uploads !== 6 || report.safety?.production_activations !== 1) throw new Error("Unexpected write count");
+          if (report.safety?.http_429_count !== 0 || report.safety?.etsy_read_only_mode !== true || report.safety?.etsy_write_approved !== false) throw new Error("Final safety state failed");
+          console.log({ status: report.status, listing_id: report.listing_id, listing_url: report.listing_url });
+          NODE
