@@ -1,0 +1,145 @@
+name: Codex Etsy P0 Title Repair Batch 18
+
+on:
+  push:
+    branches:
+      - codex/etsy-eternal-guardian-publish-2026-09-03
+    paths:
+      - ".github/workflows/codex-etsy-p0-title-repair-batch-18.yml"
+      - ".codex-etsy-ai-manager-sync-v1/config/controlled-autonomous-repair-v3/batch-18-p0-title-repair-2026-09-03.json"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  execute:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure isolated production access
+        shell: bash
+        run: |
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  key = base64.b64decode(raw).decode("utf-8").replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          if not key.endswith("\n"):
+              key += "\n"
+          Path.home().joinpath(".ssh", "prod").write_text(key)
+          PY
+          chmod 600 ~/.ssh/prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+
+      - name: Package exact Batch 18 plan
+        shell: bash
+        run: |
+          tar -czf /tmp/etsy-batch-18.tgz \
+            -C .codex-etsy-ai-manager-sync-v1 \
+            config/controlled-autonomous-repair-v3/batch-18-p0-title-repair-2026-09-03.json
+
+      - name: Install plan and execute V3
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" /tmp/etsy-batch-18.tgz \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-batch-18.tgz"
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP=/root/mykinlegacy/mensskull-etsy-ai-manager
+          cd "$APP"
+          grep -Eq '^ETSY_READ_ONLY_MODE=true$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=false$' .env.local
+          curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/status > /tmp/batch18-status-before.json
+          curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/oauth/diagnostics > /tmp/batch18-oauth-before.json
+          node - <<'NODE'
+          const status = require('/tmp/batch18-status-before.json');
+          const oauth = require('/tmp/batch18-oauth-before.json');
+          if (status?.connected !== true) throw new Error('Etsy production status is unreachable or disconnected.');
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) throw new Error('Initial guards are unsafe.');
+          if (oauth?.tokenValid !== true || oauth?.readyForDryRun !== true || oauth?.hasListingsWriteScope !== true) throw new Error('Live OAuth verification failed.');
+          if (oauth?.env?.readOnlyMode !== true || oauth?.env?.writeApproved !== false) throw new Error('OAuth diagnostics found unsafe guards.');
+          const limit = Number(status?.rateLimit?.limitPerDay);
+          const remaining = Number(status?.rateLimit?.remainingToday);
+          if (!Number.isFinite(limit) || !Number.isFinite(remaining) || remaining < Math.ceil(limit * 0.2)) throw new Error('Quota reserve is below 20%.');
+          NODE
+          mkdir -p config/controlled-autonomous-repair-v3
+          tar -xzf /tmp/etsy-batch-18.tgz -C "$APP"
+          npx tsx scripts/controlled-autonomous-repair-v3.ts \
+            --plan config/controlled-autonomous-repair-v3/batch-18-p0-title-repair-2026-09-03.json \
+            | tee /tmp/etsy-batch-18-output.txt
+          RESULT="$(sed -n 's/^V3_RESULT_JSON=//p' /tmp/etsy-batch-18-output.txt | tail -n 1)"
+          test -n "$RESULT"
+          RESULT_JSON="$RESULT" node - <<'NODE'
+          const result = JSON.parse(process.env.RESULT_JSON);
+          if (result.version !== 'V3' || result.readOnlyRestored !== true || result.otherFieldsModified !== false) throw new Error('Batch 18 final safety verification failed.');
+          if ((result.results || []).length > 2) throw new Error('Batch 18 exceeded the two remaining listing slots for 2026-09-03.');
+          const expected = new Map([
+            ['1635852221', '999 Fine Silver Bracelet with 925 Silver Feather Detail for Men'],
+            ['4366208292', 'Handmade 999 Fine Silver Horse Hoof Cuff Bracelet, Custom Sizes']
+          ]);
+          for (const item of result.results || []) {
+            if (!expected.has(String(item.listingId)) || item.verified !== true) throw new Error('Unexpected or unverified Batch 18 write.');
+          }
+          require('fs').writeFileSync('/tmp/etsy-batch-18-result.json', JSON.stringify(result, null, 2));
+          NODE
+          REMOTE
+
+      - name: Retrieve execution result
+        if: always()
+        continue-on-error: true
+        shell: bash
+        run: |
+          scp -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-batch-18-result.json" \
+            /tmp/etsy-batch-18-result.json
+          {
+            echo '## Batch 18 result'
+            echo '```json'
+            cat /tmp/etsy-batch-18-result.json
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Verify final guards
+        if: always()
+        shell: bash
+        run: |
+          ssh -i ~/.ssh/prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          cd /root/mykinlegacy/mensskull-etsy-ai-manager
+          grep -Eq '^ETSY_READ_ONLY_MODE=true$' .env.local
+          grep -Eq '^ETSY_WRITE_APPROVED=false$' .env.local
+          curl -fsS --max-time 20 https://tools.mensskull.com/api/etsy/status > /tmp/batch18-status-after.json
+          node - <<'NODE'
+          const status = require('/tmp/batch18-status-after.json');
+          if (status?.connected !== true) throw new Error('Final Etsy status is unhealthy.');
+          if (status?.env?.readOnlyMode !== true || status?.env?.writeApproved !== false) throw new Error('Final guards were not restored.');
+          NODE
+          REMOTE

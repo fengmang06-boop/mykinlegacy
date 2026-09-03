@@ -1,0 +1,83 @@
+{
+  "version": "V3",
+  "batchKey": "batch-18-p0-title-repair-2026-09-03",
+  "baselineReportPath": "exports/low-signal-breakthrough/batch-18-p0-title-repair-2026-09-03/baseline.json",
+  "candidates": [
+    {
+      "listingId": "1635852221",
+      "product": "Fine Silver Feather Bracelet",
+      "sku": "SB87",
+      "proposedTitle": "999 Fine Silver Bracelet with 925 Silver Feather Detail for Men",
+      "proposedTags": ["tribal jewelry", "feather cuff", "bird motif bracelet", "adjustable armband", "celestial boho", "Miao silver", "wing jewelry", "artisan carved", "ethnic gift women", "minimalist tribal", "feather bracelet", "stackable cuff", "recycled silver"],
+      "searchIntent": "999 fine silver men's bracelet with a 925 silver feather detail",
+      "evidence": [
+        "Founder confirmed that the bracelet body is 999 fine silver and the applied feather detail is 925 silver.",
+        "Fresh Etsy API baseline captured 2026-09-03T09:55:02.351Z confirms active listing 1635852221, exact current title, 13 tags, listing state, image order, protected fields, and baseline SHA-256."
+      ],
+      "repairPriorityScore": 97,
+      "repairPriorityComponents": {"technicalDefect": 30, "titleTagRepairability": 25, "commercialPotentialAndBrandFit": 18, "changeSafety": 14, "dataReliability": 10},
+      "views": 665,
+      "favorites": 27,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": true
+    },
+    {
+      "listingId": "4366208292",
+      "product": "Fine Silver Horse Hoof Cuff Bracelet",
+      "sku": "SB130",
+      "proposedTitle": "Handmade 999 Fine Silver Horse Hoof Cuff Bracelet, Custom Sizes",
+      "proposedTags": ["custom size bracelet", "999 silver bracelet", "unique bracelets", "cute unique bracelet", "bracelets for women", "homemade bracelets", "custom bracelet", "gift for women", "silver cuff bracelet", "999 silver bangle", "horse hoof bracelet", "lucky charm bracelet", "chunky silver cuff"],
+      "searchIntent": "handmade 999 fine silver horse hoof cuff bracelet in custom sizes",
+      "evidence": [
+        "Founder confirmed SB130 is 999 fine silver; replacing the contradictory phrase 999 Sterling Silver corrects a material-level P0 title defect.",
+        "Fresh Etsy API baseline captured 2026-09-03T09:55:02.351Z confirms active listing 4366208292, exact current title, 13 tags, listing state, image order, protected fields, and baseline SHA-256."
+      ],
+      "repairPriorityScore": 96,
+      "repairPriorityComponents": {"technicalDefect": 30, "titleTagRepairability": 25, "commercialPotentialAndBrandFit": 17, "changeSafety": 14, "dataReliability": 10},
+      "views": 88,
+      "favorites": 3,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": true
+    },
+    {
+      "listingId": "1792490833", "product": "Eternal Vows Fine Silver Bracelet", "sku": "SB68", "proposedTitle": "999 Fine Silver Eternal Vows Cuff Bracelet, Hand-Carved Spiritual Jewelry", "proposedTags": [], "searchIntent": "999 fine silver carved cuff bracelet", "evidence": ["Founder confirmed 999 fine silver.", "Winner protection remains unresolved."], "repairPriorityScore": 84, "views": 490, "favorites": 20, "stableSeller": true, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": true, "independentSearchAngle": true, "identifierReliable": false
+    },
+    {
+      "listingId": "899273951", "product": "War Mask Skull Ring", "sku": "SJ95", "proposedTitle": "925 Sterling Silver War Mask Skull Ring for Men, Gothic Biker Jewelry", "proposedTags": [], "searchIntent": "925 sterling silver war mask skull ring for men", "evidence": ["P1 title wording needs repair.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 90, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4488478432", "product": "Kraken's Embrace Copper Tray", "sku": "FCM06", "proposedTitle": "Kraken's Embrace Hammered Copper Tray with Brass Octopus, Nautical Jewelry Dish", "proposedTags": [], "searchIntent": "hammered copper tray with brass octopus", "evidence": ["P1 title entity and clarity issue is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 88, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4472782197", "product": "Sterling Silver Skull Pendant", "sku": "SP189-2", "proposedTitle": "Sterling Silver Skull Pendant Necklace for Men, Gothic Biker Jewelry", "proposedTags": [], "searchIntent": "sterling silver skull pendant necklace for men", "evidence": ["P1 item-first title repair is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 87, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4473194563", "product": "Sterling Silver Biker Skull Ring", "sku": "SJ191", "proposedTitle": "925 Sterling Silver Biker Skull Ring, Gothic Statement Jewelry", "proposedTags": [], "searchIntent": "925 sterling silver biker skull ring", "evidence": ["P1 unclear title phrase is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 86, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4364083038", "product": "Personalized Serpent Key Pendant", "sku": "SP241", "proposedTitle": "Personalized Sterling Silver Serpent Key Pendant, Custom Name Necklace", "proposedTags": [], "searchIntent": "personalized sterling silver serpent key pendant", "evidence": ["P1 item-first title repair is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 85, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4465182574", "product": "Sterling Silver Bone Cross Pendant", "sku": "SP95", "proposedTitle": "Sterling Silver Bone Cross Pendant Necklace, Men's Gothic Jewelry", "proposedTags": [], "searchIntent": "sterling silver bone cross pendant necklace", "evidence": ["Only the HTML entity needs correction.", "Batch 14 cooldown remains active until 2026-09-13T09:35:24.856Z."], "repairPriorityScore": 82, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": true, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "1893979797", "product": "Sterling Silver Weave Bracelet", "sku": "SB69", "proposedTitle": "Men's Sterling Silver Weave Bracelet, Adjustable Handmade Jewelry", "proposedTags": [], "searchIntent": "woven sterling silver bracelet", "evidence": ["The 925/999 material evidence remains conflicting.", "The listing remains explicitly held until construction and identity are resolved."], "repairPriorityScore": 60, "views": 0, "favorites": 0, "stableSeller": false, "activeExperiment": false, "materialConfirmed": false, "productTypeConfirmed": true, "structureConfirmed": false, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": true, "independentSearchAngle": false, "identifierReliable": false
+    }
+  ]
+}
