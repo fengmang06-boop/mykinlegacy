@@ -1,0 +1,106 @@
+{
+  "version": "V3",
+  "batchKey": "batch-20-p1-title-repair-2026-09-05",
+  "baselineReportPath": "exports/low-signal-breakthrough/batch-20-p1-title-repair-2026-09-05/baseline.json",
+  "candidates": [
+    {
+      "listingId": "4473194563",
+      "product": "Sterling Silver Biker Skull Ring",
+      "sku": "SJ191",
+      "proposedTitle": "925 Sterling Silver Biker Skull Ring, Gothic Statement Jewelry",
+      "proposedTags": ["skull ring", "silver skull", "gothic skull ring", "biker skull ring", "mens skull ring", "punk ring", "skull jewelry", "dark aesthetic ring", "gothic jewelry", "rocker ring", "statement ring men", "skull biker jewelry", "silver skull band"],
+      "searchIntent": "925 sterling silver biker skull ring and gothic statement jewelry",
+      "evidence": [
+        "Saved evidence maps listing 4473194563 uniquely to SKU SJ191, identifies a 925 sterling silver biker skull ring, and records zero historical orders.",
+        "Fresh Etsy API baseline captured 2026-09-05T09:45:57.161Z confirms active state, exact title, 13 tags, images, protected fields, and rollback SHA-256."
+      ],
+      "repairPriorityScore": 92,
+      "repairPriorityComponents": {"technicalDefect": 28, "titleTagRepairability": 25, "commercialPotentialAndBrandFit": 17, "changeSafety": 13, "dataReliability": 9},
+      "views": 30,
+      "favorites": 4,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": true
+    },
+    {
+      "listingId": "4364083038",
+      "product": "Personalized Serpent Key Pendant",
+      "sku": "SP241",
+      "proposedTitle": "Personalized Sterling Silver Serpent Key Pendant, Custom Name Necklace",
+      "proposedTags": ["Key Pendant", "Key Necklace", "Luck Charm", "angel wing key", "custom name necklace", "custom word pendant", "custom jewelry gift", "custom name gift", "serpent key necklace", "snake charm necklace", "wisdom key pendant", "power snake necklace", "unique name jewelry"],
+      "searchIntent": "personalized sterling silver serpent key pendant and custom name necklace",
+      "evidence": [
+        "Fresh Etsy API baseline captured 2026-09-05T09:45:57.161Z confirms active listing 4364083038 and the exact current title, tags, images, protected fields, and rollback SHA-256.",
+        "Saved evidence records a historical order, a shared SP241 SKU, and an unresolved angel-wing tag on a serpent-key product, so automatic title-only execution must remain blocked."
+      ],
+      "repairPriorityScore": 86,
+      "repairPriorityComponents": {"technicalDefect": 27, "titleTagRepairability": 22, "commercialPotentialAndBrandFit": 17, "changeSafety": 8, "dataReliability": 4},
+      "views": 86,
+      "favorites": 3,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": false,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": true,
+      "independentSearchAngle": true,
+      "identifierReliable": false
+    },
+    {
+      "listingId": "923163811",
+      "product": "Sterling Silver Double Skull Pendant",
+      "sku": "SN333",
+      "proposedTitle": "Sterling Silver Double Skull Pendant Necklace for Men, Gothic Jewelry",
+      "proposedTags": ["DoubleSkullSilver", "SkullBiteNecklace", "GothicWeddingGift", "FacetedSkulls", "925Halloween", "MementoMoriSilver", "BikerCoupleJewel", "OxidizedSkulls", "MetalheadGift", "UnisexGothicChain", "TwinSkullPact", "DarkAnniversary", "SterlingOccult"],
+      "searchIntent": "sterling silver double skull pendant necklace for men",
+      "evidence": [
+        "Saved evidence maps listing 923163811 uniquely to SKU SN333, identifies the sterling silver double-skull pendant, and records zero historical orders.",
+        "Fresh Etsy API baseline captured 2026-09-05T09:45:57.161Z confirms active state, 1,561 views, 74 favorites, a recent listing update, 13 tags, protected fields, and rollback SHA-256."
+      ],
+      "repairPriorityScore": 94,
+      "repairPriorityComponents": {"technicalDefect": 28, "titleTagRepairability": 25, "commercialPotentialAndBrandFit": 19, "changeSafety": 13, "dataReliability": 9},
+      "views": 1561,
+      "favorites": 74,
+      "stableSeller": false,
+      "activeExperiment": false,
+      "materialConfirmed": true,
+      "productTypeConfirmed": true,
+      "structureConfirmed": true,
+      "ipRisk": false,
+      "authenticityRisk": false,
+      "requiresOtherFieldChanges": false,
+      "independentSearchAngle": true,
+      "identifierReliable": true
+    },
+    {
+      "listingId": "1887413314", "product": "Sterling Silver Skull Pendant", "sku": "SP268", "proposedTitle": "Handmade Sterling Silver Skull Pendant Necklace, Gothic Biker Jewelry", "proposedTags": [], "searchIntent": "handmade sterling silver skull pendant necklace", "evidence": ["P1 item-first title repair is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 83, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "1805618761", "product": "Sterling Silver Bracelet", "sku": "SB46", "proposedTitle": "Handmade Sterling Silver Bracelet for Men, Gothic Statement Jewelry", "proposedTags": [], "searchIntent": "handmade sterling silver bracelet for men", "evidence": ["P1 unclear title phrase is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 82, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "1834805146", "product": "Sterling Silver Cross Necklace", "sku": "SN55", "proposedTitle": "Men's Sterling Silver Cross Necklace, Industrial Gothic Biker Jewelry", "proposedTags": [], "searchIntent": "men's sterling silver cross necklace", "evidence": ["P1 title entity and punctuation issue is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 81, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4327672372", "product": "Sterling Silver Viking Wolf Ring", "sku": "SJ336", "proposedTitle": "Hand-Carved Sterling Silver Viking Wolf Ring for Men", "proposedTags": [], "searchIntent": "hand-carved sterling silver Viking wolf ring", "evidence": ["P1 grammar repair is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 80, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "1707620821", "product": "Sterling Silver Skull Bracelet", "sku": "SB80", "proposedTitle": "Heavy Sterling Silver Skull Bracelet for Men, Gothic Biker Jewelry", "proposedTags": [], "searchIntent": "heavy sterling silver skull bracelet for men", "evidence": ["P1 item-first title repair is documented.", "No fresh baseline was allocated in this run."], "repairPriorityScore": 79, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": false, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "4465182574", "product": "Sterling Silver Bone Cross Pendant", "sku": "SP95", "proposedTitle": "Sterling Silver Bone Cross Pendant Necklace, Men's Gothic Jewelry", "proposedTags": [], "searchIntent": "sterling silver bone cross pendant necklace", "evidence": ["Only the HTML entity needs correction.", "Batch 14 cooldown remains active until 2026-09-13T09:35:24.856Z."], "repairPriorityScore": 78, "views": null, "favorites": null, "stableSeller": false, "activeExperiment": true, "materialConfirmed": true, "productTypeConfirmed": true, "structureConfirmed": true, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": false, "independentSearchAngle": true, "identifierReliable": true
+    },
+    {
+      "listingId": "1893979797", "product": "Sterling Silver Weave Bracelet", "sku": "SB69", "proposedTitle": "Men's Sterling Silver Weave Bracelet, Adjustable Handmade Jewelry", "proposedTags": [], "searchIntent": "woven sterling silver bracelet", "evidence": ["The 925/999 material evidence remains conflicting.", "The listing remains explicitly held until construction and identity are resolved."], "repairPriorityScore": 60, "views": 0, "favorites": 0, "stableSeller": false, "activeExperiment": false, "materialConfirmed": false, "productTypeConfirmed": true, "structureConfirmed": false, "ipRisk": false, "authenticityRisk": false, "requiresOtherFieldChanges": true, "independentSearchAngle": false, "identifierReliable": false
+    }
+  ]
+}
