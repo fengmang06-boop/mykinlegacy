@@ -61,7 +61,7 @@ describe("SEO existing-query uplift round 03", () => {
     ).toEqual({
       name: "landing_cta_clicked",
       params: {
-        source: "journal_article_commercial",
+        cta_source: "journal_article_commercial",
         destination: "/family-legacy-gift"
       }
     });
@@ -72,7 +72,7 @@ describe("SEO existing-query uplift round 03", () => {
       })
     ).toEqual({
       name: "landing_cta_clicked",
-      params: { source: "journal_article_commercial" }
+      params: { cta_source: "journal_article_commercial" }
     });
   });
 

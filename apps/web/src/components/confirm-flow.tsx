@@ -64,6 +64,7 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
         trackEvent("house_dna_confirmed", { interview_id: interviewId, mode: "founder_demo" });
         trackEvent("order_created", {
           order_number: orderNumber,
+          interview_id: interviewId,
           product_code: "family_legacy_collection",
           mode: "founder_demo"
         });
@@ -92,6 +93,7 @@ export function ConfirmFlow({ interviewId }: { interviewId: string }) {
       trackEvent("house_dna_confirmed", { interview_id: interviewId });
       trackEvent("order_created", {
         order_number: order.order_number,
+        interview_id: interviewId,
         product_code: confirmedProduct.product_code
       });
       trackEvent("funnel_step_completed", {

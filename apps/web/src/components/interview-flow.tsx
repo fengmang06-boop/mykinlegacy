@@ -158,7 +158,7 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
         { stage_code: step.code, stage_number: stepIndex + 1 },
         { durationMs, stepName: `interview_${step.code}` }
       );
-      trackEvent("interview_step_completed", { step_code: step.code }, { durationMs });
+      trackEvent("interview_step_completed", { step_code: step.code, interview_id: interviewId }, { durationMs });
       trackEvent(
         "funnel_step_completed",
         { step_name: `interview_${step.code}`, interview_id: interviewId },
@@ -167,7 +167,8 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
       if (stepIndex >= INTERVIEW_STEPS.length - 1) {
         completedRef.current = true;
         trackEvent("questionnaire_completed", {
-          stage_count: INTERVIEW_STEPS.length
+          stage_count: INTERVIEW_STEPS.length,
+          interview_id: interviewId
         });
         trackEvent("funnel_step_completed", {
           step_name: "guided_interview",

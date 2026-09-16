@@ -1,3 +1,5 @@
+import { FUNNEL_TELEMETRY_VERSION, funnelPayload, prepareFunnelEmission, telemetryPagePath } from "./funnel-telemetry";
+
 export type AnalyticsEventName =
   | "landing_view"
   | "collection_view"
@@ -87,7 +89,7 @@ export type Ga4EventName =
 
 export interface Ga4Event {
   name: Ga4EventName;
-  params: Record<string, string | boolean>;
+  params: Record<string, string | boolean | number>;
 }
 
 export type TrafficType =
@@ -154,7 +156,10 @@ export function trackEvent(
   options: { durationMs?: number; stepName?: string } = {}
 ): void {
   try {
-    const sanitized = sanitizeAnalyticsPayload(payload);
+    const canonicalName = eventName === "interview_started" ? "questionnaire_started"
+      : eventName === "payment_success" ? "purchase_completed" : eventName;
+    const funnelEvent = ["landing_cta_clicked", "create_started", "questionnaire_started", "interview_step_completed", "questionnaire_completed", "checkout_started", "purchase_completed", "order_created"].includes(canonicalName);
+    const sanitized = funnelEvent ? funnelPayload(payload) : sanitizeAnalyticsPayload(payload);
     if (process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true" && Object.keys(sanitized).length > 0) {
       console.debug("[analytics]", eventName, sanitized);
     } else if (process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true") {
@@ -166,9 +171,24 @@ export function trackEvent(
     }
 
     const context = analyticsContext();
+    // Internal/demo telemetry is not sent to either production sink, including on a live URL.
+    if (context.reporting_excluded_internal || payload.mode === "founder_demo") return;
+    let funnelId: string | undefined;
+    if (funnelEvent) {
+      const emission = prepareFunnelEmission(
+        canonicalName, sanitized, context.session_id, window.sessionStorage,
+        () => window.crypto.randomUUID()
+      );
+      if (!emission || !emission.emit) return;
+      funnelId = emission.funnel_instance_id;
+      sanitized.funnel_instance_id = funnelId;
+      if (emission.step_number) sanitized.step_number = emission.step_number;
+      sanitized.schema_version = FUNNEL_TELEMETRY_VERSION;
+      sanitized.page_path = telemetryPagePath(window.location.pathname);
+    }
     sendGa4Event(eventName, sanitized, options, context);
 
-    const flowId = context.session_id;
+    const flowId = funnelId ?? context.session_id;
     const body = JSON.stringify({
       data: {
         event_name: eventName,
@@ -256,6 +276,9 @@ export function ga4EventFor(
     name = "questionnaire_started";
   } else if (eventName === "interview_step_completed") {
     name = "interview_step_completed";
+  } else if (eventName === "funnel_step_completed" && stepName === "guided_interview") {
+    // The explicit successful save emits the canonical completion; this is legacy app telemetry.
+    return null;
   } else if (eventName === "order_created") {
     name = "order_created";
   } else if (eventName === "consent_completed") {
@@ -279,9 +302,9 @@ export function ga4EventFor(
     return null;
   }
 
-  const params: Record<string, string | boolean> = {};
+  const params: Record<string, string | boolean | number> = {};
   if (typeof window !== "undefined") {
-    params.page_path = window.location.pathname;
+    params.page_path = telemetryPagePath(window.location.pathname);
   }
   if (name === "gift_landing_view" && typeof payload.gift_slug === "string") {
     params.gift_slug = payload.gift_slug.slice(0, 80);
@@ -290,7 +313,7 @@ export function ga4EventFor(
     params.article_slug = payload.article_slug.slice(0, 80);
   }
   if (name === "landing_cta_clicked" && typeof payload.source === "string") {
-    params.source = payload.source.slice(0, 80);
+    params.cta_source = payload.source.slice(0, 80);
   }
   if (
     name === "landing_cta_clicked" &&
@@ -302,6 +325,11 @@ export function ga4EventFor(
   if (name === "interview_step_completed" && typeof payload.step_code === "string") {
     params.step_code = payload.step_code.slice(0, 80);
   }
+  if (name === "interview_step_completed" && typeof payload.step_number === "number") {
+    params.step_number = payload.step_number;
+  }
+  if (typeof payload.funnel_instance_id === "string") params.funnel_instance_id = payload.funnel_instance_id;
+  if (typeof payload.schema_version === "string") params.schema_version = payload.schema_version;
   if (
     (name === "intake_stage_started" || name === "intake_stage_completed") &&
     typeof payload.stage_code === "string"
@@ -309,7 +337,7 @@ export function ga4EventFor(
     params.stage_code = payload.stage_code.slice(0, 80);
   }
   if (typeof payload.source === "string" && /^(order_status|download_vault)$/.test(payload.source)) {
-    params.source = payload.source;
+    params.cta_source = payload.source;
   }
   if (process.env.NEXT_PUBLIC_ANALYTICS_DEBUG === "true") {
     params.debug_mode = true;
@@ -331,13 +359,7 @@ function sendGa4Event(
     }
     window.gtag("event", event.name, {
       ...event.params,
-      session_id: context.session_id,
-      source: context.source,
-      medium: context.medium,
-      landing_page: context.landing_page,
-      campaign: context.campaign,
-      video_content: context.video_content,
-      device_category: context.device_category,
+      // Native GA4 attribution/device/session_id must not be overwritten by tab heuristics.
       traffic_type: context.traffic_type,
       traffic_type_reason: context.traffic_type_reason,
       reporting_view: context.reporting_excluded_internal ? "EXCLUDED_INTERNAL" : "ESTIMATED_EXTERNAL"
