@@ -108,6 +108,7 @@ export async function GET(request: NextRequest) {
   const rows = Array.from(groups.values())
     .map(({ orderKeys, ...row }) => ({ ...row, orders: orderKeys.size, revenue: roundMoney(row.revenue) }))
     .sort((left, right) => right.date.localeCompare(left.date) || right.revenue - left.revenue || left.product.localeCompare(right.product));
+  const uniqueOrderKeys = new Set(transactions.map((transaction) => transaction.etsyReceiptId ?? transaction.etsyTransactionId));
 
   return NextResponse.json({
     mode: "read-only",
@@ -121,8 +122,9 @@ export async function GET(request: NextRequest) {
     },
     summary: {
       transactionRows: transactions.length,
-      orders: rows.reduce((total, row) => total + row.orders, 0),
-      units: rows.reduce((total, row) => total + row.units, 0)
+      orders: uniqueOrderKeys.size,
+      units: rows.reduce((total, row) => total + row.units, 0),
+      revenue: roundMoney(rows.reduce((total, row) => total + row.revenue, 0))
     },
     rows
   });
