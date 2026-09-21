@@ -1,0 +1,125 @@
+name: Deploy Etsy Growth Summary (Read Only)
+
+on:
+  push:
+    branches:
+      - codex/etsy-eternal-guardian-publish-2026-09-03
+    paths:
+      - ".codex-etsy-ai-manager-sync-v1/src/app/api/etsy/growth-summary/route.ts"
+      - ".github/workflows/codex-etsy-growth-summary-deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: mensskull-growth-os-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    env:
+      PROD_SSH_HOST: ${{ secrets.PROD_SSH_HOST }}
+      PROD_SSH_USER: ${{ secrets.PROD_SSH_USER }}
+      PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
+      PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure production SSH
+        shell: bash
+        run: |
+          set -euo pipefail
+          : "${PROD_SSH_HOST:?Missing PROD_SSH_HOST}"
+          : "${PROD_SSH_USER:?Missing PROD_SSH_USER}"
+          : "${PROD_SSH_PORT:?Missing PROD_SSH_PORT}"
+          : "${PROD_SSH_PRIVATE_KEY:?Missing PROD_SSH_PRIVATE_KEY}"
+          mkdir -p ~/.ssh
+          chmod 700 ~/.ssh
+          python3 - <<'PY'
+          import base64, os, sys
+          from pathlib import Path
+
+          raw = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
+          key = raw.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+          if "BEGIN " not in key:
+              try:
+                  decoded = base64.b64decode(raw).decode("utf-8")
+                  decoded = decoded.replace("\\r", "").replace("\r", "").replace("\\n", "\n")
+                  if "BEGIN " in decoded:
+                      key = decoded
+              except Exception:
+                  pass
+          if "BEGIN " not in key:
+              print("Invalid private key", file=sys.stderr)
+              sys.exit(1)
+          Path.home().joinpath(".ssh", "etsy_prod").write_text(key.rstrip() + "\n")
+          PY
+          chmod 600 ~/.ssh/etsy_prod
+          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
+          chmod 600 ~/.ssh/known_hosts
+
+      - name: Upload the read-only route
+        shell: bash
+        run: |
+          set -euo pipefail
+          scp -i ~/.ssh/etsy_prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -P "$PROD_SSH_PORT" \
+            .codex-etsy-ai-manager-sync-v1/src/app/api/etsy/growth-summary/route.ts \
+            "$PROD_SSH_USER@$PROD_SSH_HOST:/tmp/etsy-growth-summary-route.ts"
+
+      - name: Deploy and verify without Etsy writes
+        shell: bash
+        run: |
+          set -euo pipefail
+          ssh -i ~/.ssh/etsy_prod -o BatchMode=yes -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes \
+            -p "$PROD_SSH_PORT" "$PROD_SSH_USER@$PROD_SSH_HOST" 'bash -s' <<'REMOTE'
+          set -euo pipefail
+          APP_DIR="/root/mykinlegacy/mensskull-etsy-ai-manager"
+          APP_NAME="mensskull-etsy-ai-manager"
+          test "$(realpath "$APP_DIR")" = "$APP_DIR"
+          cd "$APP_DIR"
+
+          test "$(curl -fsS --max-time 15 http://127.0.0.1:3000/api/etsy/status | node -e '
+            let body=""; process.stdin.on("data", chunk => body += chunk); process.stdin.on("end", () => {
+              const value = JSON.parse(body);
+              if (value?.env?.readOnlyMode !== true || value?.env?.writeApproved !== false) process.exit(1);
+              process.stdout.write("safe");
+            });
+          ')" = "safe"
+
+          STAMP="$(date -u +%Y%m%dT%H%M%SZ)"
+          TARGET="src/app/api/etsy/growth-summary/route.ts"
+          BACKUP="/root/mensskull-etsy-backups/growth-summary/$STAMP"
+          mkdir -p "$BACKUP" "$(dirname "$TARGET")"
+          [ ! -e "$TARGET" ] || cp -a "$TARGET" "$BACKUP/route.ts"
+          install -m 0644 /tmp/etsy-growth-summary-route.ts "$TARGET"
+
+          npx prisma generate
+          npm run build
+          pm2 restart "$APP_NAME" --update-env
+          sleep 5
+
+          curl -fsS --max-time 20 "http://127.0.0.1:3000/api/etsy/growth-summary?days=7" -o /tmp/growth-summary.json
+          node - <<'NODE'
+          const fs = require("fs");
+          const report = JSON.parse(fs.readFileSync("/tmp/growth-summary.json", "utf8"));
+          if (report?.mode !== "read-only" || report?.writeEndpointCalled !== false) throw new Error("Growth summary safety contract failed");
+          if (!report?.window || !report?.summary || !Array.isArray(report?.rows)) throw new Error("Growth summary response is incomplete");
+          console.log(JSON.stringify({ mode: report.mode, window: report.window, summary: report.summary, rowCount: report.rows.length }));
+          NODE
+          REMOTE
+
+      - name: Verify publicly
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl -fsS --connect-timeout 8 --max-time 20 "https://tools.mensskull.com/api/etsy/growth-summary?days=7" -o /tmp/public-growth-summary.json
+          node - <<'NODE'
+          const fs = require("fs");
+          const report = JSON.parse(fs.readFileSync("/tmp/public-growth-summary.json", "utf8"));
+          if (report?.mode !== "read-only" || report?.writeEndpointCalled !== false) throw new Error("Public safety contract failed");
+          console.log(JSON.stringify({ mode: report.mode, window: report.window, summary: report.summary, rowCount: report.rows.length }));
+          NODE
