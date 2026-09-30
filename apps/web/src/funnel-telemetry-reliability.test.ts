@@ -40,6 +40,15 @@ beforeEach(() => {
 afterEach(() => { vi.unstubAllGlobals(); vi.unstubAllEnvs(); });
 
 describe("required questionnaire emission tests (local GA4/first-party sinks only)", () => {
+  it("keeps questionnaire start distinct from Create and emits each only once", async () => {
+    created("interview-1");
+    trackEvent("interview_started", { interview_id: "interview-1" });
+    trackEvent("interview_started", { interview_id: "interview-1" });
+    expect(count("create_started")).toBe(1);
+    expect(count("questionnaire_started")).toBe(1);
+    const parsed = await Promise.all(bodies().map(async (blob) => JSON.parse(await blob.text())));
+    expect(parsed.filter((body) => body.data.event_name === "interview_started")).toHaveLength(1);
+  });
   it("TEST1 normal five-step completion emits one questionnaire event", () => {
     created("interview-1");
     for (const step of INTERVIEW_STEPS) trackEvent("interview_step_completed", { interview_id: "interview-1", step_code: step.code });

@@ -6,7 +6,7 @@ import { InterviewFlow } from "./components/interview-flow";
 // Local hook/controller harness invokes the real submit callback; it is not a mobile DOM test.
 const hook = vi.hoisted(() => ({ index: 0, step: 0, submit: vi.fn(async (_id: string, _answer: { step_code: string }) => ({})), push: vi.fn() }));
 vi.mock("react", async (original) => {
-  const actual = await original<typeof import("react")>();
+  const actual = await original<typeof React>();
   return { ...actual,
     useState: (initial: unknown) => {
       const values = [hook.step, ["Local QA choice"], "", null, false];
