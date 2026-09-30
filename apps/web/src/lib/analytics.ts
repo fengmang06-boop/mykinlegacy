@@ -69,6 +69,7 @@ export type Ga4EventName =
   | "gift_landing_view"
   | "landing_cta_clicked"
   | "create_started"
+  | "questionnaire_started"
   | "intake_stage_started"
   | "intake_stage_completed"
   | "interview_step_completed"
@@ -102,6 +103,8 @@ export interface AnalyticsContext {
   source: string;
   medium: string;
   landing_page: string;
+  campaign?: string;
+  video_content?: string;
   device_category: "mobile" | "tablet" | "desktop" | "unknown";
   traffic_type: TrafficType;
   traffic_type_reason: string;
@@ -250,11 +253,9 @@ export function ga4EventFor(
   } else if (eventName === "landing_cta_clicked") {
     name = "landing_cta_clicked";
   } else if (eventName === "interview_started") {
-    name = "create_started";
+    name = "questionnaire_started";
   } else if (eventName === "interview_step_completed") {
     name = "interview_step_completed";
-  } else if (eventName === "funnel_step_completed" && stepName === "guided_interview") {
-    name = "questionnaire_completed";
   } else if (eventName === "order_created") {
     name = "order_created";
   } else if (eventName === "consent_completed") {
@@ -334,6 +335,8 @@ function sendGa4Event(
       source: context.source,
       medium: context.medium,
       landing_page: context.landing_page,
+      campaign: context.campaign,
+      video_content: context.video_content,
       device_category: context.device_category,
       traffic_type: context.traffic_type,
       traffic_type_reason: context.traffic_type_reason,
@@ -428,14 +431,24 @@ export function classifyTraffic(): { type: TrafficType; reason: string } {
   return { type: "UNKNOWN", reason: "unclassified_user_agent" };
 }
 
-function firstPartyAttribution(): Pick<AnalyticsContext, "source" | "medium" | "landing_page"> {
+function firstPartyAttribution(): Pick<AnalyticsContext, "source" | "medium" | "landing_page" | "campaign" | "video_content"> {
   const fallback = { source: "direct", medium: "none", landing_page: window.location.pathname };
   try {
     const key = "mykinlegacy_conversion_attribution";
     const existing = window.sessionStorage.getItem(key);
     if (existing) {
-      const parsed = JSON.parse(existing) as Partial<typeof fallback>;
-      if (parsed.source && parsed.medium && parsed.landing_page) return parsed as typeof fallback;
+      const parsed = JSON.parse(existing) as Partial<AnalyticsContext>;
+      if (parsed.source && parsed.medium && parsed.landing_page) {
+        return {
+          source: parsed.source,
+          medium: parsed.medium,
+          landing_page: parsed.landing_page,
+          ...(parsed.campaign === "mykinlegacy_youtube" ? { campaign: parsed.campaign } : {}),
+          ...(typeof parsed.video_content === "string" && /^video\d{3,6}_[a-z0-9_]{1,48}$/.test(parsed.video_content)
+            ? { video_content: parsed.video_content }
+            : {})
+        };
+      }
     }
     const query = new URLSearchParams(window.location.search);
     const campaignSource = safeAttributionValue(query.get("utm_source"));
@@ -449,16 +462,29 @@ function firstPartyAttribution(): Pick<AnalyticsContext, "source" | "medium" | "
         ? "organic"
         : "referral";
     }
+    const videoContent = safeVideoContent(query.get("utm_content"));
     const created = {
       source,
       medium,
-      landing_page: window.location.pathname.slice(0, 120) || "/"
+      landing_page: window.location.pathname.slice(0, 120) || "/",
+      ...(source === "youtube" && medium === "organic_video" && query.get("utm_campaign") === "mykinlegacy_youtube"
+        ? {
+            campaign: "mykinlegacy_youtube",
+            ...(videoContent ? { video_content: videoContent } : {})
+          }
+        : {})
     };
     window.sessionStorage.setItem(key, JSON.stringify(created));
     return created;
   } catch {
     return fallback;
   }
+}
+
+function safeVideoContent(value: string | null): string | undefined {
+  if (!value) return undefined;
+  const normalized = value.trim().toLowerCase();
+  return /^video\d{3,6}_[a-z0-9_]{1,48}$/.test(normalized) ? normalized : undefined;
 }
 
 function deviceCategory(): AnalyticsContext["device_category"] {

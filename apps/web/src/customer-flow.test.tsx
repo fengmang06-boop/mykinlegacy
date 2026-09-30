@@ -16,7 +16,7 @@ import { metadata as downloadMetadata } from "./app/download/[token]/page";
 import { metadata as cancelMetadata } from "./app/payment/cancel/page";
 import { metadata as successMetadata } from "./app/payment/success/page";
 import { ApiClient, ApiClientError, normalizeApiBaseUrl } from "./lib/api-client";
-import { ga4EventFor, sanitizeAnalyticsPayload } from "./lib/analytics";
+import { analyticsContext, ga4EventFor, sanitizeAnalyticsPayload } from "./lib/analytics";
 import { getSafetyMessage } from "./lib/safety";
 import { areRequiredConsentsAccepted } from "./components/checkout-flow";
 import {
@@ -269,7 +269,49 @@ describe("customer frontend flow", () => {
       })
     ).toEqual({ name: "collection_downloaded", params: {} });
     expect(ga4EventFor("funnel_step_viewed", { step_name: "create_page" })).toBeNull();
-    expect(ga4EventFor("interview_started")).toEqual({ name: "create_started", params: {} });
+    expect(ga4EventFor("interview_started")).toEqual({ name: "questionnaire_started", params: {} });
+    expect(ga4EventFor("funnel_step_completed", { step_name: "guided_interview" })).toBeNull();
+  });
+
+  it("retains allowlisted YouTube attribution across navigation without accepting private data", () => {
+    const stored = new Map<string, string>();
+    const browser = {
+      location: {
+        hostname: "mykinlegacy.com",
+        pathname: "/family-legacy-collection",
+        search: "?utm_source=youtube&utm_medium=organic_video&utm_campaign=mykinlegacy_youtube&utm_content=video003_family_reunion&customer_email=private%40example.com"
+      },
+      navigator: { userAgent: "Mozilla/5.0" },
+      innerWidth: 390,
+      sessionStorage: {
+        getItem: (key: string) => stored.get(key) ?? null,
+        setItem: (key: string, value: string) => { stored.set(key, value); }
+      }
+    };
+    vi.stubGlobal("window", browser);
+    vi.stubGlobal("document", { referrer: "", cookie: "" });
+    try {
+      const landing = analyticsContext();
+      expect(landing).toMatchObject({
+        source: "youtube",
+        medium: "organic_video",
+        campaign: "mykinlegacy_youtube",
+        video_content: "video003_family_reunion",
+        landing_page: "/family-legacy-collection"
+      });
+      browser.location.pathname = "/create";
+      browser.location.search = "";
+      expect(analyticsContext()).toMatchObject({
+        source: "youtube",
+        medium: "organic_video",
+        campaign: "mykinlegacy_youtube",
+        video_content: "video003_family_reunion",
+        landing_page: "/family-legacy-collection"
+      });
+      expect(JSON.stringify(landing)).not.toContain("private@example.com");
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it("maps the conversion-proof funnel events to their exact GA4 names", () => {

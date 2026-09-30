@@ -43,6 +43,11 @@ export function InterviewFlow({ interviewId }: { interviewId: string }) {
     setStepIndex(initialStep);
     setSelected(initialAnswer?.selected_options ?? []);
     setFreeText(initialAnswer?.free_text ?? "");
+    const startedKey = `mykinlegacy_interview_started_${interviewId}`;
+    if (!window.sessionStorage.getItem(startedKey)) {
+      window.sessionStorage.setItem(startedKey, "1");
+      trackEvent("interview_started", { interview_id: interviewId });
+    }
     trackEvent("funnel_step_viewed", {
       step_name: "guided_interview",
       interview_id: interviewId
