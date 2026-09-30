@@ -2292,6 +2292,28 @@ textarea {
   padding: 32px;
 }
 
+.premium-page .collection-contract {
+  border-color: rgba(201, 162, 74, 0.42);
+  background: linear-gradient(180deg, #292218 0%, #191510 100%);
+  color: #f4ead7;
+}
+
+.premium-page .collection-contract .eyebrow {
+  color: #d5ad5a;
+}
+
+.premium-page .collection-contract-price {
+  color: #f4dfad;
+}
+
+.premium-page .collection-contract-list {
+  color: #f4ead7;
+}
+
+.premium-page .collection-contract .muted {
+  color: #d5c5a9;
+}
+
 .premium-page .create-trust-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
