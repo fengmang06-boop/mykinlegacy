@@ -22,7 +22,7 @@ Output lives in `%LOCALAPPDATA%\MyKinLegacy\organic-growth`:
   production-action ledger. Never overwrite or discard earlier actions.
 - `crawl-latest.json`: sitemap inventory, indexability checks, and link graph.
 
-The scorer is versioned as `organic-opportunity-v1.0`. Query-to-page matching
+The scorer is versioned as `organic-opportunity-v1.1`. Query-to-page matching
 from URL tokens is only a proxy, not a semantic content judgment. A score is a
 review order, never permission to deploy. GSC query anonymization means visible
 query rows cannot be summed into sitewide totals; no visible impressions does
@@ -37,8 +37,8 @@ reliable channel attribution and exclusion of internal/QA traffic.
    cannibalization. If zero mature candidates exist, record HOLD and the next
    check; do not manufacture a page change to meet a quota.
 3. For any intervention, record URL, query, first-party evidence, intent,
-   before-state, one change hypothesis, deploy date, rollback, and 14-day
-   observation window in `production_actions` before deployment. Keep at most
+   before-state, one change hypothesis, deploy date, rollback, and 28-day
+   observation window in `production_actions` after live deployment is verified. Keep at most
    one primary SERP experiment live at a time. Do not edit that page again
    during the window unless repairing a verified defect.
 4. Prefer strengthening an existing page. A new page requires observed demand,
@@ -57,6 +57,30 @@ reliable channel attribution and exclusion of internal/QA traffic.
 
 The October 1 baseline had no mature query/page quick win or validated content
 gap, so its initial batch is empty. This is a gate decision, not a failed run.
+
+## Controlled exploration V1.1
+
+The versioned scorer now labels a query/page pair `EMERGING_EXPERIMENT` when it
+has at least 30 impressions in 28 days, at least 10 in the preceding 28 days, an approximate position of 15–40,
+strong business relevance, clear intent, no visible cannibalization, and a
+stable or growing query trend. This only admits the page to a content review;
+the score never authorizes deployment by itself. A reviewer must confirm a
+material improvement opportunity and perform page QA. The budget is at most
+two controlled SEO experiments per calendar week and one live primary SERP
+experiment per topic cluster. The same page and cluster have a 28-day observation lock unless a
+verified defect requires repair or rollback.
+
+`--record-action path/to/verified-manifest.json` appends a verified deployment
+idempotently to the growth ledger, enforcing the weekly budget and page/cluster lock.
+The report then calculates comparable pre/post 7-, 14-, and 28-complete-day
+page windows when GSC has reached each end date. Review the paired query too;
+page totals can include unrelated queries. Classify a single spike as
+insufficient evidence, not success.
+
+The first experiment is documented in
+`docs/seo/controlled-exploration-01-family-reunion.md`. The existing guide owns
+the informational `family reunion gift ideas` query; the existing gift page
+owns commercial `personalized family reunion gifts`. No third URL is warranted.
 
 ## Operational boundaries
 

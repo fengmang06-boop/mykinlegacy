@@ -9,7 +9,7 @@ from __future__ import annotations
 import argparse
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from html.parser import HTMLParser
 import json
 import math
@@ -19,7 +19,7 @@ import urllib.request
 import xml.etree.ElementTree as ET
 
 
-SCORER_VERSION = "organic-opportunity-v1.0"
+SCORER_VERSION = "organic-opportunity-v1.1"
 MONITOR = Path.home() / "AppData/Local/MyKinLegacy/monitoring/daily-results/latest.json"
 OUTPUT = Path.home() / "AppData/Local/MyKinLegacy/organic-growth"
 CLUSTERS = {
@@ -149,11 +149,17 @@ def index_state(inspection: dict | None) -> str:
     return "OTHER_OR_UNKNOWN"
 
 
-def classify(impressions: int, clicks: int, position: float, previous_impressions: int) -> str:
+def classify(impressions: int, clicks: int, position: float, previous_impressions: int,
+             previous_position: float = 0, relevance: float = 0, cannibalized: bool = False,
+             clear_intent: bool = False) -> str:
     if impressions < 10:
         return "INSUFFICIENT_SAMPLE"
     if impressions >= 30 and clicks >= 2 and 4 <= position <= 20 and previous_impressions >= 10 and impressions >= previous_impressions * 1.25:
         return "WINNER"
+    if (impressions >= 30 and previous_impressions >= 10 and 15 <= position <= 40 and relevance >= 0.7 and clear_intent
+            and not cannibalized and impressions >= previous_impressions * 0.9
+            and (not previous_position or position <= previous_position + 3)):
+        return "EMERGING_EXPERIMENT"
     if 4 <= position <= 20:
         if impressions >= 30 and clicks == 0 and position <= 10:
             return "CTR_OPPORTUNITY"
@@ -186,17 +192,74 @@ def score_pair(row: dict, previous: dict, page_strength: int, cluster_support: i
         "topic_cluster_support": min(5, math.log1p(cluster_support)),
         "cannibalization_risk": -15 if cannibalized else 0,
     }
-    status = classify(impressions, clicks, position, prev)
+    clear_intent = "gift" in query.lower() and ("ideas" in query.lower() or "personalized" in query.lower())
+    status = classify(impressions, clicks, position, prev, metric(previous, "position"), relevance, cannibalized, clear_intent)
     # Low samples can be listed for observation, never authorized for edits.
     score = round(sum(components.values()), 2)
     return {"query": query, "page": page, "cluster": cluster_for(query), "clicks": clicks,
             "impressions": impressions, "ctr": metric(row, "ctr"), "position": round(position, 2),
             "previous_impressions": prev, "classification": status, "score": score,
             "scorer_version": SCORER_VERSION, "components": {k: round(v, 2) for k, v in components.items()},
-            "content_match_proxy": round(match, 2), "production_eligible": False}
+            "content_match_proxy": round(match, 2), "clear_intent": clear_intent,
+            "eligible_for_content_review": status == "EMERGING_EXPERIMENT", "production_eligible": False}
 
 
-def make_report(source: dict, crawl: dict | None = None) -> dict:
+def summarize_dated_page(rows_90d: list[dict], page: str, start: date, end: date) -> dict:
+    matched = [row for row in rows_90d if len(row.get("keys", [])) >= 2 and row["keys"][1] == page
+               and start <= date.fromisoformat(row["keys"][0]) <= end]
+    impressions = sum(int(metric(row, "impressions")) for row in matched)
+    clicks = sum(int(metric(row, "clicks")) for row in matched)
+    position = sum(metric(row, "position") * metric(row, "impressions") for row in matched) / impressions if impressions else None
+    return {"start": start.isoformat(), "end": end.isoformat(), "impressions": impressions,
+            "clicks": clicks, "ctr": round(clicks / impressions, 5) if impressions else None,
+            "average_position": round(position, 2) if position is not None else None}
+
+
+def review_actions(source: dict, actions: list[dict]) -> list[dict]:
+    complete = date.fromisoformat(source["measurement_end_date"])
+    dated = rows(period(source, "trailing_90_days"), "dated_pages")
+    reviews = []
+    for action in actions:
+        deploy = date.fromisoformat(action["deploy_date"])
+        windows = []
+        for days in (7, 14, 28):
+            post_start = deploy + timedelta(days=1)
+            post_end = deploy + timedelta(days=days)
+            entry = {"days": days, "post_end": post_end.isoformat(),
+                     "status": "READY_FOR_REVIEW" if complete >= post_end else "WAITING_FOR_COMPLETE_GSC_DATE"}
+            if complete >= post_end:
+                entry["before"] = summarize_dated_page(dated, action["page"], deploy - timedelta(days=days), deploy - timedelta(days=1))
+                entry["after"] = summarize_dated_page(dated, action["page"], post_start, post_end)
+                entry["interpretation"] = "REQUIRES_SAMPLE_AND_CAUSALITY_REVIEW"
+            windows.append(entry)
+        reviews.append({"experiment_id": action["experiment_id"], "page": action["page"], "windows": windows})
+    return reviews
+
+
+def record_action(ledger: dict, action: dict) -> bool:
+    required = {"experiment_id", "query", "page", "deploy_date", "old_title", "new_title",
+                "old_meta", "new_meta", "baseline_28d", "change", "rollback"}
+    missing = required - action.keys()
+    if missing:
+        raise ValueError(f"Action missing required fields: {sorted(missing)}")
+    deployed = date.fromisoformat(action["deploy_date"])
+    history = ledger.setdefault("production_actions", [])
+    if any(item["experiment_id"] == action["experiment_id"] for item in history):
+        return False  # Idempotent scheduled rerun.
+    week_start = deployed - timedelta(days=deployed.weekday())
+    if sum(1 for item in history if week_start <= date.fromisoformat(item["deploy_date"]) <= deployed) >= 2:
+        raise ValueError("Controlled exploration budget exhausted: maximum 2 actions per week")
+    if any(item["page"] == action["page"] and 0 <= (deployed - date.fromisoformat(item["deploy_date"])).days < 28
+           for item in history):
+        raise ValueError("Page is inside its 28-day observation window")
+    if any(cluster_for(item["query"]) == cluster_for(action["query"])
+           and 0 <= (deployed - date.fromisoformat(item["deploy_date"])).days < 28 for item in history):
+        raise ValueError("Topic cluster is inside its 28-day observation window")
+    history.append(action)
+    return True
+
+
+def make_report(source: dict, crawl: dict | None = None, ledger: dict | None = None) -> dict:
     current = period(source, "trailing_28_complete_days")
     previous = period(source, "previous_28_complete_days")
     p7 = period(source, "trailing_7_complete_days")
@@ -224,7 +287,18 @@ def make_report(source: dict, crawl: dict | None = None) -> dict:
             candidate["score"] = round(candidate["score"] + support, 2)
         candidates.sort(key=lambda x: x["score"], reverse=True)
     quick_wins = [c for c in candidates if c["classification"] in ("QUICK_WIN", "CTR_OPPORTUNITY") and c["query"] not in cannibalized]
-    emerging = [c for c in candidates if c["classification"] == "EMERGING"]
+    emerging = [c for c in candidates if c["classification"] in ("EMERGING", "EMERGING_EXPERIMENT")]
+    actions = (ledger or {}).get("production_actions", [])
+    as_of = date.fromisoformat(source["report_date"])
+    active_pages = {action["page"] for action in actions
+                    if 0 <= (as_of - date.fromisoformat(action["deploy_date"])).days < 28}
+    active_clusters = {cluster_for(action["query"]) for action in actions
+                       if 0 <= (as_of - date.fromisoformat(action["deploy_date"])).days < 28}
+    week_start = as_of - timedelta(days=as_of.weekday())
+    weekly_actions = sum(1 for action in actions if date.fromisoformat(action["deploy_date"]) >= week_start)
+    exploration_candidates = [c for c in candidates if c["classification"] == "EMERGING_EXPERIMENT"
+                              and c["page"] not in active_pages and c["cluster"] not in active_clusters
+                              and weekly_actions < 2]
     potential_gaps = []
     pairs_by_query = defaultdict(list)
     for candidate in candidates:
@@ -360,7 +434,9 @@ def make_report(source: dict, crawl: dict | None = None) -> dict:
         "top_10_quick_wins": quick_wins[:10], "top_10_content_gaps": [],
         "potential_content_gaps_needing_review": potential_gaps[:10],
         "top_5_topic_clusters": top_clusters[:5], "all_clusters_28d": cluster_list,
-        "emerging_observation": emerging[:10], "cannibalization": cannibalized,
+        "emerging_observation": emerging[:10], "controlled_exploration_candidates": exploration_candidates[:2],
+        "weekly_experiment_budget": {"max": 2, "used": weekly_actions, "remaining": max(0, 2 - weekly_actions)},
+        "cannibalization": cannibalized,
         "all_classified_pairs": candidates, "learning_pages": learning_pages,
         "dashboard": {"total_28d_impressions": current.get("gsc", {}).get("impressions"),
                       "total_28d_clicks": current.get("gsc", {}).get("clicks"),
@@ -372,8 +448,10 @@ def make_report(source: dict, crawl: dict | None = None) -> dict:
                       "new_pages_gaining_impressions": "NOT_VERIFIED",
                       "funnel_sitewide": {k: organic.get(k) for k in ("create_started", "questionnaire_completed", "checkout_started", "purchase_completed")},
                       "funnel_organic_attribution": "NOT_VERIFIED"},
-        "first_batch": [], "production_modified": False,
-        "decision": "HOLD_INSUFFICIENT_QUERY_PAGE_EVIDENCE",
+        "first_batch": [action for action in actions if action["deploy_date"] == source["report_date"]],
+        "production_modified": bool([action for action in actions if action["deploy_date"] == source["report_date"]]),
+        "experiment_reviews": review_actions(source, actions),
+        "decision": "CONTROLLED_EXPLORATION_REVIEW" if exploration_candidates else "HOLD_NO_ELIGIBLE_EXPERIMENT",
         "next_check": "NEXT_DAILY_GSC_EXPORT; REVIEW_AGAIN_ON_NEW_COMPLETE_DATE",
         "limitations": ["GSC anonymizes some query and query+page data; row sums are not sitewide totals.",
                         "Zero impressions in visible rows is not proof of zero actual search activity.",
@@ -387,6 +465,7 @@ def main() -> None:
     parser.add_argument("--input", type=Path, default=MONITOR)
     parser.add_argument("--output", type=Path, default=OUTPUT)
     parser.add_argument("--crawl", action="store_true", help="Refresh the public sitemap and internal-link graph")
+    parser.add_argument("--record-action", type=Path, help="Append a verified deployment manifest to the ledger")
     args = parser.parse_args()
     source = json.loads(args.input.read_text(encoding="utf-8"))
     if source.get("source_status", {}).get("gsc") != "SUCCESS":
@@ -396,16 +475,20 @@ def main() -> None:
     crawl = public_crawl() if args.crawl else json.loads(crawl_path.read_text(encoding="utf-8")) if crawl_path.exists() else None
     if args.crawl:
         crawl_path.write_text(json.dumps(crawl, indent=2, ensure_ascii=False) + "\n", encoding="utf-8")
-    report = make_report(source, crawl)
+    ledger_path = args.output / "growth-ledger.json"
+    ledger = json.loads(ledger_path.read_text(encoding="utf-8")) if ledger_path.exists() else {
+        "schema_version": 1, "baseline_date": source["report_date"], "scorer_version": SCORER_VERSION,
+        "daily_snapshots": [], "production_actions": []}
+    if args.record_action:
+        action = json.loads(args.record_action.read_text(encoding="utf-8"))
+        record_action(ledger, action)
+    ledger["scorer_version"] = SCORER_VERSION
+    report = make_report(source, crawl, ledger)
     latest = args.output / "latest.json"
     dated = args.output / f"{source['report_date']}.json"
     rendered = json.dumps(report, indent=2, ensure_ascii=False) + "\n"
     dated.write_text(rendered, encoding="utf-8")
     latest.write_text(rendered, encoding="utf-8")
-    ledger_path = args.output / "growth-ledger.json"
-    ledger = json.loads(ledger_path.read_text(encoding="utf-8")) if ledger_path.exists() else {
-        "schema_version": 1, "baseline_date": source["report_date"], "scorer_version": SCORER_VERSION,
-        "daily_snapshots": [], "production_actions": []}
     snapshot = {"report_date": source["report_date"], "measurement_end_date": report["measurement_end_date"],
                 "report_path": str(dated), "gsc_28d": report["windows"]["last_28_days"],
                 "gsc_7d": report["windows"]["last_7_days"], "decision": report["decision"]}

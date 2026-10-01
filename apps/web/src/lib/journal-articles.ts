@@ -755,6 +755,11 @@ const contentBatch01: JournalArticle[] = [
           ),
           p(
             "This decision controls tone. A retirement gift may recognize contribution; a wedding gift looks forward; a memorial holds remembrance and hope; a reunion piece belongs to a group. Do not combine every family occasion into one project."
+          ),
+          p(
+            "If the moment is a gathering, compare ",
+            link("shared reunion keepsake formats", "/journal/family-reunion-gift-ideas"),
+            " before choosing what to make for the group."
           )
         ]
       },
