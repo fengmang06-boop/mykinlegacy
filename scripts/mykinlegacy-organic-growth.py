@@ -271,6 +271,32 @@ def make_report(source: dict, crawl: dict | None = None) -> dict:
         if old >= 20 and cluster["impressions"] >= 20:
             ratio = cluster["impressions"] / old
             cluster["trend"] = "GROWING_VISIBLE_PAIR_SIGNAL" if ratio >= 1.25 else "DECLINING_VISIBLE_PAIR_SIGNAL" if ratio <= 0.75 else "STABLE_VISIBLE_PAIR_SIGNAL"
+    cluster_90 = defaultdict(lambda: {"queries": set(), "pages": set(), "clicks": 0, "impressions": 0, "weighted_position": 0})
+    for row in rows(p90, "query_pages"):
+        if len(row.get("keys", [])) < 2:
+            continue
+        q, page = row["keys"][:2]
+        target = cluster_90[cluster_for(q)]
+        target["queries"].add(q)
+        target["pages"].add(page)
+        target["clicks"] += int(metric(row, "clicks"))
+        target["impressions"] += int(metric(row, "impressions"))
+        target["weighted_position"] += metric(row, "position") * metric(row, "impressions")
+    recent_by_name = {c["cluster"]: c for c in cluster_list}
+    top_clusters = []
+    for name, value in cluster_90.items():
+        if name == "OTHER_OBSERVED":
+            continue
+        recent = recent_by_name.get(name, {})
+        top_clusters.append({"cluster": name, "visible_pair_impressions_90d": value["impressions"],
+                             "visible_pair_clicks_90d": value["clicks"],
+                             "average_position_90d": round(value["weighted_position"] / value["impressions"], 2) if value["impressions"] else None,
+                             "query_count_90d": len(value["queries"]), "existing_page_count_90d": len(value["pages"]),
+                             "visible_pair_impressions_28d": recent.get("impressions", 0),
+                             "trend": recent.get("trend", "INSUFFICIENT_QUERY_LEVEL_DATA"),
+                             "business_relevance": recent.get("business_relevance", "NOT_SCORED_28D"),
+                             "content_gaps": []})
+    top_clusters.sort(key=lambda c: c["visible_pair_impressions_90d"], reverse=True)
 
     inspected = {}
     for article in source.get("articles", []):
@@ -333,7 +359,7 @@ def make_report(source: dict, crawl: dict | None = None) -> dict:
                                 "crawl_generated_at_utc": crawl.get("generated_at_utc") if crawl else None},
         "top_10_quick_wins": quick_wins[:10], "top_10_content_gaps": [],
         "potential_content_gaps_needing_review": potential_gaps[:10],
-        "top_5_topic_clusters": cluster_list[:5], "all_clusters": cluster_list,
+        "top_5_topic_clusters": top_clusters[:5], "all_clusters_28d": cluster_list,
         "emerging_observation": emerging[:10], "cannibalization": cannibalized,
         "all_classified_pairs": candidates, "learning_pages": learning_pages,
         "dashboard": {"total_28d_impressions": current.get("gsc", {}).get("impressions"),
