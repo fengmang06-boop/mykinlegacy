@@ -78,6 +78,15 @@ describe("SEO existing-query uplift round 02", () => {
     }
   );
 
+  it("answers retirement gift comparison intent on the informational guide", () => {
+    const article = getJournalArticle("retirement-gift-for-father");
+    const choiceSection = article?.sections.find((section) => section.id === "choose");
+
+    expect(article?.updatedAt).toBe("2026-10-16");
+    expect(choiceSection?.heading).toContain("best retirement gift");
+    expect(choiceSection?.bullets).toHaveLength(4);
+  });
+
   it("keeps Complete Collection as the deliverable and Private Vault as delivery", async () => {
     const source = await readFile(join(__dirname, "app/gifts/[slug]/page.tsx"), "utf8");
 

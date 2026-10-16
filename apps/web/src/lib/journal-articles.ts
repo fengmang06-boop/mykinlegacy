@@ -434,7 +434,7 @@ const contentBatch01: JournalArticle[] = [
     dek:
       "The most memorable retirement gift may not celebrate the end of work. It may finally recognize what his work made possible.",
     publishedAt: "2026-07-14",
-    updatedAt: "2026-08-11",
+    updatedAt: "2026-10-16",
     author: "MyKinLegacy Editorial Team",
     heroId: "01-father-retirement",
     heroAlt: "Classic shield and tree crest artwork created for a father's retirement",
@@ -483,6 +483,21 @@ const contentBatch01: JournalArticle[] = [
         visualAlt: "Shield-led crest artwork for a military retirement example",
         visualCaption:
           "Military retirement example: protection and service are expressed without aggressive imagery."
+      },
+      {
+        id: "choose",
+        heading: "How to choose the best retirement gift for your father",
+        paragraphs: [
+          p(
+            "Start with the way your father prefers to be appreciated, then choose the format. The best option is not the most expensive one; it is the one that fits his personality and preserves something specific about what his working years meant to the family."
+          )
+        ],
+        bullets: [
+          p("Choose an experience when he values shared time and would rather make a new memory than receive an object."),
+          p("Choose a practical gift when there is a tool, hobby, or daily ritual he genuinely plans to enjoy after retirement."),
+          p("Choose a private letter, recording, or storybook when personal recognition would matter more to him than a public presentation."),
+          p("Choose a family legacy keepsake when several relatives want to preserve memories, values, places, and contributions in one coherent gift.")
+        ]
       },
       {
         id: "example",
