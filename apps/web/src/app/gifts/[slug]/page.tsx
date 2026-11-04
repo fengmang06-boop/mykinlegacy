@@ -73,6 +73,7 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
 
   const examples = page.exampleIds.map((id) => getShowcaseCollection(id)).filter(Boolean);
   const isChristmas = page.slug === "christmas-family";
+  const isFamilyReunion = page.slug === "family-reunion";
   const displayedExamples = isChristmas ? examples.slice(0, 1) : examples;
   const displayedCollectionContents = isChristmas
     ? christmasCollectionContents
@@ -150,7 +151,11 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
                 className="secondary-button"
                 href={isChristmas ? "/real-examples/05-christmas-family" : "/real-examples"}
               >
-                {isChristmas ? "View the Christmas Example" : "See Real Examples"}
+                {isChristmas
+                  ? "View the Christmas Example"
+                  : isFamilyReunion
+                    ? "View Example Designs"
+                    : "See Real Examples"}
               </Link>
             </div>
           </div>
@@ -282,7 +287,11 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
           <div className="section-heading-row">
             <div>
               <p className="eyebrow">
-                {isChristmas ? "Real Christmas example" : "Related real collections"}
+                {isChristmas
+                  ? "Real Christmas example"
+                  : isFamilyReunion
+                    ? "Example design studies"
+                    : "Related real collections"}
               </p>
               <h2>
                 {isChristmas
@@ -300,6 +309,8 @@ export default async function GiftLandingPage({ params }: GiftLandingPageProps) 
               retold stories. Mountain, path, and laurel were selected to express continuity and
               shared meaning—not to imply official heraldry or invented history.
             </p>
+          ) : isFamilyReunion ? (
+            <p>These examples are fictional design studies.</p>
           ) : null}
           <div className={`gift-example-grid${isChristmas ? " christmas-example-grid" : ""}`}>
             {displayedExamples.map((example) =>
