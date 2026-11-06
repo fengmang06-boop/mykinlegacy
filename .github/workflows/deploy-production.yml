@@ -5,6 +5,15 @@ on:
     branches:
       - main
   workflow_dispatch:
+    inputs:
+      mode:
+        description: Run only the production capacity preflight, or perform a full deployment after it passes.
+        required: true
+        type: choice
+        default: preflight_only
+        options:
+          - preflight_only
+          - deploy
 
 permissions:
   contents: read
@@ -16,8 +25,8 @@ concurrency:
 
 jobs:
   deploy:
-    name: Deploy main to production
-    if: github.ref == 'refs/heads/main'
+    name: Capacity preflight / production deploy
+    if: github.event_name == 'workflow_dispatch' || github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
     timeout-minutes: 45
     env:
@@ -26,6 +35,7 @@ jobs:
       PROD_SSH_PORT: ${{ secrets.PROD_SSH_PORT }}
       PROD_SSH_PRIVATE_KEY: ${{ secrets.PROD_SSH_PRIVATE_KEY }}
       PROD_PROJECT_DIR: ${{ secrets.PROD_PROJECT_DIR }}
+      DEPLOY_REQUESTED: ${{ github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.mode == 'deploy') }}
       REGISTRY: ghcr.io
       IMAGE_REPOSITORY: mykinlegacy-app
     steps:
@@ -89,36 +99,20 @@ jobs:
       - name: Production capacity gate before build
         shell: bash
         run: |
-          ssh -i ~/.ssh/mykinlegacy_prod \
-            -o BatchMode=yes \
-            -o IdentitiesOnly=yes \
-            -o StrictHostKeyChecking=yes \
-            -p "$PROD_SSH_PORT" \
-            "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'bash -s' -- "$PROD_PROJECT_DIR" <<'REMOTE_SCRIPT'
-          set -euo pipefail
-          PROJECT_DIR="$1"
-          cd "$PROJECT_DIR"
-          bash deployment/with-production-lock.sh "deploy-capacity-preflight" bash -lc '
-            set -euo pipefail
-            read -r total used free usage < <(df -P -B1 / | awk "NR == 2 {gsub(/%/, \"\", \$5); print \$2, \$3, \$4, \$5}")
-            read -r itotal iused ifree iusage < <(df -P -i / | awk "NR == 2 {gsub(/%/, \"\", \$5); print \$2, \$3, \$4, \$5}")
-            mysql_health="$(docker inspect --format "{{if .State.Health}}{{.State.Health.Status}}{{else}}{{.State.Status}}{{end}}" mykinlegacy_mysql 2>/dev/null || echo unavailable)"
-            docker info >/dev/null 2>&1 && docker_health=healthy || docker_health=unhealthy
-            echo "CAPACITY_PREFLIGHT usage_percent=$usage free_bytes=$free inode_percent=$iusage mysql=$mysql_health docker=$docker_health"
-            if [ "$usage" -ge 85 ] || [ "$free" -lt 16106127360 ] || [ "$iusage" -ge 85 ] ||
-              [ "$mysql_health" != healthy ] || [ "$docker_health" != healthy ]; then
-              echo "DEPLOYMENT_BLOCKED_LOW_DISK_CAPACITY" >&2
-              exit 78
-            fi
-            echo "CAPACITY_PREFLIGHT_PASS"
-          '
-          REMOTE_SCRIPT
+          bash scripts/run-production-capacity-preflight.sh
+
+      - name: Confirm preflight-only completion
+        if: env.DEPLOY_REQUESTED != 'true'
+        shell: bash
+        run: |
+          echo "PREFLIGHT_ONLY_COMPLETE build=false image_pull=false container_recreate=false deploy=false"
 
       - name: Set up Docker Buildx
+        if: env.DEPLOY_REQUESTED == 'true'
         uses: docker/setup-buildx-action@v3
 
       - name: Log in to GitHub Container Registry
+        if: env.DEPLOY_REQUESTED == 'true'
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
@@ -126,6 +120,8 @@ jobs:
           password: ${{ github.token }}
 
       - name: Build and push production image
+        id: build_push
+        if: env.DEPLOY_REQUESTED == 'true'
         uses: docker/build-push-action@v6
         timeout-minutes: 30
         with:
@@ -144,57 +140,39 @@ jobs:
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Configure SSH
+      - name: Measure candidate image outside production
+        id: candidate_image
+        if: env.DEPLOY_REQUESTED == 'true'
         shell: bash
         run: |
-          mkdir -p ~/.ssh
-          chmod 700 ~/.ssh
-          python3 - <<'PY'
-          import base64
-          import os
-          import sys
-          from pathlib import Path
+          set -euo pipefail
+          docker pull "${APP_IMAGE}"
+          unpacked_bytes="$(docker image inspect --format '{{.Size}}' "${APP_IMAGE}")"
+          [[ "$unpacked_bytes" =~ ^[0-9]+$ ]] || {
+            echo "CANDIDATE_IMAGE_SIZE_UNKNOWN value=$unpacked_bytes" >&2
+            exit 78
+          }
+          echo "unpacked_bytes=$unpacked_bytes" >> "$GITHUB_OUTPUT"
+          echo "CANDIDATE_IMAGE_MEASURED location=github_actions_runner image=${APP_IMAGE} unpacked_bytes=$unpacked_bytes"
 
-          raw_key = os.environ["PROD_SSH_PRIVATE_KEY"].strip()
-          key = raw_key.replace("\\r", "").replace("\r", "")
-          key = key.replace("\\n", "\n")
-
-          if "BEGIN " not in key:
-              try:
-                  decoded = base64.b64decode(raw_key).decode("utf-8")
-                  decoded = decoded.replace("\\r", "").replace("\r", "")
-                  decoded = decoded.replace("\\n", "\n")
-                  if "BEGIN " in decoded:
-                      key = decoded
-              except Exception:
-                  pass
-
-          valid_headers = (
-              "-----BEGIN OPENSSH PRIVATE KEY-----",
-              "-----BEGIN RSA PRIVATE KEY-----",
-              "-----BEGIN EC PRIVATE KEY-----",
-          )
-          if not any(header in key for header in valid_headers):
-              print("PROD_SSH_PRIVATE_KEY is not a valid OpenSSH/RSA/EC private key. Replace the GitHub Secret with the full private key, not the public key.", file=sys.stderr)
-              sys.exit(1)
-
-          if not key.endswith("\n"):
-              key += "\n"
-
-          Path.home().joinpath(".ssh", "mykinlegacy_prod").write_text(key)
-          PY
-          chmod 600 ~/.ssh/mykinlegacy_prod
-          ssh-keygen -y -f ~/.ssh/mykinlegacy_prod > /dev/null
-          ssh-keyscan -p "$PROD_SSH_PORT" -H "$PROD_SSH_HOST" >> ~/.ssh/known_hosts
-          chmod 600 ~/.ssh/known_hosts
+      - name: Production capacity gate before VPS update
+        if: env.DEPLOY_REQUESTED == 'true'
+        shell: bash
+        env:
+          DEPLOY_CAPACITY_RUN_TYPE: pre_deploy_candidate
+          DEPLOY_CANDIDATE_IMAGE_UNPACKED_BYTES: ${{ steps.candidate_image.outputs.unpacked_bytes }}
+        run: |
+          bash scripts/run-production-capacity-preflight.sh
 
       - name: Deploy on production VPS
+        if: env.DEPLOY_REQUESTED == 'true'
         shell: bash
         timeout-minutes: 25
         env:
           GHCR_USERNAME: ${{ github.actor }}
           GHCR_TOKEN: ${{ github.token }}
           APP_IMAGE: ${{ steps.image_meta.outputs.app_image }}
+          CANDIDATE_IMAGE_UNPACKED_BYTES: ${{ steps.candidate_image.outputs.unpacked_bytes }}
         run: |
           ssh -i ~/.ssh/mykinlegacy_prod \
             -o BatchMode=yes \
@@ -204,12 +182,13 @@ jobs:
             -o ServerAliveCountMax=20 \
             -p "$PROD_SSH_PORT" \
             "$PROD_SSH_USER@$PROD_SSH_HOST" \
-            'bash -s' -- "$PROD_PROJECT_DIR" "$APP_IMAGE" "$GHCR_USERNAME" "$GHCR_TOKEN" <<'REMOTE_SCRIPT'
+            'bash -s' -- "$PROD_PROJECT_DIR" "$APP_IMAGE" "$GHCR_USERNAME" "$GHCR_TOKEN" "$CANDIDATE_IMAGE_UNPACKED_BYTES" <<'REMOTE_SCRIPT'
           set -euo pipefail
           PROJECT_DIR="$1"
           APP_IMAGE="$2"
           GHCR_USERNAME="$3"
           GHCR_TOKEN="$4"
+          CANDIDATE_IMAGE_UNPACKED_BYTES="$5"
 
           cleanup() {
             docker logout ghcr.io >/dev/null 2>&1 || true
@@ -222,6 +201,8 @@ jobs:
           git pull --ff-only origin main
 
           printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GHCR_USERNAME" --password-stdin >/dev/null
-          RUN_SEED=false APP_IMAGE="$APP_IMAGE" bash deployment/deploy.sh
+          RUN_SEED=false APP_IMAGE="$APP_IMAGE" \
+            DEPLOY_CANDIDATE_IMAGE_UNPACKED_BYTES="$CANDIDATE_IMAGE_UNPACKED_BYTES" \
+            bash deployment/deploy.sh
           bash deployment/status.sh
           REMOTE_SCRIPT

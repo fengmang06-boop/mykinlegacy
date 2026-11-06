@@ -105,6 +105,17 @@ if ! command -v docker >/dev/null 2>&1 || ! docker compose version >/dev/null 2>
   exit 1
 fi
 
+phase "Deployment capacity gate"
+if [ "${MYKINLEGACY_ROLLBACK_IN_PROGRESS:-false}" = "true" ]; then
+  DEPLOY_CAPACITY_GATE_PHASE=post \
+    DEPLOY_CAPACITY_RUN_TYPE=rollback \
+    bash "$SCRIPT_DIR/deployment-capacity-gate.sh"
+else
+  DEPLOY_CAPACITY_GATE_PHASE=pre \
+    DEPLOY_CAPACITY_RUN_TYPE=deploy \
+    bash "$SCRIPT_DIR/deployment-capacity-gate.sh"
+fi
+
 if [ -d "$PROJECT_ROOT/.git" ]; then
   BEFORE_COMMIT="$(current_commit)"
   echo "Current commit before deploy: $(short_commit "$BEFORE_COMMIT")"
@@ -167,9 +178,6 @@ if [[ "${MYSQL_PASSWORD:-}" == "auto" || "${MYSQL_ROOT_PASSWORD:-}" == "auto" ||
   echo "Secrets were not generated in deployment/.env.production."
   exit 1
 fi
-
-phase "Deployment capacity gate"
-bash "$SCRIPT_DIR/deployment-capacity-gate.sh"
 
 compose() {
   $SUDO docker compose -p "$COMPOSE_PROJECT_NAME" --env-file "$ENV_FILE" -f "$COMPOSE_FILE" "$@"
@@ -281,6 +289,11 @@ compose up -d --no-build --force-recreate api worker web nginx
 
 phase "Running health check"
 bash "$SCRIPT_DIR/health-check.sh"
+
+phase "Post-deployment capacity margin gate"
+DEPLOY_CAPACITY_GATE_PHASE=post \
+  DEPLOY_CAPACITY_RUN_TYPE=post_deploy \
+  bash "$SCRIPT_DIR/deployment-capacity-gate.sh"
 
 if [ -d "$PROJECT_ROOT/.git" ]; then
   SUCCESSFUL_COMMIT="$(current_commit)"

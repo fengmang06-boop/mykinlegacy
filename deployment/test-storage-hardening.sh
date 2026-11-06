@@ -57,6 +57,52 @@ else
   assert_equal "mysql unhealthy blocks deployment" NO NO
 fi
 
+current_free_bytes=15974633472
+if deployment_budget_allowed 80 "$current_free_bytes" 3 healthy healthy pre \
+  $((2 * gb)) $((512 * 1024 * 1024)) $((512 * 1024 * 1024)) true; then
+  assert_equal "current capacity rejects deployment" NO YES
+else
+  assert_equal "current capacity rejects deployment" NO NO
+fi
+
+slightly_above_floor=$((15 * gb + 1))
+if deployment_budget_allowed 80 "$slightly_above_floor" 3 healthy healthy pre \
+  UNKNOWN $((512 * 1024 * 1024)) $((512 * 1024 * 1024)) true; then
+  assert_equal "slightly above floor without peak budget rejects" NO YES
+else
+  assert_equal "slightly above floor without peak budget rejects" NO NO
+fi
+
+if deployment_budget_allowed 70 $((30 * gb)) 3 healthy healthy pre \
+  UNKNOWN $((512 * 1024 * 1024)) $((512 * 1024 * 1024)) true; then
+  assert_equal "unknown peak budget rejects" NO YES
+else
+  assert_equal "unknown peak budget rejects" NO NO
+fi
+
+complete_required=$((15 * gb + 2 * gb + 512 * 1024 * 1024 + 512 * 1024 * 1024))
+if deployment_budget_allowed 70 "$complete_required" 3 healthy healthy pre \
+  $((2 * gb)) $((512 * 1024 * 1024)) $((512 * 1024 * 1024)) true; then
+  assert_equal "complete budget and rollback allow" YES YES
+else
+  assert_equal "complete budget and rollback allow" YES NO
+fi
+
+if deployment_budget_allowed 70 "$complete_required" 3 healthy healthy pre \
+  $((2 * gb)) $((512 * 1024 * 1024)) $((512 * 1024 * 1024)) false; then
+  assert_equal "missing rollback blocks deployment" NO YES
+else
+  assert_equal "missing rollback blocks deployment" NO NO
+fi
+
+post_required=$((15 * gb + 512 * 1024 * 1024 + 512 * 1024 * 1024))
+if deployment_budget_allowed 70 "$post_required" 3 healthy healthy post \
+  $((2 * gb)) $((512 * 1024 * 1024)) $((512 * 1024 * 1024)) true; then
+  assert_equal "post-deploy margin acceptance" YES YES
+else
+  assert_equal "post-deploy margin acceptance" YES NO
+fi
+
 assert_contains "current image protected by cleanup" \
   'current_image="$(tr -d' "$SCRIPT_DIR/docker-safe-cleanup.sh"
 assert_contains "rollback image protected by cleanup" \
@@ -70,6 +116,8 @@ else
 fi
 assert_contains "deploy invokes capacity gate" \
   'deployment-capacity-gate.sh' "$SCRIPT_DIR/deploy.sh"
+assert_contains "deploy invokes post capacity gate" \
+  'DEPLOY_CAPACITY_GATE_PHASE=post' "$SCRIPT_DIR/deploy.sh"
 assert_contains "monitor emits deployment decision" \
   'deployment_allowed=' "$SCRIPT_DIR/vps-capacity-monitor.sh"
 assert_contains "monitor output excludes secrets" \
