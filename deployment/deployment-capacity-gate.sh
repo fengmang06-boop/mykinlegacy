@@ -4,7 +4,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_DIR="${DEPLOY_PROJECT_DIR:-$(cd "$SCRIPT_DIR/.." && pwd)}"
 BUDGET_FILE="${DEPLOY_CAPACITY_BUDGET_FILE:-$SCRIPT_DIR/release-capacity-budget.env}"
-GATE_VERSION="mykinlegacy-release-capacity-gate-v1.1.0"
+GATE_VERSION="mykinlegacy-release-capacity-gate-v1.1.1"
 run_type="${DEPLOY_CAPACITY_RUN_TYPE:-release}"
 candidate_image_unpacked_bytes="${DEPLOY_CANDIDATE_IMAGE_UNPACKED_BYTES:-UNKNOWN}"
 
@@ -85,8 +85,8 @@ else
 
   current_image_file="$PROJECT_DIR/deployment/.last-successful-image"
   rollback_image_file="$PROJECT_DIR/deployment/.previous_image"
-  current_image="$(tr -d '[:space:]' < "$current_image_file" 2>/dev/null || true)"
-  rollback_image="$(tr -d '[:space:]' < "$rollback_image_file" 2>/dev/null || true)"
+  current_image="${DEPLOY_CAPACITY_CURRENT_IMAGE:-$(tr -d '[:space:]' < "$current_image_file" 2>/dev/null || true)}"
+  rollback_image="${DEPLOY_CAPACITY_ROLLBACK_IMAGE:-$(tr -d '[:space:]' < "$rollback_image_file" 2>/dev/null || true)}"
   rollback_ready=false
   if [ -n "$current_image" ] && [ -n "$rollback_image" ] &&
     [ "$current_image" != "$rollback_image" ] &&

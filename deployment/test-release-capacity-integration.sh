@@ -35,7 +35,7 @@ run_test_gate() {
 }
 
 if run_test_gate 24962342912 5268000000 true >/tmp/mkl-gate-pass.log 2>&1; then
-  grep -Fq 'version=mykinlegacy-release-capacity-gate-v1.1.0' /tmp/mkl-gate-pass.log &&
+  grep -Fq 'version=mykinlegacy-release-capacity-gate-v1.1.1' /tmp/mkl-gate-pass.log &&
     grep -Fq 'DEPLOYMENT_CAPACITY_GATE_PASS' /tmp/mkl-gate-pass.log &&
     pass "target gate version accepts complete boundary inputs" ||
     fail "target gate version accepts complete boundary inputs"
@@ -100,6 +100,14 @@ if [ "$preflight_line" -lt "$build_line" ] && [ "$second_gate_line" -lt "$deploy
   pass "workflow gates ordinary manual and retry paths before writes"
 else
   fail "workflow gates ordinary manual and retry paths before writes"
+fi
+
+if grep -Fq 'DEPLOY_CAPACITY_CURRENT_IMAGE="$APP_IMAGE"' "$DEPLOY" &&
+  grep -Fq 'DEPLOY_CAPACITY_ROLLBACK_IMAGE="$POST_DEPLOY_ROLLBACK_IMAGE"' "$DEPLOY" &&
+  grep -Fq 'MYKINLEGACY_ROLLBACK_SOURCE_IMAGE="${APP_IMAGE:-}"' "$DEPLOY"; then
+  pass "post-deploy and rollback gates receive the actual image pair"
+else
+  fail "post-deploy and rollback gates receive the actual image pair"
 fi
 
 rm -f /tmp/mkl-gate-pass.log /tmp/mkl-gate-low.log /tmp/mkl-gate-unknown.log /tmp/mkl-gate-rollback.log /tmp/mkl-gate-candidate.log

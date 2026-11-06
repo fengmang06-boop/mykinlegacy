@@ -61,7 +61,10 @@ deploy_failed() {
       rollback_image="$(cat "$SCRIPT_DIR/.previous_image" | tr -d '[:space:]')"
       if [ -n "$rollback_image" ] && [ "$rollback_image" != "${APP_IMAGE:-}" ]; then
         echo "Attempting automatic rollback to image ${rollback_image} after failed deploy..."
-        if MYKINLEGACY_ROLLBACK_IN_PROGRESS=true DEPLOY_SKIP_GIT_PULL=true APP_IMAGE="$rollback_image" bash "$SCRIPT_DIR/deploy.sh"; then
+        if MYKINLEGACY_ROLLBACK_IN_PROGRESS=true \
+          MYKINLEGACY_ROLLBACK_SOURCE_IMAGE="${APP_IMAGE:-}" \
+          DEPLOY_SKIP_GIT_PULL=true APP_IMAGE="$rollback_image" \
+          bash "$SCRIPT_DIR/deploy.sh"; then
           echo "ROLLBACK_AFTER_DEPLOY_FAILURE_SUCCESS image=${rollback_image}"
         else
           echo "ROLLBACK_AFTER_DEPLOY_FAILURE_FAILED image=${rollback_image}"
@@ -107,7 +110,9 @@ fi
 
 phase "Deployment capacity gate"
 if [ "${MYKINLEGACY_ROLLBACK_IN_PROGRESS:-false}" = "true" ]; then
-  DEPLOY_CAPACITY_GATE_PHASE=post \
+  DEPLOY_CAPACITY_CURRENT_IMAGE="${MYKINLEGACY_ROLLBACK_SOURCE_IMAGE:-}" \
+    DEPLOY_CAPACITY_ROLLBACK_IMAGE="${APP_IMAGE:-}" \
+    DEPLOY_CAPACITY_GATE_PHASE=post \
     DEPLOY_CAPACITY_RUN_TYPE=rollback \
     bash "$SCRIPT_DIR/deployment-capacity-gate.sh"
 else
@@ -291,7 +296,10 @@ phase "Running health check"
 bash "$SCRIPT_DIR/health-check.sh"
 
 phase "Post-deployment capacity margin gate"
-DEPLOY_CAPACITY_GATE_PHASE=post \
+POST_DEPLOY_ROLLBACK_IMAGE="${MYKINLEGACY_ROLLBACK_SOURCE_IMAGE:-$(tr -d '[:space:]' < "$SCRIPT_DIR/.previous_image" 2>/dev/null || true)}"
+DEPLOY_CAPACITY_CURRENT_IMAGE="$APP_IMAGE" \
+  DEPLOY_CAPACITY_ROLLBACK_IMAGE="$POST_DEPLOY_ROLLBACK_IMAGE" \
+  DEPLOY_CAPACITY_GATE_PHASE=post \
   DEPLOY_CAPACITY_RUN_TYPE=post_deploy \
   bash "$SCRIPT_DIR/deployment-capacity-gate.sh"
 
@@ -303,6 +311,10 @@ else
   SUCCESSFUL_COMMIT="unknown"
 fi
 echo "$APP_IMAGE" > "$LAST_SUCCESSFUL_IMAGE_FILE"
+if [ "${MYKINLEGACY_ROLLBACK_IN_PROGRESS:-false}" = "true" ] &&
+  [ -n "${MYKINLEGACY_ROLLBACK_SOURCE_IMAGE:-}" ]; then
+  echo "$MYKINLEGACY_ROLLBACK_SOURCE_IMAGE" > "$SCRIPT_DIR/.previous_image"
+fi
 record_atomic_release "$SUCCESSFUL_COMMIT" "$APP_IMAGE"
 
 safe_image_cleanup
