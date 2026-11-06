@@ -9,6 +9,9 @@ import { describe, expect, it } from "vitest";
 import FamilyLegacyGiftPage, {
   metadata as familyLegacyGiftMetadata
 } from "./app/family-legacy-gift/page";
+import FamilyCrestGeneratorPage, {
+  metadata as familyCrestGeneratorMetadata
+} from "./app/family-crest-generator/page";
 import HeritageGiftPage, { metadata as heritageGiftMetadata } from "./app/heritage-gift/page";
 import SymbolicFamilyCrestPage, {
   metadata as symbolicFamilyCrestMetadata
@@ -27,6 +30,23 @@ function visibleWords(html: string): number {
 }
 
 describe("SEO core landing pages", () => {
+  it("gives the family crest generator distinct, contract-safe highlight descriptions", () => {
+    const html = renderToStaticMarkup(<FamilyCrestGeneratorPage />);
+
+    expect(familyCrestGeneratorMetadata.title).toBe("Family Crest Generator | MyKinLegacy");
+    expect(html).toContain("One finished symbolic crest shaped by the family details you provide.");
+    expect(html).toContain(
+      "An accompanying guide explains how your supplied memories and values relate to the design’s main symbols."
+    );
+    expect(html).toContain(
+      "After Founder review, receive the finished digital collection through your private Vault."
+    );
+    expect(html).not.toContain(
+      "Included as part of a personalized, heritage-inspired digital collection for personal use, gifting, and archiving."
+    );
+    expect(html).toContain('href="/create"');
+  });
+
   it.each([
     [
       "heritage gift",

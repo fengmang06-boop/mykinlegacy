@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import React from "react";
 
 import { SeoLandingPage } from "../../components/seo-landing-page";
 import { publicMetadata } from "../../lib/seo";
@@ -17,6 +18,14 @@ export default function FamilyCrestGeneratorPage() {
       title="Create a symbolic family crest-inspired collection"
       description="Use your surname, heritage country, values, colors, animal symbols, motto, and preferred style to create a private digital collection."
       highlights={["Crest-inspired artwork", "Symbol explanations", "Private vault delivery"]}
+      highlightDescriptions={{
+        "Crest-inspired artwork":
+          "One finished symbolic crest shaped by the family details you provide.",
+        "Symbol explanations":
+          "An accompanying guide explains how your supplied memories and values relate to the design’s main symbols.",
+        "Private vault delivery":
+          "After Founder review, receive the finished digital collection through your private Vault."
+      }}
       faq={[
         {
           question: "Is this an official family crest?",

@@ -9,6 +9,7 @@ export interface SeoLandingPageProps {
   title: string;
   description: string;
   highlights: string[];
+  highlightDescriptions?: Record<string, string>;
   faq: Array<{ question: string; answer: string }>;
   extraContent?: ReactNode;
   ctaHref?: string;
@@ -21,6 +22,7 @@ export function SeoLandingPage({
   title,
   description,
   highlights,
+  highlightDescriptions,
   faq,
   extraContent,
   ctaHref = "/create",
@@ -89,8 +91,8 @@ export function SeoLandingPage({
             <article className="card" key={item}>
               <h3>{item}</h3>
               <p className="muted">
-                Included as part of a personalized, heritage-inspired digital collection for
-                personal use, gifting, and archiving.
+                {highlightDescriptions?.[item] ??
+                  "Included as part of a personalized, heritage-inspired digital collection for personal use, gifting, and archiving."}
               </p>
             </article>
           ))}
